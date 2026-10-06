@@ -1,4 +1,16 @@
-# REBOOT – Digital Balance
+# REBOOT – Unreal Engine 5 / Neon Balance
+
+Das aktuelle Entwicklungsziel ist ein **natives 3D-Spiel für Windows mit Unreal Engine 5**.
+
+Das neue Quellprojekt liegt in **[Unreal/REBOOT3D](Unreal/REBOOT3D/README.md)**. Es enthält eine erste begehbare Campus-Welt, NPC-Dialoge, Spielmodi, vier Minigames, ein Lab und lokale Spielstände. Es ist **ein Prototyp im Quellcode**, kein fertig gebautes oder in Unreal getestetes Windows-Spiel: Der Unreal Editor ist in der Cloud nicht installiert.
+
+**[Windows-Setup und Build-Anleitung](Unreal/REBOOT3D/SETUP_WINDOWS.md)** – benötigt Unreal Engine 5.6 und Visual Studio 2022 mit C++-Toolchain.
+
+Die bisherige Browser-App bleibt im Repository erhalten. GitHub Pages kann diese Web-Version veröffentlichen; das native Unreal-Spiel wird als Windows-Paket gebaut.
+
+---
+
+# Bisherige Browser-Version: REBOOT – Digital Balance
 
 REBOOT ist ein deutschsprachiges Serious Game für Jugendliche von 13 bis 16 Jahren. Du triffst Entscheidungen über Schule, Gaming, Social Media, Schlaf und Freundschaften und entwickelst mit deinem Team einen fiktiven MedTech-Prototypen. Die Auswirkungen auf Energy, Focus, Mood, Balance und Social sind vereinfachte Spielmechanik, keine medizinischen Messwerte.
 

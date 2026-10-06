@@ -5,3 +5,14 @@ node_modules/
 .env
 .env.*
 *.log
+
+# Unreal-generated files and local builds
+Unreal/**/Binaries/
+Unreal/**/DerivedDataCache/
+Unreal/**/Intermediate/
+Unreal/**/Saved/
+Unreal/**/.vs/
+Unreal/**/*.sln
+Unreal/**/*.VC.db
+Unreal/**/*.VC.VC.opendb
+Unreal/**/__pycache__/
