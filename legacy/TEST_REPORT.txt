@@ -1,0 +1,49 @@
+REBOOT Digital Balance – Validierungsbericht
+===========================================
+Datum: 2026-10-06
+Quelle: hochgeladenes REBOOT_Digital_Balance_v2_FULL.zip
+Geprüfte Laufzeit: Node.js 24.19.0, Python 3.12.14, Chromium 151 mit Playwright
+
+PASS – Syntax und statischer Start
+- app.js, sw.js und server/server.mjs: node --check erfolgreich.
+- Statischer Server aus dem Repository-Root liefert HTML und alle App-Assets.
+- Separater Server unter /REBOOT-Digital-Balance/ prüft den GitHub-Pages-Projektpfad.
+- Relative Asset-Pfade und Manifest start_url ./ funktionieren.
+
+PASS – vollständige automatisierte Spieltests im echten Browser
+- Landingpage, Konzept/Wissen/Hub-Navigation und maskierter Spielername.
+- Daily Challenge: 18 Entscheidungen, Abschluss nach drei Tagen, 3 Minigames.
+- Story: 126 Entscheidungen, Abschluss nach 21 Tagen, 23 Minigames.
+- Endless: 24 Entscheidungen über vier Tage, Tag 5 nach Reload fortsetzbar.
+- Alle vier Minigames ausgeführt: Focus Rush, Notification Shield,
+  Signal Calibration und Memory Pulse.
+- Mehrfachklicks auf Entscheidungen, CALIBRATE und Weiter erzeugen keine
+  doppelten Entscheidungen oder Minigame-Belohnungen.
+- XP, First-Reboot-Achievement und freigeschaltetes Pulse-Modul geprüft.
+- JSON-Export enthält Profil, drei Runs und die gespeicherten Events.
+- Keine JavaScript-/Konsolenfehler; keine API-Aufrufe im statischen Modus.
+
+PASS – unabhängige Browserprüfungen
+- Mobile Darstellung bei 375 und 390 Pixeln ohne horizontalen Seitenüberlauf.
+- IndexedDB-Spielstand und Spielername bleiben nach Reload erhalten.
+- Bei deaktiviertem IndexedDB bleibt der localStorage-Spielstand erhalten.
+- Minigame-Pause/Neustart und Timer-Abbruch beim Navigieren funktionieren.
+- Offline-Reload nach Service-Worker-Aktivierung lädt die App und den Hub.
+- Service-Worker-Caches sind nach Projektpfad getrennt; fremde Caches bleiben.
+- Doppelter Klick auf Minigame-Weiter erhöht den Zeitslot genau einmal.
+
+PASS – optionales Node-/SQLite-Backend
+- 31 isolierte HTTP/API-Prüfungen: Health, öffentliche Assets, HEAD,
+  unzulässige Dateien/Pfade, fehlerhafte URL-Kodierung und JSON-Nutzlasten,
+  SQLite-Events, Run-Upsert, Research-Autorisierung und HTTPS-Proxy-Regeln.
+- Datenbank für diese Prüfungen außerhalb des Checkouts.
+- Landingpage → Hub → Daily → Entscheidung unter strenger CSP geprüft.
+- Explizit aktivierte Telemetrie liefert HTTP 201; keine Browserfehler.
+
+Abgrenzung
+- Kein Build oder npm-Install notwendig.
+- Lokale Playwright-Testhelfer und Ergebnisse liegen außerhalb des Repositories
+  in /workspace/reboot-checks; sie sind kein Laufzeitbestandteil der App.
+- Die Windows-Batchdatei wurde unter Linux nicht ausgeführt.
+- Dieser Bericht beschreibt lokale Validierung; den Live-Deployment-Status
+  zeigt GitHub unter Settings → Pages bzw. Actions.

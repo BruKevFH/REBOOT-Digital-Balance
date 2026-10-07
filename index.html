@@ -3,16 +3,93 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#080b14" />
-  <meta name="description" content="REBOOT – ein Serious Game über Digital Balance, Schlaf, Aufmerksamkeit, Gaming, Social Media und MedTech." />
-  <title>REBOOT – Own Your Day</title>
+  <meta name="theme-color" content="#080d16" />
+  <meta name="description" content="Entdecke den Neon Campus. Ein spielbares 3D-Abenteuer über Fokus, Freunde und deinen eigenen Rhythmus – direkt im Browser oder als Download." />
+  <title>REBOOT — Neon Balance</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div id="app"></div>
-  <noscript>REBOOT benötigt JavaScript.</noscript>
-  <script src="app.js" defer></script>
+  <canvas id="world" aria-label="Dreidimensionaler Neon Campus"></canvas>
+  <div class="screen-vignette" aria-hidden="true"></div>
+
+  <div id="loading" class="loading-screen" role="status" aria-live="polite">
+    <div class="loading-symbol" aria-hidden="true"><span></span><span></span><span></span></div>
+    <strong>REBOOT</strong>
+    <span>Dein Campus erwacht.</span>
+    <div class="loading-track" aria-hidden="true"><i></i></div>
+  </div>
+
+  <main id="home" class="view home">
+    <header class="home-header">
+      <a class="brand" href="./" aria-label="REBOOT Startseite">
+        <svg class="brand-mark" viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M5 8h15l7 8-7 8H5l7-8-7-8Z" stroke="currentColor" stroke-width="2"/><path d="m15 8 7 8-7 8" stroke="currentColor" stroke-width="2"/></svg>
+        <span>REBOOT<small>NEON BALANCE</small></span>
+      </a>
+      <div class="campus-stamp"><span class="status-dot"></span> CAMPUS ONLINE <span class="stamp-divider">/</span> <span class="stamp-coordinate">SEKTOR 01</span></div>
+    </header>
+
+    <section class="home-content" aria-labelledby="game-title">
+      <div class="hero-eyebrow"><span></span> DEINE WELT. DEIN RHYTHMUS.</div>
+      <h1 id="game-title">REBOOT<span class="title-period">.</span></h1>
+      <p class="hero-title">OWN YOUR <span>DAY.</span></p>
+      <p class="hero-description">Die Stadt schläft nie. Du entscheidest, wann du abschaltest. Entdecke den Neon Campus, triff deine Crew und finde deine Balance.</p>
+
+      <label class="player-field" for="player-name">
+        <span>DEIN NAME IM CAMPUS</span>
+        <span class="input-wrap"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="6" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M4 17v-2a6 6 0 0 1 12 0v2" stroke="currentColor" stroke-width="1.5"/></svg><input id="player-name" aria-label="Spielername" maxlength="20" placeholder="Spieler:in" autocomplete="nickname" spellcheck="false" /></span>
+      </label>
+
+      <button id="continue" class="btn resume-button" hidden><span><span class="button-kicker">DEIN SPIELSTAND</span><strong>Abenteuer fortsetzen</strong></span><svg class="button-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <button id="launch-story" class="btn primary story-button"><span class="play-icon" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="m3 2 7 4-7 4V2Z" fill="currentColor"/></svg></span><span><span class="button-kicker">21 TAGE. DEINE GESCHICHTE.</span><strong>Abenteuer starten</strong></span><svg class="button-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+
+      <div class="mode-options" aria-label="Weitere Spielmodi">
+        <button id="launch-endless" class="mode-option"><span class="mode-icon" aria-hidden="true">∞</span><span><strong>Endless Mode</strong><small>Dein Campus. Dein Tempo.</small></span><svg class="mode-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <button id="launch-daily" class="mode-option"><svg class="mode-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m13 2-8 12h6l-1 8 9-13h-7l1-7Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg><span><strong>Daily Challenge</strong><small>Eine neue Mission pro Tag.</small></span><svg class="mode-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+
+      <div class="home-utilities">
+        <a id="download" class="download-link" href="downloads/REBOOT-Neon-Balance-1.0.0.zip" download><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 2v10m-4-4 4 4 4-4M3 13v4h14v-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span><strong>Spiel herunterladen</strong><small>ZIP · auch offline spielen</small></span><svg class="download-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        <button id="learn-button" class="learn-button">Wissen & Quellen <span aria-hidden="true">→</span></button>
+      </div>
+      <p class="local-note"><svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m8 1 5 2v4c0 4-5 7-5 7S3 11 3 7V3l5-2Z" stroke="currentColor"/><path d="m5.5 7.5 2 2 3-3" stroke="currentColor"/></svg> Dein Fortschritt bleibt auf deinem Gerät. Kein Account nötig.</p>
+    </section>
+
+    <aside class="world-label" aria-label="Spielwelt Neon Campus">
+      <div class="world-label-line"><span class="status-dot"></span> LIVE AUS DEINER SPIELWELT</div>
+      <strong>NEON<br />CAMPUS<span>01</span></strong>
+      <p>Fokus finden. Crew treffen. Neues entdecken.</p>
+      <div class="world-coordinates" aria-hidden="true"><span>48° 12′ N</span><i></i><span>016° 22′ E</span></div>
+    </aside>
+    <footer class="home-footer"><span>3D ABENTEUER <i>+</i> DIGITAL BALANCE</span><span class="footer-controls"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> BEWEGEN <span>·</span> MAUS UMSCHAUEN</span><span>SPIELEN. RESETTEN. WEITERGEHEN.</span></footer>
+  </main>
+
+  <div id="hud" class="hud" hidden>
+    <div class="hud-top">
+      <div class="hud-brand"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M5 8h15l7 8-7 8H5l7-8-7-8Z" stroke="currentColor" stroke-width="2"/><path d="m15 8 7 8-7 8" stroke="currentColor" stroke-width="2"/></svg><span>REBOOT<small id="mode-label">STORY</small></span></div>
+      <div class="hud-progress"><span id="day-label">TAG 01 / 21</span><strong id="chapter-label">Dein nächster Schritt</strong></div>
+      <nav class="hud-tools" aria-label="Spieloptionen">
+        <button id="sound-toggle" class="tool-button" title="Ton umschalten" aria-label="Ton umschalten"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4V9Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M16 8c3 2 3 6 0 8m3-11c5 4 5 10 0 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+        <button id="lab-button" class="tool-button" title="MedTech-Lab öffnen (Tab)" aria-label="MedTech-Lab öffnen"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 3h8M10 3v7L5 18c-1 2 0 3 2 3h10c2 0 3-1 2-3l-5-8V3M7 15h10" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg></button>
+        <button id="mini-button" class="tool-button" title="Minigames öffnen" aria-label="Minigames öffnen"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 7h10c3 0 5 10 3 12-1 1-3-1-5-3H9c-2 2-4 4-5 3C2 17 4 7 7 7Z" stroke="currentColor" stroke-width="1.5"/><path d="M8 10v4m-2-2h4m5-1h.1m2 2h.1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+        <button id="help-button" class="tool-button" title="Steuerung und Hilfe" aria-label="Steuerung und Hilfe"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5"/><path d="M9.5 9a2.5 2.5 0 0 1 5 0c0 2-2.5 2-2.5 4m0 3h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+        <button id="fullscreen-button" class="tool-button" title="Vollbild" aria-label="Vollbild umschalten"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 4H4v4m12-4h4v4M4 16v4h4m12-4v4h-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <button id="pause-button" class="tool-button pause-button" title="Pause (Esc)" aria-label="Spiel pausieren"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 5v14m8-14v14" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg></button>
+      </nav>
+    </div>
+    <div class="hud-stats"><div class="hud-section-label">DEINE BALANCE <span>LIVE</span></div><div id="stats"></div></div>
+    <div id="crosshair" class="crosshair" aria-hidden="true"><span></span><span></span><i></i></div>
+    <div class="objective-panel"><div class="objective-eyebrow"><span class="status-dot"></span> DEINE MISSION <span id="objective-distance"></span></div><strong id="objective-name">Erkunde den Campus</strong><span id="objective-scene">Finde deinen nächsten Schritt.</span><div class="objective-rule" aria-hidden="true"></div></div>
+    <button id="pointer-hint" class="pointer-hint" hidden><svg class="pointer-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span><strong>Zum Umschauen klicken</strong><small>WASD bewegen · E interagieren · Esc Pause</small></span></button>
+    <div class="hud-controls" aria-hidden="true"><span><kbd>WASD</kbd> BEWEGEN</span><span><kbd>E</kbd> INTERAGIEREN</span><span><kbd>SHIFT</kbd> SPRINTEN</span></div>
+  </div>
+
+  <div id="touch-controls" class="touch-controls" hidden aria-label="Touch-Steuerung"><div class="touch-pad"><button data-move="forward" aria-label="Vorwärts"><svg viewBox="0 0 20 20" aria-hidden="true"><polygon points="10 5 16 15 4 15" fill="currentColor"/></svg></button><button data-move="left" aria-label="Nach links"><svg viewBox="0 0 20 20" aria-hidden="true"><polygon points="5 10 15 4 15 16" fill="currentColor"/></svg></button><button data-move="back" aria-label="Rückwärts"><svg viewBox="0 0 20 20" aria-hidden="true"><polygon points="10 15 16 5 4 5" fill="currentColor"/></svg></button><button data-move="right" aria-label="Nach rechts"><svg viewBox="0 0 20 20" aria-hidden="true"><polygon points="15 10 5 4 5 16" fill="currentColor"/></svg></button></div><button class="touch-interact" data-action="interact" aria-label="Interagieren"><span>E</span><small>AKTION</small></button></div>
+  <div id="save-indicator" class="save-indicator" aria-live="polite"></div>
+  <div id="overlay-root"></div>
+  <div id="toast-root" class="toast-root" role="status" aria-live="polite"></div>
+  <noscript><div class="noscript-panel"><h1>REBOOT</h1><p>Bitte aktiviere JavaScript, um den Neon Campus zu betreten.</p></div></noscript>
+  <script src="dist/reboot.js" defer></script>
 </body>
 </html>

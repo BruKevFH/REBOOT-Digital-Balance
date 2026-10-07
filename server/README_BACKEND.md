@@ -1,6 +1,6 @@
 # Optionales FH-Backend
 
-Die App funktioniert vollständig statisch, auch auf GitHub Pages. Dort bleiben Spielstände lokal im Browser; es werden keine API-Aufrufe gesendet. Dieses optionale Backend ergänzt SQLite, Event-Historisierung, eine REST-API und Security Headers. Es benötigt einen eigenen Node-Host und läuft nicht auf GitHub Pages.
+Das neue 3D-Spiel funktioniert vollständig statisch, auch auf GitHub Pages. Spielstände bleiben lokal im Browser; es werden keine API-Aufrufe gesendet. Dieses optionale Backend stammt aus der bisherigen 2D-App und ergänzt SQLite, Event-Historisierung, eine REST-API und Security Headers. Es kann die 3D-Dateien ausliefern, deren Spielregeln sind jedoch nicht an seine Telemetrie angebunden. Es benötigt einen eigenen Node-Host und läuft nicht auf GitHub Pages.
 
 ## Lokal starten
 
@@ -10,7 +10,7 @@ Voraussetzung: Node.js 24 mit eingebautem `node:sqlite`. Keine npm-Pakete nötig
 node server/server.mjs
 ```
 
-Öffne http://127.0.0.1:8080. Das Backend bindet standardmäßig nur an Loopback und aktiviert die optionale Telemetrie über ein Meta-Element in der ausgelieferten HTML-Seite. Die Dateien im Repository bleiben statisch und unverändert.
+Öffne http://127.0.0.1:8080. Das Backend bindet standardmäßig nur an Loopback. Das Meta-Element für die optionale Telemetrie wird vom neuen 3D-Client nicht verwendet. Die Dateien im Repository bleiben statisch und unverändert.
 
 `PORT` ändert den Port, `HOST` die Bind-Adresse. SQLite liegt standardmäßig in `server/reboot.sqlite`; mit `DATA_DIR` lässt sich ein anderer Datenordner verwenden. Datenbankdateien dürfen nicht ins Repository eingecheckt werden. Der Server liefert ausschließlich die öffentlichen App-Dateien aus.
 

@@ -1,0 +1,7 @@
+{
+  "name": "REBOOT Neon Balance",
+  "version": "1.0.0",
+  "engine": "Three.js 0.186.1",
+  "entry": "index.html",
+  "offline": true
+}

@@ -1,9 +1,11 @@
 {
-  "name": "REBOOT – Own Your Day",
-  "short_name": "REBOOT",
+  "name": "REBOOT – Neon Balance 3D",
+  "short_name": "REBOOT 3D",
   "start_url": "./",
+  "scope": "./",
   "display": "standalone",
-  "background_color": "#080b14",
-  "theme_color": "#080b14",
-  "description": "Serious Game zu Digital Balance, Schlaf, Aufmerksamkeit, Gaming und Social Media."
+  "background_color": "#06101b",
+  "theme_color": "#06101b",
+  "description": "Erkunde den Neon Campus: ein 3D-Spiel über Digital Balance.",
+  "icons": [{"src": "favicon.svg", "sizes": "any", "type": "image/svg+xml"}]
 }

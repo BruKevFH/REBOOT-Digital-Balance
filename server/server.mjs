@@ -15,7 +15,7 @@ if(REQUIRE_HTTPS && !TRUST_PROXY) throw new Error('REQUIRE_HTTPS=1 requires TRUS
 const DATA_DIR=path.resolve(process.env.DATA_DIR||__dirname);
 fs.mkdirSync(DATA_DIR,{recursive:true});
 const db=new DatabaseSync(path.join(DATA_DIR,'reboot.sqlite'));
-const PUBLIC_FILES=new Set(['/index.html','/404.html','/app.js','/styles.css','/sw.js','/manifest.webmanifest','/favicon.svg']);
+const PUBLIC_FILES=new Set(['/index.html','/404.html','/app.js','/styles.css','/sw.js','/manifest.webmanifest','/favicon.svg','/dist/reboot.js','/dist/build.json','/licenses/THREE-LICENSE.txt','/downloads/REBOOT-Neon-Balance-1.0.0.zip']);
 
 db.exec(`
 PRAGMA journal_mode=WAL;
@@ -80,7 +80,7 @@ async function serveFile(req,res,rel){
   const ext=path.extname(target);
   // Only this optional backend enables same-origin telemetry.
   if(ext==='.html')body=body.toString('utf8').replace('</head>','  <meta name="reboot-api-base" content="/api/">\n</head>');
-  const types={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.json':'application/json; charset=utf-8','.webmanifest':'application/manifest+json; charset=utf-8','.svg':'image/svg+xml'};
+  const types={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.json':'application/json; charset=utf-8','.webmanifest':'application/manifest+json; charset=utf-8','.svg':'image/svg+xml','.zip':'application/zip','.txt':'text/plain; charset=utf-8'};
   securityHeaders(res);res.writeHead(200,{'Content-Type':types[ext]||'application/octet-stream','Cache-Control':ext==='.html'?'no-cache':'public, max-age=3600'});res.end(req.method==='HEAD'?undefined:body);
 }
 

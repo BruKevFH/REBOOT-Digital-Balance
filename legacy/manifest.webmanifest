@@ -1,0 +1,9 @@
+{
+  "name": "REBOOT – Own Your Day",
+  "short_name": "REBOOT",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#080b14",
+  "theme_color": "#080b14",
+  "description": "Serious Game zu Digital Balance, Schlaf, Aufmerksamkeit, Gaming und Social Media."
+}

@@ -1,100 +1,96 @@
-# REBOOT – Unreal Engine 5 / Neon Balance
+# REBOOT — Neon Balance
 
-Das aktuelle Entwicklungsziel ist ein **natives 3D-Spiel für Windows mit Unreal Engine 5**.
+Ein deutschsprachiges 3D-Abenteuer über Fokus, Gaming, Social Media und Freundschaften. Erkunde den Neon Campus aus der First-Person-Perspektive, triff deine Crew und entwickle im MedTech-Lab ein fiktives FocusBand. Deine Entscheidungen bestimmen deinen Tagesablauf und deine Balance im Spiel.
 
-Das neue Quellprojekt liegt in **[Unreal/REBOOT3D](Unreal/REBOOT3D/README.md)**. Es enthält eine erste begehbare Campus-Welt, NPC-Dialoge, Spielmodi, vier Minigames, ein Lab und lokale Spielstände. Es ist **ein Prototyp im Quellcode**, kein fertig gebautes oder in Unreal getestetes Windows-Spiel: Der Unreal Editor ist in der Cloud nicht installiert.
+**[Direkt im Browser spielen](https://brukevfh.github.io/REBOOT-Digital-Balance/)** · **[Spiel als ZIP herunterladen](downloads/REBOOT-Neon-Balance-1.0.0.zip)**
 
-**[Windows-Setup und Build-Anleitung](Unreal/REBOOT3D/SETUP_WINDOWS.md)** – benötigt Unreal Engine 5.6 und Visual Studio 2022 mit C++-Toolchain.
+## Spielen
 
-Die bisherige Browser-App bleibt im Repository erhalten. GitHub Pages kann diese Web-Version veröffentlichen; das native Unreal-Spiel wird als Windows-Paket gebaut.
+Online genügt ein aktueller Chrome, Edge oder Firefox mit JavaScript und WebGL 2. Für den Download:
 
----
+1. `REBOOT-Neon-Balance-1.0.0.zip` herunterladen.
+2. Die **gesamte ZIP-Datei entpacken**.
+3. Im entpackten Ordner **`index.html` öffnen**.
 
-# Bisherige Browser-Version: REBOOT – Digital Balance
-
-REBOOT ist ein deutschsprachiges Serious Game für Jugendliche von 13 bis 16 Jahren. Du triffst Entscheidungen über Schule, Gaming, Social Media, Schlaf und Freundschaften und entwickelst mit deinem Team einen fiktiven MedTech-Prototypen. Die Auswirkungen auf Energy, Focus, Mood, Balance und Social sind vereinfachte Spielmechanik, keine medizinischen Messwerte.
-
-Die Web-App läuft vollständig im Browser. Es gibt keine Installation, kein Framework und keinen Build-Schritt.
-
-## Spielen und lokal starten
-
-Die vorgesehene GitHub-Pages-Adresse lautet:
-
-**https://brukevfh.github.io/REBOOT-Digital-Balance/**
-
-Für die lokale Entwicklung brauchst du Python 3. Starte im Repository-Root:
-
-```sh
-python3 -m http.server 8000 --bind 127.0.0.1
-```
-
-Öffne danach `http://localhost:8000`. Ein moderner Browser mit JavaScript genügt. Der Webserver ermöglicht auch Service Worker und Offline-Cache; beim direkten Öffnen einer Datei stehen diese Funktionen nicht zur Verfügung.
+Das ZIP enthält das vollständige Browserspiel mit allen benötigten Dateien. Es lässt sich offline öffnen; Installation, Unreal Engine und ein lokaler Server sind dafür nicht erforderlich. Hardwarebeschleunigung im Browser muss verfügbar sein. `START-HIER.txt` im Download enthält die Kurzanleitung.
 
 ## Spielinhalte
 
-- Landingpage mit Konzept, Lernkarten und Quellen
-- 21-Tage-Story, Endless Balance und dreitägige Daily Challenge
-- NPCs Mia, Leon, Sami und Nora mit Beziehungen und Entscheidungen
-- Vier Minigames: Focus Rush, Notification Shield, Signal Calibration und Memory Pulse
-- FocusBand-Lab mit fünf freischaltbaren MedTech-Modulen
-- XP, Chips, Achievements, Run-Historie und JSON-Export
-- Lokale Speicherung in IndexedDB, mit localStorage als Fallback
-- Service Worker für Offline-Nutzung nach dem ersten vollständigen Online-Aufruf
+- **Story:** 21 Spieltage mit sechs Stationen pro Tag und einer fortlaufenden Geschichte.
+- **Daily Challenge:** ein kompakter Run über drei Spieltage.
+- **Endless Mode:** ohne festes Tageslimit spielen und den Campus weiter erkunden.
+- Vier NPCs: **Mia, Leon, Sami und Nora**, mit Dialogen und Beziehungen.
+- Vier Minigames: **Focus Rush**, **Notification Shield**, **Signal Calibration** und **Memory Pulse**.
+- Fünf freischaltbare FocusBand-Module im **MedTech-Lab**.
+- XP, Chips, Achievements, Run-Historie und JSON-Export.
+- Lokale Spielstände, Touch-Steuerung und ein Download für die Offline-Nutzung.
 
-Beim Pausieren eines Minigames wird es beim Fortsetzen neu gestartet. Ein aktiver Run lässt sich durch Neuladen derselben `#game`-Adresse fortsetzen. Ein neuer Run über den Hub beginnt von vorn.
+Energy, Focus, Mood, Balance und Social sind vereinfachte Spielwerte. Das FocusBand ist eine Simulation; das Spiel erhebt keine Gesundheitsdaten und stellt keine Diagnosen. Lernkarten und fachliche Quellen sind über „Wissen & Quellen“ erreichbar.
+
+## Steuerung
+
+| Taste / Eingabe | Aktion |
+| --- | --- |
+| `W A S D` | Bewegen |
+| `Shift` | Sprinten |
+| Maus | Umschauen; ins Spiel klicken, um die Maus zu aktivieren |
+| `E` | Am markierten Ort mit einem NPC sprechen |
+| `1`, `2`, `3` | Dialogentscheidung oder Memory-Feld wählen |
+| `Space` | Aktion im Minigame |
+| `Esc` | Pause / Dialog schließen |
+| `Tab` | MedTech-Lab öffnen |
+| `F5` | Spielstand als JSON exportieren |
+
+Auf Touch-Geräten gibt es Bewegungstasten und eine Aktionstaste. Ziehen auf der Spielwelt verändert die Blickrichtung.
+
+## Daten und Spielstände
+
+Die 3D-Version benötigt keinen Account, keine API und keine Zugangsdaten. Sie verwendet **localStorage** und überträgt keine Spielstände oder Telemetrie. Im Spiel kann der Fortschritt als JSON exportiert werden. Das Löschen der Website-Daten im Browser entfernt den lokalen Fortschritt.
+
+Online-Version, localhost und direkt geöffnete Dateien können getrennte Speicherplätze verwenden. Browser-Einstellungen können das Speichern lokaler Dateien einschränken. Der Online-Service-Worker speichert die Laufzeitdateien nach dem ersten Laden für spätere Offline-Aufrufe.
+
+## Entwicklung
+
+Voraussetzungen: **Node.js ab Version 20**, npm und **Python 3**. Die festgelegten Paketversionen stehen in `package-lock.json`.
+
+```sh
+npm ci
+npm run build
+npm test
+npm run package
+npm run serve
+```
+
+Danach `http://localhost:8000` öffnen. `npm run build` bündelt JavaScript und Three.js mit esbuild nach `dist/reboot.js`. Die fertigen Laufzeitdateien in `dist/` sind versioniert: Zum Spielen oder Veröffentlichen ist kein npm-Installationsschritt nötig, und es werden keine Bibliotheken von einem CDN geladen.
+
+`npm run package` erstellt `downloads/REBOOT-Neon-Balance-1.0.0.zip` und die zugehörige SHA-256-Datei. Nach Änderungen am Spiel zuerst neu bauen und das ZIP erneut erstellen. Bei Änderungen an gecachten Laufzeitdateien auch die Cache-Version in `sw.js` aktualisieren.
 
 ## Projektstruktur
 
 ```text
 .
-├── index.html                 # Einstiegspunkt direkt im Root
-├── app.js                     # Spiel, Navigation und lokale Datenhaltung
-├── styles.css                 # Responsive Darstellung
-├── sw.js                      # Projektbezogener Offline-Cache
-├── manifest.webmanifest       # Web-App-Metadaten
-├── favicon.svg
-├── 404.html                   # Fehlerseite für statisches Hosting
-├── .nojekyll                  # Statische Dateien ohne Jekyll veröffentlichen
-├── DEPLOY.md                  # GitHub-Pages-Anleitung
-├── TEST_REPORT.txt            # Ergebnisse der aktuellen Prüfungen
-└── server/
-    ├── server.mjs             # Optionales Node-/SQLite-Demonstrationsbackend
-    ├── start-windows.bat
-    └── README_BACKEND.md
+├── index.html                 # Einstiegspunkt für Browser und Download
+├── styles.css                 # Startmenü, HUD, Dialoge und Touch-Steuerung
+├── src/
+│   ├── main.js                # Spielablauf, Eingaben und Oberfläche
+│   ├── world.js               # 3D-Campus, Kamera und Kollisionen
+│   ├── game.js                # Spielregeln und lokale Speicherung
+│   └── content.js             # Geschichte, NPCs, Module und Lerninhalte
+├── dist/                      # Fertige Laufzeitdateien einschließlich Three.js
+├── downloads/                 # Offline-ZIP und SHA-256-Prüfsumme
+├── scripts/                   # Build und Download-Paketierung
+├── tests/                     # Automatisierte Prüfungen der Spielregeln
+├── licenses/                  # MIT-Lizenz von Three.js
+├── sw.js                      # Offline-Cache der Online-Version
+├── manifest.webmanifest
+├── legacy/                    # Erhaltene frühere 2D-Web-App
+├── Unreal/REBOOT3D/            # Optionaler Unreal-Engine-Quellprototyp
+├── server/                    # Historisches optionales Demo-Backend
+└── DEPLOY.md                  # GitHub-Pages-Veröffentlichung
 ```
 
-## GitHub Pages
+## Veröffentlichung und weitere Prototypen
 
-Veröffentlicht wird der Branch `main` aus `/(root)`. `index.html` und alle statischen Assets liegen direkt im Root; relative Pfade und Hash-Navigation funktionieren auch unter `/REBOOT-Digital-Balance/`. Das optionale Backend wird auf GitHub Pages nicht ausgeführt. Die statische App speichert ausschließlich lokal und benötigt keine API oder Zugangsdaten.
+GitHub Pages ist für **`main` → `/(root)`** eingerichtet. Es veröffentlicht die bereits gebauten Dateien im Repository unter **https://brukevfh.github.io/REBOOT-Digital-Balance/**. Alle Laufzeitpfade sind relativ. Die Schritte für Aktualisierungen stehen in [DEPLOY.md](DEPLOY.md).
 
-Falls Pages noch nicht aktiviert ist: **Settings → Pages → Build and deployment → Source: Deploy from a branch → Branch: main → Folder: /(root) → Save**. Details stehen in [DEPLOY.md](DEPLOY.md).
-
-## Entwicklung und Prüfungen
-
-Die JavaScript-Dateien lassen sich mit Node.js auf Syntaxfehler prüfen:
-
-```sh
-node --check app.js
-node --check sw.js
-node --check server/server.mjs
-```
-
-Für einen Funktionstest öffne den Hub, starte einen Story-Run, triff eine Entscheidung und lade die Seite neu. Prüfe außerdem Daily Challenge, Lab, JSON-Export und die Mobilansicht. Offline-Nutzung setzt einen erfolgreichen ersten Online-Aufruf und einen aktivierten Service Worker voraus. Die tatsächlich ausgeführten automatisierten Browsertests sind in [TEST_REPORT.txt](TEST_REPORT.txt) dokumentiert.
-
-Bei Änderungen an gecachten Assets auch die Cache-Version in `sw.js` erhöhen. Eine neue Service-Worker-Version wird nach dem Schließen alter Tabs aktiv. Der Cache ist auf den jeweiligen Projektpfad begrenzt.
-
-## Optionales Backend
-
-Node.js 24 kann das zusätzliche SQLite-Backend ohne npm-Pakete starten:
-
-```sh
-node server/server.mjs
-```
-
-Es ist ein lokales Lehrveranstaltungs-Demo und wird für das Spiel nicht benötigt. Nur die vom Backend ausgelieferte Seite aktiviert dessen Telemetrie. Für Datenverzeichnis, Forschungszugriff und Reverse-Proxy-Betrieb siehe [server/README_BACKEND.md](server/README_BACKEND.md). SQLite-Dateien und lokale Umgebungsdateien werden nicht versioniert.
-
-## Daten und fachliche Einordnung
-
-Die statische App überträgt keine Spieldaten an einen Server. Profile, Entscheidungen und Runs bleiben im Browser des jeweiligen Geräts und können als JSON exportiert werden. Zum Löschen verwende die Website-Daten-Einstellungen deines Browsers; dabei wird der lokale Fortschritt entfernt. Der optionale lokale Server kann pseudonyme Spieldaten zusätzlich in SQLite speichern, wenn du ihn ausdrücklich verwendest.
-
-REBOOT benötigt keine echten Gesundheitsdaten und diagnostiziert weder Schlafstörungen noch psychische Erkrankungen oder Gaming Disorder. Fachliche Quellen von WHO und CDC sind im Bereich „Wissen“ verlinkt.
+Die frühere Web-App bleibt unter [legacy/](legacy/index.html) erhalten. Das [Unreal-Engine-5-Quellprojekt](Unreal/REBOOT3D/README.md) ist ein zusätzlicher Prototyp; es wurde hier weder in Unreal kompiliert noch als Windows-EXE gebaut. Die [Windows-Setup-Anleitung](Unreal/REBOOT3D/SETUP_WINDOWS.md) beschreibt dessen separate Voraussetzungen. Das historische [Demo-Backend](server/README_BACKEND.md) wird von der neuen 3D-Version nicht verwendet.
