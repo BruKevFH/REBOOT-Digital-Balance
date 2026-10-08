@@ -1,3 +1,13 @@
+# Notification Ninja – Master Your Digital Balance
+
+Ein schnelles Browser-Arcade-Spiel mit echter Maus- und Touch-Wischsteuerung. Zerschneide Ablenkungen und lass sinnvolle Nachrichten durch. Die richtige Aktion ändert sich zwischen Lernen, Gaming und Schlaf; derselbe Gaming-Clip bleibt optisch gleich, bekommt aber eine andere Bedeutung.
+
+**[Jetzt spielen](https://brukevfh.github.io/REBOOT-Digital-Balance/notification-ninja/)** · **[Vollständiges Offline-ZIP](notification-ninja/downloads/Notification-Ninja-1.0.0.zip)** · **[Spielanleitung](notification-ninja/README.md)** · **[Ablaufdiagramm & Beispiel-Gantt](notification-ninja/PLAN.md)**
+
+Tutorial, vier Levels, Focus Flow, drei Power-ups, reagierende Grafik und prozedurale Musik. Getrennte Arcade-/Balance-Wertungen, bewusste Zeitentscheidungen, lokale Highscores und vier Klingen-Skins. `npm run build:ninja`, `npm run test:ninja` und `npm run package:ninja` gehören zu Notification Ninja; `npm test` prüft alle Spiele.
+
+Die übrigen Spiele bleiben separat erreichbar:
+
 # MIND MAZE – Escape the Distraction
 
 Das neue deutschsprachige 3D-Puzzle-Abenteuer führt dich durch eine digitale Anlage: Merke Lichtfolgen, filtere Nachrichten, löse Schaltungen, weiche Impulsfallen aus und finde deinen Fluchtweg. Das Störsystem AURA reagiert auf deine Entscheidungen mit simulierten Lockangeboten und hilfreichen Signalen.

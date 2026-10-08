@@ -1,0 +1,10 @@
+{
+  "name":"Notification Ninja – Master Your Digital Balance",
+  "short_name":"Notification Ninja",
+  "start_url":"./index.html",
+  "scope":"./",
+  "display":"standalone",
+  "background_color":"#070914",
+  "theme_color":"#070914",
+  "icons":[{"src":"./favicon.svg","sizes":"any","type":"image/svg+xml","purpose":"any"}]
+}

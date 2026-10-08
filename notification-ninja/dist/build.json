@@ -1,0 +1,8 @@
+{
+  "name": "Notification Ninja – Master Your Digital Balance",
+  "version": "1.0.0",
+  "engine": "Canvas 2D / Web Audio",
+  "entry": "index.html",
+  "offline": true,
+  "levels": 4
+}
