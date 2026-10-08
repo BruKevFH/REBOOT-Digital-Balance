@@ -1,0 +1,8 @@
+{
+  "name": "MIND MAZE – Escape the Distraction",
+  "version": "1.0.0",
+  "engine": "Three.js 0.186.1",
+  "entry": "index.html",
+  "offline": true,
+  "rooms": 7
+}

@@ -1,3 +1,18 @@
+# MIND MAZE – Escape the Distraction
+
+Das neue deutschsprachige 3D-Puzzle-Abenteuer führt dich durch eine digitale Anlage: Merke Lichtfolgen, filtere Nachrichten, löse Schaltungen, weiche Impulsfallen aus und finde deinen Fluchtweg. Das Störsystem AURA reagiert auf deine Entscheidungen mit simulierten Lockangeboten und hilfreichen Signalen.
+
+**[MIND MAZE im Browser spielen](https://brukevfh.github.io/REBOOT-Digital-Balance/mind-maze/)** · **[Vollständiges Spiel als ZIP herunterladen](mind-maze/downloads/MIND-MAZE-1.0.0.zip)** · **[Anleitung und Entwicklung](mind-maze/README.md)**
+
+- Sechs Haupträume und ein versteckter Stillraum mit unterschiedlichen Rätseln.
+- Scanner, Impulsschild, Aufgabenplaner und Bypass mit Credits, Ladungen und Upgrades.
+- Zwei Fluchtwege, eine echte 3D-Spielfigur und Steuerung per Tastatur, Maus oder Touch.
+- Lokale Spielstände, Offline-Cache und ein vollständiger ZIP-Download; kein Account erforderlich.
+
+MIND MAZE verwendet Three.js und läuft im Browser. Es ist kein natives Unreal-Engine- oder Windows-Programm. Das bisherige **REBOOT Neon Balance** bleibt unter der Hauptadresse erhalten und ist nachfolgend dokumentiert.
+
+---
+
 # REBOOT — Neon Balance
 
 Ein deutschsprachiges 3D-Abenteuer über Fokus, Gaming, Social Media und Freundschaften. Erkunde den Neon Campus aus der First-Person-Perspektive, triff deine Crew und entwickle im MedTech-Lab ein fiktives FocusBand. Deine Entscheidungen bestimmen deinen Tagesablauf und deine Balance im Spiel.

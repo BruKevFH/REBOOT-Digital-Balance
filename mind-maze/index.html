@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#101924" />
+  <meta name="description" content="MIND MAZE – Escape the Distraction. Erkunde eine rätselhafte 3D-Anlage, löse ihre Räume und finde deinen Weg durch die Ablenkung." />
+  <title>MIND MAZE — Escape the Distraction</title>
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <canvas id="world" aria-label="Dreidimensionale Spielwelt von MIND MAZE"></canvas>
+  <div class="world-vignette" aria-hidden="true"></div>
+  <div id="loading" class="loading-screen" role="status" aria-live="polite">
+    <div class="maze-mark loading-mark" aria-hidden="true"><i></i><i></i><i></i></div>
+    <strong>MIND MAZE</strong>
+    <span>Die Anlage erwacht.</span>
+    <div class="loading-track" aria-hidden="true"><i></i></div>
+  </div>
+
+  <main id="home" class="home">
+    <header class="home-header">
+      <a class="brand" href="./" aria-label="MIND MAZE Startseite"><svg viewBox="0 0 34 34" fill="none" aria-hidden="true"><path d="M4 4h26v26H4V4Zm7 0v19h12V11H17v6" stroke="currentColor" stroke-width="1.6" stroke-linecap="square"/></svg><span>MIND MAZE<small>ESCAPE THE DISTRACTION</small></span></a>
+      <a class="back-link" href="../"><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M16 10H4m5-5-5 5 5 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg> REBOOT</a>
+    </header>
+
+    <section class="home-content" aria-labelledby="game-title">
+      <div class="eyebrow hero-eyebrow"><span></span> FOKUS IST DER SCHLÜSSEL</div>
+      <h1 id="game-title">MIND<span>MAZE<span class="title-dot">.</span></span></h1>
+      <p class="hero-subtitle">ESCAPE THE DISTRACTION</p>
+      <p class="hero-copy">Hinter jeder Tür wartet ein neues Muster. Hinter jeder Ablenkung ein Umweg. Erkunde die Anlage, löse ihre Rätsel und finde deinen eigenen Ausweg.</p>
+      <div class="route-facts" aria-label="Spielumfang"><span><strong>06</strong> RÄUME</span><i></i><span><strong>01</strong> GEHEIMER PFAD</span><i></i><span>DEIN TEMPO</span></div>
+
+      <button id="continue" class="btn resume-button" hidden><span><small>DEIN GESPEICHERTER WEG</small><strong>Weiter durch das Labyrinth</strong></span><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m-5-5 5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <button id="launch" class="btn primary launch-button"><span class="launch-symbol" aria-hidden="true"><svg viewBox="0 0 20 20" fill="none"><path d="m6 4 10 6-10 6V4Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></span><span><small>DEIN WEG BEGINNT HIER</small><strong>Das Labyrinth betreten</strong></span><svg class="launch-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m-5-5 5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <a id="download" class="download-link" href="./downloads/MIND-MAZE-1.0.0.zip" download><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 2v10m-4-4 4 4 4-4M3 13v4h14v-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span><strong>Spiel herunterladen</strong><small>ZIP entpacken. Öffnen. Offline spielen.</small></span><span class="download-tag">OFFLINE</span></a>
+      <p class="save-note"><span class="small-dot"></span> Dein Spielstand bleibt auf deinem Gerät. Kein Account nötig.</p>
+    </section>
+
+    <aside class="facility-stamp" aria-label="Deine Spielwelt">
+      <div class="facility-rule"></div>
+      <span>ANLAGE M–06 <i>///</i> LIVE</span>
+      <strong>BEOBACHTEN.<br />VERSTEHEN.<br /><em>ENTKOMMEN.</em></strong>
+      <div class="facility-coordinates"><span>EBENE 01</span><span class="small-dot"></span><span>FOKUS: BEREIT</span></div>
+    </aside>
+    <footer class="home-footer"><span>EIN 3D-PUZZLE-ABENTEUER</span><span class="home-controls"><kbd>WASD</kbd> BEWEGEN <i>/</i> <kbd>E</kbd> INTERAGIEREN</span><span>WENIGER RAUSCHEN. MEHR RICHTUNG.</span></footer>
+  </main>
+
+  <div id="hud" class="hud" hidden>
+    <div class="hud-top">
+      <div class="room-heading"><span id="room-number" class="room-number">RAUM 01 / 06</span><strong id="room-label">Der Empfang</strong></div>
+      <div class="status-strip" aria-label="Dein Zustand im Spiel">
+        <div class="meter-block"><div class="meter-label"><span class="small-dot"></span> FOKUS</div><div class="meter-track"><div id="focus-meter" class="meter-fill" style="width:100%" role="progressbar" aria-label="Fokus" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100"></div></div></div>
+        <div class="meter-block stress-block"><div class="meter-label"><span class="small-dot"></span> STRESS</div><div class="meter-track"><div id="stress-meter" class="meter-fill stress-fill" style="width:0%" role="progressbar" aria-label="Stress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div></div></div>
+      </div>
+      <nav class="hud-buttons" aria-label="Spieloptionen">
+        <button id="sound-toggle" class="icon-button" title="Ton umschalten" aria-label="Ton umschalten" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4V9Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M16 8c3 2 3 6 0 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+        <button id="map-button" class="icon-button" title="Raumübersicht" aria-label="Raumübersicht öffnen"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m3 5 6-2 6 2 6-2v16l-6 2-6-2-6 2V5Zm6-2v16m6-14v16" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg></button>
+        <button id="help-button" class="icon-button" title="Steuerung und Hilfe" aria-label="Steuerung und Hilfe öffnen"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.4"/><path d="M9.5 9a2.5 2.5 0 0 1 5 0c0 2-2.5 2-2.5 4m0 3h.01" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
+        <button id="pause-button" class="icon-button pause-button" title="Pause" aria-label="Spiel pausieren"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8 5v14m8-14v14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg></button>
+      </nav>
+    </div>
+
+    <div class="objective-card"><div class="eyebrow"><span class="small-dot"></span> DEIN NÄCHSTER SCHRITT</div><strong id="objective">Finde deinen eigenen Weg.</strong><div class="objective-line" aria-hidden="true"></div></div>
+    <div class="toolbelt"><div class="toolbelt-label">DEINE WERKZEUGE</div><div id="tools" class="tools"></div></div>
+    <div class="keys-legend" aria-hidden="true"><span><kbd>WASD</kbd> BEWEGEN</span><span><kbd>E</kbd> AKTION</span><span><kbd>ESC</kbd> PAUSE</span></div>
+    <button id="interact-button" class="interact-button"><span class="action-key">E</span><span>Interagieren</span><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10h12m-4-4 4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  </div>
+
+  <div id="touch-controls" class="touch-controls" hidden aria-label="Touch-Steuerung"><div class="touch-pad"><button data-move="forward" aria-label="Vorwärts"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m10 5 6 10H4l6-10Z" fill="currentColor"/></svg></button><button data-move="left" aria-label="Nach links"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m5 10 10-6v12L5 10Z" fill="currentColor"/></svg></button><button data-move="back" aria-label="Rückwärts"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m10 15 6-10H4l6 10Z" fill="currentColor"/></svg></button><button data-move="right" aria-label="Nach rechts"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="m15 10-10-6v12l10-6Z" fill="currentColor"/></svg></button></div><button class="touch-action" data-action="interact" aria-label="Interagieren"><strong>E</strong><small>AKTION</small></button></div>
+  <div id="distraction-root" class="distraction-root" aria-live="polite" aria-label="Ablenkungen innerhalb der Spielsimulation"></div>
+  <div id="save-indicator" class="save-indicator" aria-live="polite"></div>
+  <div id="overlay-root"></div>
+  <div id="toast-root" class="toast-root" role="status" aria-live="polite"></div>
+  <noscript><div class="noscript-panel"><h1>MIND MAZE</h1><p>Bitte aktiviere JavaScript, um das Labyrinth zu betreten.</p></div></noscript>
+  <script src="./dist/maze.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+{
+  "name": "MIND MAZE – Escape the Distraction",
+  "short_name": "MIND MAZE",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#080d19",
+  "theme_color": "#080d19",
+  "description": "Ein 3D-Escape-Abenteuer durch eine digitale Anlage.",
+  "icons": [{"src": "favicon.svg", "sizes": "any", "type": "image/svg+xml"}]
+}

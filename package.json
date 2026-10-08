@@ -6,7 +6,10 @@
   "description": "REBOOT Neon Balance: a playable 3D browser game and offline download",
   "scripts": {
     "build": "node scripts/build.mjs",
-    "test": "node --test tests/game.test.mjs",
+    "test": "node --test tests/game.test.mjs tests/maze.test.mjs",
+    "build:maze": "node scripts/build_maze.mjs",
+    "test:maze": "node --test tests/maze.test.mjs",
+    "package:maze": "python3 scripts/package_maze.py",
     "package": "python3 scripts/package_download.py",
     "serve": "python3 -m http.server 8000 --bind 127.0.0.1"
   },
