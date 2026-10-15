@@ -135,17 +135,17 @@ test('useful messages passing, useful cuts and missed distractions have separate
   assert.equal(game.state.metrics.missedDistractions, 1);
   assert.equal(game.state.overload, 30);
   assert.equal(game.state.metrics.cuts, 0);
-  assert.equal(game.state.lives, lives - 2, 'both unprotected mistakes lose exactly one heart');
+  assert.equal(game.state.lives, lives - 1, 'missing a distraction is gentle: only useful cuts cost a heart');
+  assert.equal(game.state.metrics.lifeLost, 1);
 });
 
-test('a mistake at the overload threshold still costs exactly one heart', () => {
+test('a useful cut at the overload threshold still costs exactly one heart', () => {
   const { game } = setup();
   game.state.objects = [];
   game.state.overload = 95;
-  object(game, 'streak', { y: -200, vy: -100, age: 2 });
-  const events = game.update(0.05);
+  const events = cut(game, 'homework').events;
   assert.equal(ofType(events, 'life-lost').length, 1);
-  assert.equal(game.state.lives, 2);
+  assert.equal(game.state.lives, 4);
   assert.equal(game.state.metrics.lifeLost, 1);
   assert.equal(game.state.overload, 60);
 });
@@ -433,18 +433,18 @@ test('an authored useful card flies from the bottom beyond the top and earns a p
   assert.ok(card.y > game.height);
   assert.ok(card.vy < 0);
   let passed = [];
-  for (let frame = 0; frame < 80 && passed.length === 0; frame++) {
+  for (let frame = 0; frame < 100 && passed.length === 0; frame++) {
     game.state.objects = game.state.objects.filter(item => item.id === card.id);
     passed = ofType(game.update(0.05), 'useful-passed').filter(event => event.id === card.id);
   }
   assert.equal(passed.length, 1);
   assert.ok(card.y + card.radius < 0);
-  assert.ok(game.state.stageElapsed >= 2.5 && game.state.stageElapsed <= 3.2);
+  assert.ok(game.state.stageElapsed >= 4 && game.state.stageElapsed <= 4.65);
   assert.equal(game.state.metrics.usefulPassed, 1);
   assert.equal(game.state.metrics.cuts, 0);
   assert.equal(game.state.score, 100);
   assert.equal(game.state.scoreArcade, 100);
-  assert.equal(game.state.lives, 3);
+  assert.equal(game.state.lives, 5);
 });
 
 test('results reward and high score survive loading without duplicate profile awards', () => {
@@ -489,7 +489,7 @@ test('skin purchases validate funds and ownership and selection persists', () =>
 test('paused runs restore complete physical state and resume deliberately', () => {
   const { game, storage } = setup('gaming', { gamingLimit: 60 });
   game.state.objects = [];
-  object(game, 'streak', { x: 230, y: 180, vx: 75, vy: -200, radius: 36, age: 0.4 });
+  object(game, 'streak', { x: 230, y: 180, vx: 75, vy: -200, radius: 48, age: 0.4 });
   game.state.effects.slow = 3.5;
   game.state.score = 70;
   game.state.stageElapsed = 4.25;
@@ -619,8 +619,8 @@ test('Master finale launches more waves while keeping the flight physics and nin
     return { game, times, average, first: launches[0][0] };
   }
   const earlier = waves(10, 0), finale = waves(75, 3);
-  assert.ok(earlier.average > 1.02 && earlier.average < 1.08);
-  assert.ok(finale.average > .74 && finale.average < .82);
+  assert.ok(earlier.average > 1.37 && earlier.average < 1.43);
+  assert.ok(finale.average > 1.17 && finale.average < 1.23);
   assert.ok(finale.times.length > earlier.times.length);
   for (const field of ['x', 'y', 'vx', 'vy', 'gravity', 'radius']) assert.equal(finale.first[field], earlier.first[field], `unchanged ${field}`);
   assert.ok(Math.abs(finale.game.state.stageElapsed - 84) < .000001);
@@ -661,4 +661,117 @@ test('Master final transition drains old cards and pause blocks every additional
   for (let frame = 0; frame < 8; frame++) launched.push(...ofType(game.update(.05), 'spawned'));
   assert.ok(launched.length > 0);
   assert.ok(launched.every(card => card.context === 'study'));
+});
+
+test('five forgiving hearts survive missed distractions while five useful cuts end a run', () => {
+  const { game } = setup();
+  assert.equal(game.state.lives, 5);
+  for (let i = 0; i < 12; i++) {
+    game.state.objects = [];
+    game.state.combo = 3;
+    game.state.decisionStreak = 4;
+    object(game, 'streak', { y: -200, vy: -100 });
+    const events = game.update(.05);
+    assert.equal(ofType(events, 'distraction-missed').length, 1);
+    assert.equal(ofType(events, 'life-lost').length, 0);
+    assert.equal(game.state.lives, 5);
+    assert.equal(game.state.combo, 0);
+    assert.equal(game.state.decisionStreak, 0);
+    assert.equal(game.state.ended, false);
+  }
+  assert.equal(game.state.metrics.missedDistractions, 12);
+  assert.equal(game.state.metrics.lifeLost, 0);
+  assert.ok(game.state.overload > 0);
+  for (let i = 0; i < 5; i++) {
+    const events = cut(game, 'homework').events;
+    assert.equal(ofType(events, 'life-lost').length, 1);
+    assert.equal(game.state.lives, 4 - i);
+    assert.equal(game.state.ended, i === 4);
+  }
+  assert.equal(game.state.result, 'lives');
+  assert.equal(game.state.metrics.lifeLost, 5);
+});
+
+test('campaign recovery restores one heart and never exceeds five', () => {
+  for (const before of [1, 4, 5]) {
+    const { game } = setup('campaign');
+    game.state.lives = before;
+    nearEnd(game, 75);
+    assert.equal(game.state.lives, Math.min(5, before + 1));
+    assert.equal(game.nextLevel().ok, true);
+    assert.equal(game.state.context, 'gaming');
+  }
+});
+
+test('version-one saves preserve three-heart runs, coins, unlocked skins and highscores', () => {
+  const { game, storage } = setup('gaming');
+  game.state.lives = 3;
+  game.profile.coins = 127;
+  game.profile.highScores.gaming = 8800;
+  game.profile.unlockedSkins.push('solar');
+  game.profile.selectedSkin = 'solar';
+  game.state.skin = 'solar';
+  game.pause();
+  const restored = new NinjaGame({ storage });
+  assert.equal(restored.storageFailed, false);
+  assert.equal(restored.state.lives, 3);
+  assert.equal(restored.state.scene, 'playing');
+  assert.equal(restored.profile.coins, 127);
+  assert.equal(restored.profile.highScores.gaming, 8800);
+  assert.equal(restored.profile.selectedSkin, 'solar');
+  assert.ok(restored.profile.unlockedSkins.includes('solar'));
+  restored.state.lives = 5;
+  restored.save();
+  assert.equal(new NinjaGame({ storage }).state.lives, 5);
+});
+
+test('each room launches its own familiar illustrated objects in small, gentle waves', () => {
+  const specific = {
+    study: ['homework', 'pencil', 'urgent-school'],
+    gaming: ['gaming-invite', 'loot', 'gameclip'],
+    sleep: ['quiet', 'teddy', 'moon']
+  };
+  const forbidden = { study: ['teddy', 'moon', 'loot'], gaming: ['teddy', 'moon', 'pencil'], sleep: ['loot', 'pencil', 'urgent-school'] };
+  for (const [context, interval] of [['study', 1.65], ['gaming', 1.5], ['sleep', 1.8]]) {
+    const { game } = setup(context), seen = new Set();
+    for (let wave = 0; wave < 160; wave++) {
+      game.state.objects = [];
+      game.state.spawnTimer = 0;
+      const events = [];
+      game._spawn(events);
+      assert.ok(events.length >= 1 && events.length <= 2);
+      assert.equal(game.state.spawnTimer, interval);
+      for (const event of events) seen.add(event.contentId);
+    }
+    for (const id of specific[context]) assert.ok(seen.has(id), `${id} belongs in ${context}`);
+    for (const id of forbidden[context]) assert.equal(seen.has(id), false, `${id} stays in its own room`);
+  }
+  for (const content of CONTENT) {
+    assert.ok(content.visual, `${content.id} has an illustration`);
+    assert.ok(content.shortLabel.length <= 12, `${content.id} has a readable short label`);
+  }
+});
+
+test('large targets keep separate lanes for their full flight and crowded waves wait safely', () => {
+  for (const width of [240, 390, 800, 1440]) {
+    const { game } = setup('gaming', { width });
+    const expectedRadius = Math.min(width * .16, width < 650 ? 50 : 48);
+    const first = game._spawnContent('streak');
+    const second = game._spawnContent('gaming-invite');
+    assert.ok(first && second);
+    assert.equal(first.radius, expectedRadius);
+    while (game._spawnContent('streak')) { /* fill only the separated lanes */ }
+    assert.ok(game.state.objects.length <= 5);
+    for (const a of game.state.objects) {
+      assert.equal(a.vx, 0);
+      assert.ok(a.x >= a.radius && a.x <= width - a.radius);
+      for (const b of game.state.objects) if (a.id !== b.id) {
+        assert.ok(Math.abs(a.x - b.x) >= a.radius + b.radius + 24, `separate targets at ${width}px`);
+      }
+    }
+    const before = game.state.objects.length, events = [];
+    game._spawn(events);
+    assert.equal(game.state.objects.length, before);
+    assert.equal(events.length, 0, 'a full board never squeezes in another target');
+  }
 });

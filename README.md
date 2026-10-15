@@ -1,10 +1,10 @@
 # Notification Ninja – Master Your Digital Balance
 
-Ein schnelles Browser-Arcade-Spiel mit echter Maus- und Touch-Wischsteuerung. Zerschneide Ablenkungen und lass sinnvolle Nachrichten durch. Die richtige Aktion ändert sich zwischen Lernen, Gaming und Schlaf; derselbe Gaming-Clip bleibt optisch gleich, bekommt aber eine andere Bedeutung.
+Ein buntes Browser-Arcade-Spiel mit echter Maus- und Touch-Wischsteuerung. Spiele im sonnigen Klassenzimmer, gemütlichen Gaming-Zimmer und Schlafzimmer bei Mondlicht. Bücher, Controller, Kissen und andere passende Objekte fliegen durchs Bild: Ablenkungen zerschneiden, sinnvolle Dinge durchlassen. Die richtige Aktion ändert sich zwischen Lernen, Gaming und Schlaf; klare WISCHEN-/BEHALTEN-Hinweise helfen dir dabei.
 
-**[Jetzt spielen](https://brukevfh.github.io/REBOOT-Digital-Balance/notification-ninja/)** · **[Vollständiges Offline-ZIP](notification-ninja/downloads/Notification-Ninja-1.0.0.zip)** · **[Spielanleitung](notification-ninja/README.md)** · **[Ablaufdiagramm & Beispiel-Gantt](notification-ninja/PLAN.md)**
+**[Jetzt spielen](https://brukevfh.github.io/REBOOT-Digital-Balance/notification-ninja/)** · **[Vollständiges Offline-ZIP](notification-ninja/downloads/Notification-Ninja-1.1.0.zip)** · **[Spielanleitung](notification-ninja/README.md)** · **[Ablaufdiagramm & Beispiel-Gantt](notification-ninja/PLAN.md)**
 
-Tutorial, vier Levels, Focus Flow, drei Power-ups, reagierende Grafik und prozedurale Musik. Getrennte Arcade-/Balance-Wertungen, bewusste Zeitentscheidungen, lokale Highscores und vier Klingen-Skins. `npm run build:ninja`, `npm run test:ninja` und `npm run package:ninja` gehören zu Notification Ninja; `npm test` prüft alle Spiele.
+Tutorial, vier Levels, fünf Herzen und langsamere Objekte machen den Einstieg leichter. Dazu kommen Focus Flow, drei Power-ups, Bonusanimationen und eigene Musik pro Zimmer. Getrennte Arcade-/Balance-Wertungen, bewusste Zeitentscheidungen, lokale Highscores und vier Klingen-Skins sorgen für neue Ziele. `npm run build:ninja`, `npm run test:ninja` und `npm run package:ninja` gehören zu Notification Ninja; `npm test` prüft alle Spiele.
 
 Die übrigen Spiele bleiben separat erreichbar:
 

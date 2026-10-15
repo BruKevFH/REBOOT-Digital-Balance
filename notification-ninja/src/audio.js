@@ -1,10 +1,9 @@
 const MAX_VOICES = 32;
-const MASTER_VOLUME = 0.36;
+const MASTER_VOLUME = 0.4;
 const STYLES = {
-  study: { bpm: 96, root: 50, arp: [0, 4, 7, 9, 7, 4, 2, 7], chords: [0, 5, 9, 7], bright: false },
-  gaming: { bpm: 132, root: 45, arp: [0, 3, 7, 10, 7, 3, 5, 7], chords: [0, 5, 3, 7], bright: true },
-  sleep: { bpm: 74, root: 48, arp: [0, 4, 7, 9, 7, 4, 2, 4], chords: [0, 5, 7, 0], bright: false },
-  master: { bpm: 122, root: 47, arp: [0, 3, 7, 10, 7, 5, 3, 7], chords: [0, 5, 3, 7], bright: true }
+  study: { bpm: 100, root: 60, arp: [0, 4, 7, 12, 9, 7, 4, null, 2, 5, 9, 12, 7, 4, 2, null], chords: [0, 5, 7, 0], instrument: 'pizzicato' },
+  gaming: { bpm: 116, root: 60, arp: [7, 12, 7, 4, 9, null, 7, 4, 0, 4, 7, 12, 9, 7, 4, null], chords: [0, 5, 0, 7], instrument: 'marimba' },
+  sleep: { bpm: 80, root: 60, arp: [12, null, 7, null, 4, 7, 0, null, 9, null, 7, 4, 2, null, 0, null], chords: [0, 5, 0, 7], instrument: 'music-box' }
 };
 const note = midi => 440 * 2 ** ((midi - 69) / 12);
 
@@ -18,7 +17,7 @@ function styleFor(state) {
   return ['study', 'gaming', 'sleep', 'master'][index] || 'study';
 }
 
-/** Optional procedural audio. Constructing this module never opens an AudioContext. */
+/** Local, playful music. Constructing this module never opens an AudioContext. */
 export function createAudio() {
   let context = null, master = null, music = null, effects = null, noise = null;
   let enabled = false, unlocked = false, disposed = false, unlocking = null;
@@ -129,29 +128,36 @@ export function createAudio() {
   }
 
   function currentStyle() {
-    if (mode !== 'master') return STYLES[mode];
-    if (contextMode === 'sleep') return { ...STYLES.sleep, bpm: 84 };
-    if (contextMode === 'study') return { ...STYLES.master, bpm: 108, bright: false };
-    return STYLES.master;
+    return STYLES[mode === 'master' ? contextMode : mode] || STYLES.study;
+  }
+
+  function pluck(frequency, time, instrument, volume = 0.045) {
+    const bell = instrument === 'music-box', wood = instrument === 'marimba';
+    tone(frequency, bell ? 0.85 : wood ? 0.24 : 0.2, volume, time, 'music', bell || wood ? 'sine' : 'triangle');
+    // A short, quiet overtone supplies the pick, wooden strike or music-box tine.
+    tone(frequency * (wood ? 3 : 2.005), bell ? 0.42 : 0.045, volume * (bell ? 0.2 : 0.12), time, 'music', 'sine');
   }
 
   function schedule(time) {
     const style = currentStyle(), beat = step % 8;
-    const shift = style.chords[Math.floor(step / 8) % style.chords.length];
-    const pitch = flow ? 12 : 0;
-    const quiet = mode === 'sleep' || mode === 'master' && contextMode === 'sleep';
-    tone(note(style.root + 12 + shift + style.arp[beat] + pitch), quiet ? 0.34 : 0.19,
-      quiet ? 0.018 : 0.025, time, 'music', 'triangle');
+    const shift = style.chords[Math.floor(step / 16) % style.chords.length];
+    const quiet = style.instrument === 'music-box', gaming = style.instrument === 'marimba';
+    const melody = style.arp[step % style.arp.length];
+    if (melody !== null) pluck(note(style.root + shift + melody), time, style.instrument, quiet ? 0.033 : 0.054);
     if (beat % 4 === 0) {
-      tone(note(style.root - 12 + shift), 0.4, quiet ? 0.025 : 0.047, time, 'music', 'sine');
-      if (!quiet) tone(120, 0.12, 0.09, time, 'music', 'sine', 42);
+      tone(note(style.root - 24 + shift + (beat === 4 ? 7 : 0)), quiet ? 0.8 : 0.22,
+        quiet ? 0.023 : 0.055, time, 'music', 'sine');
+      if (!quiet) tone(105, 0.1, gaming ? 0.07 : 0.03, time, 'music', 'sine', 48);
     }
     if (beat === 0) {
-      for (const interval of [0, mode === 'gaming' || mode === 'master' ? 3 : 4, 7])
-        tone(note(style.root + shift + interval), 1.45, quiet ? 0.012 : 0.009, time, 'music', 'sine');
+      for (const [index, interval] of [0, 4, 7].entries())
+        tone(note(style.root - 12 + shift + interval), quiet ? 1.1 : 0.38, quiet ? 0.01 : 0.018,
+          time + index * 0.015, 'music', quiet ? 'sine' : 'triangle');
     }
-    if (!quiet && beat % 4 === 2) hiss(time, 0.08, style.bright ? 0.033 : 0.015, 1600);
-    if ((style.bright || flow) && (beat % 2 === 0 || flow)) hiss(time, 0.035, flow ? 0.028 : 0.018, 6500);
+    if (!quiet && beat % 4 === 2) hiss(time, 0.055, gaming ? 0.028 : 0.012, 1800);
+    if (!quiet && (gaming && beat % 2 === 1 || flow)) hiss(time, 0.025, flow ? 0.018 : 0.01, 6000);
+    if (flow && !quiet && beat % 2 === 1)
+      tone(note(style.root + 12 + shift + (beat % 4 === 1 ? 7 : 12)), 0.11, 0.018, time, 'music', 'sine');
     step++; scheduledSteps++;
   }
 
@@ -162,7 +168,7 @@ export function createAudio() {
     if (!active || context.state !== 'running') { if (playing || nextBeat !== null) quietMusic(); return; }
     const selected = styleFor(state), selectedContext = ['study', 'gaming', 'sleep'].includes(state.context) ? state.context : 'study';
     if (mode !== selected) { quietMusic(); mode = selected; step = 0; }
-    if (contextMode !== selectedContext) { if (mode === 'master') quietMusic(); contextMode = selectedContext; }
+    if (contextMode !== selectedContext) { if (mode === 'master') { quietMusic(); step = 0; } contextMode = selectedContext; }
     flow = Number(state.effects?.flow ?? state.flow ?? 0) > 0;
     if (!playing) { playing = true; ramp(music.gain, mode === 'sleep' || mode === 'master' && contextMode === 'sleep' ? 0.58 : 0.92, 0.12); }
     const now = context.currentTime;
@@ -185,15 +191,17 @@ export function createAudio() {
       tone(150, 0.26, 0.11, time, 'effects', 'triangle', 62);
       tone(92, 0.22, 0.055, time + 0.025, 'effects', 'sine');
     } else if (name === 'useful-passed') sparkle([659, 784], 0.07, 0.035);
-    else if (name === 'powerup' || ['shield', 'slow', 'multiplier'].includes(name)) sparkle([659, 830, 988]);
+    else if (name === 'powerup' || ['shield', 'slow', 'multiplier', 'bonus'].includes(name)) sparkle([523, 659, 784, 1046], 0.055);
+    else if (name === 'combo') {
+      const lift = Math.min(4, Math.floor(Number(event?.combo || event?.count || 5) / 5));
+      sparkle([523, 659, 784].map(hz => hz * 2 ** (lift / 12)), 0.038, 0.055);
+    }
     else if (name === 'flow-started') sparkle([440, 554, 659, 880, 1046], 0.055);
-    else if (name === 'level-complete') sparkle([523, 659, 784, 1046, 1318, 1568], 0.09, 0.06);
+    else if (name === 'level-complete' || name === 'victory') sparkle([523, 659, 784, 1046, 1318, 1568], 0.09, 0.06);
     else if (name === 'ended') sparkle([392, 494, 587, 784], 0.085, 0.045);
     else if (name === 'click') tone(680, 0.04, 0.043, time, 'effects', 'sine', 880);
-    else if (name === 'start') {
-      tone(170, 0.28, 0.09, time, 'effects', 'sine', 1000);
-      hiss(time, 0.15, 0.04, 2200, 'effects');
-    } else return false;
+    else if (name === 'start' || name === 'play') sparkle([392, 523, 659, 784], 0.065, 0.055);
+    else return false;
     lastEvent = name; eventCount++;
     return true;
   }
@@ -210,7 +218,8 @@ export function createAudio() {
   function getStats() {
     return { enabled, unlocked, contextState: context?.state || 'locked', activeVoices: voices.size,
       musicVoices: [...voices].filter(entry => entry.group === 'music').length,
-      mode, context: contextMode, playing, flow, scheduledSteps, eventCount, lastEvent, volume: enabled ? MASTER_VOLUME : 0, lastError };
+      mode, context: contextMode, bpm: currentStyle().bpm, instrument: currentStyle().instrument,
+      playing, flow, scheduledSteps, eventCount, lastEvent, volume: enabled ? MASTER_VOLUME : 0, lastError };
   }
 
   return Object.freeze({ unlock, setEnabled, update, play, dispose, getStats });

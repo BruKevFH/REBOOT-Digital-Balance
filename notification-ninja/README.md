@@ -1,14 +1,14 @@
 # Notification Ninja
 
-Ein deutschsprachiges Arcade-Spiel über digitale Ablenkung: Schneide störende Benachrichtigungen mit deiner Ninja-Klinge und lass hilfreiche Signale passieren. Ob eine Nachricht sinnvoll ist, hängt von deiner aktuellen Aufgabe ab. Derselbe Gaming-Clip kann beim Lernen ablenken und während der eingeplanten Gaming-Zeit passen.
+Ein buntes, deutschsprachiges Arcade-Spiel über digitale Ablenkung: Wische durch störende Inhalte und lass hilfreiche Dinge passieren. Ein sonniges Klassenzimmer, ein gemütliches Gaming-Zimmer und ein Schlafzimmer bei Mondlicht begleiten deinen Tag. Bücher, Controller, Trinkflaschen, Kissen und andere gezeichnete Objekte passen zur jeweiligen Umgebung.
 
-**[Im Browser spielen](https://brukevfh.github.io/REBOOT-Digital-Balance/notification-ninja/)** · **[Vollständiges Spiel herunterladen](downloads/Notification-Ninja-1.0.0.zip)**
+**[Im Browser spielen](https://brukevfh.github.io/REBOOT-Digital-Balance/notification-ninja/)** · **[Vollständiges Spiel herunterladen](downloads/Notification-Ninja-1.1.0.zip)**
 
 ## Spielen
 
 Öffne das Spiel in einem aktuellen Browser mit JavaScript. Für den Download die **gesamte ZIP-Datei entpacken** und anschließend `index.html` öffnen. Alle Laufzeitdateien gehören zum Paket; eine Engine-Installation oder ein Account ist nicht erforderlich. Falls dein Browser lokale Dateien einschränkt, kannst du den entpackten Ordner über einen lokalen HTTP-Server öffnen.
 
-Die Online-Version speichert ihre Laufzeitdateien nach dem vollständigen ersten Laden für spätere Offline-Aufrufe. Die Musik ist anfangs ausgeschaltet und lässt sich über den Sound-Schalter aktivieren. Musik und Effekte entstehen direkt im Browser, ohne externe Audiodateien.
+Die Online-Version speichert ihre Laufzeitdateien nach dem vollständigen ersten Laden für spätere Offline-Aufrufe. Die Musik startet nach deinem Klick auf **Spielen**, sofern Ton eingeschaltet ist. Über den Lautsprecher-Schalter kannst du sie jederzeit ausschalten. Musik und Effekte entstehen direkt im Browser, ohne externe Audiodateien: verspielte Zupfklänge beim Lernen, ein fröhlicher Marimba-Groove beim Gaming und eine sanfte Spieluhr vor dem Schlafen.
 
 ## Dein digitaler Tag
 
@@ -16,12 +16,14 @@ Nach dem Tutorial durchläufst du vier Spielphasen. Die Zeitfenster bilden einen
 
 | Phase | Regel und Spielzeit |
 | --- | --- |
-| Study | Während des 75-Sekunden-Lernfensters Ablenkungen schneiden und relevante Lernsignale durchlassen |
-| Gaming | Vorher ein Limit von 45, 60 oder 90 Sekunden wählen; anschließend bewusst aufhören oder weiterspielen |
-| Sleep | Während des 75-Sekunden-Fensters zur Ruhe kommen; nach acht Sekunden kannst du die Phase bewusst beenden oder weiter auf Bonusjagd gehen |
-| Master | 90 Sekunden mit wechselnden Kontexten und dichteren Wellen im Finale; die Bedeutung derselben Nachricht kann sich ändern |
+| Study | Im sonnigen Klassenzimmer 75 Sekunden lang Ablenkungen schneiden und Dinge fürs Lernen durchlassen |
+| Gaming | Im gemütlichen Gaming-Zimmer ein Limit von 45, 60 oder 90 Sekunden einhalten; anschließend bewusst aufhören oder weiterspielen |
+| Sleep | Im Schlafzimmer bei Mondlicht zur Ruhe kommen; nach acht Sekunden kannst du das 75-Sekunden-Fenster bewusst beenden oder weiter auf Bonusjagd gehen |
+| Master | 90 Sekunden mit wechselnden Zimmern und Kontexten; achte auf die neuen Hinweise beim Wechsel |
 
-Du startest mit **drei Leben**. Verwechslungen unterbrechen deine Combo. Fünf richtige Entscheidungen in Folge aktivieren für fünf Sekunden den **Flow-Modus**. Power-ups verleihen Zeitlupe, Schildschutz oder einen Punktemultiplikator. Hohe Punktzahlen bringen Münzen für freischaltbare Skins; Highscores, Münzen und Skins bleiben lokal gespeichert.
+Du startest mit **fünf Herzen**. Die Objekte bleiben ungefähr vier Sekunden sichtbar. **WISCHEN** und **BEHALTEN** zeigen dir auch nach dem Tutorial, was gerade passt. Wer eine Ablenkung verpasst, erhöht den Overload-Wert, verliert dabei aber kein Herz. Ein versehentlicher Schnitt durch etwas Sinnvolles kostet ein Herz; Verwechslungen unterbrechen deine Combo.
+
+Fünf richtige Entscheidungen in Folge aktivieren für fünf Sekunden den **Flow-Modus**. Power-ups verleihen Zeitlupe, Schildschutz oder einen Punktemultiplikator. Kombos, Boni und abgeschlossene Levels bekommen eigene Animationen und kurze Klangfolgen. Hohe Punktzahlen bringen Münzen für freischaltbare Skins; Highscores, Münzen und Skins bleiben lokal gespeichert.
 
 Alle Benachrichtigungen, Boni und Münzen sind Spielsimulationen. Es gibt keine echten Käufe oder Gewinne. Das Spiel vermittelt Aufmerksamkeitsauswahl, Kontextbewusstsein und selbst gewählte Grenzen bei digitalen Medien.
 
@@ -32,7 +34,7 @@ Alle Benachrichtigungen, Boni und Münzen sind Spielsimulationen. Es gibt keine 
 - Hilfreiche Nachrichten unberührt passieren lassen.
 - Die Pause-, Sound- und Entscheidungstasten direkt in der Oberfläche bedienen.
 
-Ein Schnitt folgt deiner tatsächlichen Wischbewegung. Im Tutorial lernst du den Unterschied zwischen Ablenkung und hilfreichem Signal.
+Ein Schnitt folgt deiner tatsächlichen Wischbewegung. Im Tutorial lernst du den Unterschied zwischen Ablenkung und hilfreichem Signal. Ob ein Inhalt gerade passt, hängt von deiner Aufgabe ab: Ein Gaming-Clip kann beim Lernen ablenken und während der eingeplanten Gaming-Zeit passen. Die sichtbaren Hinweise helfen dir bei jedem Objekt.
 
 ## Daten und Offline-Nutzung
 

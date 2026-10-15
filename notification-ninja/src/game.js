@@ -13,20 +13,34 @@ export const SKINS = [
 ];
 const kinds = (study,gaming,sleep) => ({study,gaming,sleep});
 export const CONTENT = [
-  {id:'streak',label:'STREAK RETTEN!',text:'Deine Serie wartet. Öffne den Feed!',brand:'SOCIAL',icon:'🔥',color:'#ff917d',kindByContext:kinds('distraction','distraction','distraction')},
-  {id:'urgent-school',label:'SCHULE · WICHTIG',text:'Der Gruppenauftrag braucht deine Rückmeldung.',brand:'SCHULE',icon:'✉',color:'#8bb9ff',kindByContext:kinds('useful','useful','distraction')},
-  {id:'homework',label:'HAUSAUFGABEN',text:'Eine neue Aufgabe – heute ist noch Zeit.',brand:'SCHULE',icon:'▤',color:'#8bb9ff',kindByContext:kinds('useful','distraction','distraction')},
-  {id:'gameclip',label:'NEUER GAME-CLIP',text:'Ein Spieltipp für deine nächste Runde.',brand:'GAME',icon:'▶',color:'#c0a0ff',kindByContext:kinds('distraction','useful','distraction')},
-  {id:'gaming-invite',label:'GAMING-EINLADUNG',text:'Dein Team ist bereit für die nächste Runde.',brand:'GAME',icon:'✚',color:'#c0a0ff',kindByContext:kinds('distraction','useful','distraction')},
-  {id:'break',label:'KURZE PAUSE',text:'Trinken, durchatmen, eine Sache nach der anderen.',brand:'PAUSE',icon:'◌',color:'#a0ddd1',kindByContext:kinds('useful','useful','useful')},
-  {id:'quiet',label:'RUHEZEIT',text:'Die Schlafenszeit-Erinnerung darf bleiben.',brand:'RUHE',icon:'☾',color:'#9fb6da',kindByContext:kinds('distraction','distraction','useful')},
-  {id:'scary-lure',label:'DU VERPASST ALLES!',text:'Künstliche Dringlichkeit: Jetzt sofort klicken!',brand:'FEED',icon:'!',color:'#ffbd80',kindByContext:kinds('distraction','distraction','distraction')},
-  {id:'safety',label:'ECHTE WARNUNG',text:'Eine wichtige Sicherheitsmeldung behalten.',brand:'SICHERHEIT',icon:'△',color:'#ffc783',kindByContext:kinds('useful','useful','useful')},
-  {id:'update',label:'UPDATE · MORGEN',text:'Kein Notfall. Dieses Update kann warten.',brand:'SYSTEM',icon:'↻',color:'#8ed1e0',kindByContext:kinds('distraction','distraction','distraction')},
-  {id:'power-slow',label:'ZEITLUPE',text:'6 Sekunden langsamere Karten, normale Spielzeit.',brand:'TOOL',icon:'◷',color:'#80d4f8',powerup:'slow'},
-  {id:'power-shield',label:'FOKUS-SCHILD',text:'Fängt genau einen Fehler ab.',brand:'TOOL',icon:'⬡',color:'#84f2cb',powerup:'shield'},
-  {id:'power-multiplier',label:'PUNKTE ×2',text:'10 Sekunden doppelte Arcade-Punkte.',brand:'TOOL',icon:'×2',color:'#ffda86',powerup:'multiplier'}
+  {id:'streak',label:'STREAK RETTEN!',shortLabel:'STREAK',visual:'phone',text:'Deine Serie wartet. Öffne den Feed!',brand:'SOCIAL',icon:'🔥',color:'#ff917d',kindByContext:kinds('distraction','distraction','distraction')},
+  {id:'urgent-school',label:'SCHULE · WICHTIG',shortLabel:'AUFTRAG',visual:'assignment',text:'Der Gruppenauftrag braucht deine Rückmeldung.',brand:'SCHULE',icon:'✉',color:'#8bb9ff',kindByContext:kinds('useful','useful','distraction')},
+  {id:'homework',label:'HAUSAUFGABEN',shortLabel:'LERNHEFT',visual:'notebook',text:'Eine neue Aufgabe – heute ist noch Zeit.',brand:'SCHULE',icon:'▤',color:'#8bb9ff',kindByContext:kinds('useful','distraction','distraction')},
+  {id:'pencil',label:'STIFT & LINEAL',shortLabel:'STIFTE',visual:'pencil',text:'Deine Schulsachen helfen dir beim Lernen.',brand:'SCHULE',icon:'✎',color:'#e9bc65',kindByContext:kinds('useful','distraction','distraction')},
+  {id:'gameclip',label:'NEUER GAME-CLIP',shortLabel:'SPIELTIPP',visual:'gameclip',text:'Ein Spieltipp für deine nächste Runde.',brand:'GAME',icon:'▶',color:'#c0a0ff',kindByContext:kinds('distraction','useful','distraction')},
+  {id:'gaming-invite',label:'GAMING-EINLADUNG',shortLabel:'DEIN TEAM',visual:'controller',text:'Dein Team ist bereit für die nächste Runde.',brand:'GAME',icon:'✚',color:'#c0a0ff',kindByContext:kinds('distraction','useful','distraction')},
+  {id:'loot',label:'TEAM-TROPHÄE',shortLabel:'TROPHÄE',visual:'loot',text:'Eine gemeinsam erspielte Trophäe für deine Sammlung.',brand:'GAME',icon:'★',color:'#e7b869',kindByContext:kinds('distraction','useful','distraction')},
+  {id:'ad',label:'JETZT KAUFEN!',shortLabel:'WERBUNG',visual:'ad',text:'Ein angeblich einmaliges Angebot kann warten.',brand:'WERBUNG',icon:'!',color:'#efb37b',kindByContext:kinds('distraction','distraction','distraction')},
+  {id:'autoplay',label:'NOCH EIN VIDEO!',shortLabel:'AUTOPLAY',visual:'video',text:'Das nächste Video startet, obwohl du etwas anderes vorhast.',brand:'FEED',icon:'▶',color:'#c4a9ce',kindByContext:kinds('distraction','distraction','distraction')},
+  {id:'break',label:'KURZE PAUSE',shortLabel:'TRINKPAUSE',visual:'energy',text:'Trinken, durchatmen, eine Sache nach der anderen.',brand:'PAUSE',icon:'◌',color:'#a0ddd1',kindByContext:kinds('useful','useful','useful')},
+  {id:'quiet',label:'RUHEZEIT',shortLabel:'KISSEN',visual:'pillow',text:'Die Schlafenszeit-Erinnerung darf bleiben.',brand:'RUHE',icon:'☾',color:'#9fb6da',kindByContext:kinds('distraction','distraction','useful')},
+  {id:'teddy',label:'KUSCHELZEIT',shortLabel:'TEDDY',visual:'teddy',text:'Gemütlich werden und ohne Bildschirm zur Ruhe kommen.',brand:'RUHE',icon:'♥',color:'#d5ac82',kindByContext:kinds('distraction','distraction','useful')},
+  {id:'moon',label:'GUTE NACHT',shortLabel:'GUTE NACHT',visual:'moon',text:'Ein ruhiges Abendritual hilft dir beim Einschlafen.',brand:'RUHE',icon:'☾',color:'#f1cc7a',kindByContext:kinds('distraction','distraction','useful')},
+  {id:'scary-lure',label:'DU VERPASST ALLES!',shortLabel:'KLICK-KÖDER',visual:'phone',text:'Künstliche Dringlichkeit: Jetzt sofort klicken!',brand:'FEED',icon:'!',color:'#ffbd80',kindByContext:kinds('distraction','distraction','distraction')},
+  {id:'safety',label:'ECHTE WARNUNG',shortLabel:'WARNUNG',visual:'shield',text:'Eine wichtige Sicherheitsmeldung behalten.',brand:'SICHERHEIT',icon:'△',color:'#ffc783',kindByContext:kinds('useful','useful','useful')},
+  {id:'update',label:'UPDATE · MORGEN',shortLabel:'UPDATE',visual:'phone',text:'Kein Notfall. Dieses Update kann warten.',brand:'SYSTEM',icon:'↻',color:'#8ed1e0',kindByContext:kinds('distraction','distraction','distraction')},
+  {id:'power-slow',label:'ZEITLUPE',shortLabel:'ZEITLUPE',visual:'clock',text:'6 Sekunden langsamere Gegenstände, normale Spielzeit.',brand:'TOOL',icon:'◷',color:'#80d4f8',powerup:'slow'},
+  {id:'power-shield',label:'FOKUS-SCHILD',shortLabel:'SCHILD',visual:'shield',text:'Fängt genau einen Fehler ab.',brand:'TOOL',icon:'⬡',color:'#84f2cb',powerup:'shield'},
+  {id:'power-multiplier',label:'PUNKTE ×2',shortLabel:'PUNKTE ×2',visual:'star',text:'10 Sekunden doppelte Arcade-Punkte.',brand:'TOOL',icon:'×2',color:'#ffda86',powerup:'multiplier'}
 ];
+
+// Familiar objects belong to the room; shared signals still keep their contextual meaning.
+const POOLS = {
+  study:['homework','pencil','urgent-school','streak','gameclip','autoplay','scary-lure','break','safety'],
+  gaming:['gaming-invite','loot','gameclip','ad','autoplay','streak','urgent-school','break','safety'],
+  sleep:['quiet','teddy','moon','autoplay','streak','scary-lure','gameclip','break','safety']
+};
+const MAX_LIVES = 5;
 
 const MAX = Number.MAX_SAFE_INTEGER;
 const MODES = ['campaign','study','gaming','sleep','master'];
@@ -47,7 +61,7 @@ function profile() {return {coins:0,totalRuns:0,highScores:scoreKeys(),unlockedS
 function emptyState(seed,skin='default') {return {
   started:false,scene:'home',mode:'campaign',levelIndex:0,stageIndex:0,context:'study',isTutorial:false,
   tutorialDecisions:0,tutorialCuts:0,tutorialPassed:0,tutorialResults:null,tutorialReason:null,
-  objects:[],score:0,scoreArcade:0,balance:50,balanceScore:100,combo:0,bestCombo:0,decisionStreak:0,overload:0,lives:3,
+  objects:[],score:0,scoreArcade:0,balance:50,balanceScore:100,combo:0,bestCombo:0,decisionStreak:0,overload:0,lives:MAX_LIVES,
   elapsed:0,stageElapsed:0,duration:75,remaining:75,awaitingNext:false,paused:false,stopAvailable:false,
   extensionUsed:false,sleepContinued:false,effects:{slow:0,shield:0,multiplier:0,flow:0},metrics:metrics(),stageMetrics:stageMetrics(),
   skin,ended:false,credited:false,result:null,awardedCoins:0,rng:seed,runSerial:0,objectSequence:0,spawnCount:0,spawnTimer:.5,
@@ -78,7 +92,7 @@ export class NinjaGame {
   _random(){let x=this.state.rng;x^=x<<13;x^=x>>>17;x^=x<<5;this.state.rng=(x>>>0)||1;return this.state.rng/4294967296;}
   _record(type,data={}){this.state.history.push({type,time:this._time(),elapsed:this.state.elapsed,context:this.state.context,...clone(data)});if(this.state.history.length>200)this.state.history.shift();}
   _achievement(id){if(!this.profile.achievements.includes(id))this.profile.achievements.push(id);}
-  _radius(){return Math.min(this.width*.16,this.width<650?44:36);}
+  _radius(){return Math.min(this.width*.16,this.width<650?50:48);}
   _playable(){return this.state.started&&!this.state.ended&&this.state.scene==='playing'&&!this.state.paused;}
   _arcade(points){if(this.state.isTutorial)return;this.state.score=Math.min(MAX,this.state.score+points);this.state.scoreArcade=this.state.score;this.state.stageMetrics.score+=points;}
   _balance(){const m=this.state.metrics,correct=m.correctDecisions,wrong=m.usefulMistakes+m.missedDistractions;
@@ -109,20 +123,26 @@ export class NinjaGame {
     for(const obj of this.state.objects){obj.x*=sx;obj.y*=sy;obj.vx*=sx;obj.vy*=sy;obj.gravity*=sy;obj.radius=this._radius();obj.x=Math.max(obj.radius,Math.min(w-obj.radius,obj.x));}
     return {ok:true,width:w,height:h};}
   _spawnContent(id){if(this.state.objects.length>=50)return null;const content=CONTENT_MAP.get(id);if(!content)return null;
-    const radius=this._radius(),span=Math.max(120,this.height-40),gravity=span*.08,flight=2.6+this._random()*.45;
+    const radius=this._radius(),inset=radius+8,laneCount=Math.min(5,Math.max(2,Math.floor((this.width-inset*2)/(radius*2+28))+1));
+    const lanes=Array.from({length:laneCount},(_,i)=>inset+i*(this.width-inset*2)/(laneCount-1));
+    // A lane stays reserved for the whole flight, including slow motion. No lateral
+    // drift means a swipe at one object cannot accidentally meet its neighbour.
+    const available=lanes.filter(x=>!this.state.objects.some(obj=>Math.abs(obj.x-x)<obj.radius+radius+24));
+    if(!available.length)return null;
+    const x=available[Math.floor(this._random()*available.length)],span=Math.max(120,this.height-40),gravity=span*.08,flight=4+this._random()*.6;
     const y=this.height+radius+6,target=-radius-2,distance=y-target,vy=-(distance/flight+.5*gravity*flight);
     const obj={id:`ninja-${this.state.runSerial}-${++this.state.objectSequence}`,contentId:id,label:content.label,text:content.text,
       kind:content.powerup?'powerup':content.kindByContext[this.state.context],powerup:content.powerup||null,context:this.state.context,
-      x:radius+(this.width-radius*2)*(.12+this._random()*.76),y,vx:(this._random()-.5)*Math.min(this.width*.14,120),vy,gravity,radius,age:0};
+      x,y,vx:0,vy,gravity,radius,age:0};
     this.state.objects.push(obj);return obj;}
   _spawn(events){const s=this.state;let ids;
     if(s.isTutorial){const order=['streak','urgent-school','streak','urgent-school','gameclip','homework'];ids=[order[s.spawnCount%order.length]];}
     else if(s.context==='study'&&s.spawnCount<2)ids=[s.spawnCount===0?'streak':'urgent-school'];
-    else {const batch=this._random(),count=s.effects.flow>0&&batch<.04?5:batch<.04?3:batch<.24?2:1;
-      const regular=CONTENT.filter(item=>!item.powerup);ids=Array.from({length:count},()=>this._random()<.09?['power-slow','power-shield','power-multiplier'][Math.floor(this._random()*3)]:regular[Math.floor(this._random()*regular.length)].id);}
+    else {const count=this._random()<.2?2:1,regular=POOLS[s.context];
+      ids=Array.from({length:count},()=>this._random()<.12?['power-slow','power-shield','power-multiplier'][Math.floor(this._random()*3)]:regular[Math.floor(this._random()*regular.length)]);}
     for(const id of ids){const obj=this._spawnContent(id);if(obj){s.spawnCount++;events.push({type:'spawned',...clone(obj)});}}
     const finale=s.levelIndex===3&&s.stageElapsed>=75&&!s.pendingContext;
-    s.spawnTimer+=s.isTutorial?1.3:finale?.78:s.context==='sleep'?1.2:1.05;}
+    s.spawnTimer+=s.isTutorial?1.8:finale?1.2:s.levelIndex===3?1.4:s.context==='sleep'?1.8:s.context==='gaming'?1.5:1.65;}
   _good(events){const s=this.state;s.metrics.correctDecisions++;s.stageMetrics.correctDecisions++;s.decisionStreak++;this._balance();
     if(s.isTutorial)s.tutorialDecisions++;
     if(s.decisionStreak%5===0){s.effects.flow=5;s.metrics.flowTriggers++;events.push({type:'flow-started',duration:5});if(!s.isTutorial)this._achievement('flow-five');}}
@@ -131,10 +151,10 @@ export class NinjaGame {
       events.push({type:kind==='useful'?'useful-mistake':'distraction-missed',id:obj.id,contentId:obj.contentId,kind:obj.kind,x:obj.x,y:obj.y,protected:true,points:0});return;}
     const key=kind==='useful'?'usefulMistakes':'missedDistractions';s.metrics[key]++;s.stageMetrics[key]++;
     s.combo=0;s.decisionStreak=0;s.balance=Math.max(0,s.balance-(kind==='useful'?12:6));s.overload=Math.min(100,s.overload+(kind==='useful'?18:12));
-    s.lives=Math.max(0,s.lives-1);s.metrics.lifeLost++;if(s.overload>=100)s.overload=60;this._balance();
+    if(kind==='useful'){s.lives=Math.max(0,s.lives-1);s.metrics.lifeLost++;}if(s.overload>=100)s.overload=60;this._balance();
     events.push({type:kind==='useful'?'useful-mistake':'distraction-missed',id:obj.id,contentId:obj.contentId,kind:obj.kind,x:obj.x,y:obj.y,protected:false,points:0});
-    events.push({type:'life-lost',lives:s.lives,reason:kind==='useful'?'useful-cut':'distraction-passed'});
-    if(!s.lives){if(s.isTutorial){s.lives=3;s.overload=0;events.push({type:'tutorial-retry'});}else this._finishRun('lives',events);}}
+    if(kind==='useful')events.push({type:'life-lost',lives:s.lives,reason:'useful-cut'});
+    if(!s.lives){if(s.isTutorial){s.lives=MAX_LIVES;s.overload=0;events.push({type:'tutorial-retry'});}else this._finishRun('lives',events);}}
   _slice(obj,events,chain=false){const s=this.state;if(!s.objects.some(item=>item.id===obj.id)||s.ended)return;
     s.objects=s.objects.filter(item=>item.id!==obj.id);
     if(obj.kind==='useful'){this._mistake(obj,'useful',events);return;}
@@ -185,7 +205,7 @@ export class NinjaGame {
   }
   _endTutorial(reason,events){const s=this.state;if(!s.isTutorial)return;
     s.tutorialResults={decisions:s.tutorialDecisions,cuts:s.tutorialCuts,passed:s.tutorialPassed,elapsed:s.stageElapsed,reason};s.tutorialReason=reason;
-    this.profile.tutorialCompleted=true;s.isTutorial=false;s.stageIndex=0;s.levelIndex=0;s.score=s.scoreArcade=0;s.balance=50;s.balanceScore=100;s.lives=3;s.overload=0;s.elapsed=0;
+    this.profile.tutorialCompleted=true;s.isTutorial=false;s.stageIndex=0;s.levelIndex=0;s.score=s.scoreArcade=0;s.balance=50;s.balanceScore=100;s.lives=MAX_LIVES;s.overload=0;s.elapsed=0;
     s.metrics=metrics();s.scene='briefing';s.awaitingNext=true;s.paused=false;this._resetStage();this._record('tutorial-complete',{reason});events.push({type:'tutorial-complete',reason,levelIndex:0});this.save();}
   skipTutorial(){if(!this.state.started||this.state.ended||!this.state.isTutorial)return fail('Es ist kein Tutorial aktiv.');const events=[];this._endTutorial('skipped',events);return {ok:true,events};}
   _endStage(reason,events){const s=this.state;if(s.ended||s.scene==='briefing')return;
@@ -194,7 +214,7 @@ export class NinjaGame {
     if(!s.stageMetrics.usefulMistakes&&!s.stageMetrics.missedDistractions)this._achievement('careful-stage');
     events.push({type:'level-complete',levelIndex:s.levelIndex,reason,summary:clone(summary)});this._record('level-complete',{levelIndex:s.levelIndex,reason});
     if(s.stageIndex+1>=PLANS[s.mode].length){this._finishRun(reason==='stop'?'healthy-stop':'complete',events);return;}
-    s.stageIndex++;s.levelIndex=PLANS[s.mode][s.stageIndex];s.lives=Math.min(3,s.lives+1);s.scene='briefing';s.awaitingNext=true;s.paused=false;this._resetStage();this.save();}
+    s.stageIndex++;s.levelIndex=PLANS[s.mode][s.stageIndex];s.lives=Math.min(MAX_LIVES,s.lives+1);s.scene='briefing';s.awaitingNext=true;s.paused=false;this._resetStage();this.save();}
   requestStop(){const s=this.state;if(!s.started||s.ended||s.paused||s.isTutorial)return fail('Hier ist gerade kein bewusster Stopp verfügbar.');
     if(!(s.levelIndex===1&&s.scene==='limit-choice'||s.levelIndex===2&&s.scene==='playing'&&s.stopAvailable))return fail('Die Stoppentscheidung wird an deiner Grenze oder in der Ruhephase verfügbar.');
     const events=[];s.metrics.healthyStops++;this._arcade(100);s.balance=Math.min(100,s.balance+10);s.overload=Math.max(0,s.overload-15);this._balance();this._achievement('healthy-stop');
@@ -235,7 +255,7 @@ export class NinjaGame {
     s.stageElapsed=number(source.stageElapsed,0,0,s.duration);s.remaining=Math.max(0,s.duration-s.stageElapsed);s.elapsed=number(source.elapsed,0,0,1000000);
     if(s.scene==='limit-choice'&&s.stageElapsed<s.duration-.001)throw new Error('limit');
     for(const key of ['score','combo','bestCombo','decisionStreak','objectSequence','runSerial','spawnCount','tutorialDecisions','tutorialCuts','tutorialPassed','awardedCoins'])s[key]=integer(source[key]);
-    s.scoreArcade=s.score;s.balance=number(source.balance,50,0,100);s.overload=number(source.overload,0,0,100);s.lives=integer(source.lives,3,0,3);
+    s.scoreArcade=s.score;s.balance=number(source.balance,50,0,100);s.overload=number(source.overload,0,0,100);s.lives=integer(source.lives,MAX_LIVES,0,MAX_LIVES);
     if(!s.ended&&s.lives===0)throw new Error('lives');s.stopAvailable=s.scene==='limit-choice'||s.levelIndex===2&&s.stageElapsed>=8&&!s.ended;
     s.effects={slow:number(source.effects?.slow,0,0,6),shield:integer(source.effects?.shield,0,0,1),multiplier:number(source.effects?.multiplier,0,0,10),flow:number(source.effects?.flow,0,0,5)};
     for(const key of Object.keys(s.metrics))if(!['contextsPlayed','stageStats'].includes(key))s.metrics[key]=integer(source.metrics?.[key]);
@@ -257,6 +277,6 @@ export class NinjaGame {
     this.state=s;this._balance();const targetWidth=this.width,targetHeight=this.height;this.width=savedWidth;this.height=savedHeight;this.resize(targetWidth,targetHeight);
   }catch{this.state=emptyState(this.seed,this.profile.selectedSkin);this.storageFailed=true;this.storageError='unreadable';}}
   getSnapshot(){return clone({state:this.state,profile:this.profile,width:this.width,height:this.height,storageFailed:this.storageFailed});}
-  exportData(){return clone({game:'Notification Ninja',version:'1.0.0',schemaVersion:1,width:this.width,height:this.height,profile:this.profile,state:this.state});}
+  exportData(){return clone({game:'Notification Ninja',version:'1.1.0',schemaVersion:1,width:this.width,height:this.height,profile:this.profile,state:this.state});}
 }
 export const Game = NinjaGame;

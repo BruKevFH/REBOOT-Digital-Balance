@@ -34,7 +34,9 @@ flowchart TD
     End --> Home
 ```
 
-Die Phase bestimmt, welche Nachrichten helfen und welche ablenken. Gaming- und Schlafentscheidungen werden über sichtbare Schaltflächen getroffen. Pause unterbricht die laufende Simulation; Musik wird dabei ebenfalls angehalten.
+Die Phase bestimmt, welche Dinge helfen und welche ablenken. Klassenzimmer, Gaming-Zimmer und Schlafzimmer haben eigene Hintergründe, passende Objekte und eigene Musik. Sichtbare WISCHEN-/BEHALTEN-Hinweise begleiten jedes Objekt. Gaming- und Schlafentscheidungen werden über sichtbare Schaltflächen getroffen. Pause unterbricht die laufende Simulation; Musik wird dabei ebenfalls angehalten.
+
+Fünf Herzen, ungefähr vier Sekunden Flugzeit und verpasste Ablenkungen ohne Herzverlust machen den Einstieg leichter. Fehler beeinflussen Combo und Overload. Richtige Entscheidungen, Bonusobjekte und Flow belohnen mit Punkten, Animationen und Klangfolgen.
 
 ## Vier technische Systeme
 
@@ -57,7 +59,7 @@ flowchart LR
     Storage --> Progression
 ```
 
-Spielregeln werden getrennt von Darstellung und Eingaben überprüft. Die Audio-Komponente erzeugt Musik und Effekte lokal, bleibt standardmäßig aus und öffnet ihren AudioContext erst nach einer Nutzeraktion. Ihre Stimmenzahl ist begrenzt; Pause stoppt geplante Musiknoten.
+Spielregeln werden getrennt von Darstellung und Eingaben überprüft. Die Audio-Komponente erzeugt Musik und Effekte lokal und öffnet ihren AudioContext erst nach einer Nutzeraktion. Mit eingeschaltetem Ton startet die Musik beim Spielen. Study verwendet Zupfklänge mit 100 BPM, Gaming einen Marimba-Groove mit 116 BPM und Sleep eine Spieluhr mit 80 BPM. Master folgt musikalisch dem aktuellen Kontext. Die Stimmenzahl ist auf 32 begrenzt; Pause stoppt geplante Musiknoten und Stummschalten räumt alle Stimmen auf.
 
 ## Beispiel für Weiterentwicklung: vier Wochen
 
