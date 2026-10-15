@@ -2,7 +2,7 @@
 
 Ein buntes, deutschsprachiges Arcade-Spiel über digitale Ablenkung: Wische durch störende Inhalte und lass hilfreiche Dinge passieren. Ein sonniges Klassenzimmer, ein gemütliches Gaming-Zimmer und ein Schlafzimmer bei Mondlicht begleiten deinen Tag. Bücher, Controller, Trinkflaschen, Kissen und andere gezeichnete Objekte passen zur jeweiligen Umgebung.
 
-**[Im Browser spielen](https://brukevfh.github.io/REBOOT-Digital-Balance/notification-ninja/)** · **[Vollständiges Spiel 1.5.0 herunterladen](downloads/Notification-Ninja-1.5.0.zip)**
+**[Im Browser spielen](https://brukevfh.github.io/REBOOT-Digital-Balance/notification-ninja/)** · **[Vollständiges Spiel 1.6.0 herunterladen](downloads/Notification-Ninja-1.6.0.zip)**
 
 ## Spielen
 
@@ -15,6 +15,10 @@ Die Online-Version speichert ihre Laufzeitdateien nach dem vollständigen ersten
 ## Dein Ninja-Team und die Spielansicht
 
 Unten im Spielfeld steht dein größeres, um die Mitte angeordnetes Ninja-Team: **ein Ninja auf Entspannt, zwei auf Normal und drei auf Profi**. Alle tragen den beim Start des Runs ausgerüsteten Look. Jeder Ninja holt sichtbar aus; der Gegenstand folgt dabei tatsächlich seiner Hand, löst sich beim Wurf und wächst auf dem Weg ins Spielfeld auf seine volle Größe. Während des Ausholens und des kurzen Anflugs sind die Gegenstände vor Schnitten geschützt. Erst nach dieser Phase kannst du sie zerschneiden. So kannst du die Ninjas und ihre Würfe sehen, bevor deine Entscheidung zählt.
+
+Die Spielfläche nutzt den Platz bis zum unteren Bildschirmrand. **Rundeninfos und Fähigkeiten stehen in einer kompakten rechten Seitenleiste**, für die eigener Platz reserviert ist. Flugobjekte bleiben im Spielfeld links daneben. Dort findest du Zeit, Balance, Overload, Münzen, Tempo, Effekte und die Super-Taste. Die Seitenleiste passt sich an schmale Bildschirme an, statt als untere Leiste die Ninjas zu verdecken.
+
+Deine **Herzen haben oben einen eigenen Bereich**: große Symbole, ein Zähler wie `4/5` und Umrisse für bereits verlorene Herzen. Beim Herzverlust reagiert die Anzeige kurz; das letzte verbleibende Herz wird zusätzlich hervorgehoben. So erkennst du deine Chancen, ohne die Flugobjekte aus dem Blick zu verlieren.
 
 Auf der Startseite und in der Werkzeugleiste findest du die **Vollbild-Taste**. Sie öffnet nach deinem Klick den nativen Vollbildmodus, wenn der Browser ihn unterstützt und erlaubt. Fehlt die passende API oder lehnt der Browser den Aufruf ab, schaltet das Spiel auf **Große Spielansicht** um. Das gilt auch für Safari-Konfigurationen ohne Webseiten-Vollbild, etwa auf manchen iPhones. Die Ersatzansicht vergrößert die Spielfläche; die eigenen Leisten des Browsers können sichtbar bleiben. Der Schalter benennt die tatsächlich verwendete Ansicht und beendet sie beim erneuten Tippen. `Esc` verlässt die große Ersatzansicht; außerhalb dieser Ansicht dient die Taste der Spielpause.
 
@@ -36,7 +40,7 @@ Der **Offene Modus / Open Run** ist kostenlos von Anfang an verfügbar. Er spiel
 
 Für vergleichbare Runs gelten je Schwierigkeit dieselben Grundregeln: **gekaufte passive Fähigkeiten und ausgerüstete Supers sind im Open Run ausgeschaltet**. Die fliegenden Power-ups und Focus Flow gehören weiterhin zum Spiel. Dein Ninja-Look und Hintergrund verändern die Optik. Die Herzanzahl ist 5 / 4 / 3 für Entspannt / Normal / Profi. Münzen und XP werden beim Ende durch verbrauchte Herzen wie bei anderen Runs einmalig lokal gesichert; der offene Run zählt als ein Abschnitt mit dem entsprechenden Münzlimit.
 
-Die optionale gemeinsame Rangliste wertet ausschließlich beendete Open Runs aus und trennt die drei Schwierigkeiten. Eine Übertragung erfolgt erst, wenn du dein Ergebnis ausdrücklich veröffentlichst. Kampagne, Einzelräume und Training zählen nicht für diese Rangliste. Mehr zur noch nicht aktivierten Online-Verbindung steht unter [Gemeinsame Rangliste](#gemeinsame-rangliste).
+Die gemeinsame Rangliste wertet ausschließlich beendete Open Runs aus und trennt die drei Schwierigkeiten. Eine Übertragung erfolgt erst, wenn du dein Ergebnis ausdrücklich veröffentlichst. Kampagne, Einzelräume und Training zählen nicht für diese Rangliste. Mehr zur verbundenen Online-Rangliste steht unter [Gemeinsame Rangliste](#gemeinsame-rangliste).
 
 ## Dein digitaler Tag
 
@@ -171,19 +175,21 @@ Hilfreiche Dinge unberührt passieren lassen. Ein Schnitt folgt deiner tatsächl
 
 ## Daten und Offline-Nutzung
 
-Dein Ninja-Profil ist ein **lokales Spielerprofil** mit Nutzername. Name, Fortschritt, bestätigte NIM-Hinweise, Mitteilungen und Einstellungen liegen in **localStorage**. Es gibt kein Passwortkonto mit Wiederherstellung oder Gerätesynchronisierung. Ein anderer Browser oder ein anderes Gerät hat einen eigenen Spielstand. Im standardmäßig deaktivierten Ranglistenbetrieb werden keine Profil- oder Spieldaten übertragen. Wenn dein Browser die Speicherung blockiert, bleibt das Spiel für die laufende Sitzung spielbar; Ergebnisse werden dann nicht online veröffentlicht. Das Löschen der Website-Daten entfernt den lokalen Fortschritt.
+Dein Ninja-Profil ist ein **lokales Spielerprofil** mit Nutzername. Name, Fortschritt, bestätigte NIM-Hinweise, Mitteilungen und Einstellungen liegen in **localStorage**. Es gibt kein Passwortkonto mit Wiederherstellung oder Gerätesynchronisierung. Ein anderer Browser oder ein anderes Gerät hat einen eigenen Spielstand. Ergebnisse werden erst durch ausdrückliches Veröffentlichen an die gemeinsame Rangliste gesendet; Münzen und Profil-XP bleiben lokal. Wenn dein Browser die Speicherung blockiert, bleibt das Spiel für die laufende Sitzung spielbar; Ergebnisse werden dann nicht online veröffentlicht. Das Löschen der Website-Daten entfernt den lokalen Fortschritt.
 
 Online-Version, lokale HTTP-Version und direkt geöffnete Dateien können getrennte Speicherplätze verwenden. Die lokale Dateinutzung kann von den Browser-Einstellungen abhängen. Ältere Spielstände behalten ihr vorhandenes Guthaben, ihre Skins, Erfolge und Freischaltungen. Fehlt ein Ninja-Name, ergänzt du ihn beim Einstieg; Level und XP werden aus den bisherigen gespeicherten Statistiken berechnet. Bereits gespeicherte ältere Runs lassen sich fortsetzen; für neue Runs gelten die Raumfreischaltungen.
 
-Ältere vollständige Downloads bleiben verfügbar: [Version 1.4.0](downloads/Notification-Ninja-1.4.0.zip), [Version 1.3.0](downloads/Notification-Ninja-1.3.0.zip), [Version 1.2.0](downloads/Notification-Ninja-1.2.0.zip), [Version 1.1.0](downloads/Notification-Ninja-1.1.0.zip) und [Version 1.0.0](downloads/Notification-Ninja-1.0.0.zip).
+Ältere vollständige Downloads bleiben verfügbar: [Version 1.5.0](downloads/Notification-Ninja-1.5.0.zip), [Version 1.4.0](downloads/Notification-Ninja-1.4.0.zip), [Version 1.3.0](downloads/Notification-Ninja-1.3.0.zip), [Version 1.2.0](downloads/Notification-Ninja-1.2.0.zip), [Version 1.1.0](downloads/Notification-Ninja-1.1.0.zip) und [Version 1.0.0](downloads/Notification-Ninja-1.0.0.zip).
 
 ## Gemeinsame Rangliste
 
-Die gemeinsame Open-Run-Rangliste ist technisch vorbereitet, **noch nicht öffentlich verbunden**. Die Standarddatei `leaderboard-config.json` enthält `enabled: false` und einen leeren Endpunkt. Die Oberfläche meldet diesen Zustand und zeigt keine erfundenen Mitspieler. Das Spiel und die lokalen Highscores funktionieren vollständig ohne den Dienst.
+Die öffentliche Rangliste ist für die GitHub-Pages-Spielseite freigegeben. Lokal geöffnete Downloads verwenden eine andere Browser-Herkunft und können dort keine Ergebnisse veröffentlichen; ihre lokalen Rekorde funktionieren weiterhin.
 
-Für eine kostenlose Demo liegt die Render-Vorlage [`render.yaml`](../render.yaml) bereit. Die genaue einmalige Einrichtung steht in [server/README_NINJA.md](../server/README_NINJA.md): im eigenen Render-Konto **New → Blueprint** wählen, dieses Repository mit `render.yaml` verbinden und den **Free**-Dienst starten; anschließend seine echte HTTPS-Adresse in `leaderboard-config.json` eintragen und die Konfiguration veröffentlichen. Der Server wurde hier nicht bei Render angelegt. **Bei diesem Free-Dienst geht die SQLite-Rangliste beim Einschlafen, Neustart oder Deployment verloren**; deine lokalen Münzen und Freischaltungen bleiben erhalten. Dauerhafte Online-Highscores brauchen einen beständigen Server-Datenträger.
+Die gemeinsame Open-Run-Rangliste ist mit **[notification-ninja-ranking.onrender.com](https://notification-ninja-ranking.onrender.com)** verbunden. `leaderboard-config.json` enthält `enabled: true` und diese HTTPS-Adresse als Endpunkt. Öffne im Dojo **Rangliste**, wähle Entspannt, Normal oder Profi und veröffentliche einen beendeten Open Run ausdrücklich über die dortige Schaltfläche. Ohne Veröffentlichung erscheint dein Ergebnis nur lokal. Ein leeres Ranking bleibt leer; es gibt keine erfundenen Mitspieler. Das Spiel und die lokalen Highscores funktionieren auch bei fehlender Verbindung.
 
-Nach Aktivierung werden ausschließlich **ausdrücklich veröffentlichte, durch null Herzen beendete Open Runs** nach Schwierigkeit verglichen. Die Übertragung enthält Ninja-Name, Punkte, Schwierigkeit, Zeit und grundlegende Run-Werte. Münzen, Profil-XP, E-Mail-Adressen und Passwörter werden nicht übertragen. Eine zufällige Gerätekennung erlaubt, eigene Einträge beim Profil-Löschen zu entfernen; Abmelden erhält diese Kennung. Das ist kein Online-Konto mit Wiederherstellung oder Synchronisierung. Die serverseitige Plausibilitätsprüfung macht die im Browser berechneten Ergebnisse nicht zu einer manipulationssicheren Turnierrangliste.
+Der Server läuft als kostenlose Render-Demo. Nach einer inaktiven Phase kann der erste Zugriff etwa eine Minute dauern; warte kurz und aktualisiere die Rangliste erneut. **Bei diesem Free-Dienst geht die SQLite-Rangliste beim Einschlafen, Neustart oder Deployment verloren**; deine lokalen Münzen und Freischaltungen bleiben erhalten. Ein neuer ausdrücklich veröffentlichter Run kann danach wieder einen Ranglisteneintrag anlegen. Dauerhafte Online-Highscores brauchen einen beständigen Server-Datenträger. Die Vorlage [`render.yaml`](../render.yaml) und [server/README_NINJA.md](../server/README_NINJA.md) dokumentieren Betrieb, erneute Einrichtung und Grenzen des Dienstes.
+
+Verglichen werden ausschließlich **ausdrücklich veröffentlichte, durch null Herzen beendete Open Runs**, getrennt nach Schwierigkeit. Die Übertragung enthält Ninja-Name, Punkte, Schwierigkeit, Zeit und grundlegende Run-Werte. Münzen, Profil-XP, E-Mail-Adressen und Passwörter werden nicht übertragen. Eine zufällige Gerätekennung erlaubt, eigene Einträge beim Profil-Löschen zu entfernen; Abmelden erhält diese Kennung. Das ist kein Online-Konto mit Wiederherstellung oder Synchronisierung. Die serverseitige Plausibilitätsprüfung macht die im Browser berechneten Ergebnisse nicht zu einer manipulationssicheren Turnierrangliste.
 
 ## Entwicklung
 
@@ -223,7 +229,7 @@ notification-ninja/
 ├── dist/                     # Fertiges JavaScript-Bundle
 ├── downloads/                # Vollständiges ZIP und Prüfsumme
 ├── sw.js                     # Offline-Cache für diesen Spielpfad
-├── leaderboard-config.json   # Rangliste standardmäßig deaktiviert
+├── leaderboard-config.json   # HTTPS-Verbindung zur gemeinsamen Open-Run-Rangliste
 └── PLAN.md, TEST_REPORT.md    # Ablauf, Beispielplanung und Prüfbericht
 ```
 

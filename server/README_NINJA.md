@@ -1,6 +1,6 @@
 # Gemeinsame Rangliste für Notification Ninja
 
-Das Spiel und alle lokalen Profile funktionieren weiterhin auf GitHub Pages. Eine gemeinsame Rangliste braucht zusätzlich diesen kleinen Node-Server und eine dauerhafte SQLite-Datei. GitHub Pages führt keine Serverprogramme aus. Solange `notification-ninja/leaderboard-config.json` deaktiviert ist, zeigt das Spiel ehrlich „Online-Rangliste noch nicht verbunden“ und veröffentlicht keine Ergebnisse. Es gibt keine erfundenen Mitspieler.
+Das Spiel und alle lokalen Profile funktionieren weiterhin auf GitHub Pages. Eine gemeinsame Rangliste braucht zusätzlich diesen kleinen Node-Server und eine dauerhafte SQLite-Datei. GitHub Pages führt keine Serverprogramme aus. Seit Version 1.6 ist `notification-ninja/leaderboard-config.json` mit **https://notification-ninja-ranking.onrender.com** verbunden. Ergebnisse werden weiterhin ausschließlich nach ausdrücklichem Veröffentlichen übertragen. Es gibt keine erfundenen Mitspieler.
 
 ## Lokal mit mehreren Browsern testen
 
@@ -26,9 +26,9 @@ Dann `http://127.0.0.1:8000/notification-ninja/` in zwei getrennten Browser-Prof
 
 ## Öffentlich betreiben
 
-Benötigt werden ein Node-24-Host oder Docker-Host, ein dauerhafter Datenträger und eine eigene HTTPS-Adresse, beispielsweise `https://ninja-api.example.org`. Die Adresse ist ein Platzhalter. In dieser Repository-Version wurde kein externer Server angelegt oder veröffentlicht.
+Benötigt werden ein Node-24-Host oder Docker-Host, ein dauerhafter Datenträger und eine eigene HTTPS-Adresse, beispielsweise `https://ninja-api.example.org`. Die Adresse ist ein Platzhalter. Der bereitgestellte Dienst **https://notification-ninja-ranking.onrender.com** läuft als kostenlose Render-Demo. Health, alle drei Open-Run-Schwierigkeiten und die CORS-Freigabe für `https://brukevfh.github.io` wurden über öffentliches HTTPS geprüft. Die folgende Anleitung erklärt den Aufbau und die Einrichtung weiterer Instanzen.
 
-### Kostenlose Demo über Render vorbereiten
+### Kostenlose Demo über Render
 
 Die Datei [`render.yaml`](../render.yaml) legt ausdrücklich einen **Free-Web-Service ohne kostenpflichtigen Datenträger** an. Die API und SQLite passen in diesen Dienst. Render liefert dessen öffentliche `https://…onrender.com`-Adresse über seinen TLS-Proxy aus; für diese Vorlage prüft der Node-Prozess keine Proxy-Header und vertraut ihnen auch nicht. Der Browser akzeptiert als öffentlichen Endpunkt nur HTTPS.
 

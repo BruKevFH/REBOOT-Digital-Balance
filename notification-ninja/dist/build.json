@@ -1,6 +1,6 @@
 {
   "name": "Notification Ninja – Master Your Digital Balance",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "engine": "Canvas 2D / Web Audio",
   "style": "Illustrated cartoon arcade",
   "entry": "index.html",
@@ -25,5 +25,7 @@
   ],
   "realHandThrows": true,
   "fullscreen": true,
+  "hudLayout": "sidebar",
+  "largeHearts": true,
   "leaderboard": "optional-open-run-service"
 }

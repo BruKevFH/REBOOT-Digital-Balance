@@ -1,6 +1,6 @@
 # Notification Ninja: Ablauf und Weiterentwicklung
 
-Diese Übersicht dokumentiert den Spielablauf von Version 1.5.0 und ordnet die technischen Aufgaben. Der Zeitplan am Ende ist ein **anpassbares Beispiel für Weiterentwicklung**. Seine Daten sind keine vereinbarte Projektfrist.
+Diese Übersicht dokumentiert den Spielablauf von Version 1.6.0 und ordnet die technischen Aufgaben. Der Zeitplan am Ende ist ein **anpassbares Beispiel für Weiterentwicklung**. Seine Daten sind keine vereinbarte Projektfrist.
 
 ## Ablauf der Bildschirme
 
@@ -72,6 +72,8 @@ Das Diagramm zeigt den Einstieg, Open Run und die Kampagne. Die Startseite führ
 
 Das Spielfeld zeigt ein größeres Ninja-Team um die Mitte: ein Werfer auf Entspannt, zwei auf Normal und drei auf Profi. Jeder trägt den beim Run-Start ausgewählten Look. Gegenstände folgen beim Ausholen der tatsächlichen Handposition, lösen sich bei der Wurfbewegung und wachsen beim Anflug auf volle Größe. Die Aushol- und Anflugphase sind vor Schnitten geschützt; erst danach nimmt die Schnittprüfung den Gegenstand auf. Dadurch stimmen Animation und spielbare Flugbahn überein.
 
+Die Spieloberfläche reserviert rechts einen eigenen Bereich für Zeit, Balance, Overload, Münzen, Tempo, aktive Effekte und Super-Taste. Das Canvas endet links neben diesem Bereich und reicht bis zum unteren Bildschirmrand; eine untere Informationsleiste entfällt. Die Seitenbreite passt sich mit 152, 124, 108 oder 76 Pixeln an die Bildschirmgröße an. Bei 320 Pixeln Gesamtbreite bleiben 244 Pixel Spielfeld. Die Herzen haben oben einen eigenen Bereich mit 26–30 Pixel großen Symbolen, Umrissen verlorener Herzen und einem Zahlenzähler. Ein kurzer Trefferimpuls und die Hervorhebung des letzten Herzens unterstützen das direkte Fehlerfeedback.
+
 Die Ansicht-Taste auf der Startseite und in der Werkzeugleiste fordert den nativen Vollbildmodus nur nach einem Klick an. Bei fehlender oder abgelehnter Browser-API schaltet sie auf eine große Spielansicht um und benennt diese entsprechend. Das gilt auch für Safari-Konfigurationen, die Webseiten-Vollbild nicht unterstützen. Die Browserleisten können dabei sichtbar bleiben. Erneutes Tippen beendet die aktuelle Ansicht; `Esc` beendet die große Ersatzansicht und dient sonst der Spielpause.
 
 Das Schulzimmer ist frei; Gaming-Zimmer kostet 80, Schlafzimmer 180 und Balance Master 320 Münzen, jeweils nach dem Kauf des vorherigen Raums. Vor einem noch gesperrten Raum endet der Run mit `result: locked`; die verdienten Münzen werden einmal gutgeschrieben. Erst mit allen vier Räumen führt die Kampagne durch den ganzen Tag. Einzelmodi starten den gewählten offenen Raum direkt. Ein gespeicherter Run setzt seine bestehende Ausstattung fort. Im Startmenü gibt es Entspannt mit fünf Herzen, Normal mit vier und Profi mit drei Herzen.
@@ -94,8 +96,8 @@ Ein falscher Schnitt und eine verpasste Ablenkung kosten jeweils ein Herz, sofer
 | Progression | Münzen, Zimmerkarte, Hintergründe, Fähigkeiten, Erfolge, Skins und Highscores lokal verwalten | Werden Run-Münzen einmal gutgeschrieben, Raumvoraussetzungen geprüft und Erfolgsbelohnungen nur einmal abgeholt? |
 | Player | Ninja-Name, aus Statistiken abgeleitete XP und Level sowie lokales Postfach | Bleiben alte Münzen und Freischaltungen beim Benennen erhalten und taucht jede Freischaltung nur einmal auf? |
 | Mentor | NIM-Erklärungen mit Animation, Tastaturfokus und bestätigten Hinweisen | Stehen Spiel und Uhr während der Erklärung still und wird anschließend der richtige vorherige Zustand wiederhergestellt? |
-| Leaderboard | Optional veröffentlichte Open-Ergebnisse nach Schwierigkeit vergleichen | Bleibt die deaktivierte Rangliste ehrlich leer und werden nur ausdrücklich veröffentlichte gültige Open Runs übertragen? |
-| Ansicht | Browser-Vollbild oder große Spielansicht öffnen und verlassen | Meldet die Schaltfläche den tatsächlichen Modus und passt sich die Spielfläche beim Wechsel an? |
+| Leaderboard | Optional veröffentlichte Open-Ergebnisse nach Schwierigkeit vergleichen | Bleibt eine leere Rangliste ehrlich leer und werden nur ausdrücklich veröffentlichte gültige Open Runs übertragen? |
+| Ansicht | Browser-Vollbild oder große Spielansicht öffnen und verlassen; Infos und Herzen getrennt vom Flugbereich darstellen | Meldet die Schaltfläche den tatsächlichen Modus, bleiben Ziele außerhalb der Seitenleiste und passen Canvas und Herzen bei schmalen Bildschirmen? |
 
 ```mermaid
 flowchart LR
@@ -127,7 +129,7 @@ Die Münzökonomie vergibt eine Grundmünze je 14 richtige Entscheidungen, je ei
 
 `throwers.js` liefert dieselben Ninja-Positionen und Handbewegungen an Spielregeln und Renderer. Die Anzahl richtet sich nach der Schwierigkeit; jeder neue Gegenstand erhält seinen Werfer und die Aushol-/Anflugphase. `game.js` prüft vor einem Schnitt, ob der Anflug abgeschlossen ist. `fullscreen.js` verwaltet den nativen Vollbildmodus einschließlich WebKit-API und die große Ersatzansicht bei fehlender Unterstützung. Die Oberfläche meldet den tatsächlichen Modus, statt die Ersatzansicht als natives Vollbild auszugeben.
 
-`local-profile.js` verwaltet den lokalen Anmeldestatus und löscht gezielt Notification-Ninja-Daten. `leaderboard.js` verbindet den Browser bei aktivierter Konfiguration mit `server/ninja-leaderboard.mjs`. Die Standardkonfiguration ist deaktiviert; es wurde kein externer Ranglistenserver bereitgestellt. [`render.yaml`](../render.yaml) bereitet einen kostenlosen Render-Dienst vor. Zur Aktivierung muss der Betreiber im eigenen Konto den Blueprint starten und anschließend die echte HTTPS-Adresse in `leaderboard-config.json` veröffentlichen. Bei diesem Free-Dienst wird die SQLite-Rangliste beim Einschlafen, Neustart oder Deployment gelöscht. Lokale Profile sind davon unabhängig. Einrichtung und Grenzen stehen in [server/README_NINJA.md](../server/README_NINJA.md).
+`local-profile.js` verwaltet den lokalen Anmeldestatus und löscht gezielt Notification-Ninja-Daten. `leaderboard.js` verbindet den Browser über `leaderboard-config.json` mit dem öffentlichen Dienst **https://notification-ninja-ranking.onrender.com**; `enabled` ist `true`. Der Server führt `server/ninja-leaderboard.mjs` aus und nimmt nur ausdrücklich veröffentlichte Open Runs entgegen, getrennt nach den drei Schwierigkeiten. Leere Listen erhalten keine erfundenen Einträge. Der kostenlose Render-Dienst kann nach Inaktivität etwa eine Minute zum Aufwachen brauchen. Seine SQLite-Rangliste wird beim Einschlafen, Neustart oder Deployment gelöscht; lokale Profile bleiben davon unabhängig. [`render.yaml`](../render.yaml) und [server/README_NINJA.md](../server/README_NINJA.md) dokumentieren Betrieb, erneute Einrichtung und Grenzen.
 
 Der Super lädt sich durch richtige Entscheidungen und kann bei 100 Prozent über Schaltfläche oder Leertaste aktiviert werden. Zeitzauber verlangsamt Objekte acht Sekunden lang, Rettungsschirm schützt vor einem Fehler und Aufräum-Wirbel entfernt ausschließlich Ablenkungen. Die Leveluhr wird durch diese Fähigkeiten nicht verlängert.
 

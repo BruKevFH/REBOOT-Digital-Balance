@@ -4,7 +4,7 @@ from zipfile import ZipFile, ZipInfo, ZIP_DEFLATED
 from hashlib import sha256
 
 ROOT=Path(__file__).resolve().parents[1]/'notification-ninja'
-NAME='Notification-Ninja-1.5.0'
+NAME='Notification-Ninja-1.6.0'
 FILES=['index.html','styles.css','sw.js','manifest.webmanifest','favicon.svg','dist/ninja.js','dist/build.json','leaderboard-config.json']
 INSTRUCTIONS='''NOTIFICATION NINJA – MASTER YOUR DIGITAL BALANCE
 
@@ -23,6 +23,8 @@ Je nach Schwierigkeit werfen 1 / 2 / 3 große Ninjas in deinem ausgewählten
 Look die echten Gegenstände aus ihrer Hand ins Feld. Ausholen und Anflug
 sind geschützt; erst im freien Flug kannst du die Gegenstände schneiden.
 Neue Runs übernehmen die Auswahl. Ein gespeicherter Run behält seinen Look.
+Große Herzsymbole zeigen deine verbleibenden Chancen. Rundenuhr, Münzen,
+Tempo und Super stehen kompakt rechts; das Spielfeld reicht bis nach unten.
 Die Vollbild-Taste oben rechts gibt dir mehr Spielfläche. Unterstützt dein
 Browser kein echtes Vollbild, öffnet sie eine große Spielansicht mit kompakter
 Anzeige; die Browserleiste kann dabei sichtbar bleiben. Zum Verlassen erneut
@@ -101,14 +103,19 @@ Falls lokale Dateien eingeschränkt sind, den Ordner über HTTP öffnen.
 Das Spiel ist eine Lernsimulation; Balance und Overload sind Spielwerte.
 Ergebnisse lassen sich im Spiel als JSON exportieren.
 
-Die optionale gemeinsame Rangliste ist standardmäßig nicht verbunden.
-Es gibt keine erfundenen Mitspieler. Nur ausdrücklich veröffentlichte
-Open Runs zählen, getrennt nach Schwierigkeit. Offline wird nichts gesendet.
-Ein kostenloser Render-Server ist im Repository vorbereitet, nicht gestartet:
-server/README_NINJA.md beschreibt die einmalige Einrichtung und URL-Aktivierung.
-https://github.com/BruKevFH/REBOOT-Digital-Balance/blob/main/server/README_NINJA.md
+Die gemeinsame Rangliste ist mit https://notification-ninja-ranking.onrender.com
+verbunden. Nur ausdrücklich veröffentlichte Open Runs zählen, getrennt nach
+Schwierigkeit. Es gibt keine erfundenen Mitspieler. Ohne Internet werden keine
+Ergebnisse übertragen; das lokale Spiel funktioniert weiterhin.
+Zum Veröffentlichen die GitHub-Pages-Version verwenden. Ein lokal geöffneter
+Download hat eine andere Herkunft und darf deshalb nicht an die öffentliche
+Rangliste senden.
+Der kostenlose Render-Dienst kann nach einer Pause ungefähr eine Minute zum
+Starten brauchen. Warte kurz und öffne die Rangliste bei Bedarf erneut.
 Bei Render Free geht die Online-Rangliste durch Einschlafen, Neustart oder
 Deployment verloren. Lokale Münzen und Profile bleiben erhalten.
+Betriebsanleitung:
+https://github.com/BruKevFH/REBOOT-Digital-Balance/blob/main/server/README_NINJA.md
 
 https://brukevfh.github.io/REBOOT-Digital-Balance/notification-ninja/
 '''
