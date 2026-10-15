@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { NinjaGame, Game, LEVELS, SKINS, CONTENT, STORAGE_KEY, DIFFICULTIES, SKILLS, WORLDS, BACKGROUNDS } from '../notification-ninja/src/game.js';
+import { isThrowReady } from '../notification-ninja/src/throwers.js';
 
 class Storage {
   constructor() { this.data = new Map(); }
@@ -925,7 +926,7 @@ test('legacy profiles migrate safely and extended live state survives a paused r
   enhanced.game.state.bonusClock=19.99;enhanced.game.update(.05);enhanced.game.pause();
   const resumed=new NinjaGame({storage:enhanced.storage,width:800,height:600});
   for(const key of ['skillIds','selectedSuper','runCoins','superCharge','bonusPhase','bonusClock','reviveUsed'])assert.deepEqual(resumed.state[key],enhanced.game.state[key],key);
-  assert.ok(resumed.state.effects.slow>7);assert.deepEqual(resumed.profile,enhanced.game.profile);assert.equal(resumed.exportData().version,'1.4.0');
+  assert.ok(resumed.state.effects.slow>7);assert.deepEqual(resumed.profile,enhanced.game.profile);assert.equal(resumed.exportData().version,'1.5.0');
 });
 
 
@@ -1034,7 +1035,7 @@ test('completed players can explicitly replay unscored training without losing c
 function autoplayFrame(game) {
   const events=game.update(.05);
   for(const item of [...game.state.objects]) {
-    if(item.kind==='useful'||item.y<=item.radius||item.y>=game.height-item.radius)continue;
+    if(item.kind==='useful'||!isThrowReady(item)||item.y<=item.radius||item.y>=game.height-item.radius)continue;
     events.push(...game.swipe([{x:item.x-item.radius*.85,y:item.y},{x:item.x+item.radius*.85,y:item.y}]));
   }
   return events;
@@ -1074,7 +1075,8 @@ test('faster late waves keep their separate lanes on narrow screens as the launc
       if(game.state.stageElapsed>=45)launches[1]++;
     }
     for(const first of game.state.objects)for(const second of game.state.objects)if(first.id!==second.id) {
-      assert.ok(Math.abs(first.x-second.x)>=first.radius+second.radius+24,'no overlapping targets at high tempo');
+      assert.ok(Math.abs((first.launch?.laneX??first.x)-(second.launch?.laneX??second.x))>=first.radius+second.radius+24,'whole-flight lane reservations stay separate at high tempo');
+      if(isThrowReady(first)&&isThrowReady(second))assert.ok(Math.abs(first.x-second.x)>=first.radius+second.radius+24,'swipeable targets never overlap');
     }
   }
   assert.ok(launches[1]>launches[0],`${launches[0]} first versus ${launches[1]} late launches`);

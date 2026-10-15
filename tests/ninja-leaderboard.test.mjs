@@ -88,12 +88,12 @@ test('SQLite leaderboard survives server restart without storing plaintext authe
   assert.equal(fs.readFileSync(databasePath).includes(Buffer.from(token.token)),false);
 });
 
-function browserFixture(endpoint,storage=new Storage()){
+function browserFixture(endpoint,storage=new Storage(),{closeConnections=false}={}){
   const calls=[];
   const fetchImpl=async(url,options)=>{
     calls.push(String(url));
     if(url==='./leaderboard-config.json')return new Response(JSON.stringify({enabled:true,endpoint}),{headers:{'Content-Type':'application/json'}});
-    return fetch(url,{...options,headers:{...options.headers,Origin:origin}});
+    return fetch(url,{...options,headers:{...options.headers,Origin:origin,...(closeConnections?{Connection:'close'}:{})}});
   };
   return {client:createLeaderboard({storage,fetchImpl}),calls,storage};
 }
@@ -142,17 +142,20 @@ test('concurrent browser loads share initialization and do not publish or miss a
 });
 
 test('a free-host database reset permits explicit republication and deletion of an already missing identity',async t=>{
-  const first=await fixture(t),browser=browserFixture(first.endpoint);
+  // A new server process must receive a new connection, rather than a pooled
+  // Undici socket whose close notification can race the same-port restart.
+  const transport={closeConnections:true};
+  const first=await fixture(t),browser=browserFixture(first.endpoint,new Storage(),transport);
   assert.equal((await browser.client.submit(run())).ok,true);
   const stale=new Storage();for(const[key,value]of browser.storage.data)stale.setItem(key,value);
   const port=first.server.address().port;await new Promise(resolve=>first.server.close(resolve));
   const fresh=createNinjaLeaderboardServer({allowedOrigins:[origin]});fresh.listen(port,'127.0.0.1');await once(fresh,'listening');
   t.after(()=>new Promise(resolve=>fresh.close(resolve)));
-  const restored=browserFixture(first.endpoint,browser.storage);
-  assert.equal((await restored.client.load()).totalPlayers,0);
+  const restored=browserFixture(first.endpoint,browser.storage,transport);
+  const empty=await restored.client.load();assert.equal(empty.ok,true,empty.reason);assert.equal(empty.totalPlayers,0);
   assert.equal((await restored.client.submit(run(2000,'after-reset-0001'))).ok,true);
   assert.equal((await restored.client.load()).own.score,2000);
-  const missing=browserFixture(first.endpoint,stale);
+  const missing=browserFixture(first.endpoint,stale,transport);
   assert.equal((await missing.client.deletePlayer()).ok,true);assert.equal(stale.data.size,0);
   assert.equal((await restored.client.load()).entries.length,1);
 });

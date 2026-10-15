@@ -1,3 +1,4 @@
+import { THROW_RECOVERY, getThrowerLayout, getThrowerPose, isThrowReady } from './throwers.js';
 import { GUIDE_IDS, normalizePlayer, validateUsername, validateNotification } from './player.js';
 export { GUIDE_IDS, normalizePlayer, validateUsername, getPlayerProgress } from './player.js';
 import { DIFFICULTIES, SKILLS, ACHIEVEMENTS, WORLDS, BACKGROUNDS, buyWorld as purchaseWorld, buyBackground as purchaseBackground, equipBackground, sanitizeProgress, buySkill as purchaseSkill, equipSuper, claimAchievement as claimReward, unlockAchievements, getDifficulty, getSpeedFactor, getOpenSpeedFactor } from './progression.js';
@@ -57,6 +58,14 @@ const isObject = value => value !== null && typeof value === 'object' && !Array.
 const number = (value,fallback=0,min=0,max=MAX) => typeof value === 'number' && Number.isFinite(value) ? Math.max(min,Math.min(max,value)) : fallback;
 const integer = (value,fallback=0,min=0,max=MAX) => Math.trunc(number(value,fallback,min,max));
 const clone = value => JSON.parse(JSON.stringify(value));
+const clamp = (value,min,max) => Math.max(min,Math.min(max,value));
+const smoothstep = value => {const p=clamp(value,0,1);return p*p*(3-2*p);};
+function restoreLaunch(value,width,height,difficulty){
+  if(!isObject(value)||!Number.isInteger(value.throwerIndex)||value.throwerIndex<0||value.throwerIndex>=getThrowerLayout(width,height,difficulty).length)return null;
+  if(!['fromX','fromY','laneX','windup','arc','initialVy'].every(key=>Number.isFinite(value[key])))return null;
+  if(value.fromX<0||value.fromX>width||value.fromY<0||value.fromY>height||value.laneX<0||value.laneX>width||value.windup<.04||value.windup>.5||value.arc<.000001||value.arc>.6||value.initialVy>=0||value.initialVy< -100000000)return null;
+  return {throwerIndex:value.throwerIndex,fromX:value.fromX,fromY:value.fromY,laneX:value.laneX,windup:value.windup,arc:value.arc,initialVy:value.initialVy};
+}
 const fail = reason => ({ok:false,reason});
 const hash = value => {let h=2166136261;for(const char of String(value))h=Math.imul(h^char.charCodeAt(0),16777619);return (h>>>0)||1;};
 const scoreKeys = () => Object.fromEntries(MODES.map(mode=>[mode,0]));
@@ -143,20 +152,32 @@ export class NinjaGame {
   resumeRun(){if(!this.state.started||this.state.ended)return fail('Kein gespeicherter Run zum Fortsetzen.');this.state.paused=false;return {ok:true,state:this.state,events:[]};}
   resize(width,height){if(!Number.isFinite(width)||!Number.isFinite(height)||width<240||height<240)return fail('Ungültige Spielfeldgröße.');
     const w=Math.min(5000,width),h=Math.min(5000,height),sx=w/this.width,sy=h/this.height;this.width=w;this.height=h;
-    for(const obj of this.state.objects){obj.x*=sx;obj.y*=sy;obj.vx*=sx;obj.vy*=sy;obj.gravity*=sy;obj.radius=this._radius();obj.x=Math.max(obj.radius,Math.min(w-obj.radius,obj.x));}
+    const actors=getThrowerLayout(w,h,this.state.difficulty);
+    for(const obj of this.state.objects){obj.x*=sx;obj.y*=sy;obj.vx*=sx;obj.vy*=sy;obj.gravity*=sy;obj.radius=this._radius();
+      if(obj.launch){const launch=obj.launch;launch.fromX*=sx;launch.fromY*=sy;launch.laneX*=sx;launch.initialVy*=sy;
+        if(obj.age<launch.windup){const actor=actors[launch.throwerIndex],hand=getThrowerPose(actor,obj.age,launch.windup),release=getThrowerPose(actor,launch.windup,launch.windup);obj.x=hand.handX;obj.y=hand.handY;launch.fromX=release.handX;launch.fromY=release.handY;}}
+      else obj.x=Math.max(obj.radius,Math.min(w-obj.radius,obj.x));}
     return {ok:true,width:w,height:h};}
-  _spawnContent(id){if(this.state.objects.length>=50)return null;const content=CONTENT_MAP.get(id);if(!content)return null;
+  _availableThrower(){const s=this.state,actors=getThrowerLayout(this.width,this.height,s.difficulty);
+    for(let offset=0;offset<actors.length;offset++){const index=(s.objectSequence+offset)%actors.length;
+      if(!s.objects.some(obj=>obj.launch?.throwerIndex===index&&obj.age<obj.launch.windup+THROW_RECOVERY))return index;}
+    return null;}
+  _spawnContent(id,throwerIndex=null){if(this.state.objects.length>=50)return null;const content=CONTENT_MAP.get(id);if(!content)return null;
+    const actors=getThrowerLayout(this.width,this.height,this.state.difficulty),actor=throwerIndex===null?null:actors[throwerIndex];
+    if(throwerIndex!==null&&(!actor||this.state.objects.some(obj=>obj.launch?.throwerIndex===throwerIndex&&obj.age<obj.launch.windup+THROW_RECOVERY)))return null;
     const radius=this._radius(),inset=radius+8,laneCount=Math.min(5,Math.max(2,Math.floor((this.width-inset*2)/(radius*2+28))+1));
     const lanes=Array.from({length:laneCount},(_,i)=>inset+i*(this.width-inset*2)/(laneCount-1));
     // A lane stays reserved for the whole flight, including slow motion. No lateral
     // drift means a swipe at one object cannot accidentally meet its neighbour.
-    const available=lanes.filter(x=>!this.state.objects.some(obj=>Math.abs(obj.x-x)<obj.radius+radius+24));
+    const available=lanes.filter(x=>!this.state.objects.some(obj=>Math.abs((obj.launch?.laneX??obj.x)-x)<obj.radius+radius+24));
     if(!available.length)return null;
     const x=available[Math.floor(this._random()*available.length)],span=Math.max(120,this.height-40),gravity=span*.08,flight=((this.state.isTutorial?4.6:this._difficulty().flight)+this._random()*.6)/this.state.speedFactor;
-    const y=this.height+radius+6,target=-radius-2,distance=y-target,vy=-(distance/flight+.5*gravity*flight);
+    const target=-radius-2,release=actor?getThrowerPose(actor,.22,.22):null,y=release?release.handY:this.height+radius+6,distance=y-target,vy=-(distance/flight+.5*gravity*flight);
     const obj={id:`ninja-${this.state.runSerial}-${++this.state.objectSequence}`,contentId:id,label:content.label,text:content.text,
       kind:content.powerup?'powerup':content.kindByContext[this.state.context],powerup:content.powerup||null,context:this.state.context,
       x,y,vx:0,vy,gravity,radius,age:0};
+    if(actor){const speed=Math.sqrt(Math.min(this.state.speedFactor,4)),windup=.22/speed,arc=Math.min(.30/speed,flight*.28),hand=getThrowerPose(actor,0,windup);
+      obj.launch={throwerIndex,fromX:release.handX,fromY:release.handY,laneX:x,windup,arc,initialVy:vy};obj.x=hand.handX;obj.y=hand.handY;}
     this.state.objects.push(obj);return obj;}
   _spawn(events){const s=this.state,canEarnCoins=s.stageMetrics.earnedCoins<this._coinCap();let ids;
     if(!canEarnCoins)s.bonusCoinPending=false;
@@ -171,7 +192,7 @@ export class NinjaGame {
         if(s.bonusPhase?.id==='focus-wave'&&this._random()<.65)return pick(distractions);
         return pick(regular);
       });}
-    for(const id of ids){const obj=this._spawnContent(id);if(obj){if(id==='power-coins')s.bonusCoinPending=false;s.spawnCount++;events.push({type:'spawned',...clone(obj)});}}
+    for(const id of ids){const throwerIndex=this._availableThrower();if(throwerIndex===null)break;const obj=this._spawnContent(id,throwerIndex);if(obj){if(id==='power-coins')s.bonusCoinPending=false;s.spawnCount++;events.push({type:'spawned',...clone(obj)});}}
     const finale=s.levelIndex===3&&s.stageElapsed>=75&&!s.pendingContext;
     s.spawnTimer+=s.isTutorial?1.8:this._difficulty().spawn*(finale?.77:s.levelIndex===3?.9:s.context==='sleep'?1.08:s.context==='gaming'?.92:1)/s.speedFactor;}
   _good(events){const s=this.state;s.metrics.correctDecisions++;s.stageMetrics.correctDecisions++;s.decisionStreak++;this._balance();
@@ -188,7 +209,7 @@ export class NinjaGame {
     events.push({type:kind==='useful'?'useful-mistake':'distraction-missed',id:obj.id,contentId:obj.contentId,kind:obj.kind,x:obj.x,y:obj.y,protected:false,points:0});
     events.push({type:'life-lost',lives:s.lives,reason:kind==='useful'?'useful-cut':'distraction-missed'});
     if(!s.lives){if(s.isTutorial){s.lives=MAX_LIVES;s.overload=0;events.push({type:'tutorial-retry'});}else if(this._hasSkill('second-chance')&&!s.reviveUsed){s.reviveUsed=true;s.lives=1;s.overload=Math.min(50,s.overload);events.push({type:'second-chance',lives:1});}else this._finishRun('lives',events);}}
-  _slice(obj,events,chain=false){const s=this.state;if(!s.objects.some(item=>item.id===obj.id)||s.ended)return;
+  _slice(obj,events,chain=false){const s=this.state;if(!s.objects.some(item=>item.id===obj.id)||s.ended||!isThrowReady(obj))return;
     s.objects=s.objects.filter(item=>item.id!==obj.id);
     if(obj.kind==='useful'){this._mistake(obj,'useful',events);return;}
     if(obj.kind==='powerup'){s.metrics.powerups++;if(obj.powerup==='coins')this._earnCoins(1,events,'collectable',{x:obj.x,y:obj.y});else if(obj.powerup==='shield')s.effects.shield=1;else s.effects[obj.powerup]=obj.powerup==='slow'?6:10;
@@ -203,7 +224,7 @@ export class NinjaGame {
     points=points.slice(0,256);if(points.length<2||points.some(point=>!isObject(point)||!Number.isFinite(point.x)||!Number.isFinite(point.y)))return [];
     if(points.reduce((total,point,i)=>total+(i?Math.hypot(point.x-points[i-1].x,point.y-points[i-1].y):0),0)<4)return [];
     const s=this.state,events=[],wide=s.effects.flow>0?1.2:1;
-    const direct=s.objects.map(obj=>({obj,order:segmentOrder(points,obj,obj.radius*wide)})).filter(hit=>Number.isFinite(hit.order)).sort((a,b)=>a.order-b.order);
+    const direct=s.objects.filter(isThrowReady).map(obj=>({obj,order:segmentOrder(points,obj,obj.radius*wide)})).filter(hit=>Number.isFinite(hit.order)).sort((a,b)=>a.order-b.order);
     for(const {obj} of direct){if(s.ended)break;if(!s.objects.some(item=>item.id===obj.id))continue;this._slice(obj,events);
       if(obj.kind==='distraction'&&s.effects.flow>0){for(const nearby of [...s.objects])if(nearby.kind==='distraction'&&Math.hypot(nearby.x-obj.x,nearby.y-obj.y)<=90)this._slice(nearby,events,true);}}
     if(s.isTutorial&&s.tutorialDecisions>=6&&s.tutorialCuts>=2&&s.tutorialPassed>=2)this._endTutorial('learned',events);
@@ -226,8 +247,13 @@ export class NinjaGame {
     s.elapsed+=dt;s.stageElapsed=s.mode==='open'?s.stageElapsed+dt:Math.min(s.duration,s.stageElapsed+dt);s.remaining=s.mode==='open'?0:Math.max(0,s.duration-s.stageElapsed);s.speedFactor=this._speed();
     for(const effect of ['slow','multiplier','flow'])s.effects[effect]=Math.max(0,s.effects[effect]-dt);
     if(s.levelIndex===2&&!s.isTutorial&&s.stageElapsed>=8-.0000001)s.stopAvailable=true;
-    for(const obj of [...s.objects]){if(s.ended)break;obj.age+=step;obj.x+=obj.vx*step;obj.y+=obj.vy*step+.5*obj.gravity*step*step;obj.vy+=obj.gravity*step;
-      if(obj.x<obj.radius){obj.x=obj.radius;obj.vx=Math.abs(obj.vx);}else if(obj.x>this.width-obj.radius){obj.x=this.width-obj.radius;obj.vx=-Math.abs(obj.vx);}
+    const actors=getThrowerLayout(this.width,this.height,s.difficulty);
+    for(const obj of [...s.objects]){if(s.ended)break;obj.age+=step;
+      if(obj.launch){const launch=obj.launch;
+        if(obj.age<launch.windup){const hand=getThrowerPose(actors[launch.throwerIndex],obj.age,launch.windup);obj.x=hand.handX;obj.y=hand.handY;}
+        else{const flightAge=obj.age-launch.windup;obj.x=launch.fromX+(launch.laneX-launch.fromX)*smoothstep(flightAge/launch.arc);obj.y=launch.fromY+launch.initialVy*flightAge+.5*obj.gravity*flightAge*flightAge;obj.vy=launch.initialVy+obj.gravity*flightAge;}}
+      else{obj.x+=obj.vx*step;obj.y+=obj.vy*step+.5*obj.gravity*step*step;obj.vy+=obj.gravity*step;
+        if(obj.x<obj.radius){obj.x=obj.radius;obj.vx=Math.abs(obj.vx);}else if(obj.x>this.width-obj.radius){obj.x=this.width-obj.radius;obj.vx=-Math.abs(obj.vx);}}
       if(obj.y+obj.radius<0||obj.age>12)this._pass(obj,events);}
     if(s.ended)return events;
     if(s.isTutorial&&s.tutorialDecisions>=6&&s.tutorialCuts>=2&&s.tutorialPassed>=2)this._endTutorial('learned',events);
@@ -288,7 +314,7 @@ export class NinjaGame {
     if(s.superCharge<100)return fail('Deine Superfähigkeit lädt sich durch richtige Entscheidungen auf.');
     const id=s.selectedSuper,events=[];s.superCharge=0;s.metrics.superUses++;const duration=id==='slow-super'?8:id==='shield-super'?1:0;
     events.push({type:'super-used',id,duration,charge:0});if(id==='slow-super')s.effects.slow=8;else if(id==='shield-super')s.effects.shield=1;
-    else {this._superSlicing=true;try{for(const obj of [...s.objects])if(obj.kind==='distraction')this._slice(obj,events,true);}finally{this._superSlicing=false;}}
+    else {this._superSlicing=true;try{for(const obj of [...s.objects])if(obj.kind==='distraction'&&isThrowReady(obj))this._slice(obj,events,true);}finally{this._superSlicing=false;}}
     this._record('super-used',{id});this.save();return {ok:true,events};}
   buySkin(id){const skin=SKIN_MAP.get(id);if(!skin)return fail('Unbekannter Skin.');if(this.profile.unlockedSkins.includes(id))return fail('Dieser Skin ist bereits freigeschaltet.');
     if(this.profile.coins<skin.cost)return fail('Dafür fehlen Coins.');this.profile.coins-=skin.cost;this.profile.unlockedSkins.push(id);this.save();return {ok:true,id,coins:this.profile.coins};}
@@ -347,11 +373,11 @@ export class NinjaGame {
     s.tutorialResults=isObject(source.tutorialResults)?{decisions:integer(source.tutorialResults.decisions),cuts:integer(source.tutorialResults.cuts),passed:integer(source.tutorialResults.passed),elapsed:number(source.tutorialResults.elapsed,0,0,60),reason:s.tutorialReason}:null;
     s.history=(Array.isArray(source.history)?source.history:[]).slice(-200).filter(isObject).map(item=>({type:typeof item.type==='string'?item.type.slice(0,50):'unknown',time:number(item.time),elapsed:number(item.elapsed),context:CONTEXTS.includes(item.context)?item.context:'study'}));
     const savedWidth=number(saved.width,this.width,240,5000),savedHeight=number(saved.height,this.height,240,5000),ids=new Set();
-    s.objects=(Array.isArray(source.objects)?source.objects:[]).slice(-50).filter(item=>isObject(item)&&typeof item.id==='string'&&CONTENT_MAP.has(item.contentId)&&CONTEXTS.includes(item.context)&&[item.x,item.y,item.vx,item.vy,item.gravity].every(Number.isFinite)).filter(item=>{if(ids.has(item.id))return false;ids.add(item.id);return true;}).map(item=>{const content=CONTENT_MAP.get(item.contentId);return {id:item.id.slice(0,100),contentId:content.id,label:content.label,text:content.text,kind:content.powerup?'powerup':content.kindByContext[item.context],powerup:content.powerup||null,context:item.context,x:number(item.x,0,-savedWidth,savedWidth*2),y:number(item.y,0,-savedHeight,savedHeight*2),vx:number(item.vx,0,-2000,2000),vy:number(item.vy,-400,-5000,5000),gravity:number(item.gravity,40,0,1000),radius:number(item.radius,36,10,100),age:number(item.age,0,0,12)};});
+    s.objects=(Array.isArray(source.objects)?source.objects:[]).slice(-50).filter(item=>isObject(item)&&typeof item.id==='string'&&CONTENT_MAP.has(item.contentId)&&CONTEXTS.includes(item.context)&&[item.x,item.y,item.vx,item.vy,item.gravity].every(Number.isFinite)).filter(item=>{if(ids.has(item.id))return false;ids.add(item.id);return true;}).map(item=>{const content=CONTENT_MAP.get(item.contentId),launch=restoreLaunch(item.launch,savedWidth,savedHeight,s.difficulty);return {id:item.id.slice(0,100),contentId:content.id,label:content.label,text:content.text,kind:content.powerup?'powerup':content.kindByContext[item.context],powerup:content.powerup||null,context:item.context,x:number(item.x,0,-savedWidth,savedWidth*2),y:number(item.y,0,-savedHeight,savedHeight*2),vx:number(item.vx,0,-2000,2000),vy:number(item.vy,-400,launch?-100000000:-5000,launch?100000000:5000),gravity:number(item.gravity,40,0,1000),radius:number(item.radius,36,10,100),age:number(item.age,0,0,12),...(launch?{launch}:{})};});
     if(s.scene!=='playing'&&s.scene!=='limit-choice')s.objects=[];
     this.state=s;this._balance();const targetWidth=this.width,targetHeight=this.height;this.width=savedWidth;this.height=savedHeight;this.resize(targetWidth,targetHeight);
   }catch{this.state=emptyState(this.seed,this.profile.selectedSkin);this.storageFailed=true;this.storageError='unreadable';}}
   getSnapshot(){return clone({state:this.state,profile:this.profile,width:this.width,height:this.height,storageFailed:this.storageFailed});}
-  exportData(){return clone({game:'Notification Ninja',version:'1.4.0',schemaVersion:1,width:this.width,height:this.height,profile:this.profile,state:this.state});}
+  exportData(){return clone({game:'Notification Ninja',version:'1.5.0',schemaVersion:1,width:this.width,height:this.height,profile:this.profile,state:this.state});}
 }
 export const Game = NinjaGame;

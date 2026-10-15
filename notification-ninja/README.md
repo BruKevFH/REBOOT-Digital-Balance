@@ -2,7 +2,7 @@
 
 Ein buntes, deutschsprachiges Arcade-Spiel über digitale Ablenkung: Wische durch störende Inhalte und lass hilfreiche Dinge passieren. Ein sonniges Klassenzimmer, ein gemütliches Gaming-Zimmer und ein Schlafzimmer bei Mondlicht begleiten deinen Tag. Bücher, Controller, Trinkflaschen, Kissen und andere gezeichnete Objekte passen zur jeweiligen Umgebung.
 
-**[Im Browser spielen](https://brukevfh.github.io/REBOOT-Digital-Balance/notification-ninja/)** · **[Vollständiges Spiel 1.4.0 herunterladen](downloads/Notification-Ninja-1.4.0.zip)**
+**[Im Browser spielen](https://brukevfh.github.io/REBOOT-Digital-Balance/notification-ninja/)** · **[Vollständiges Spiel 1.5.0 herunterladen](downloads/Notification-Ninja-1.5.0.zip)**
 
 ## Spielen
 
@@ -11,6 +11,12 @@ Ein buntes, deutschsprachiges Arcade-Spiel über digitale Ablenkung: Wische durc
 Für den Download die **gesamte ZIP-Datei entpacken** und anschließend `index.html` öffnen. Alle Laufzeitdateien gehören zum Paket; eine Engine-Installation ist nicht erforderlich. Falls dein Browser lokale Dateien einschränkt, kannst du den entpackten Ordner über einen lokalen HTTP-Server öffnen.
 
 Die Online-Version speichert ihre Laufzeitdateien nach dem vollständigen ersten Laden für spätere Offline-Aufrufe. Die Musik startet nach deinem Klick auf **Spielen**, sofern Ton eingeschaltet ist. Über den Lautsprecher-Schalter kannst du sie jederzeit ausschalten. Musik und Effekte entstehen direkt im Browser, ohne externe Audiodateien: verspielte Zupfklänge beim Lernen, ein fröhlicher Marimba-Groove beim Gaming und eine sanfte Spieluhr vor dem Schlafen.
+
+## Dein Ninja-Team und die Spielansicht
+
+Unten im Spielfeld steht dein größeres, um die Mitte angeordnetes Ninja-Team: **ein Ninja auf Entspannt, zwei auf Normal und drei auf Profi**. Alle tragen den beim Start des Runs ausgerüsteten Look. Jeder Ninja holt sichtbar aus; der Gegenstand folgt dabei tatsächlich seiner Hand, löst sich beim Wurf und wächst auf dem Weg ins Spielfeld auf seine volle Größe. Während des Ausholens und des kurzen Anflugs sind die Gegenstände vor Schnitten geschützt. Erst nach dieser Phase kannst du sie zerschneiden. So kannst du die Ninjas und ihre Würfe sehen, bevor deine Entscheidung zählt.
+
+Auf der Startseite und in der Werkzeugleiste findest du die **Vollbild-Taste**. Sie öffnet nach deinem Klick den nativen Vollbildmodus, wenn der Browser ihn unterstützt und erlaubt. Fehlt die passende API oder lehnt der Browser den Aufruf ab, schaltet das Spiel auf **Große Spielansicht** um. Das gilt auch für Safari-Konfigurationen ohne Webseiten-Vollbild, etwa auf manchen iPhones. Die Ersatzansicht vergrößert die Spielfläche; die eigenen Leisten des Browsers können sichtbar bleiben. Der Schalter benennt die tatsächlich verwendete Ansicht und beendet sie beim erneuten Tippen. `Esc` verlässt die große Ersatzansicht; außerhalb dieser Ansicht dient die Taste der Spielpause.
 
 ## Dein Dojo, Profil und NIM
 
@@ -47,11 +53,11 @@ Nach dem Tutorial spielst du zuerst im kostenlosen Klassenzimmer. Verdiene Münz
 
 ### Schwierigkeit und steigendes Tempo
 
-| Schwierigkeit | Herzen zu Beginn | Münzfaktor | Tempospitze normaler Räume | Spielmünzlimit pro Abschnitt |
-| --- | --- | --- | --- | --- |
-| Entspannt – Voreinstellung | 5 | ×1 | ×1,75 | 8 |
-| Normal | 4 | ×1,25 | ×2,25 | 10 |
-| Profi | 3 | ×1,5 | ×2,75 | 12 |
+| Schwierigkeit | Ninjas | Herzen zu Beginn | Münzfaktor | Tempospitze normaler Räume | Spielmünzlimit pro Abschnitt |
+| --- | --- | --- | --- | --- | --- |
+| Entspannt – Voreinstellung | 1 | 5 | ×1 | ×1,75 | 8 |
+| Normal | 2 | 4 | ×1,25 | ×2,25 | 10 |
+| Profi | 3 | 3 | ×1,5 | ×2,75 | 12 |
 
 Wähle den Schwierigkeitsgrad im Startmenü. **Ein falscher Schnitt und eine durchgelassene Ablenkung kosten jeweils ein Herz.** Beide Fehler unterbrechen deine Combo und erhöhen den Overload-Wert. Ein aktiver Schild fängt genau einen Fehler ab. Hilfreiche Dinge und ausgelassene optionale Bonusobjekte kosten beim Durchlassen kein Herz.
 
@@ -157,6 +163,8 @@ Alle Benachrichtigungen, Boni und Münzen sind Spielsimulationen. Es gibt keine 
 | Ein Finger auf der Spielfläche | Durch dieselben Objekte wischen |
 | Super-Schaltfläche / Leertaste | Ausgerüstete Superfähigkeit bei voller Ladung einsetzen |
 | Pause-, Sound- und Entscheidungstasten | Pause, Musik und bewusste Zeitentscheidungen bedienen |
+| Vollbild-/Ansicht-Taste | Nativen Vollbildmodus oder große Spielansicht öffnen und wieder verlassen |
+| `Esc` | Große Ersatzansicht verlassen; ansonsten Spielpause bedienen |
 | Zurück-Schaltfläche / Browser-Zurück | Zur vorherigen Ansicht und ihrer Scrollposition zurückkehren |
 
 Hilfreiche Dinge unberührt passieren lassen. Ein Schnitt folgt deiner tatsächlichen Wischbewegung. Im Tutorial lernst du den Unterschied zwischen Ablenkung und hilfreichem Signal.
@@ -167,7 +175,7 @@ Dein Ninja-Profil ist ein **lokales Spielerprofil** mit Nutzername. Name, Fortsc
 
 Online-Version, lokale HTTP-Version und direkt geöffnete Dateien können getrennte Speicherplätze verwenden. Die lokale Dateinutzung kann von den Browser-Einstellungen abhängen. Ältere Spielstände behalten ihr vorhandenes Guthaben, ihre Skins, Erfolge und Freischaltungen. Fehlt ein Ninja-Name, ergänzt du ihn beim Einstieg; Level und XP werden aus den bisherigen gespeicherten Statistiken berechnet. Bereits gespeicherte ältere Runs lassen sich fortsetzen; für neue Runs gelten die Raumfreischaltungen.
 
-Ältere vollständige Downloads bleiben verfügbar: [Version 1.3.0](downloads/Notification-Ninja-1.3.0.zip), [Version 1.2.0](downloads/Notification-Ninja-1.2.0.zip), [Version 1.1.0](downloads/Notification-Ninja-1.1.0.zip) und [Version 1.0.0](downloads/Notification-Ninja-1.0.0.zip).
+Ältere vollständige Downloads bleiben verfügbar: [Version 1.4.0](downloads/Notification-Ninja-1.4.0.zip), [Version 1.3.0](downloads/Notification-Ninja-1.3.0.zip), [Version 1.2.0](downloads/Notification-Ninja-1.2.0.zip), [Version 1.1.0](downloads/Notification-Ninja-1.1.0.zip) und [Version 1.0.0](downloads/Notification-Ninja-1.0.0.zip).
 
 ## Gemeinsame Rangliste
 
@@ -207,6 +215,8 @@ notification-ninja/
 ├── src/art.js                # Eigene Upgrade-, Erfolgs- und Dojo-Illustrationen
 ├── src/local-profile.js      # Lokale Anmeldung und Profil-Löschung
 ├── src/leaderboard.js        # Optionale Ranglistenverbindung und Gerätekennung
+├── src/throwers.js           # Gemeinsame Ninja-Positionen, Handbewegung und Wurfphasen
+├── src/fullscreen.js         # Browser-Vollbild und große Ersatzansicht
 ├── src/renderer.js           # Canvas-Grafik, Schnitte und Effekte
 ├── src/audio.js              # Lokaler WebAudio-Soundtrack
 ├── src/main.js               # Maus, Touch und Bildschirmablauf

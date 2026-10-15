@@ -4,7 +4,7 @@ from zipfile import ZipFile, ZipInfo, ZIP_DEFLATED
 from hashlib import sha256
 
 ROOT=Path(__file__).resolve().parents[1]/'notification-ninja'
-NAME='Notification-Ninja-1.4.0'
+NAME='Notification-Ninja-1.5.0'
 FILES=['index.html','styles.css','sw.js','manifest.webmanifest','favicon.svg','dist/ninja.js','dist/build.json','leaderboard-config.json']
 INSTRUCTIONS='''NOTIFICATION NINJA – MASTER YOUR DIGITAL BALANCE
 
@@ -19,8 +19,14 @@ Profil löschen verlangt deinen aktuellen Namen zur Bestätigung und löscht
 Notification-Ninja-Daten. Andere Spiele bleiben erhalten. Falls du Ergebnisse
 veröffentlicht hast, werden zuerst deine Online-Einträge gelöscht.
 Deine Garderobe zeigt gekaufte Looks und dein echtes ausgewähltes Ninja-Bild.
-Dein Ninja wirft die Gegenstände animiert ins Feld; neue Runs übernehmen
-die Auswahl. Ein gespeicherter Run behält seine Ausstattung.
+Je nach Schwierigkeit werfen 1 / 2 / 3 große Ninjas in deinem ausgewählten
+Look die echten Gegenstände aus ihrer Hand ins Feld. Ausholen und Anflug
+sind geschützt; erst im freien Flug kannst du die Gegenstände schneiden.
+Neue Runs übernehmen die Auswahl. Ein gespeicherter Run behält seinen Look.
+Die Vollbild-Taste oben rechts gibt dir mehr Spielfläche. Unterstützt dein
+Browser kein echtes Vollbild, öffnet sie eine große Spielansicht mit kompakter
+Anzeige; die Browserleiste kann dabei sichtbar bleiben. Zum Verlassen erneut
+die Taste drücken. Esc verlässt die große Spielansicht, sonst pausiert es.
 Meister NIM, dein eigener Fuchs-Sensei, erklärt im Training das Wischen
 und Durchlassen. Während der Erklärungen pausiert die Runde.
 Neue Kräfte erklärt er beim Freischalten.

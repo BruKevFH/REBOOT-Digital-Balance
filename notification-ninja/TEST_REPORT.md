@@ -1,37 +1,34 @@
-# Notification Ninja 1.4.0 – Prüfbericht
+# Notification Ninja 1.5.0 – Prüfbericht
 
-Geprüft am **15. Oktober 2026** mit Node.js 24, Python 3 und Chromium/Playwright. Native Browserprüfungen verwenden echte Maus-/Touch-Eingaben und ausschließlich lesende Laufzeitdiagnosen.
+Geprüft am **15. Oktober 2026** mit Node.js 24, Python 3 und Chromium/Playwright. Native Spielprüfungen verwenden Maus-/Touch-Eingaben und ausschließlich lesende Laufzeitdiagnosen. Komponentenprüfungen werden gesondert ausgewiesen.
 
 ## Aktuelle Ergebnisse
 
 | Prüfung | Ergebnis |
 | --- | --- |
-| Frozen Installation und Build | `npm --cache /workspace/.npm-cache ci --no-audit --no-fund`, aktueller Ninja-Build und reproduzierbare ZIP-Erstellung erfolgreich; Node 24 ist für die SQLite-Ranglistentests erforderlich |
-| `npm test` | **173 bestanden**, 0 fehlgeschlagen, 0 übersprungen; REBOOT, MIND MAZE, Ninja-Regeln, Fortschritt, Profile, lokale Sitzungen und Ranglistendienst |
-| Open Run | Sieben neue Regelprüfungen: kostenloser unbefristeter Modus, keine Enden bei 75/90/300 Sekunden, weiter steigendes Tempo, Ende nur durch verlorene Herzen, genau einmalige Abrechnung, faires Standard-Loadout, langfristiger Save/Reload und alte Highscores |
-| Nativer Open Run | **114,88 aktive Sekunden**, 64 echte Mauswischer, 115 Wurfanimationen. Bei 15/30/60/90 Sekunden Tempo ungefähr **1,30 / 1,59 / 2,04 / 2,25×**, danach weiterer Anstieg. Nach 96 Sekunden weiterhin spielbar und HUD `∞`; erst später ohne weitere Eingriffe durch verlorene Herzen beendet. Zehn Münzen einmalig gesichert, Reload unverändert, keine JavaScript-Fehler |
-| Tempo und Ökonomie | Aktive Frame-Simulationen prüfen Rampen, neue statt nachträglich geänderter Flugbahnen und sichere schmale Bahnen. Perfekte Study-Runden: 10/12/14 Münzen. Erstes 35-Münzen-Upgrade nach drei normalen Runden; kurze Schlaf-Bonus-Schleifen/untätige frühe Niederlagen liefern kein Gratisgeld. Vorhandene Münzen und gekaufte Inhalte bleiben erhalten |
-| Lokales Profil und Navigation | **16 native Prüfgruppen über 1280×800, 390×844, 320×568, 844×390**: Startseite, Name, tatsächliches Skin-Porträt, Garderobenwechsel, Umbenennen, Browser-/UI-Zurück mit Scrollwiederherstellung, 24 Trophäen, verschachtelte Mitteilungen, Abmelden/Neuladen, Wiedereinstieg, sichere Löschung und pausierte Runs |
-| Sichere Löschung | Falscher Bestätigungsname und Abbrechen erhalten alle Daten. Richtiger Name entfernt das Ninja-Profil; ein neues Profil beginnt leer. Kontroll-Speicherstände von REBOOT und MIND MAZE bleiben unverändert. Bei einem vorhandenen Online-Eintrag wird zuerst dessen bestätigte Löschung angefragt |
-| Vier Bildschirmgrößen | Zusätzliche native UI-Prüfung: öffentliche Startseite, oben sichtbare 44-Pixel-Zurück-Taste auch nach mehr als 1.000 Pixeln Scrollen, vorherige Ansicht, neue Raumvorschau, Open Run mit `∞`, Ranglistenstatus und Löschdialog. Keine horizontalen Seiten-/Panelüberläufe oder Browserfehler |
-| Spieler-Ninja | Vier unterscheidbare Outfits und sichere animierte Profilbilder; der tatsächlich ausgewählte Skin ist im Spiel sichtbar. Echte Spawn-Ereignisse erzeugen Windup/Wurf/Funken. 100-Spawn-Stresstest begrenzt dekorative Würfe auf acht; Animationen laufen aus. Kleine 320-Pixel-Ansicht kontrolliert |
-| Meister NIM | Eigenständiger Fuchs-Sensei mit Augen-, Sprech-, Wink- und Papierzeichen-Animationen. Neun native Mentor-Prüfgruppen erneut bestanden; reduzierte Bewegung deaktiviert die Charakteranimationen. Warteschlange, Bestätigungen und Spielpause bleiben erhalten |
-| Bilder und Erfolge | 24 tatsächlich erreichbare Erfolge, neun Fähigkeiten; kräftige eigene Bildmotive. 51 SVG-Varianten auf gültiges XML und sichere Inhalte geprüft, 33 Fähigkeits-/Erfolgsillustrationen unterscheidbar |
-| Ranglisten-API | Zwölf Tests: zwei Spieler, nur Open Run mit `result:lives`, getrennte Schwierigkeiten, beste Punktzahl, doppelte Runs, eigene Löschung, SQLite-Neustart, genaue CORS-Ursprünge, ungültige Scores, offline/blockierte Speicherung, parallele Initialisierung und Wiederherstellung nach verlorener Demo-Datenbank |
-| Rangliste im echten Browser | **Sieben zusätzliche Prüfungen bestanden**: über reguläre Spielmethoden erzeugten Open Run per sichtbarer Taste veröffentlichen, zweiter unabhängiger Browser sieht ihn, zweiter Score korrekt sortiert, keine doppelte Zeile, Schwierigkeiten getrennt, Study-Ergebnis nicht veröffentlichbar, Profillöschung entfernt den eigenen Online-Eintrag. Lokaler echter API-Dienst, keine erfundenen Mitspieler, keine Browserfehler |
-| Offline und Download | **8/8 bestanden**: Root-Einstieg, getrennte Worker-Scopes, eigener alter Cache gelöscht, fremde Caches erhalten, echter Schnitt und Offline-Reload, Browser-ZIP mit identischer Prüfsumme, entpacktes HTTP-Spiel und Offline-Fortsetzen, keine JavaScript-Fehler. Ranglistenkonfiguration ebenfalls offline gecacht |
+| Installation und Build | Vorhandene Frozen-Installation mit unverändertem Lockfile, neuer Ninja-Build und reproduzierbare ZIP-Erstellung erfolgreich; Node 24 für SQLite erforderlich |
+| `npm test` | **183 bestanden**, 0 fehlgeschlagen, 0 übersprungen; REBOOT, MIND MAZE, Ninja-Regeln, Fortschritt, Profile, Sitzungen und Ranglistendienst |
+| Echte Würfe | Zehn neue Integrationstests: 1/2/3 zentrierte Werfer, tatsächliche Handkoordinaten, geschütztes Ausholen/Anflug, Flow-/Super-Sicherheit, faire Zielbahnen, abwechselnde Werfer, Pause/Zeitlupe, Bildratenunabhängigkeit, Resize/Reload, alte Spielstände und extreme Open-Geschwindigkeit |
+| Gemeinsame Geometrie | Zwölf Bildschirm-/Schwierigkeitskombinationen: zentrierte Verteilung, größere Figuren, kontinuierlicher Übergang zwischen Hand und Flugbahn |
+| Renderer im Browser | **24 Komponenten-/Modellprüfungen** über 1280×800, 390×844, 320×568 und 844×390: 613 Handpositionsprüfungen und 5.914 Prüfungen freigegebener Flugobjekte. Keine dekorativen Objektkopien, keine Aktionshinweise vor Freigabe, angehaltene Pose bei Pause, keine Browserfehler |
+| Vollbild-Komponente | Vier Bildschirmgrößen: native API, fehlende API, abgelehnte API, große Ersatzansicht, Escape, Zustandsanzeige und Aufräumen. 44-Pixel-Schalter und sichtbare wichtige Spielanzeigen geprüft |
+| Vollbild im laufenden Spiel | **4/4 native Spielprüfungen bestanden**: echtes Desktop-Vollbild, drei emulierte Browser ohne API, echte Maus-/Touch-Schnitte nach dem Wurf, endliche Koordinaten, ausgerüsteter Solar-Skin, erreichbare Pause-/Ansichtstasten, weiterlaufendes Spiel nach Verlassen. Arena-Höhen 569→616, 549→614, 273→338 und 241→250 Pixel; keine Browserfehler |
+| Nativer Open Run | **117,43 aktive Sekunden**, 65 echte Mauswischer und 135 reale Würfe. Bis 96,05 Sekunden mit vier Herzen gespielt, danach ohne Eingaben erst bei null Herzen beendet. Zwei Solar-Ninjas durchgehend geprüft; Tempo bei 15/30/60/90 Sekunden ungefähr 1,30 / 1,59 / 2,04 / 2,26×, Anzeige `∞`, einmalige Münzabrechnung nach Reload erhalten, keine Browserfehler |
+| Ranglisten-Neustarttest | Ein vorhandenes Testproblem mit dem Node-HTTP-Verbindungspool beim Neustart auf demselben Port behoben: ausschließlich dieser Test schließt seine Verbindungen ausdrücklich. Echte Reset-/Wiederveröffentlichungs-/Löschprüfungen unverändert; 100 isolierte Wiederholungen erfolgreich |
+| Offline und Download | **8/8 aktuelle Prüfgruppen bestanden**: Root-Einstieg, getrennte Worker-Scopes, eigener alter 1.4-Cache gelöscht und fremde Caches erhalten, echter Schnitt und Offline-Reload, Browser-ZIP mit identischer Prüfsumme, entpacktes HTTP-Spiel und Offline-Fortsetzen, keine JavaScript-Fehler |
 
-Test-Spielstände wurden mit öffentlichen Spielmethoden erspielt. Das reichere Navigationsprofil stammt aus 60 abgeschlossenen Study-Runden, anschließend regulären Käufen; es gibt keine Diagnose-Mutatoren oder vergebenen Testmünzen im laufenden Browser. Komponenten-, Checkpoint- und vollständige native Durchläufe werden getrennt ausgewiesen. Die vollständige endliche Vier-Raum-Kampagne wurde zuletzt in Version 1.2 nativ durchgespielt; für 1.4 konzentriert sich die native Spielprüfung auf den neuen Open Run und die geänderten Oberflächen. Automatisierte Tests decken weiterhin die endlichen Spielregeln ab.
+Die Tests verwenden regulär erspielte Profile. Das reichere Browserprofil stammt aus 60 abgeschlossenen Study-Runden mit anschließenden regulären Käufen; keine Diagnose-Mutatoren oder vergebenen Testmünzen im laufenden Browser. Die bestehende endliche Vier-Raum-Kampagne wurde zuletzt in Version 1.2 vollständig nativ durchgespielt; automatisierte Tests prüfen ihre Regeln weiterhin. Die 16 Profil-/Navigationsgruppen, Mentorprüfungen und sieben Browserprüfungen mit lokalem Ranglistendienst wurden zuletzt in 1.4 ausgeführt und werden nicht als neue 1.5-Durchläufe gezählt.
 
 ## Download
 
-`downloads/Notification-Ninja-1.4.0.zip`: **110.468 Bytes**, acht Laufzeitdateien einschließlich deaktivierter `leaderboard-config.json` plus `START-HIER.txt`.
+`downloads/Notification-Ninja-1.5.0.zip`: **115.523 Bytes**, acht Laufzeitdateien einschließlich deaktivierter `leaderboard-config.json` plus `START-HIER.txt`.
 
-SHA-256: `c6c48618a4931a42296be927055c961ad487ab77fa410e18b2600b1e1872539e`
+SHA-256: `be05a316f2070b46e4b9135756208d3758be8b2749b673a8fe704bbffa34ba7f`
 
 Zweimal identische Paketierung, CRC, acht bytegleiche Laufzeitdateien und tatsächlicher Browserdownload geprüft. Ältere ZIPs bleiben verfügbar.
 
 ## Ranglisten-Betrieb und Grenzen
+
 
 **Es wurde kein öffentlicher Ranglistenserver angelegt.** Die produktive Konfiguration ist ausdrücklich deaktiviert; GitHub Pages kann die zusätzliche API nicht ausführen. Das Spiel zeigt „Online-Rangliste noch nicht verbunden“. Die Tests der gemeinsamen Rangliste verwendeten einen lokal gestarteten echten Node-/SQLite-Dienst mit getrennten Browserprofilen.
 
@@ -41,4 +38,4 @@ Die API prüft Grenzen, Besitzer-Token und doppelte Run-IDs; clientseitige Ergeb
 
 Mobile Prüfungen verwenden Chromium mit Touch-/Viewport-Emulation, kein physisches iPhone mit Safari. Direktes `file://`-Öffnen ist im verwalteten Cloud-Chromium gesperrt; kein Doppelklick-Test wird behauptet. Browserrichtlinien und TLS-Prüfungen bleiben aktiv. Öffentliche Spiel-/Paketdateien werden separat mit regulärem HTTPS-Systemvertrauen geprüft.
 
-Berichte und Screenshots: `/workspace/ninja-checks/v14/`, insbesondere `open-native.json`, `profile-nav.json`, `rank-ui.json`, `offline.json`, `ui/native.json`, `mentor/` und die Renderer-Berichte. Dies sind externe Prüfartefakte, keine Spielabhängigkeiten. Es wurden keine Tests mit jugendlichen Testpersonen durchgeführt.
+Berichte und Screenshots: `/workspace/ninja-checks/v15/`, insbesondere `renderer-report.json`, `renderer-model-report.json`, `fullscreen-report.json`, `fullscreen-game-report.json`, `open-native.json` und `offline.json`. Frühere Prüfungen unter `/workspace/ninja-checks/v14/`. Dies sind externe Prüfartefakte, keine Spielabhängigkeiten. Keine Tests mit jugendlichen Testpersonen durchgeführt.
