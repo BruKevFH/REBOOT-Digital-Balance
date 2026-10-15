@@ -4,14 +4,21 @@ from zipfile import ZipFile, ZipInfo, ZIP_DEFLATED
 from hashlib import sha256
 
 ROOT=Path(__file__).resolve().parents[1]/'notification-ninja'
-NAME='Notification-Ninja-1.2.0'
+NAME='Notification-Ninja-1.3.0'
 FILES=['index.html','styles.css','sw.js','manifest.webmanifest','favicon.svg','dist/ninja.js','dist/build.json']
 INSTRUCTIONS='''NOTIFICATION NINJA – MASTER YOUR DIGITAL BALANCE
 
 Die gesamte ZIP entpacken. Im Spielordner index.html in einem aktuellen
 Chrome, Edge oder Firefox öffnen. Maus oder Touch und JavaScript erforderlich.
 Alle Grafiken, Effekte, Musik und Spielregeln sind lokal enthalten.
-Keine Installation, kein Account, keine Internet-API nötig.
+Keine Installation, kein Passwort, keine Internet-API nötig.
+Wähle zuerst einen Ninja-Namen (3–18 Zeichen). Dein Profil mit Münzen,
+XP und Level bleibt auf diesem Gerät; den Namen kannst du im Profil ändern.
+NIM erklärt dir im Training das Wischen und Durchlassen. Während der
+Erklärungen pausiert die Runde. Neue Kräfte erklärt er beim Freischalten.
+Mitteilungen sammeln deine letzten 50 Freischaltungen. Oben sind neue Ziele,
+unten deine erreichten Erfolge und gekauften Kräfte. Dein Fähigkeitenbaum
+wächst aus der Mitte in drei verbundenen Wurzelzweigen.
 Die Musik startet nach deinem Klick auf Spielen. Du kannst sie ausschalten.
 
 Mit gedrückter Maustaste oder Finger durch Ablenkungen WISCHEN.

@@ -2,13 +2,25 @@
 
 Ein buntes, deutschsprachiges Arcade-Spiel über digitale Ablenkung: Wische durch störende Inhalte und lass hilfreiche Dinge passieren. Ein sonniges Klassenzimmer, ein gemütliches Gaming-Zimmer und ein Schlafzimmer bei Mondlicht begleiten deinen Tag. Bücher, Controller, Trinkflaschen, Kissen und andere gezeichnete Objekte passen zur jeweiligen Umgebung.
 
-**[Im Browser spielen](https://brukevfh.github.io/REBOOT-Digital-Balance/notification-ninja/)** · **[Vollständiges Spiel 1.2.0 herunterladen](downloads/Notification-Ninja-1.2.0.zip)**
+**[Im Browser spielen](https://brukevfh.github.io/REBOOT-Digital-Balance/notification-ninja/)** · **[Vollständiges Spiel 1.3.0 herunterladen](downloads/Notification-Ninja-1.3.0.zip)**
 
 ## Spielen
 
-Öffne das Spiel in einem aktuellen Browser mit JavaScript. Für den Download die **gesamte ZIP-Datei entpacken** und anschließend `index.html` öffnen. Alle Laufzeitdateien gehören zum Paket; eine Engine-Installation oder ein Account ist nicht erforderlich. Falls dein Browser lokale Dateien einschränkt, kannst du den entpackten Ordner über einen lokalen HTTP-Server öffnen.
+Öffne das Spiel in einem aktuellen Browser mit JavaScript und wähle beim ersten Start einen **Ninja-Namen mit 3–18 Zeichen**. Erlaubt sind Buchstaben, Zahlen, Leerzeichen, `_` und `-`. Dein lokales Spielerprofil braucht kein Passwort und keine E-Mail.
+
+Für den Download die **gesamte ZIP-Datei entpacken** und anschließend `index.html` öffnen. Alle Laufzeitdateien gehören zum Paket; eine Engine-Installation ist nicht erforderlich. Falls dein Browser lokale Dateien einschränkt, kannst du den entpackten Ordner über einen lokalen HTTP-Server öffnen.
 
 Die Online-Version speichert ihre Laufzeitdateien nach dem vollständigen ersten Laden für spätere Offline-Aufrufe. Die Musik startet nach deinem Klick auf **Spielen**, sofern Ton eingeschaltet ist. Über den Lautsprecher-Schalter kannst du sie jederzeit ausschalten. Musik und Effekte entstehen direkt im Browser, ohne externe Audiodateien: verspielte Zupfklänge beim Lernen, ein fröhlicher Marimba-Groove beim Gaming und eine sanfte Spieluhr vor dem Schlafen.
+
+## Dein Dojo, Profil und NIM
+
+Die Dojo-Übersicht bündelt deinen Namen, Münzen, Level, XP-Fortschritt und das nächste Freischaltziel. Über dein Profil kannst du den Namen ändern, Runden und Sammlungen ansehen, Fähigkeiten und Basar öffnen sowie deine Daten als JSON exportieren. Umbenennen erhält deinen vorhandenen Fortschritt.
+
+Du bekommst **5 XP pro richtiger Entscheidung, 10 XP pro eingesetztem Super und 25 XP pro beendeter Runde**. Diese Werte werden am Run-Ende gesichert; das Training vergibt keine Run-XP. Level und XP entstehen aus deinen gespeicherten Spielstatistiken. Level 2 beginnt bei 100 Gesamt-XP, Level 3 bei 400, Level 4 bei 900; die weiteren Schwellen folgen `100 × (Level − 1)²`. Münzen und XP sind getrennte Werte: Einkaufen verringert dein Level nicht.
+
+Dein Mentor **NIM** spricht mit dir in animierten Hinweisfenstern. Er erklärt am Anfang den Einstieg, im Training die Wischbewegung und das Durchlassen und später neue Freischaltungen und Supers. Während einer Erklärung stehen Objekte und Rundenuhr still. Bestätigte Erklärungen werden lokal gemerkt. Das Training lässt sich jederzeit wiederholen; die WISCHEN-/BEHALTEN-Hilfen erscheinen dort weiter.
+
+Die Glocke öffnet deine **Mitteilungen**. Neue Fähigkeiten, Räume, Hintergründe, Skins, Erfolge und erreichte Level werden dort mit passenden Bildern gesammelt. Ein Zähler markiert ungelesene Mitteilungen; du kannst sie als gelesen markieren und zur passenden Sammlung wechseln. Das lokale Postfach hält bis zu 50 Mitteilungen bereit. Freischaltmitteilungen erscheinen innerhalb des Spiels und benötigen keine Browser-Push-Berechtigung.
 
 ## Dein digitaler Tag
 
@@ -76,7 +88,9 @@ Ohne Fähigkeiten verdienst du eine Münze je fünf richtige Entscheidungen, dre
 
 Während des Runs zeigt das Spiel die vorgemerkten Münzen an. Diese werden **am Run-Ende einmalig** deinem Guthaben gutgeschrieben, auch wenn du alle Herzen verlierst. Das erneute Öffnen desselben Ergebnisses zahlt keine zweite Belohnung aus. Ein noch laufender Run kann gespeichert und fortgesetzt werden; seine vorgemerkten Münzen sind noch nicht ausgebbar.
 
-Mit deinem Guthaben kaufst du Räume, Hintergründe, Klingen-Skins oder Knoten im Fähigkeitenbaum. Der Baum hat drei Äste mit je drei Stufen. Die erste Stufe kostet **12 Münzen**, die zweite **25**, die dritte **45**. Innerhalb eines Astes brauchst du jeweils die vorherige Stufe; jeder Knoten wird nur einmal gekauft.
+Mit deinem Guthaben kaufst du Räume, Hintergründe, Klingen-Skins oder Knoten im Fähigkeitenbaum. Der **Wurzelbaum beginnt bei NIM in der Mitte** und breitet sich über sichtbare Verbindungen aus: Fokus nach oben, Schutz nach rechts und Münzen nach links. Jedes Upgrade hat eine eigene Illustration; beim Antippen erscheinen Wirkung, Voraussetzung und Kaufmöglichkeit. Auf kleinen Bildschirmen lässt sich die Karte seitlich verschieben und über die drei Ast-Schaltflächen gezielt ansehen.
+
+Der Baum hat drei Äste mit je drei Stufen. Die erste Stufe kostet **12 Münzen**, die zweite **25**, die dritte **45**. Innerhalb eines Astes brauchst du jeweils die vorherige Stufe; jeder Knoten wird nur einmal gekauft. Gekaufte Knoten bleiben als kleine verbundene Markierungen sichtbar. Ihre vollständigen Karten und die Super-Auswahl stehen gesammelt unter dem Baum, damit die noch offenen Wege leichter erkennbar sind.
 
 | Ast | Stufe 1 – 12 Münzen | Stufe 2 – 25 Münzen | Stufe 3 – 45 Münzen |
 | --- | --- | --- | --- |
@@ -88,7 +102,7 @@ Rüste **eine** freigeschaltete Superfähigkeit aus. Jede richtige Entscheidung 
 
 Gekaufte passive Fähigkeiten und die ausgewählte Superfähigkeit werden **beim Start eines neuen Runs** übernommen. Ein gespeicherter Run behält seine beim Start gewählte Ausstattung. So ändern Käufe während einer Pause nicht nachträglich die laufende Runde.
 
-Im Erfolgsmenü kannst du erreichte Erfolge ansehen und ihre Münzbelohnung **jeweils einmal abholen**. Freischalten und Abholen sind getrennte Schritte. Abgeholte Belohnungen bleiben als abgeholt gespeichert.
+Im Erfolgsmenü stehen **noch offene Ziele oben** und geschaffte Erfolge in deiner Sammlung darunter. Alle zwölf Erfolge haben eigene Illustrationen und eine Fortschrittsanzeige. Du kannst ihre Münzbelohnung **jeweils einmal abholen**; innerhalb der Sammlung stehen noch abholbare Belohnungen zuerst. Freischalten und Abholen sind getrennte Schritte. Abgeholte Belohnungen bleiben als abgeholt gespeichert.
 
 | Erfolg | Bedingung | Münzen |
 | --- | --- | --- |
@@ -122,11 +136,11 @@ Hilfreiche Dinge unberührt passieren lassen. Ein Schnitt folgt deiner tatsächl
 
 ## Daten und Offline-Nutzung
 
-Es gibt keinen Account, keine API-Anbindung und keine Übertragung von Spielständen oder Telemetrie. Fortschritt und Einstellungen liegen in **localStorage**. Wenn dein Browser die Speicherung blockiert, bleibt das Spiel für die laufende Sitzung spielbar. Das Löschen der Website-Daten entfernt den lokalen Fortschritt.
+Dein Ninja-Profil ist ein **lokales Spielerprofil** mit Nutzername. Es gibt keine Online-Kontoanmeldung, keine API-Anbindung und keine Übertragung von Namen, Spielständen oder Telemetrie. Name, Fortschritt, bestätigte NIM-Hinweise, Mitteilungen und Einstellungen liegen in **localStorage**. Ein anderer Browser oder ein anderes Gerät hat einen eigenen Spielstand. Wenn dein Browser die Speicherung blockiert, bleibt das Spiel für die laufende Sitzung spielbar. Das Löschen der Website-Daten entfernt den lokalen Fortschritt.
 
-Online-Version, lokale HTTP-Version und direkt geöffnete Dateien können getrennte Speicherplätze verwenden. Die lokale Dateinutzung kann von den Browser-Einstellungen abhängen. Ältere Profile behalten ihr vorhandenes Guthaben, ihre Skins und Erfolge; Fähigkeiten, Räume und Hintergründe ergänzen diesen Fortschritt. Bereits gespeicherte ältere Runs lassen sich fortsetzen; für neue Runs gelten die Raumfreischaltungen.
+Online-Version, lokale HTTP-Version und direkt geöffnete Dateien können getrennte Speicherplätze verwenden. Die lokale Dateinutzung kann von den Browser-Einstellungen abhängen. Ältere Spielstände behalten ihr vorhandenes Guthaben, ihre Skins, Erfolge und Freischaltungen. Beim ersten Öffnen von Version 1.3.0 ergänzt du lediglich deinen Ninja-Namen; Level und XP werden aus den bisherigen gespeicherten Statistiken berechnet. Bereits gespeicherte ältere Runs lassen sich fortsetzen; für neue Runs gelten die Raumfreischaltungen.
 
-Ältere vollständige Downloads bleiben verfügbar: [Version 1.1.0](downloads/Notification-Ninja-1.1.0.zip) und [Version 1.0.0](downloads/Notification-Ninja-1.0.0.zip).
+Ältere vollständige Downloads bleiben verfügbar: [Version 1.2.0](downloads/Notification-Ninja-1.2.0.zip), [Version 1.1.0](downloads/Notification-Ninja-1.1.0.zip) und [Version 1.0.0](downloads/Notification-Ninja-1.0.0.zip).
 
 ## Entwicklung
 
@@ -153,6 +167,9 @@ notification-ninja/
 ├── index.html, styles.css     # Startmenü, HUD und Dialoge
 ├── src/game.js               # Regeln, Kontextwechsel und Spielstände
 ├── src/progression.js        # Schwierigkeit, Räume, Shop, Fähigkeiten und Erfolge
+├── src/player.js             # Lokaler Name, abgeleitete XP, Hinweise und Mitteilungen
+├── src/mentor.js             # NIM-Dialoge, Erkläranimationen und Fokussteuerung
+├── src/art.js                # Eigene Upgrade-, Erfolgs- und Dojo-Illustrationen
 ├── src/renderer.js           # Canvas-Grafik, Schnitte und Effekte
 ├── src/audio.js              # Lokaler WebAudio-Soundtrack
 ├── src/main.js               # Maus, Touch und Bildschirmablauf
@@ -162,4 +179,4 @@ notification-ninja/
 └── PLAN.md, TEST_REPORT.md    # Ablauf, Beispielplanung und Prüfbericht
 ```
 
-Build- und Paketierungswerkzeuge liegen unter `../scripts/`, die Regeltests unter `../tests/ninja.test.mjs`. Der [Prüfbericht](TEST_REPORT.md) nennt die ausgeführten Tests und ihre Grenzen.
+Build- und Paketierungswerkzeuge liegen unter `../scripts/`, die Regeltests unter `../tests/ninja*.test.mjs`. Der [Prüfbericht](TEST_REPORT.md) nennt die ausgeführten Tests und ihre Grenzen.

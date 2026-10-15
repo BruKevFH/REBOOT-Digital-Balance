@@ -1,41 +1,40 @@
-# Notification Ninja 1.2.0 – Prüfbericht
+# Notification Ninja 1.3.0 – Prüfbericht
 
-Geprüft am **15. Oktober 2026** mit Chromium/Playwright, nativen Maus- und Touch-Eingaben, Node.js 24 und Python 3. Alle erforderlichen Grafik-, Spiel- und Audiodaten sind lokal enthalten.
+Geprüft am **15. Oktober 2026** mit Node.js 24, Python 3 und Chromium/Playwright. Browserprüfungen nutzen native Mausbewegungen und Touch-Eingaben; die Diagnosefunktion ist ausschließlich lesend.
 
-## Ergebnisse
+## Aktuelle Ergebnisse
 
 | Prüfung | Ergebnis |
 | --- | --- |
-| `npm test` | **120 bestanden**, 0 fehlgeschlagen, 0 übersprungen: 55 Ninja-Regeltests, 20 Fortschrittstests, 20 MIND-MAZE- und 25 REBOOT-Tests |
-| Fähigkeiten und Fortschritt | Neun Knoten, Vorgängerbedingungen, drei Supers, zwölf einmalig abholbare Erfolgsbelohnungen, drei Schwierigkeitsgrade und alte Profile geprüft |
-| Native Fortschrittsfälle | **11/11 bestanden**: erspielte Rundenmünzen bleiben bis zum Abschluss getrennt vom Wallet; Käufe, verzögerte Ausrüstung, Erfolge, 5/4/3 Herzen, beide Fehlerarten, einmalige Abrechnung bei Spielende, Migration und Pause |
-| Native Spielort-/Shopfälle | **4/4 bestanden**: echte Raum-Sperren, Kaufreihenfolge 35/75/120, korrekte Münzabzüge, alle Premium-Hintergründe kaufen und ausdrücklich auswählen, Neuladen, echte Kulissen im Spiel und Kampagnenende am gesperrten Raum |
-| Supers und Münzregen | Alle drei Supers mit echten Touch-Eingaben aktiviert; Ladung verbraucht, Zeitlupe/Schild/Wirbel wirksam. Der Wirbel entfernt Ablenkungen und erhält sinnvolle Objekte. Einen tatsächlich erschienenen Münzgegenstand per Touch gesammelt |
-| Premium-Spielwelten | Papiergarten, Pixelbucht und Mondinseln aus über Spiel verdienten und gekauften Checkpoints mit Touch gestartet; echte Renderer-Kulisse und neutrale Objektbeschriftungen geprüft |
-| Basar und Bedienung | 1280×800, 390×844, 320×568 und 844×390: Zimmerkarte, alle drei Shop-Bereiche, vier Orte, sechs Hintergründe und vier Ninja-Designs mit tatsächlich gezeichneten Vorschauen; erreichbare Tasten und kein horizontaler Überlauf |
-| Training und normale Runde | WISCHEN-/BEHALTEN-Hilfen nur im Training; Training erneut startbar. Außerhalb des Trainings bleibt derselbe Gegenstand bei unterschiedlicher Bewertung pixelgleich; die richtige Aktion wird nicht vorweggenommen |
-| Musik und Effekte | Tatsächliches WebAudio mit Nutzerfreigabe, klaren Kontextmelodien, Münz-/Super-/Erfolgs-Cues, Pause und Mute; maximal 32 Stimmen. Partikel, Münz- und Super-Animationen sind begrenzt und laufen aus |
-| Offline und ZIP | **8/8 bestanden**: Einstieg aus Root, getrennte Worker-Scopes, eigener alter 1.1-Cache gelöscht, fremde Caches erhalten, nativer Schnitt mit Offline-Reload, echter ZIP-Download mit identischer Prüfsumme, entpacktes HTTP-Spiel und Offline-Fortsetzen |
-| Reproduzierbare Paketierung | Zweimal identische ZIP-Erstellung; CRC und bytegleiche Laufzeitdateien geprüft |
+| `npm test` | **138 bestanden**, 0 fehlgeschlagen oder übersprungen: 55 Ninja-Regeln, 20 Fortschrittstests, 18 Profiltests, 20 MIND-MAZE- und 25 REBOOT-Tests |
+| Profil und Migration | Pflichtname mit 3–18 Zeichen, Unicode-Normalisierung, ungültige Eingaben, atomare Umbenennung, alte Münzen/Freischaltungen, XP-Schwellen, gespeicherte Guide-Bestätigungen und begrenzte Mitteilungen geprüft |
+| NIM-Komponente | **9 Prüfgruppen bestanden**: Dialogwarteschlange, genau einmalige Bestätigung, Escape, Tab-Fokus, Fokuswiederherstellung, sichere Textausgabe, Aufräumen und vier Bildschirmgrößen |
+| Native Profil-/Trainingsintegration | **32 Prüfgruppen bestanden**, 24 bestätigte NIM-Dialoge: Anmeldung, Umbenennen/Neuladen, echtes Maus-/Touch-Training, stillstehende Uhr und Objektpositionen während Erklärungen sowie Sammlungsreihenfolge |
+| Supers und erste Erklärungen | **3 Prüfgruppen bestanden**: echte Käufe für 12 + 25 Münzen, spezifische Fähigkeits-/Erfolgs-Erklärungen, gespeicherte Mitteilungen und Guide-Bestätigungen; im Browser eine Super mit guten Entscheidungen geladen und tatsächlich aktiviert |
+| Zusätzlicher Freischaltungsablauf | **10 Prüfungen bestanden**: vorhandenes Guthaben erhalten, Vorgängerbedingung, korrekter Kaufabzug, Bild/Erklärung, Mitteilungszähler, Lesen/Neuladen, bestätigter Hinweis erscheint nicht erneut, eigene Fähigkeiten und erreichte Erfolge unten, einmalige Belohnung |
+| Nativer Rundenabschluss und Levelaufstieg | Ein regulär weitergespielter Checkpoint aus einer echten simulierten Study-Runde sicherte Münzen und XP einmalig. Levelaufstieg, Mitteilung und NIM-Bestätigung blieben nach Neuladen erhalten |
+| Übersicht und Fähigkeitenbaum | **1280×800, 390×844, 320×568, 844×390**: Anmeldung, Profil, Übersicht, Mitteilungen, Erfolge, Zweigwahl und Details erreichbar; alle neun verbundenen Knoten ohne Überlappungen, abgeschnittene Knotentexte oder horizontalen Seitenüberlauf |
+| Eigene Sammlung | Zusätzliche Prüfung derselben vier Größen mit erspieltem Profil: kompakte eigene Knoten, lesbare Sammlung unter dem Baum, ungelesene Mitteilung und Markieren als gelesen |
+| Illustrationen | Eigene SVG-Bilder für alle neun Fähigkeiten und zwölf Erfolge; weitere Raum-/Kulissen-/Outfit-/Münz-/Levelbilder. 39 Varianten auf gültiges XML und sichere Inhalte geprüft, visuelle Vorschau kontrolliert |
+| Offline und Download | **8/8 bestanden**: Einstieg über Root, getrennte Worker-Scopes, alter eigener Cache gelöscht, fremde Caches erhalten, echter Schnitt mit Offline-Reload, echter ZIP-Download mit identischer Prüfsumme, entpacktes HTTP-Spiel und Offline-Fortsetzen, keine JavaScript-Fehler |
+| Build und Paketierung | Aktuelles Bundle erfolgreich erzeugt; zweimal identische ZIP-Erstellung, CRC und bytegleiche Laufzeitdateien geprüft |
 
-## Vollständiger nativer Durchlauf
+Die Browser-Spielstände für Kaufprüfungen wurden durch öffentliche Spielmethoden mit abgeschlossenen Runden und regulären Käufen erzeugt. Es wurden keine Münzen über die Diagnosefunktion vergeben. Komponentenprüfungen und fortgesetzte Checkpoints werden als solche ausgewiesen.
 
-Ein durch öffentliche Spielmethoden erzeugter Vor-Spielstand enthielt Münzen aus 14 simulierten abgeschlossenen Lernrunden und bereits legal freigeschaltete Räume. Im Browser wurden anschließend mit echten Schaltflächen die Fokus-Fähigkeit, der Zeitzauber und der Papiergarten gekauft und ausgewählt. Danach liefen das wiederholbare Training und die **vollständige Kampagne mit regulär laufender Uhr und nativen Mauswischern**, ohne Sprünge in der Spielzeit oder Mutationen über Diagnosefunktionen.
+## Weiter geltende Gameplay-Nachweise aus 1.2
 
-Der Durchlauf endete mit vier abgeschlossenen Abschnitten, allen drei Master-Kontexten, allen drei Bonusphasen, 56 geschnittenen Ablenkungen, 69 hilfreichen Durchlässen, 40 eingesammelten Power-ups und 12 Super-Einsätzen. Ergebnis: 30.800 Punkte, Balance 100, fünf Herzen. **165 Münzen** wurden genau einmal gutgeschrieben; Wallet 555→720. Export und Neuladen bewahrten Ausrüstung, Münzen, Highscore und Rundenzähler. Keine JavaScript-Fehler oder externen Spielanfragen.
-
-Die fokussierten Integrationsprüfungen verwenden ebenfalls über echte Spielaufrufe verdiente Checkpoints. Komponentenprüfungen von Grafik oder Audio werden als solche ausgewiesen; sie ersetzen den vollständigen nativen Durchlauf nicht. Mobile Prüfungen verwenden Chromium mit Touch-/Viewport-Emulation und sind kein Nachweis eines physischen iPhone-Safari-Tests.
+Die vorherige Version bestand zusätzlich elf native Fortschrittsfälle, vier Spielort-/Shopfälle, alle drei echten Touch-Supers, Münzaufnahme und Premium-Kulissen. Ein vollständiger nativer Kampagnendurchlauf mit regulär laufender Uhr und zuvor legal erspielten Freischaltungen schloss alle vier Abschnitte ab: 56 geschnittene Ablenkungen, 69 hilfreiche Durchlässe, 40 Power-ups, zwölf Super-Einsätze und alle drei Bonusphasen. Ergebnis: 30.800 Punkte, Balance 100, fünf Herzen; 165 Münzen wurden genau einmal gebucht, Wallet 555→720. Diese vollständige Vier-Raum-Kampagne wurde für 1.3 nicht erneut durchgeführt; die aktuelle Prüfung konzentriert sich auf Profile, NIM, Darstellung, Freischaltungen, Rundenabschluss und Offline-Verhalten. Die bisherigen Spielregeln bleiben durch die automatisierten Tests abgedeckt.
 
 ## Download
 
-`downloads/Notification-Ninja-1.2.0.zip`: **66.381 Bytes**, sieben Laufzeitdateien plus `START-HIER.txt` in einem vollständigen Spielordner.
+`downloads/Notification-Ninja-1.3.0.zip`: **89.532 Bytes**, sieben Laufzeitdateien und `START-HIER.txt` in einem vollständigen Spielordner.
 
-SHA-256: `816bd4ee5ff0d6d99b4c8e6590d6c4e853ee9c3182294277226b47665d7578ae`
+SHA-256: `cb7f20d05750ddcf59ae916c7c8f4136945a74a367cb27a158b794ad07c5f587`
 
-Der heruntergeladene Browser-Download stimmt bytegenau mit dem erzeugten Paket überein. Die älteren 1.0.0- und 1.1.0-Pakete bleiben für vorhandene Links erhalten.
+Der echte Browser-Download stimmt bytegenau mit dem erzeugten Paket überein. Die Downloads 1.0.0, 1.1.0 und 1.2.0 bleiben für vorhandene Links erhalten.
 
 ## Grenzen und Artefakte
 
-Direktes `file://`-Öffnen ist im verwalteten Cloud-Chromium gesperrt; ein erfolgreicher Doppelklick-Test wird nicht behauptet. Die Richtlinie wurde nicht umgangen. Der direkte öffentliche HTTPS-Browsertest ist hier wegen des bestehenden Proxy-CA-Vertrauens optional eingeschränkt; Zertifikatsprüfung und Browserrichtlinien bleiben aktiv. Öffentliche Dateien werden separat über HTTPS mit regulärem Systemvertrauen bytegenau geprüft.
+Mobile Prüfungen verwenden Chromium mit Touch-/Viewport-Emulation und sind kein Test auf einem physischen iPhone mit Safari. Direktes `file://`-Öffnen ist im verwalteten Cloud-Chromium gesperrt; ein Doppelklick-Test wird nicht behauptet. Browserrichtlinien und Zertifikatsprüfungen bleiben aktiv. Öffentliche Dateien werden separat über HTTPS mit regulärem Systemvertrauen geprüft.
 
-Ausführliche Berichte und Screenshots liegen außerhalb des Checkouts unter `/workspace/ninja-checks/v12/`, Shop-/Layout-Berichte zusätzlich unter `/workspace/ninja-v12-checks/ui/`. Herkunftsnachweise für Test-Spielstände liegen unter `/workspace/ninja-checks/progression/` sowie in den Fixture-Skripten im v12-Verzeichnis. Sie sind Prüfartefakte und keine Spielabhängigkeiten. Es wurden keine Tests mit jugendlichen Testpersonen durchgeführt.
+Aktuelle Berichte und Screenshots liegen unter `/workspace/ninja-checks/v13/` sowie `/workspace/ninja-checks/profile-mentor/`, frühere Kampagnen-/Gameplay-Nachweise unter `/workspace/ninja-checks/v12/`. Dies sind externe Prüfartefakte, keine Spielabhängigkeiten. Es wurden keine Tests mit jugendlichen Testpersonen durchgeführt. Das Profil ist lokal und hat keine geräteübergreifende Anmeldung.

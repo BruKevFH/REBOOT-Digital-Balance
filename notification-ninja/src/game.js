@@ -1,3 +1,5 @@
+import { GUIDE_IDS, normalizePlayer, validateUsername, validateNotification } from './player.js';
+export { GUIDE_IDS, normalizePlayer, validateUsername, getPlayerProgress } from './player.js';
 import { DIFFICULTIES, SKILLS, ACHIEVEMENTS, WORLDS, BACKGROUNDS, buyWorld as purchaseWorld, buyBackground as purchaseBackground, equipBackground, sanitizeProgress, buySkill as purchaseSkill, equipSuper, claimAchievement as claimReward, unlockAchievements, getDifficulty } from './progression.js';
 export { DIFFICULTIES, SKILLS, ACHIEVEMENTS, WORLDS, BACKGROUNDS } from './progression.js';
 export const STORAGE_KEY = 'notification-ninja:save:v1';
@@ -60,7 +62,7 @@ const hash = value => {let h=2166136261;for(const char of String(value))h=Math.i
 const scoreKeys = () => Object.fromEntries(MODES.map(mode=>[mode,0]));
 const metrics = () => ({cuts:0,usefulPassed:0,usefulMistakes:0,missedDistractions:0,shieldedMistakes:0,lifeLost:0,healthyStops:0,powerups:0,flowTriggers:0,correctDecisions:0,superUses:0,limitExtensions:0,sleepContinues:0,contextsPlayed:[],stageStats:[]});
 const stageMetrics = () => ({cuts:0,usefulPassed:0,usefulMistakes:0,missedDistractions:0,shieldedMistakes:0,correctDecisions:0,score:0});
-function profile() {return {coins:0,totalRuns:0,highScores:scoreKeys(),unlockedSkins:['default'],selectedSkin:'default',achievements:[],tutorialCompleted:false,...sanitizeProgress({})};}
+function profile() {return {coins:0,totalRuns:0,highScores:scoreKeys(),unlockedSkins:['default'],selectedSkin:'default',achievements:[],tutorialCompleted:false,player:normalizePlayer({}),...sanitizeProgress({})};}
 function emptyState(seed,skin='default') {return {
   started:false,scene:'home',mode:'campaign',levelIndex:0,stageIndex:0,context:'study',isTutorial:false,
   tutorialDecisions:0,tutorialCuts:0,tutorialPassed:0,tutorialResults:null,tutorialReason:null,
@@ -260,6 +262,16 @@ export class NinjaGame {
       const stats=this.profile.stats;stats.correct=Math.min(MAX,stats.correct+s.metrics.correctDecisions);stats.coinsEarned=Math.min(MAX,stats.coinsEarned+coins);stats.superUses=Math.min(MAX,stats.superUses+s.metrics.superUses);stats.bestCombo=Math.max(stats.bestCombo,s.bestCombo);
       if(s.difficulty==='hard'&&['complete','healthy-stop'].includes(result))stats.hardClears=Math.min(MAX,stats.hardClears+1);for(const id of unlockAchievements(this.profile))events.push({type:'achievement-unlocked',id});}
     events.push({type:'ended',result,score:s.score,scoreArcade:s.scoreArcade,balanceScore:s.balanceScore,coins:s.awardedCoins});this._record('ended',{result});this.save();}
+  setUsername(value){const result=validateUsername(value);if(!result.ok)return fail(result.reason);const player=normalizePlayer(this.profile);
+    this.profile.player={...player,username:result.username,createdAt:player.username?player.createdAt:this._time()};this.save();return {ok:true,username:result.username};}
+  markGuideSeen(id){if(!GUIDE_IDS.includes(id))return fail('Unbekannter Guide-Hinweis.');const player=normalizePlayer(this.profile);
+    if(!player.guideSeen.includes(id)){player.guideSeen.push(id);this.profile.player=player;this.save();}return {ok:true,id};}
+  addNotification(value){const result=validateNotification(value);if(!result.ok)return fail(result.reason);const player=normalizePlayer(this.profile);
+    const existing=player.notifications.find(item=>item.id===result.id);if(existing)return {ok:true,notification:clone(existing)};
+    const notification={id:result.id,type:result.type,ref:result.ref,createdAt:this._time(),read:false};
+    player.notifications=[notification,...player.notifications].slice(0,50);this.profile.player=player;this.save();return {ok:true,notification:clone(notification)};}
+  markNotificationsRead(){const player=normalizePlayer(this.profile),unread=player.notifications.filter(item=>!item.read).length;
+    if(unread){for(const item of player.notifications)item.read=true;this.profile.player=player;this.save();}return {ok:true,count:unread};}
   _progressAllowed(){return !this.state.started||this.state.ended||this.state.paused||this.state.scene==='home';}
   buyWorld(id){if(!this._progressAllowed())return fail('Pausiere den Run oder öffne das Hauptmenü, um eine Welt freizuschalten.');const result=purchaseWorld(this.profile,id);if(result.ok)this.save();return result;}
   buyBackground(id){if(!this._progressAllowed())return fail('Pausiere den Run oder öffne das Hauptmenü, um einen Hintergrund freizuschalten.');const result=purchaseBackground(this.profile,id);if(result.ok)this.save();return result;}
@@ -285,7 +297,7 @@ export class NinjaGame {
     const p=saved.profile;if(isObject(p)){this.profile.coins=integer(p.coins);this.profile.totalRuns=integer(p.totalRuns);for(const mode of MODES)this.profile.highScores[mode]=integer(p.highScores?.[mode]);
       this.profile.unlockedSkins=[...new Set(['default',...(Array.isArray(p.unlockedSkins)?p.unlockedSkins:[]).filter(id=>SKIN_MAP.has(id))])];
       this.profile.selectedSkin=this.profile.unlockedSkins.includes(p.selectedSkin)?p.selectedSkin:'default';this.profile.tutorialCompleted=p.tutorialCompleted===true;
-      this.profile.achievements=[...new Set((Array.isArray(p.achievements)?p.achievements:[]).filter(id=>ACHIEVEMENTS.some(item=>item.id===id)))];Object.assign(this.profile,sanitizeProgress(p));}
+      this.profile.achievements=[...new Set((Array.isArray(p.achievements)?p.achievements:[]).filter(id=>ACHIEVEMENTS.some(item=>item.id===id)))];Object.assign(this.profile,sanitizeProgress(p));this.profile.player=normalizePlayer(p);}
     const source=saved.state;if(!isObject(source)||!MODES.includes(source.mode)||!['home','briefing','playing','limit-choice','results'].includes(source.scene))throw new Error('state');
     const s=emptyState(integer(source.rng,this.seed,1,0xffffffff),this.profile.selectedSkin);s.mode=source.mode;s.gamingLimit=[45,60,90].includes(source.gamingLimit)?source.gamingLimit:90;
     s.started=source.started===true;s.isTutorial=source.isTutorial===true&&s.mode==='campaign';s.difficulty=DIFFICULTIES.some(item=>item.id===source.difficulty)?source.difficulty:'easy';s.maxLives=s.isTutorial?5:getDifficulty(s.difficulty).lives;
@@ -334,6 +346,6 @@ export class NinjaGame {
     this.state=s;this._balance();const targetWidth=this.width,targetHeight=this.height;this.width=savedWidth;this.height=savedHeight;this.resize(targetWidth,targetHeight);
   }catch{this.state=emptyState(this.seed,this.profile.selectedSkin);this.storageFailed=true;this.storageError='unreadable';}}
   getSnapshot(){return clone({state:this.state,profile:this.profile,width:this.width,height:this.height,storageFailed:this.storageFailed});}
-  exportData(){return clone({game:'Notification Ninja',version:'1.2.0',schemaVersion:1,width:this.width,height:this.height,profile:this.profile,state:this.state});}
+  exportData(){return clone({game:'Notification Ninja',version:'1.3.0',schemaVersion:1,width:this.width,height:this.height,profile:this.profile,state:this.state});}
 }
 export const Game = NinjaGame;
