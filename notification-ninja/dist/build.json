@@ -1,6 +1,6 @@
 {
   "name": "Notification Ninja – Master Your Digital Balance",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "engine": "Canvas 2D / Web Audio",
   "style": "Illustrated cartoon arcade",
   "entry": "index.html",
@@ -8,11 +8,15 @@
   "levels": 4,
   "difficulties": 3,
   "skills": 9,
-  "achievements": 12,
+  "achievements": 24,
   "worlds": 4,
   "backgrounds": 6,
   "localProfile": true,
   "ninjaGuide": true,
   "unlockInbox": 50,
-  "skillTree": "radial-roots"
+  "skillTree": "radial-roots",
+  "openRun": true,
+  "animatedPlayer": true,
+  "publicLanding": true,
+  "leaderboard": "optional-open-run-service"
 }

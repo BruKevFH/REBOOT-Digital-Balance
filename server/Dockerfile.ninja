@@ -1,0 +1,8 @@
+FROM node:24-bookworm-slim
+WORKDIR /app
+COPY --chown=node:node server/ninja-leaderboard.mjs ./ninja-leaderboard.mjs
+RUN mkdir -p /data && chown node:node /data
+USER node
+ENV HOST=0.0.0.0 PORT=8082 DATA_DIR=/data
+EXPOSE 8082
+CMD ["node", "ninja-leaderboard.mjs"]

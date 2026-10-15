@@ -53,7 +53,7 @@ test('authored levels, skins and contextual notification meanings are distinct a
   assert.equal(Game, NinjaGame);
   assert.equal(STORAGE_KEY, 'notification-ninja:save:v1');
   assert.equal(LEVELS.length, 4);
-  assert.deepEqual(SKINS.map(skin => [skin.id, skin.cost]), [['default', 0], ['solar', 20], ['mint', 45], ['neon', 80]]);
+  assert.deepEqual(SKINS.map(skin => [skin.id, skin.cost]), [['default', 0], ['solar', 80], ['mint', 180], ['neon', 320]]);
   const byId = new Map(CONTENT.map(content => [content.id, content]));
   assert.equal(byId.size, CONTENT.length);
   for (const content of CONTENT) {
@@ -198,6 +198,7 @@ test('gaming limits are explicit choices with a single 15-second extension', () 
 
 test('choosing to stop at the gaming limit is a healthy completion credited once', () => {
   const { game } = setup('gaming');
+  for(let i=0;i<12;i++)cut(game);
   nearEnd(game, 90);
   const score = game.state.score;
   assert.equal(game.requestStop().ok, true);
@@ -205,7 +206,7 @@ test('choosing to stop at the gaming limit is a healthy completion credited once
   assert.equal(game.state.metrics.healthyStops, 1);
   assert.equal(game.state.ended, true);
   const awarded = game.profile.coins;
-  assert.equal(awarded, 2);
+  assert.equal(awarded, 3);
   assert.equal(game.requestStop().ok, false);
   game.update(0.05);
   assert.equal(game.profile.coins, awarded);
@@ -440,7 +441,7 @@ test('an authored useful card flies from the bottom beyond the top and earns a p
   }
   assert.equal(passed.length, 1);
   assert.ok(card.y + card.radius < 0);
-  assert.ok(game.state.stageElapsed >= 4.6 && game.state.stageElapsed <= 5.25);
+  assert.ok(game.state.stageElapsed >= 4 && game.state.stageElapsed <= 4.65);
   assert.equal(game.state.metrics.usefulPassed, 1);
   assert.equal(game.state.metrics.cuts, 0);
   assert.equal(game.state.score, 100);
@@ -450,11 +451,12 @@ test('an authored useful card flies from the bottom beyond the top and earns a p
 
 test('results reward and high score survive loading without duplicate profile awards', () => {
   const { game, storage } = setup();
+  for(let i=0;i<14;i++)cut(game);
   game.state.score = game.state.scoreArcade = 1250;
   nearEnd(game, 75);
   assert.equal(game.state.ended, true);
   assert.equal(game.state.credited, true);
-  assert.equal(game.profile.coins, 2);
+  assert.equal(game.profile.coins, 3);
   assert.equal(game.profile.totalRuns, 1);
   assert.equal(game.profile.highScores.study, 1250);
   const profile = structuredClone(game.profile);
@@ -475,14 +477,14 @@ test('skin purchases validate funds and ownership and selection persists', () =>
   assert.equal(game.selectSkin('neon').ok, false);
   game.profile.coins = 100;
   assert.equal(game.buySkin('solar').ok, true);
-  assert.equal(game.profile.coins, 80);
+  assert.equal(game.profile.coins, 20);
   assert.equal(game.buySkin('solar').ok, false);
-  assert.equal(game.profile.coins, 80);
+  assert.equal(game.profile.coins, 20);
   assert.equal(game.selectSkin('solar').ok, true);
   assert.equal(game.profile.selectedSkin, 'solar');
   assert.equal(game.state.skin, 'solar');
   const restored = new NinjaGame({ storage });
-  assert.equal(restored.profile.coins, 80);
+  assert.equal(restored.profile.coins, 20);
   assert.equal(restored.profile.selectedSkin, 'solar');
   assert.ok(restored.profile.unlockedSkins.includes('solar'));
 });
@@ -620,8 +622,8 @@ test('Master finale launches more waves and ramps new flights without changing t
     return { game, times, average, first: launches[0][0] };
   }
   const earlier = waves(10, 0), finale = waves(75, 3);
-  assert.ok(earlier.average > 1.45 && earlier.average < 1.55);
-  assert.ok(finale.average > 1.04 && finale.average < 1.14);
+  assert.ok(earlier.average > 1.15 && earlier.average < 1.25);
+  assert.ok(finale.average > .67 && finale.average < .74);
   assert.ok(finale.times.length > earlier.times.length);
   for (const field of ['x', 'y', 'vx', 'gravity', 'radius']) assert.equal(finale.first[field], earlier.first[field], `unchanged ${field}`);
   assert.ok(finale.first.vy < earlier.first.vy, 'later newly launched cards move faster');
@@ -728,7 +730,7 @@ test('each room launches its own familiar illustrated objects in small, gentle w
     sleep: ['quiet', 'teddy', 'moon']
   };
   const forbidden = { study: ['teddy', 'moon', 'loot'], gaming: ['teddy', 'moon', 'pencil'], sleep: ['loot', 'pencil', 'urgent-school'] };
-  for (const [context, interval] of [['study', 1.75], ['gaming', 1.75*.92], ['sleep', 1.75*1.08]]) {
+  for (const [context, interval] of [['study', 1.55], ['gaming', 1.55*.92], ['sleep', 1.55*1.08]]) {
     const { game } = setup(context), seen = new Set();
     for (let wave = 0; wave < 160; wave++) {
       game.state.objects = [];
@@ -803,14 +805,14 @@ test('difficulty changes hearts, flight and spawn budgets; invalid difficulty ca
 test('ramping affects new cards, retains existing trajectories and freezes completely in pause', () => {
   const { game } = setup('study', { difficulty: 'hard' });
   const prior = game._spawnContent('streak');const vy = prior.vy, gravity = prior.gravity;
-  game.state.elapsed = 100;game.update(.05);
-  assert.ok(game.state.speedFactor > 1.7 && game.state.speedFactor < 1.95);
+  game.state.elapsed = 60;game.update(.05);
+  assert.ok(game.state.speedFactor > 2.4 && game.state.speedFactor < 2.75);
   assert.ok(Math.abs(prior.vy - (vy + gravity*.05)) < .000001, 'existing velocity changes only by gravity');
   const fast = game._spawnContent('streak');assert.ok(fast.vy < vy);
   game.pause();const snapshot = game.getSnapshot();
   for (let i=0;i<100;i++) game.update(.05);
   assert.deepEqual(game.getSnapshot(), snapshot);
-  game.resume();game.state.elapsed=500;game.update(.05);assert.equal(game.state.speedFactor,1.95);
+  game.resume();game.state.elapsed=500;game.update(.05);assert.equal(game.state.speedFactor,2.75);
 });
 
 test('shield absorbs a missed distraction once and tutorial hearts reset without ending the run', () => {
@@ -829,20 +831,20 @@ test('shield absorbs a missed distraction once and tutorial hearts reset without
 
 test('coins accrue from correct decisions, collectables and combos, then settle only once across reloads', () => {
   const {game,storage}=setup();
-  for(let i=0;i<4;i++)cut(game);
+  for(let i=0;i<13;i++)cut(game);
   assert.equal(game.state.runCoins,0);assert.equal(game.profile.coins,0);
   const coin=cut(game).events;assert.equal(ofType(coin,'coin-earned')[0].amount,1);
-  cut(game,'power-coins');assert.equal(game.state.runCoins,4);
-  for(let i=0;i<5;i++)cut(game);
-  assert.equal(game.state.runCoins,7,'two decision coins, three collectible coins and two combo coins');
+  cut(game,'power-coins');assert.equal(game.state.runCoins,2);
+  for(let i=0;i<11;i++)cut(game);
+  assert.equal(game.state.runCoins,3,'one decision coin, one collectible coin and one combo coin');
   assert.equal(game.profile.coins,0,'pending coins cannot be spent mid-run');
-  nearEnd(game,75);const awarded=game.state.awardedCoins;assert.ok(awarded>=7);assert.equal(game.profile.coins,awarded);
+  nearEnd(game,75);const awarded=game.state.awardedCoins;assert.equal(awarded,5);assert.equal(game.profile.coins,awarded);
   const before=structuredClone(game.profile),restored=new NinjaGame({storage});
   restored.update(.05);assert.deepEqual(restored.profile,before);assert.equal(restored.profile.stats.coinsEarned,awarded);
 });
 
 test('paused skill purchases and super selection affect the next run and cannot change a live loadout', () => {
-  const {game,storage}=setup();game.profile.coins=100;
+  const {game,storage}=setup();game.profile.coins=200;
   assert.equal(game.buySkill('focus-root').ok,false);assert.deepEqual(game.state.skillIds,[]);
   game.pause();assert.equal(game.buySkill('focus-root').ok,true);assert.equal(game.buySkill('slow-super').ok,true);
   assert.deepEqual(game.state.skillIds,[]);assert.equal(game.state.selectedSuper,null);
@@ -882,7 +884,8 @@ test('passive guard, longer Flow, extra coins and second chance have one-run eff
   const {game,storage}=prepared(SKILLS.map(skill=>skill.id),'shield-super');
   assert.equal(game.state.effects.shield,1);cut(game,'homework');assert.equal(game.state.lives,5);assert.equal(game.state.effects.shield,0);
   for(let i=0;i<5;i++)cut(game);assert.equal(game.state.effects.flow,7);assert.equal(game.state.superCharge,50);
-  assert.equal(game.state.runCoins,1);cut(game,'power-coins');assert.equal(game.state.runCoins,5,'coin boost fractional carry is preserved');
+  assert.equal(game.state.runCoins,0);for(let i=0;i<7;i++)cut(game);assert.equal(game.state.runCoins,1);
+  for(let i=0;i<3;i++)cut(game,'power-coins');assert.equal(game.state.runCoins,5,'coin boost fractional carry is preserved');
   game.state.lives=1;const revived=cut(game,'homework').events;assert.equal(ofType(revived,'second-chance').length,1);assert.equal(game.state.lives,1);
   game.pause();const restored=new NinjaGame({storage});assert.equal(restored.state.reviveUsed,true);restored.resume();
   cut(restored,'homework');assert.equal(restored.state.ended,true);assert.equal(restored.state.result,'lives');
@@ -891,7 +894,7 @@ test('passive guard, longer Flow, extra coins and second chance have one-run eff
 test('bonus phases alternate, change real rewards, freeze during pause and wait for master context drain', () => {
   const {game}=setup();game.state.bonusClock=19.99;game.update(.05);
   assert.equal(game.state.bonusPhase.id,'coin-rush');const before=game.state.runCoins;
-  const coinEvents=cut(game,'power-coins').events;assert.equal(game.state.runCoins-before,6);assert.equal(ofType(coinEvents,'coin-earned')[0].amount,6);
+  const coinEvents=cut(game,'power-coins').events;assert.equal(game.state.runCoins-before,2);assert.equal(ofType(coinEvents,'coin-earned')[0].amount,2);
   game.pause();const snapshot=game.getSnapshot();for(let i=0;i<100;i++)game.update(.05);assert.deepEqual(game.getSnapshot(),snapshot);game.resume();
   game.state.objects=[];game.state.spawnTimer=100;const ended=[];for(let i=0;i<120;i++)ended.push(...game.update(.05));
   assert.equal(ofType(ended,'bonus-phase-end').length,1);assert.equal(game.state.bonusPhase,null);
@@ -905,8 +908,8 @@ test('new achievement milestones and explicit rewards persist and cannot be clai
   const {game,storage}=prepared(['focus-root','slow-super'],'slow-super');
   for(let i=0;i<13;i++)cut(game);game.activateSuper();nearEnd(game,75);
   for(const id of ['first-skill','first-super','combo-10'])assert.ok(game.profile.achievements.includes(id));
-  const before=game.profile.coins,result=game.claimAchievement('first-super');assert.equal(result.ok,true);assert.equal(game.profile.coins,before+8);
-  assert.equal(game.claimAchievement('first-super').ok,false);assert.equal(game.profile.coins,before+8);
+  const before=game.profile.coins,result=game.claimAchievement('first-super');assert.equal(result.ok,true);assert.equal(game.profile.coins,before+4);
+  assert.equal(game.claimAchievement('first-super').ok,false);assert.equal(game.profile.coins,before+4);
   const restored=new NinjaGame({storage});assert.equal(restored.claimAchievement('first-super').ok,false);assert.equal(restored.profile.stats.superUses,1);
   assert.ok(restored.profile.claimedAchievements.includes('first-super'));
 });
@@ -922,7 +925,7 @@ test('legacy profiles migrate safely and extended live state survives a paused r
   enhanced.game.state.bonusClock=19.99;enhanced.game.update(.05);enhanced.game.pause();
   const resumed=new NinjaGame({storage:enhanced.storage,width:800,height:600});
   for(const key of ['skillIds','selectedSuper','runCoins','superCharge','bonusPhase','bonusClock','reviveUsed'])assert.deepEqual(resumed.state[key],enhanced.game.state[key],key);
-  assert.ok(resumed.state.effects.slow>7);assert.deepEqual(resumed.profile,enhanced.game.profile);assert.equal(resumed.exportData().version,'1.3.0');
+  assert.ok(resumed.state.effects.slow>7);assert.deepEqual(resumed.profile,enhanced.game.profile);assert.equal(resumed.exportData().version,'1.4.0');
 });
 
 
@@ -942,7 +945,7 @@ test('coin rush creates collectible waves and focus waves change the actual cont
 });
 
 test('difficulty coin bonuses retain fractional earnings and successful hard rounds record a claimable milestone', () => {
-  for(const [difficulty,coins,remainder] of [['easy',3,0],['normal',3,.75],['hard',4,.5]]){
+  for(const [difficulty,coins,remainder] of [['easy',1,0],['normal',1,.25],['hard',1,.5]]){
     const {game}=setup('study',{difficulty});cut(game,'power-coins');assert.equal(game.state.runCoins,coins);assert.equal(game.state.coinRemainder,remainder);
     nearEnd(game,75);assert.equal(game.profile.stats.hardClears,difficulty==='hard'?1:0);
     assert.equal(game.profile.achievements.includes('hard-clear'),difficulty==='hard');
@@ -954,10 +957,10 @@ test('fresh profiles must buy worlds in order and locked mode starts leave the r
   const game=new NinjaGame({storage:new Storage()});
   assert.deepEqual(game.profile.unlockedWorlds,['study']);
   for(const mode of ['gaming','sleep','master']){const before=game.getSnapshot();assert.equal(game.start({mode}).ok,false);assert.deepEqual(game.getSnapshot(),before);}
-  game.profile.coins=250;
+  game.profile.coins=600;
   for(const id of ['sleep','master']){const before=structuredClone(game.profile);assert.equal(game.buyWorld(id).ok,false);assert.deepEqual(game.profile,before);}
-  assert.equal(game.buyWorld('gaming').ok,true);assert.equal(game.profile.coins,215);assert.equal(game.buyWorld('gaming').ok,false);assert.equal(game.profile.coins,215);
-  assert.equal(game.buyWorld('sleep').ok,true);assert.equal(game.profile.coins,140);assert.equal(game.buyWorld('master').ok,true);assert.equal(game.profile.coins,20);
+  assert.equal(game.buyWorld('gaming').ok,true);assert.equal(game.profile.coins,520);assert.equal(game.buyWorld('gaming').ok,false);assert.equal(game.profile.coins,520);
+  assert.equal(game.buyWorld('sleep').ok,true);assert.equal(game.profile.coins,340);assert.equal(game.buyWorld('master').ok,true);assert.equal(game.profile.coins,20);
   assert.deepEqual(game.profile.unlockedWorlds,WORLDS.map(world=>world.id));
   assert.equal(game.start({mode:'master'}).ok,true);game.nextLevel();
   const before=structuredClone(game.profile);assert.equal(game.buyBackground('paper-garden').ok,false);assert.deepEqual(game.profile,before);
@@ -971,14 +974,15 @@ test('a campaign ends at the next locked world, settles coins once and restores 
   assert.equal(game.state.scene,'results');assert.equal(game.state.result,'locked');assert.equal(game.state.nextLockedWorld,'gaming');
   assert.equal(game.state.stageIndex,0);assert.equal(game.state.levelIndex,0);assert.equal(game.state.metrics.stageStats.length,1);
   assert.equal(game.profile.achievements.includes('context-master'),false);assert.equal(game.profile.achievements.includes('hard-clear'),false);assert.equal(game.profile.stats.hardClears,0);
-  assert.ok(game.profile.coins>=35);const before=structuredClone(game.profile),restored=new NinjaGame({storage,width:800,height:600});
+  assert.ok(game.profile.coins>0&&game.profile.coins<80);const before=structuredClone(game.profile),restored=new NinjaGame({storage,width:800,height:600});
   assert.equal(restored.storageFailed,false);assert.equal(restored.state.result,'locked');assert.equal(restored.state.nextLockedWorld,'gaming');assert.equal(restored.state.metrics.stageStats.length,1);assert.deepEqual(restored.profile,before);
   restored.update(.05);assert.equal(restored.nextLevel().ok,false);assert.deepEqual(restored.profile,before);
+  assert.equal(restored.buyWorld('gaming').ok,false);restored.profile.coins=80;
   assert.equal(restored.buyWorld('gaming').ok,true);assert.equal(restored.start({mode:'gaming'}).ok,true);
 });
 
 test('campaign ownership gates every later room and preserves two completed stages at the sleep gate', () => {
-  const storage=new Storage(),game=new NinjaGame({storage,width:800,height:600});game.profile.coins=35;game.buyWorld('gaming');
+  const storage=new Storage(),game=new NinjaGame({storage,width:800,height:600});game.profile.coins=80;game.buyWorld('gaming');
   game.start({mode:'campaign',tutorial:false,gamingLimit:45});game.nextLevel();nearEnd(game,75);
   assert.equal(game.state.scene,'briefing');assert.equal(game.state.levelIndex,1);game.nextLevel();nearEnd(game,45);game.requestStop();
   assert.equal(game.state.result,'locked');assert.equal(game.state.nextLockedWorld,'sleep');assert.equal(game.state.stageIndex,1);assert.equal(game.state.metrics.stageStats.length,2);
@@ -988,7 +992,7 @@ test('campaign ownership gates every later room and preserves two completed stag
 test('background buying and equipping are separate, world-gated and snapshotted until the next run', () => {
   const storage=new Storage(),game=new NinjaGame({storage,width:800,height:600});game.profile.coins=300;
   assert.equal(game.selectBackground('paper-garden').ok,false);assert.equal(game.buyBackground('pixel-cove').ok,false);assert.equal(game.profile.coins,300);
-  assert.equal(game.buyBackground('paper-garden').ok,true);assert.equal(game.profile.coins,240);assert.equal(game.profile.selectedBackgrounds.study,'classroom');
+  assert.equal(game.buyBackground('paper-garden').ok,true);assert.equal(game.profile.coins,140);assert.equal(game.profile.selectedBackgrounds.study,'classroom');
   assert.equal(game.selectBackground('paper-garden').ok,true);assert.equal(game.profile.selectedBackgrounds.study,'paper-garden');
   game.start({mode:'study',tutorial:false});game.nextLevel();assert.equal(game.state.backgrounds.study,'paper-garden');
   assert.equal(game.selectBackground('classroom').ok,false);game.pause();assert.equal(game.selectBackground('classroom').ok,true);
@@ -1025,4 +1029,216 @@ test('completed players can explicitly replay unscored training without losing c
   assert.equal(game.start({mode:'campaign',difficulty:'normal',forceTutorial:true}).ok,true);assert.equal(game.state.isTutorial,true);assert.equal(game.state.lives,5);game.nextLevel();
   cut(game);cut(game);for(let i=0;i<4;i++)passUseful(game);
   assert.equal(game.state.isTutorial,false);assert.equal(game.state.scene,'briefing');assert.equal(game.state.difficulty,'normal');assert.equal(game.state.lives,4);assert.equal(game.state.runCoins,0);assert.equal(game.profile.coins,55);
+});
+
+function autoplayFrame(game) {
+  const events=game.update(.05);
+  for(const item of [...game.state.objects]) {
+    if(item.kind==='useful'||item.y<=item.radius||item.y>=game.height-item.radius)continue;
+    events.push(...game.swipe([{x:item.x-item.radius*.85,y:item.y},{x:item.x+item.radius*.85,y:item.y}]));
+  }
+  return events;
+}
+
+function autoplayStudy(game,difficulty='normal') {
+  assert.equal(game.start({mode:'study',difficulty,tutorial:false}).ok,true);game.nextLevel();
+  for(let frame=0;frame<1600&&!game.state.ended;frame++)autoplayFrame(game);
+  assert.equal(game.state.result,'complete');return game.state.awardedCoins;
+}
+
+test('real active frames visibly accelerate each difficulty at 15, 30 and 60 seconds with an honest clock', () => {
+  for(const [difficulty,minimums] of [['easy',[1.17,1.34,1.62]],['normal',[1.29,1.58,2.03]],['hard',[1.41,1.82,2.45]]]) {
+    const {game}=setup('gaming',{difficulty});
+    const seen=[];
+    for(const [index,target] of [15,30,60].entries()) {
+      while(game.state.elapsed<target-.000001)autoplayFrame(game);
+      assert.ok(game.state.speedFactor>=minimums[index],`${difficulty} at ${target}`);
+      assert.ok(Math.abs(game.state.stageElapsed-target)<.051);
+      assert.ok(Math.abs(game.state.remaining-(90-game.state.stageElapsed))<.000001);
+      seen.push(game.state.speedFactor);
+    }
+    assert.ok(seen[0]<seen[1]&&seen[1]<seen[2]);
+    while(game.state.scene==='playing')autoplayFrame(game);
+    assert.ok(Math.abs(game.state.speedFactor-DIFFICULTIES.find(item=>item.id===difficulty).speedCap)<.00000001);
+    assert.equal(game.state.scene,'limit-choice');assert.ok(Math.abs(game.state.stageElapsed-90)<.00000001);
+  }
+});
+
+test('faster late waves keep their separate lanes on narrow screens as the launch count increases', () => {
+  const {game}=setup('gaming',{difficulty:'hard',width:390,height:600});
+  const launches=[0,0];
+  while(game.state.stageElapsed<60-.000001) {
+    const events=autoplayFrame(game);
+    for(const event of ofType(events,'spawned')) {
+      if(game.state.stageElapsed<=15)launches[0]++;
+      if(game.state.stageElapsed>=45)launches[1]++;
+    }
+    for(const first of game.state.objects)for(const second of game.state.objects)if(first.id!==second.id) {
+      assert.ok(Math.abs(first.x-second.x)>=first.radius+second.radius+24,'no overlapping targets at high tempo');
+    }
+  }
+  assert.ok(launches[1]>launches[0],`${launches[0]} first versus ${launches[1]} late launches`);
+  assert.equal(game.state.lives,3,'correct native-style swipes remain safe');
+});
+
+test('perfect finite studies earn a small, bounded purse rather than converting large scores into currency', () => {
+  for(const difficulty of ['easy','normal','hard'])for(let seed=0;seed<3;seed++) {
+    const game=new NinjaGame({storage:null,seed:`economy-${seed}`,width:1000,height:700});
+    const coins=autoplayStudy(game,difficulty);
+    assert.ok(game.state.score>10000);
+    assert.ok(game.state.metrics.correctDecisions>=40);
+    assert.ok(coins>=5&&coins<=(difficulty==='hard'?14:12),`${difficulty} earned ${coins}`);
+    assert.equal(game.profile.stats.coinsEarned,coins);
+    assert.equal(game.profile.totalRuns,1);
+  }
+});
+
+test('normal play funds the first ability after three completed rounds without automatic achievement money', () => {
+  const game=new NinjaGame({storage:new Storage(),seed:'first-three-rounds'});
+  for(let round=1;round<=3;round++) {
+    autoplayStudy(game);
+    assert.equal(game.profile.coins,round*12);
+    if(round<3){const before=structuredClone(game.profile);assert.equal(game.buySkill('focus-root').ok,false);assert.deepEqual(game.profile,before);}
+  }
+  assert.equal(game.buySkill('focus-root').ok,true);assert.equal(game.profile.coins,1);
+  assert.equal(game.profile.claimedAchievements.length,0);
+  assert.ok(game.profile.achievements.includes('first-skill'));
+});
+
+test('repeated short sleep offers and idle failure cannot farm free completion money', () => {
+  const {game}=setup('sleep');
+  for(let round=0;round<5;round++) {
+    game.start({mode:'sleep',tutorial:false});game.nextLevel();
+    while(!game.state.stopAvailable)game.update(.05);
+    assert.equal(game.continueSleep().ok,true);assert.equal(game.requestStop().ok,true);
+    assert.equal(game.state.awardedCoins,0);assert.equal(game.profile.coins,0);
+  }
+  game.start({mode:'study',tutorial:false});game.nextLevel();
+  while(!game.state.ended)game.update(.05);
+  assert.equal(game.state.result,'lives');assert.equal(game.state.awardedCoins,0);assert.equal(game.profile.coins,0);
+});
+
+test('coin rush and arbitrary collectible streaks respect the stage purse and restore it without duplicate awards', () => {
+  const {game,storage}=setup('study',{difficulty:'normal'});game.state.bonusPhase={id:'coin-rush',name:'Münzregen',remaining:6};
+  for(let count=0;count<100;count++)cut(game,'power-coins');
+  assert.equal(game.state.runCoins,10);assert.equal(game.state.stageMetrics.earnedCoins,10);assert.equal(game.profile.coins,0);
+  game.pause();const restored=new NinjaGame({storage,width:800,height:600});restored.resume();
+  assert.equal(ofType(cut(restored,'power-coins').events,'coin-earned').length,0);
+  restored.state.objects=[];restored.state.spawnCount=2;restored.state.bonusCoinPending=true;const cappedSpawns=[];
+  for(let wave=0;wave<100;wave++){restored.state.objects=[];restored._spawn(cappedSpawns);}
+  assert.equal(cappedSpawns.some(item=>item.contentId==='power-coins'),false,'no worthless collectible spawns after the stage purse is full');
+  nearEnd(restored,75);assert.equal(restored.profile.coins,10);
+  const again=new NinjaGame({storage});assert.equal(again.profile.coins,10);assert.equal(again.profile.totalRuns,1);
+});
+
+test('coin-root offers an earlier first coin while the full money branch remains a bounded improvement', () => {
+  const base=setup().game,boosted=prepared(['coin-root']).game;
+  for(let count=0;count<12;count++){cut(base);cut(boosted);}
+  assert.equal(base.state.runCoins,0);assert.equal(boosted.state.runCoins,1);
+  for(let count=0;count<2;count++)cut(base);assert.equal(base.state.runCoins,1);
+  const upgraded=prepared(['coin-root','sweep-super','coin-boost']).game;
+  for(let count=0;count<100;count++)cut(upgraded,'power-coins');
+  assert.equal(upgraded.state.stageMetrics.earnedCoins,10,'25% benefit has a finite purse too');
+});
+
+test('a paid campaign resets the small stage purse while carrying only the actually earned coins forward', () => {
+  const {game}=setup('campaign');
+  for(let count=0;count<100;count++)cut(game,'power-coins');assert.equal(game.state.runCoins,8);
+  nearEnd(game,75);assert.equal(game.state.scene,'briefing');assert.equal(game.state.stageMetrics.earnedCoins,0);
+  game.nextLevel();for(let count=0;count<100;count++)cut(game,'power-coins');
+  assert.equal(game.state.runCoins,16);assert.equal(game.state.stageMetrics.earnedCoins,8);assert.equal(game.profile.coins,0);
+});
+
+test('old saved money, paid unlocks and pending coins survive the new price list without retroactive charges', () => {
+  const {game,storage}=setup('study');
+  game.profile.coins=2917;game.profile.unlockedSkills=SKILLS.map(item=>item.id);game.profile.selectedSuper='slow-super';
+  game.profile.unlockedBackgrounds=BACKGROUNDS.map(item=>item.id);game.profile.selectedBackgrounds.study='paper-garden';
+  game.profile.unlockedSkins=['default','solar','mint','neon'];game.profile.selectedSkin='solar';
+  game.profile.achievements=['first-cut','flow-five'];game.profile.claimedAchievements=['first-cut'];
+  game.state.runCoins=50;game.state.metrics.correctDecisions=20;game.pause();
+  const saved=JSON.parse(storage.getItem(STORAGE_KEY));delete saved.state.stageMetrics.earnedCoins;storage.setItem(STORAGE_KEY,JSON.stringify(saved));
+  const restored=new NinjaGame({storage,width:800,height:600});assert.equal(restored.storageFailed,false);assert.deepEqual(restored.profile,game.profile);
+  assert.equal(restored.state.runCoins,50);assert.equal(restored.claimAchievement('first-cut').ok,false);
+  restored.resume();nearEnd(restored,75);assert.equal(restored.state.awardedCoins,52);assert.equal(restored.profile.coins,2969);
+});
+
+test('open play is free and starts a JSON-safe untimed round without changing the four worlds', () => {
+  const game=new NinjaGame({storage:new Storage()});
+  assert.deepEqual(game.profile.unlockedWorlds,['study']);assert.equal(game.profile.highScores.open,0);
+  assert.equal(game.start({mode:'open',forceTutorial:true,difficulty:'normal'}).ok,true);
+  assert.equal(LEVELS.length,4);assert.equal(game.state.levelIndex,0);assert.equal(game.state.stageIndex,0);assert.equal(game.state.context,'study');
+  assert.equal(game.state.isTutorial,false);assert.equal(game.profile.tutorialCompleted,false);
+  assert.equal(game.state.duration,0);assert.equal(game.state.remaining,0);assert.equal(game.nextLevel().ok,true);
+  assert.equal(game.requestStop().ok,false);assert.equal(game.continueAfterLimit().ok,false);assert.equal(game.continueSleep().ok,false);
+  const exported=JSON.parse(JSON.stringify(game.exportData()));assert.equal(exported.state.duration,0);assert.equal(exported.state.remaining,0);
+});
+
+test('open play survives the old 75 and 90 second limits and keeps accelerating beyond five minutes', () => {
+  const {game}=setup('open',{difficulty:'normal'});let earlier=0;
+  for(const seconds of [75,90,180,300]) {
+    while(game.state.elapsed<seconds-.000001)autoplayFrame(game);
+    assert.equal(game.state.scene,'playing');assert.equal(game.state.ended,false);assert.equal(game.state.awaitingNext,false);
+    assert.equal(game.state.duration,0);assert.equal(game.state.remaining,0);assert.equal(game.state.context,'study');
+    assert.ok(game.state.speedFactor>earlier);earlier=game.state.speedFactor;
+    assert.ok(Math.abs(game.state.stageElapsed-seconds)<.051);
+  }
+  assert.ok(game.state.speedFactor>4);assert.equal(game.state.metrics.stageStats.length,0);
+  assert.equal(game.nextLevel().ok,false);assert.equal(game.requestStop().ok,false);
+});
+
+test('only losing all hearts ends an open round and its local highscore and scarce coins settle once', () => {
+  const {game,storage}=setup('open',{difficulty:'hard'});
+  while(game.state.elapsed<100-.000001)autoplayFrame(game);
+  assert.ok(game.state.score>0);const correct=game.state.metrics.correctDecisions;
+  for(let error=0;error<10&&!game.state.ended;error++)cut(game,'homework');
+  assert.equal(game.state.ended,true);assert.equal(game.state.result,'lives');assert.equal(game.state.lives,0);
+  assert.equal(game.profile.highScores.open,game.state.score);assert.equal(game.profile.totalRuns,1);
+  assert.equal(game.profile.stats.correct,correct);assert.equal(game.profile.stats.hardClears,0);
+  assert.equal(game.profile.achievements.includes('context-master'),false);assert.equal(game.profile.achievements.includes('hard-clear'),false);assert.equal(game.profile.achievements.includes('careful-stage'),false);
+  assert.ok(game.state.awardedCoins>0&&game.state.awardedCoins<=12);
+  const before=structuredClone(game.profile),restored=new NinjaGame({storage});
+  assert.equal(restored.storageFailed,false);assert.equal(restored.state.result,'lives');assert.equal(restored.profile.highScores.open,game.state.score);
+  restored.update(.05);assert.equal(restored.resumeRun().ok,false);assert.deepEqual(restored.profile,before);
+});
+
+test('open competition ignores paid skills and supers while honoring a purchased cosmetic skin', () => {
+  const first=new NinjaGame({storage:new Storage(),seed:'same-open-seed',width:800,height:600});
+  const paid=new NinjaGame({storage:new Storage(),seed:'same-open-seed',width:800,height:600});paid.profile.coins=10000;
+  for(const skill of SKILLS)assert.equal(paid.buySkill(skill.id).ok,true);paid.buySkin('solar');paid.selectSkin('solar');paid.selectSuper('shield-super');
+  first.start({mode:'open',gamingLimit:45,difficulty:'normal'});paid.start({mode:'open',gamingLimit:90,difficulty:'normal'});
+  first.nextLevel();paid.nextLevel();
+  assert.equal(paid.state.skin,'solar');assert.equal(first.state.skin,'default');assert.deepEqual(paid.state.skillIds,[]);assert.equal(paid.state.selectedSuper,null);assert.equal(paid.state.effects.shield,0);
+  for(let frame=0;frame<600;frame++){assert.deepEqual(autoplayFrame(first),autoplayFrame(paid));assert.deepEqual(first.state.objects,paid.state.objects);}
+  for(const key of ['score','lives','superCharge','runCoins','speedFactor'])assert.equal(first.state[key],paid.state[key],key);
+  assert.equal(paid.state.superCharge,0);assert.equal(paid.activateSuper().ok,false);
+});
+
+test('a long open save restores the upward clock, repeating bonuses and moving objects without a timed finish', () => {
+  const {game,storage}=setup('open',{difficulty:'normal'});
+  while(game.state.elapsed<301-.000001)autoplayFrame(game);game.pause();
+  const expected=game.getSnapshot(),restored=new NinjaGame({storage,width:800,height:600});
+  assert.equal(restored.storageFailed,false);assert.equal(restored.state.mode,'open');assert.equal(restored.state.duration,0);assert.equal(restored.state.remaining,0);
+  for(const key of ['elapsed','stageElapsed','speedFactor','bonusClock','bonusNextAt','bonusSequence','bonusPhase','runCoins'])assert.deepEqual(restored.state[key],expected.state[key],key);
+  assert.deepEqual(restored.state.objects,expected.state.objects);assert.equal(restored.state.paused,true);
+  const time=restored.state.elapsed;restored.update(.05);assert.equal(restored.state.elapsed,time);
+  restored.resumeRun();autoplayFrame(restored);assert.ok(restored.state.elapsed>time);assert.equal(restored.state.scene,'playing');
+});
+
+test('restoring open play enforces its standard loadout even when paid fields were saved on the profile', () => {
+  const {game,storage}=prepared(SKILLS.map(skill=>skill.id),'slow-super');
+  game.start({mode:'open'});game.nextLevel();game.pause();
+  const saved=JSON.parse(storage.getItem(STORAGE_KEY));saved.state.skillIds=SKILLS.map(skill=>skill.id);saved.state.selectedSuper='slow-super';saved.state.superCharge=100;saved.state.effects.flow=7;saved.state.effects.slow=8;
+  storage.setItem(STORAGE_KEY,JSON.stringify(saved));const restored=new NinjaGame({storage});
+  assert.equal(restored.storageFailed,false);assert.deepEqual(restored.state.skillIds,[]);assert.equal(restored.state.selectedSuper,null);assert.equal(restored.state.superCharge,0);
+  assert.equal(restored.state.effects.flow,5);assert.equal(restored.state.effects.slow,6);assert.equal(restored.profile.unlockedSkills.length,9);
+  restored.resumeRun();assert.equal(restored.activateSuper().ok,false);
+});
+
+test('old profiles gain an empty open highscore without losing finite records and open saves reject fake completion', () => {
+  const {game,storage}=setup('study');game.profile.highScores.study=12345;game.profile.coins=77;game.pause();
+  const legacy=JSON.parse(storage.getItem(STORAGE_KEY));delete legacy.profile.highScores.open;storage.setItem(STORAGE_KEY,JSON.stringify(legacy));
+  const restored=new NinjaGame({storage});assert.equal(restored.profile.highScores.open,0);assert.equal(restored.profile.highScores.study,12345);assert.equal(restored.profile.coins,77);
+  restored.start({mode:'open'});restored.nextLevel();restored.save();const forged=JSON.parse(storage.getItem(STORAGE_KEY));
+  Object.assign(forged.state,{scene:'results',ended:true,result:'complete'});storage.setItem(STORAGE_KEY,JSON.stringify(forged));
+  const rejected=new NinjaGame({storage});assert.equal(rejected.state.scene,'home');assert.equal(rejected.storageFailed,true);assert.equal(rejected.profile.coins,77);assert.equal(rejected.profile.highScores.study,12345);
 });

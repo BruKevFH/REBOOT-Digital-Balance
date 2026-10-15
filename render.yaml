@@ -1,0 +1,25 @@
+# Free demo hosting: SQLite is erased when Render sleeps, restarts or redeploys.
+# For a lasting public ranking, use a host with a persistent DATA_DIR instead.
+services:
+  - type: web
+    name: notification-ninja-ranking
+    runtime: docker
+    plan: free
+    region: frankfurt
+    branch: main
+    dockerfilePath: ./server/Dockerfile.ninja
+    dockerContext: .
+    healthCheckPath: /health
+    envVars:
+      - key: HOST
+        value: 0.0.0.0
+      - key: PORT
+        value: "8082"
+      - key: DATA_DIR
+        value: /tmp/ninja-ranking-data
+      - key: ALLOWED_ORIGINS
+        value: https://brukevfh.github.io
+      - key: REQUIRE_HTTPS
+        value: "0"
+      - key: TRUST_PROXY
+        value: "0"

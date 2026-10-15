@@ -97,7 +97,7 @@ test('each authored unlock has a persistent guide acknowledgement and unknown or
 
 test('player identity survives real skill and world purchases, background selection and reward claiming', () => {
   const game=new NinjaGame({storage:new Storage(),now:()=>100});
-  game.setUsername('Ninja Finn');game.markGuideSeen('shop');game.profile.coins=200;
+  game.setUsername('Ninja Finn');game.markGuideSeen('shop');game.profile.coins=400;
   const player=structuredClone(game.profile.player);
   assert.equal(game.buySkill('focus-root').ok,true);
   assert.equal(game.buyWorld('gaming').ok,true);
@@ -153,7 +153,7 @@ test('identity can be set when storage is blocked and exported snapshots remain 
   assert.equal(game.setUsername('Offline Ninja').ok,true);assert.equal(game.markGuideSeen('welcome').ok,true);assert.equal(game.storageFailed,true);
   const snapshot=game.getSnapshot();snapshot.profile.player.username='Changed';snapshot.profile.player.guideSeen.push('shop');
   assert.equal(game.profile.player.username,'Offline Ninja');assert.deepEqual(game.profile.player.guideSeen,['welcome']);
-  const exported=game.exportData();assert.equal(exported.version,'1.3.0');assert.equal(exported.profile.player.username,'Offline Ninja');
+  const exported=game.exportData();assert.equal(exported.version,'1.4.0');assert.equal(exported.profile.player.username,'Offline Ninja');
   assert.equal(game.start({mode:'study'}).ok,true);
 });
 
@@ -221,11 +221,11 @@ test('inbox normalization drops unknown refs, repairs IDs and bounds timestamps 
 });
 
 test('identity edits, guide acknowledgements and progression purchases preserve a migrated inbox', () => {
-  const storage=new Storage(),game=new NinjaGame({storage,now:()=>1000});game.profile.coins=100;
+  const storage=new Storage(),game=new NinjaGame({storage,now:()=>1000});game.profile.coins=200;
   game.setUsername('Ninja Kai');game.addNotification({type:'achievement',ref:'first-cut'});
   const expected=structuredClone(game.profile.player.notifications);
-  game.setUsername('Kai_8');game.markGuideSeen('first-achievement');game.buySkill('focus-root');game.buyWorld('gaming');
+  game.setUsername('Kai_8');game.markGuideSeen('first-achievement');assert.equal(game.buySkill('focus-root').ok,true);assert.equal(game.buyWorld('gaming').ok,true);
   assert.deepEqual(game.profile.player.notifications,expected);
   const restored=new NinjaGame({storage});assert.equal(restored.profile.player.username,'Kai_8');assert.deepEqual(restored.profile.player.notifications,expected);
-  assert.equal(restored.profile.coins,53);assert.equal(restored.profile.player.guideSeen.includes('first-achievement'),true);
+  assert.equal(restored.profile.coins,85);assert.equal(restored.profile.player.guideSeen.includes('first-achievement'),true);
 });

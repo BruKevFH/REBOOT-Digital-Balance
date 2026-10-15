@@ -2,11 +2,11 @@
 
 Ein buntes, deutschsprachiges Arcade-Spiel über digitale Ablenkung: Wische durch störende Inhalte und lass hilfreiche Dinge passieren. Ein sonniges Klassenzimmer, ein gemütliches Gaming-Zimmer und ein Schlafzimmer bei Mondlicht begleiten deinen Tag. Bücher, Controller, Trinkflaschen, Kissen und andere gezeichnete Objekte passen zur jeweiligen Umgebung.
 
-**[Im Browser spielen](https://brukevfh.github.io/REBOOT-Digital-Balance/notification-ninja/)** · **[Vollständiges Spiel 1.3.0 herunterladen](downloads/Notification-Ninja-1.3.0.zip)**
+**[Im Browser spielen](https://brukevfh.github.io/REBOOT-Digital-Balance/notification-ninja/)** · **[Vollständiges Spiel 1.4.0 herunterladen](downloads/Notification-Ninja-1.4.0.zip)**
 
 ## Spielen
 
-Öffne das Spiel in einem aktuellen Browser mit JavaScript und wähle beim ersten Start einen **Ninja-Namen mit 3–18 Zeichen**. Erlaubt sind Buchstaben, Zahlen, Leerzeichen, `_` und `-`. Dein lokales Spielerprofil braucht kein Passwort und keine E-Mail.
+Öffne das Spiel in einem aktuellen Browser mit JavaScript. Die Startseite führt dich in dein Dojo. Wähle beim ersten Start einen **Ninja-Namen mit 3–18 Zeichen**. Erlaubt sind Buchstaben, Zahlen, Leerzeichen, `_` und `-`. Dein lokales Spielerprofil braucht kein Passwort und keine E-Mail. Hast du dich abgemeldet, kannst du von der Startseite mit deinem gespeicherten Profil zurückkehren.
 
 Für den Download die **gesamte ZIP-Datei entpacken** und anschließend `index.html` öffnen. Alle Laufzeitdateien gehören zum Paket; eine Engine-Installation ist nicht erforderlich. Falls dein Browser lokale Dateien einschränkt, kannst du den entpackten Ordner über einen lokalen HTTP-Server öffnen.
 
@@ -14,13 +14,23 @@ Die Online-Version speichert ihre Laufzeitdateien nach dem vollständigen ersten
 
 ## Dein Dojo, Profil und NIM
 
-Die Dojo-Übersicht bündelt deinen Namen, Münzen, Level, XP-Fortschritt und das nächste Freischaltziel. Über dein Profil kannst du den Namen ändern, Runden und Sammlungen ansehen, Fähigkeiten und Basar öffnen sowie deine Daten als JSON exportieren. Umbenennen erhält deinen vorhandenen Fortschritt.
+Die Dojo-Übersicht bündelt deinen Namen, Münzen, Level, XP-Fortschritt und das nächste Freischaltziel. Über dein Profil kannst du den Namen ändern, Runden und Sammlungen ansehen, Fähigkeiten und Basar öffnen sowie deine Daten als JSON exportieren. In der **Ninja-Garderobe** ziehst du einen bereits gekauften Look an. Das Profilbild zeigt deine tatsächliche Auswahl; der ausgewählte Ninja wirft die Gegenstände mit einer Wurfanimation ins Spielfeld. Ein neuer Run übernimmt den gewählten Look, ein gespeicherter Run behält seine Ausstattung.
+
+**Abmelden** bringt dich zur Startseite und erhält deinen Fortschritt. **Profil löschen** verlangt zur Bestätigung deinen aktuellen Ninja-Namen und entfernt anschließend die lokalen Notification-Ninja-Daten. Andere Spiele im Repository bleiben erhalten. Falls du Ergebnisse veröffentlicht hast, werden zuerst deine Online-Einträge gelöscht; bei einem Verbindungsfehler bleibt dein lokales Profil erhalten und du kannst die Löschung erneut versuchen. Umbenennen löscht keinen Fortschritt. Die feste Zurück-Schaltfläche führt zur vorherigen Ansicht und ihrer Scrollposition.
 
 Du bekommst **5 XP pro richtiger Entscheidung, 10 XP pro eingesetztem Super und 25 XP pro beendeter Runde**. Diese Werte werden am Run-Ende gesichert; das Training vergibt keine Run-XP. Level und XP entstehen aus deinen gespeicherten Spielstatistiken. Level 2 beginnt bei 100 Gesamt-XP, Level 3 bei 400, Level 4 bei 900; die weiteren Schwellen folgen `100 × (Level − 1)²`. Münzen und XP sind getrennte Werte: Einkaufen verringert dein Level nicht.
 
-Dein Mentor **NIM** spricht mit dir in animierten Hinweisfenstern. Er erklärt am Anfang den Einstieg, im Training die Wischbewegung und das Durchlassen und später neue Freischaltungen und Supers. Während einer Erklärung stehen Objekte und Rundenuhr still. Bestätigte Erklärungen werden lokal gemerkt. Das Training lässt sich jederzeit wiederholen; die WISCHEN-/BEHALTEN-Hilfen erscheinen dort weiter.
+Dein Mentor **Meister NIM** ist ein eigener Fuchs-Sensei mit Schal, Ohren und Schweif. Er spricht mit dir in animierten Hinweisfenstern. Er erklärt am Anfang den Einstieg, im Training die Wischbewegung und das Durchlassen und später neue Freischaltungen und Supers. Während einer Erklärung stehen Objekte und Rundenuhr still. Bestätigte Erklärungen werden lokal gemerkt. Das Training lässt sich jederzeit wiederholen; die WISCHEN-/BEHALTEN-Hilfen erscheinen dort weiter.
 
 Die Glocke öffnet deine **Mitteilungen**. Neue Fähigkeiten, Räume, Hintergründe, Skins, Erfolge und erreichte Level werden dort mit passenden Bildern gesammelt. Ein Zähler markiert ungelesene Mitteilungen; du kannst sie als gelesen markieren und zur passenden Sammlung wechseln. Das lokale Postfach hält bis zu 50 Mitteilungen bereit. Freischaltmitteilungen erscheinen innerhalb des Spiels und benötigen keine Browser-Push-Berechtigung.
+
+## Open Run – bis zum letzten Herz
+
+Der **Offene Modus / Open Run** ist kostenlos von Anfang an verfügbar. Er spielt im Lernkontext: passende Schulsachen und Pausen behalten, Ablenkungen schneiden. Es gibt keinen Rundentimer und keinen Abschluss nach 90 oder 300 Sekunden. Du spielst bis deine Herzen aufgebraucht sind; das Tempo steigt mit der aktiven Spielzeit immer weiter. Pause hält die Zeit und die Objekte an.
+
+Für vergleichbare Runs gelten je Schwierigkeit dieselben Grundregeln: **gekaufte passive Fähigkeiten und ausgerüstete Supers sind im Open Run ausgeschaltet**. Die fliegenden Power-ups und Focus Flow gehören weiterhin zum Spiel. Dein Ninja-Look und Hintergrund verändern die Optik. Die Herzanzahl ist 5 / 4 / 3 für Entspannt / Normal / Profi. Münzen und XP werden beim Ende durch verbrauchte Herzen wie bei anderen Runs einmalig lokal gesichert; der offene Run zählt als ein Abschnitt mit dem entsprechenden Münzlimit.
+
+Die optionale gemeinsame Rangliste wertet ausschließlich beendete Open Runs aus und trennt die drei Schwierigkeiten. Eine Übertragung erfolgt erst, wenn du dein Ergebnis ausdrücklich veröffentlichst. Kampagne, Einzelräume und Training zählen nicht für diese Rangliste. Mehr zur noch nicht aktivierten Online-Verbindung steht unter [Gemeinsame Rangliste](#gemeinsame-rangliste).
 
 ## Dein digitaler Tag
 
@@ -37,15 +47,15 @@ Nach dem Tutorial spielst du zuerst im kostenlosen Klassenzimmer. Verdiene Münz
 
 ### Schwierigkeit und steigendes Tempo
 
-| Schwierigkeit | Herzen zu Beginn | Münzfaktor | Maximales Tempo gegenüber dem Start |
-| --- | --- | --- | --- |
-| Entspannt – Voreinstellung | 5 | ×1 | ×1,35 |
-| Normal | 4 | ×1,25 | ×1,65 |
-| Profi | 3 | ×1,5 | ×1,95 |
+| Schwierigkeit | Herzen zu Beginn | Münzfaktor | Tempospitze normaler Räume | Spielmünzlimit pro Abschnitt |
+| --- | --- | --- | --- | --- |
+| Entspannt – Voreinstellung | 5 | ×1 | ×1,75 | 8 |
+| Normal | 4 | ×1,25 | ×2,25 | 10 |
+| Profi | 3 | ×1,5 | ×2,75 | 12 |
 
 Wähle den Schwierigkeitsgrad im Startmenü. **Ein falscher Schnitt und eine durchgelassene Ablenkung kosten jeweils ein Herz.** Beide Fehler unterbrechen deine Combo und erhöhen den Overload-Wert. Ein aktiver Schild fängt genau einen Fehler ab. Hilfreiche Dinge und ausgelassene optionale Bonusobjekte kosten beim Durchlassen kein Herz.
 
-Die Objekte werden im Verlauf schneller und erscheinen häufiger. Nach 120 aktiven Spielsekunden ist die Tempostufe des Schwierigkeitsgrads erreicht; diese Entwicklung läuft über die Abschnitte eines Runs hinweg. Bereits fliegende Objekte behalten ihre Flugbahn. Die Uhr bleibt unverändert: Zeitlupe und Flow verlangsamen die Objekte, nicht die Levelzeit. Pause hält Simulation, Effekte und Uhr an.
+Die Objekte werden im Verlauf schneller und erscheinen häufiger. Nach 15, 30 und 60 aktiven Sekunden sind die Temposchritte bereits deutlich; normale Räume erreichen nach 90 aktiven Spielsekunden die Tempospitze des Schwierigkeitsgrads. Diese Entwicklung läuft über die Abschnitte eines Runs hinweg. Im Open Run steigt das Tempo anschließend weiter. Bereits fliegende Objekte behalten ihre Flugbahn. Die Uhr bleibt unverändert: Zeitlupe und Flow verlangsamen die Objekte, nicht die Levelzeit. Pause hält Simulation, Effekte und Uhr an.
 
 ### Abwechslung und Boni
 
@@ -66,9 +76,9 @@ Die Zimmerkarte zeigt dir freigeschaltete Räume und das nächste Ziel. Käufe k
 | Raum | Preis | Voraussetzung |
 | --- | --- | --- |
 | Schulzimmer – Study | Kostenlos | Von Anfang an verfügbar |
-| Gaming-Zimmer | 35 Münzen | Schulzimmer |
-| Schlafzimmer – Sleep | 75 Münzen | Gaming-Zimmer |
-| Balance Master | 120 Münzen | Schlafzimmer |
+| Gaming-Zimmer | 80 Münzen | Schulzimmer |
+| Schlafzimmer – Sleep | 180 Münzen | Gaming-Zimmer |
+| Balance Master | 320 Münzen | Schlafzimmer |
 
 Endet deine Kampagne vor einem noch gesperrten Raum, wird der bisherige Run abgeschlossen und einmalig abgerechnet. Kaufe den nächsten Raum im Basar und starte eine neue Kampagne oder wähle auf der Karte einen offenen Einzelraum. Ein Kauf schaltet einen Raum dauerhaft für dieses lokale Profil frei und startet keine Runde. Die Teilkampagne vor einem gesperrten Raum zählt nicht als vollständiger Abschluss für **Balance-Meister** oder **Profi-Ninja**.
 
@@ -76,48 +86,64 @@ Im **Ninja-Basar** gibt es Bereiche für Räume, Hintergründe und Skins. Die dr
 
 | Hintergrund | Motiv | Raum | Preis |
 | --- | --- | --- | --- |
-| Papiergarten | Papierblumen und Origami | Study | 60 Münzen |
-| Pixelbucht | Insel, Palmen und Pixelwellen | Gaming | 85 Münzen |
-| Mondinseln | Schwebende Wolkeninseln und Mondlicht | Sleep | 110 Münzen |
+| Papiergarten | Papierblumen und Origami | Study | 160 Münzen |
+| Pixelbucht | Insel, Palmen und Pixelwellen | Gaming | 220 Münzen |
+| Mondinseln | Schwebende Wolkeninseln und Mondlicht | Sleep | 280 Münzen |
 
 Nach dem Kauf wählst du den Hintergrund ausdrücklich für den passenden Raum aus; Kaufen und Auswählen sind zwei Schritte. Diese Auswahl wird beim nächsten neuen Run übernommen; ein gespeicherter Run behält seine bisherige Gestaltung. Master verwendet beim Kontextwechsel die jeweilige ausgewählte Kulisse. Die Hintergründe verändern die Darstellung, während die Kontextregeln des Raums gelten. Vier Klingen-Skins haben unterschiedliche Designs, Farbpaletten und Wischspuren; im Basar kannst du sie vor dem Kauf ansehen.
 
+**Ninja Mint** ist kostenlos. Die weiteren Looks kosten **Solar Slice 80**, **Arctic Focus 180** und **Violet Flow 320 Münzen**. Nach dem Kauf stehen sie auch in deiner Profil-Garderobe bereit.
+
 ## Münzen, Fähigkeiten und Erfolge
 
-Ohne Fähigkeiten verdienst du eine Münze je fünf richtige Entscheidungen, drei Münzen pro eingesammeltem Münzobjekt und zwei Münzen bei jeder vollen Zehner-Combo. Schwierigkeit und Fähigkeiten verändern den Verdienst. Bruchteile aus Münzfaktoren werden innerhalb des Runs weitergezählt. Am Ende kommen Punkte- und Stopp-Boni hinzu.
+Ohne Fähigkeiten verdienst du eine Münze je **14 richtige Entscheidungen**, eine Münze pro eingesammeltem Münzobjekt und eine Münze bei jeder vollen **25er-Combo**. Mit **Münzgespür** reichen zwölf richtige Entscheidungen. Schwierigkeit, Münzregen und **Goldener Lauf** verändern den Verdienst; Bruchteile werden innerhalb des Runs weitergezählt. Die während eines Abschnitts verdienten Spielmünzen sind auf 8 / 10 / 12 begrenzt. Goldener Lauf erhöht auch diese Abschnittsgrenze um 25 Prozent, abgerundet.
+
+Ein abgeschlossener Run erhält bei mindestens zwölf richtigen Entscheidungen **zwei zusätzliche Abschlussmünzen**; ein bewusster Gaming-/Sleep-Stopp bringt dann eine weitere Münze. Der Abschluss vor einem gesperrten Raum zählt dafür ebenfalls. Bei verbrauchten Herzen gibt es diesen Abschlussbonus nicht. Ein perfekter einzelner Study-Run kann ohne Münzfähigkeiten somit höchstens **10 / 12 / 14 Münzen** auf Entspannt / Normal / Profi sichern. Erfolgsbelohnungen kommen beim ausdrücklichen Abholen hinzu. Bestehendes Guthaben und bereits gekaufte Freischaltungen bleiben trotz der neuen Preise erhalten.
 
 Während des Runs zeigt das Spiel die vorgemerkten Münzen an. Diese werden **am Run-Ende einmalig** deinem Guthaben gutgeschrieben, auch wenn du alle Herzen verlierst. Das erneute Öffnen desselben Ergebnisses zahlt keine zweite Belohnung aus. Ein noch laufender Run kann gespeichert und fortgesetzt werden; seine vorgemerkten Münzen sind noch nicht ausgebbar.
 
 Mit deinem Guthaben kaufst du Räume, Hintergründe, Klingen-Skins oder Knoten im Fähigkeitenbaum. Der **Wurzelbaum beginnt bei NIM in der Mitte** und breitet sich über sichtbare Verbindungen aus: Fokus nach oben, Schutz nach rechts und Münzen nach links. Jedes Upgrade hat eine eigene Illustration; beim Antippen erscheinen Wirkung, Voraussetzung und Kaufmöglichkeit. Auf kleinen Bildschirmen lässt sich die Karte seitlich verschieben und über die drei Ast-Schaltflächen gezielt ansehen.
 
-Der Baum hat drei Äste mit je drei Stufen. Die erste Stufe kostet **12 Münzen**, die zweite **25**, die dritte **45**. Innerhalb eines Astes brauchst du jeweils die vorherige Stufe; jeder Knoten wird nur einmal gekauft. Gekaufte Knoten bleiben als kleine verbundene Markierungen sichtbar. Ihre vollständigen Karten und die Super-Auswahl stehen gesammelt unter dem Baum, damit die noch offenen Wege leichter erkennbar sind.
+Der Baum hat drei Äste mit je drei Stufen. Die erste Stufe kostet **35 Münzen**, die zweite **90**, die dritte **180**. Innerhalb eines Astes brauchst du jeweils die vorherige Stufe; jeder Knoten wird nur einmal gekauft. Gekaufte Knoten bleiben als kleine verbundene Markierungen sichtbar. Ihre vollständigen Karten und die Super-Auswahl stehen gesammelt unter dem Baum, damit die noch offenen Wege leichter erkennbar sind.
 
-| Ast | Stufe 1 – 12 Münzen | Stufe 2 – 25 Münzen | Stufe 3 – 45 Münzen |
+| Ast | Stufe 1 – 35 Münzen | Stufe 2 – 90 Münzen | Stufe 3 – 180 Münzen |
 | --- | --- | --- | --- |
 | Fokus | **Klarer Kopf:** +2 Superladung pro richtiger Entscheidung | **Zeitzauber:** acht Sekunden langsamere Objekte | **Flow-Meister:** Flow dauert zwei Sekunden länger |
 | Verteidigung | **Gut vorbereitet:** Run mit einem Schild beginnen | **Rettungsschirm:** den nächsten Fehler abfangen | **Zweite Chance:** einmal pro Run nach dem letzten verlorenen Herz mit einem Herz weiterspielen |
-| Münzen & Combo | **Münzgespür:** eine Münze je vier statt fünf richtige Entscheidungen | **Aufräum-Wirbel:** alle sichtbaren Ablenkungen schneiden | **Goldener Lauf:** 25 Prozent mehr Spielmünzen |
+| Münzen & Combo | **Münzgespür:** eine Münze je zwölf statt 14 richtige Entscheidungen | **Aufräum-Wirbel:** alle sichtbaren Ablenkungen schneiden | **Goldener Lauf:** 25 Prozent mehr Spielmünzen |
 
 Rüste **eine** freigeschaltete Superfähigkeit aus. Jede richtige Entscheidung füllt ihre Anzeige um acht Prozentpunkte, mit **Klarer Kopf** um zehn. Ein Sweep lädt sich durch seine eigenen Treffer nicht erneut auf. Bei **100 Prozent** kannst du sie über die Super-Schaltfläche oder mit der **Leertaste** einsetzen; anschließend muss sie erneut aufgeladen werden. Der Sweep trifft ausschließlich Ablenkungen. Hilfreiche Inhalte bleiben bestehen.
 
-Gekaufte passive Fähigkeiten und die ausgewählte Superfähigkeit werden **beim Start eines neuen Runs** übernommen. Ein gespeicherter Run behält seine beim Start gewählte Ausstattung. So ändern Käufe während einer Pause nicht nachträglich die laufende Runde.
+Gekaufte passive Fähigkeiten und die ausgewählte Superfähigkeit werden **beim Start eines neuen normalen Runs** übernommen. Ein gespeicherter Run behält seine beim Start gewählte Ausstattung. So ändern Käufe während einer Pause nicht nachträglich die laufende Runde. Im Open Run gelten die einheitlichen Grundregeln ohne gekaufte Fähigkeiten und Supers.
 
-Im Erfolgsmenü stehen **noch offene Ziele oben** und geschaffte Erfolge in deiner Sammlung darunter. Alle zwölf Erfolge haben eigene Illustrationen und eine Fortschrittsanzeige. Du kannst ihre Münzbelohnung **jeweils einmal abholen**; innerhalb der Sammlung stehen noch abholbare Belohnungen zuerst. Freischalten und Abholen sind getrennte Schritte. Abgeholte Belohnungen bleiben als abgeholt gespeichert.
+Im Erfolgsmenü stehen **noch offene Ziele oben** und geschaffte Erfolge in deiner Sammlung darunter. Alle **24 Erfolge** haben eigene Bildabzeichen und eine Fortschrittsanzeige. Du kannst ihre Münzbelohnung **jeweils einmal abholen**; innerhalb der Sammlung stehen noch abholbare Belohnungen zuerst. Freischalten und Abholen sind getrennte Schritte. Abgeholte Belohnungen bleiben als abgeholt gespeichert.
 
 | Erfolg | Bedingung | Münzen |
 | --- | --- | --- |
 | Erster Wischer | Erste Ablenkung schneiden | 3 |
-| Im Flow | Zum ersten Mal Flow aktivieren | 5 |
-| Mit Köpfchen | Einen Abschnitt ohne Entscheidungsfehler abschließen | 8 |
-| Meine Grenze | Gaming oder Sleep bewusst per Stopp beenden | 8 |
-| Balance-Meister | Kampagne oder Master abschließen | 15 |
-| Zehner-Serie | Combo 10 erreichen | 8 |
-| Unaufhaltsam | Combo 25 erreichen | 15 |
-| Münzsammler | Insgesamt 100 Münzen verdienen; Ausgeben ist erlaubt | 12 |
-| Gute Instinkte | Insgesamt 250 richtige Entscheidungen treffen | 20 |
-| Profi-Ninja | Einen Run auf Profi abschließen | 25 |
-| Superkraft! | Ersten Super einsetzen | 8 |
-| Mein eigener Weg | Erste Fähigkeit kaufen | 6 |
+| Im Flow | Zum ersten Mal Flow aktivieren | 3 |
+| Mit Köpfchen | Einen Abschnitt ohne Entscheidungsfehler abschließen | 4 |
+| Meine Grenze | Gaming oder Sleep bewusst per Stopp beenden | 4 |
+| Balance-Meister | Kampagne oder Master abschließen | 10 |
+| Zehner-Serie | Combo 10 erreichen | 3 |
+| Unaufhaltsam | Combo 25 erreichen | 5 |
+| Münzsammler | Insgesamt 100 Münzen verdienen; Ausgeben ist erlaubt | 5 |
+| Gute Instinkte | Insgesamt 250 richtige Entscheidungen treffen | 6 |
+| Profi-Ninja | Einen normalen Run auf Profi abschließen | 8 |
+| Superkraft! | Ersten Super einsetzen | 4 |
+| Mein eigener Weg | Erste Fähigkeit kaufen | 3 |
+| Tausend klare Momente | Insgesamt 1.000 richtige Entscheidungen treffen | 10 |
+| Instinkt-Legende | Insgesamt 2.500 richtige Entscheidungen treffen | 20 |
+| Perfekte Welle | Combo 50 erreichen | 8 |
+| Wisch-Legende | Combo 75 erreichen | 15 |
+| Wieder am Start | Zehn gewertete Runden beenden | 5 |
+| Ninja-Routine | 25 gewertete Runden beenden | 10 |
+| Super-Profi | Insgesamt 25 Supers einsetzen | 8 |
+| Super-Legende | Insgesamt 100 Supers einsetzen | 20 |
+| Profi-Serie | Fünf normale Runs auf Profi abschließen | 10 |
+| Profi-Legende | 20 normale Runs auf Profi abschließen | 20 |
+| Goldener Vorrat | Insgesamt 500 Münzen verdienen; Ausgeben ist erlaubt | 10 |
+| Goldene Legende | Insgesamt 1.500 Münzen verdienen; Ausgeben ist erlaubt | 20 |
 
 Arcade-Punktzahl und Balance-Wertung werden getrennt angezeigt; lokale Highscores, Münzen, Erfolge, Fähigkeiten, Räume, Hintergründe und vier Klingen-Skins bleiben auf deinem Gerät.
 
@@ -131,20 +157,29 @@ Alle Benachrichtigungen, Boni und Münzen sind Spielsimulationen. Es gibt keine 
 | Ein Finger auf der Spielfläche | Durch dieselben Objekte wischen |
 | Super-Schaltfläche / Leertaste | Ausgerüstete Superfähigkeit bei voller Ladung einsetzen |
 | Pause-, Sound- und Entscheidungstasten | Pause, Musik und bewusste Zeitentscheidungen bedienen |
+| Zurück-Schaltfläche / Browser-Zurück | Zur vorherigen Ansicht und ihrer Scrollposition zurückkehren |
 
 Hilfreiche Dinge unberührt passieren lassen. Ein Schnitt folgt deiner tatsächlichen Wischbewegung. Im Tutorial lernst du den Unterschied zwischen Ablenkung und hilfreichem Signal.
 
 ## Daten und Offline-Nutzung
 
-Dein Ninja-Profil ist ein **lokales Spielerprofil** mit Nutzername. Es gibt keine Online-Kontoanmeldung, keine API-Anbindung und keine Übertragung von Namen, Spielständen oder Telemetrie. Name, Fortschritt, bestätigte NIM-Hinweise, Mitteilungen und Einstellungen liegen in **localStorage**. Ein anderer Browser oder ein anderes Gerät hat einen eigenen Spielstand. Wenn dein Browser die Speicherung blockiert, bleibt das Spiel für die laufende Sitzung spielbar. Das Löschen der Website-Daten entfernt den lokalen Fortschritt.
+Dein Ninja-Profil ist ein **lokales Spielerprofil** mit Nutzername. Name, Fortschritt, bestätigte NIM-Hinweise, Mitteilungen und Einstellungen liegen in **localStorage**. Es gibt kein Passwortkonto mit Wiederherstellung oder Gerätesynchronisierung. Ein anderer Browser oder ein anderes Gerät hat einen eigenen Spielstand. Im standardmäßig deaktivierten Ranglistenbetrieb werden keine Profil- oder Spieldaten übertragen. Wenn dein Browser die Speicherung blockiert, bleibt das Spiel für die laufende Sitzung spielbar; Ergebnisse werden dann nicht online veröffentlicht. Das Löschen der Website-Daten entfernt den lokalen Fortschritt.
 
-Online-Version, lokale HTTP-Version und direkt geöffnete Dateien können getrennte Speicherplätze verwenden. Die lokale Dateinutzung kann von den Browser-Einstellungen abhängen. Ältere Spielstände behalten ihr vorhandenes Guthaben, ihre Skins, Erfolge und Freischaltungen. Beim ersten Öffnen von Version 1.3.0 ergänzt du lediglich deinen Ninja-Namen; Level und XP werden aus den bisherigen gespeicherten Statistiken berechnet. Bereits gespeicherte ältere Runs lassen sich fortsetzen; für neue Runs gelten die Raumfreischaltungen.
+Online-Version, lokale HTTP-Version und direkt geöffnete Dateien können getrennte Speicherplätze verwenden. Die lokale Dateinutzung kann von den Browser-Einstellungen abhängen. Ältere Spielstände behalten ihr vorhandenes Guthaben, ihre Skins, Erfolge und Freischaltungen. Fehlt ein Ninja-Name, ergänzt du ihn beim Einstieg; Level und XP werden aus den bisherigen gespeicherten Statistiken berechnet. Bereits gespeicherte ältere Runs lassen sich fortsetzen; für neue Runs gelten die Raumfreischaltungen.
 
-Ältere vollständige Downloads bleiben verfügbar: [Version 1.2.0](downloads/Notification-Ninja-1.2.0.zip), [Version 1.1.0](downloads/Notification-Ninja-1.1.0.zip) und [Version 1.0.0](downloads/Notification-Ninja-1.0.0.zip).
+Ältere vollständige Downloads bleiben verfügbar: [Version 1.3.0](downloads/Notification-Ninja-1.3.0.zip), [Version 1.2.0](downloads/Notification-Ninja-1.2.0.zip), [Version 1.1.0](downloads/Notification-Ninja-1.1.0.zip) und [Version 1.0.0](downloads/Notification-Ninja-1.0.0.zip).
+
+## Gemeinsame Rangliste
+
+Die gemeinsame Open-Run-Rangliste ist technisch vorbereitet, **noch nicht öffentlich verbunden**. Die Standarddatei `leaderboard-config.json` enthält `enabled: false` und einen leeren Endpunkt. Die Oberfläche meldet diesen Zustand und zeigt keine erfundenen Mitspieler. Das Spiel und die lokalen Highscores funktionieren vollständig ohne den Dienst.
+
+Für eine kostenlose Demo liegt die Render-Vorlage [`render.yaml`](../render.yaml) bereit. Die genaue einmalige Einrichtung steht in [server/README_NINJA.md](../server/README_NINJA.md): im eigenen Render-Konto **New → Blueprint** wählen, dieses Repository mit `render.yaml` verbinden und den **Free**-Dienst starten; anschließend seine echte HTTPS-Adresse in `leaderboard-config.json` eintragen und die Konfiguration veröffentlichen. Der Server wurde hier nicht bei Render angelegt. **Bei diesem Free-Dienst geht die SQLite-Rangliste beim Einschlafen, Neustart oder Deployment verloren**; deine lokalen Münzen und Freischaltungen bleiben erhalten. Dauerhafte Online-Highscores brauchen einen beständigen Server-Datenträger.
+
+Nach Aktivierung werden ausschließlich **ausdrücklich veröffentlichte, durch null Herzen beendete Open Runs** nach Schwierigkeit verglichen. Die Übertragung enthält Ninja-Name, Punkte, Schwierigkeit, Zeit und grundlegende Run-Werte. Münzen, Profil-XP, E-Mail-Adressen und Passwörter werden nicht übertragen. Eine zufällige Gerätekennung erlaubt, eigene Einträge beim Profil-Löschen zu entfernen; Abmelden erhält diese Kennung. Das ist kein Online-Konto mit Wiederherstellung oder Synchronisierung. Die serverseitige Plausibilitätsprüfung macht die im Browser berechneten Ergebnisse nicht zu einer manipulationssicheren Turnierrangliste.
 
 ## Entwicklung
 
-Voraussetzungen: **Node.js ab Version 20**, npm und **Python 3**. Im Repository-Root ausführen:
+Voraussetzungen: **Node.js 24**, npm und **Python 3**. Node 24 bringt das SQLite-Modul für die Ranglistentests mit. Im Repository-Root ausführen:
 
 ```sh
 npm ci
@@ -170,12 +205,15 @@ notification-ninja/
 ├── src/player.js             # Lokaler Name, abgeleitete XP, Hinweise und Mitteilungen
 ├── src/mentor.js             # NIM-Dialoge, Erkläranimationen und Fokussteuerung
 ├── src/art.js                # Eigene Upgrade-, Erfolgs- und Dojo-Illustrationen
+├── src/local-profile.js      # Lokale Anmeldung und Profil-Löschung
+├── src/leaderboard.js        # Optionale Ranglistenverbindung und Gerätekennung
 ├── src/renderer.js           # Canvas-Grafik, Schnitte und Effekte
 ├── src/audio.js              # Lokaler WebAudio-Soundtrack
 ├── src/main.js               # Maus, Touch und Bildschirmablauf
 ├── dist/                     # Fertiges JavaScript-Bundle
 ├── downloads/                # Vollständiges ZIP und Prüfsumme
 ├── sw.js                     # Offline-Cache für diesen Spielpfad
+├── leaderboard-config.json   # Rangliste standardmäßig deaktiviert
 └── PLAN.md, TEST_REPORT.md    # Ablauf, Beispielplanung und Prüfbericht
 ```
 

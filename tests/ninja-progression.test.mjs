@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {
   DIFFICULTIES,SKILLS,SUPERS,ACHIEVEMENTS,WORLDS,BACKGROUNDS,getDifficulty,getSkill,getWorld,getBackground,
   sanitizeProgress,buySkill,equipSuper,claimAchievement,unlockAchievements,getAchievementProgress,
-  buyWorld,buyBackground,equipBackground
+  buyWorld,buyBackground,equipBackground,getOpenSpeedFactor
 } from '../notification-ninja/src/progression.js';
 
 const makeProfile = (overrides = {}) => ({coins:0,achievements:[],...sanitizeProgress(null),...overrides});
@@ -29,7 +29,7 @@ test('the skill tree has three reachable branches with locked supers and no cycl
   const reached=new Set();
   for(const branch of ['focus','guard','coins']) {
     const nodes=SKILLS.filter(skill=>skill.branch===branch);
-    assert.deepEqual(nodes.map(skill=>skill.cost),[12,25,45]);
+    assert.deepEqual(nodes.map(skill=>skill.cost),[35,90,180]);
     for(const node of nodes) {
       assert.ok(node.requires.every(parent=>reached.has(parent)));
       reached.add(node.id);
@@ -38,8 +38,8 @@ test('the skill tree has three reachable branches with locked supers and no cycl
   }
   assert.equal(getSkill('second-chance').effect,'revive');
   assert.equal(getSkill('missing'),null);
-  assert.equal(ACHIEVEMENTS.length,12);
-  assert.equal(new Set(ACHIEVEMENTS.map(item=>item.id)).size,12);
+  assert.equal(ACHIEVEMENTS.length,24);
+  assert.equal(new Set(ACHIEVEMENTS.map(item=>item.id)).size,24);
 });
 
 test('old saved profiles receive independent progression defaults without changing existing money or records', () => {
@@ -72,21 +72,21 @@ test('rejected purchases are atomic for missing parents, insufficient money, dup
   const before=saved(profile);
   assert.equal(buySkill(profile,'focus-root').ok,false);
   assert.deepEqual(profile,before);
-  const poor=makeProfile({coins:11});
+  const poor=makeProfile({coins:34});
   assert.equal(buySkill(poor,'coin-root').ok,false);
-  assert.equal(poor.coins,11);
+  assert.equal(poor.coins,34);
   assert.equal(buySkill(null,'focus-root').ok,false);
 });
 
 test('earned currency purchases an entire branch in order and first purchased super equips automatically', () => {
-  const profile=makeProfile({coins:200});
+  const profile=makeProfile({coins:500});
   assert.equal(buySkill(profile,'focus-root').ok,true);
-  assert.equal(profile.coins,188);
+  assert.equal(profile.coins,465);
   assert.deepEqual(profile.achievements,['first-skill']);
   assert.equal(profile.claimedAchievements.length,0);
   assert.equal(buySkill(profile,'slow-super').selectedSuper,'slow-super');
   assert.equal(buySkill(profile,'flow-boost').ok,true);
-  assert.equal(profile.coins,118);
+  assert.equal(profile.coins,195);
   assert.deepEqual(profile.unlockedSkills,['focus-root','slow-super','flow-boost']);
   assert.equal(buySkill(profile,'guard-root').ok,true);
   assert.equal(buySkill(profile,'shield-super').ok,true);
@@ -142,12 +142,12 @@ test('reward coins count toward lifetime earnings and reaching a milestone still
   assert.equal(profile.coins,5);
   assert.equal(profile.stats.coinsEarned,102);
   assert.deepEqual(profile.claimedAchievements,['first-cut']);
-  assert.equal(claimAchievement(profile,'coins-100').reward,12);
-  assert.equal(profile.coins,17);
-  assert.equal(profile.stats.coinsEarned,114);
+  assert.equal(claimAchievement(profile,'coins-100').reward,5);
+  assert.equal(profile.coins,10);
+  assert.equal(profile.stats.coinsEarned,107);
 });
 
-test('all twelve rewards remain individually claimable once, including previously unlocked story achievements', () => {
+test('all twenty-four rewards remain individually claimable once, including previously unlocked story achievements', () => {
   const profile=makeProfile({achievements:ACHIEVEMENTS.map(item=>item.id)});
   let expected=0;
   for(const achievement of ACHIEVEMENTS) {
@@ -157,7 +157,7 @@ test('all twelve rewards remain individually claimable once, including previousl
     assert.equal(profile.coins,expected);
     assert.equal(claimAchievement(profile,achievement.id).ok,false);
   }
-  assert.equal(profile.claimedAchievements.length,12);
+  assert.equal(profile.claimedAchievements.length,24);
   assert.equal(profile.stats.coinsEarned,expected);
 });
 
@@ -185,7 +185,7 @@ test('bounded balances cannot overflow through rewards and invalid currency neve
 
 test('worlds form one priced level chain and backgrounds offer one free and one distinct premium look per context', () => {
   assert.deepEqual(WORLDS.map(world=>[world.id,world.cost,world.requires]),[
-    ['study',0,[]],['gaming',35,['study']],['sleep',75,['gaming']],['master',120,['sleep']]
+    ['study',0,[]],['gaming',80,['study']],['sleep',180,['gaming']],['master',320,['sleep']]
   ]);
   assert.equal(getWorld('master').name,'Balance Master');
   assert.equal(getWorld('missing'),null);
@@ -200,9 +200,9 @@ test('worlds form one priced level chain and backgrounds offer one free and one 
     assert.notDeepEqual(choices[0].preview,choices[1].preview);
     assert.ok(choices.every(background=>background.preview.length===4&&background.palette.sky&&background.description));
   }
-  assert.equal(getBackground('paper-garden').cost,60);
-  assert.equal(getBackground('pixel-cove').cost,85);
-  assert.equal(getBackground('moon-isles').cost,110);
+  assert.equal(getBackground('paper-garden').cost,160);
+  assert.equal(getBackground('pixel-cove').cost,220);
+  assert.equal(getBackground('moon-isles').cost,280);
   assert.equal(getBackground('missing'),null);
 });
 
@@ -221,12 +221,12 @@ test('room migration keeps only reachable paid unlocks and validates contextual 
 });
 
 test('earned coins unlock rooms in order without switching the chosen mode or background', () => {
-  const profile=makeProfile({coins:300,mode:'study'});
+  const profile=makeProfile({coins:800,mode:'study'});
   const originalBackgrounds=saved(profile.selectedBackgrounds);
-  assert.equal(buyWorld(profile,'gaming').coins,265);
-  assert.equal(buyWorld(profile,'sleep').coins,190);
+  assert.equal(buyWorld(profile,'gaming').coins,720);
+  assert.equal(buyWorld(profile,'sleep').coins,540);
   const purchase=buyWorld(profile,'master');
-  assert.deepEqual(purchase,{ok:true,id:'master',coins:70,unlockedWorlds:['study','gaming','sleep','master']});
+  assert.deepEqual(purchase,{ok:true,id:'master',coins:220,unlockedWorlds:['study','gaming','sleep','master']});
   assert.equal(profile.mode,'study');
   assert.deepEqual(profile.selectedBackgrounds,originalBackgrounds);
   purchase.unlockedWorlds.pop();
@@ -248,17 +248,17 @@ test('blocked room purchases never deduct coins or modify an old profile', () =>
 });
 
 test('premium art requires its room, sufficient currency, and a separate selection after buying', () => {
-  const profile=makeProfile({coins:300});
+  const profile=makeProfile({coins:600});
   let before=saved(profile);
   assert.equal(buyBackground(profile,'pixel-cove').ok,false);
   assert.deepEqual(profile,before);
   assert.equal(buyBackground(profile,'paper-garden').ok,true);
-  assert.equal(profile.coins,240);
+  assert.equal(profile.coins,440);
   assert.equal(profile.selectedBackgrounds.study,'classroom');
   assert.equal(equipBackground(profile,'paper-garden').ok,true);
   assert.equal(profile.selectedBackgrounds.study,'paper-garden');
   assert.equal(buyWorld(profile,'gaming').ok,true);
-  assert.equal(buyBackground(profile,'pixel-cove').coins,120);
+  assert.equal(buyBackground(profile,'pixel-cove').coins,140);
   assert.equal(profile.selectedBackgrounds.gaming,'game-room');
   const equipped=equipBackground(profile,'pixel-cove');
   assert.deepEqual(equipped,{ok:true,id:'pixel-cove',context:'gaming',selectedBackgrounds:{study:'paper-garden',gaming:'pixel-cove',sleep:'bedroom'}});
@@ -283,7 +283,7 @@ test('locked room defaults and unowned art cannot be equipped or purchased cheap
 });
 
 test('world and background purchases preserve skill, achievement, currency history, and selections across reloads', () => {
-  const profile=makeProfile({coins:500,unlockedSkills:['focus-root','slow-super'],selectedSuper:'slow-super',stats:{correct:250,coinsEarned:600,superUses:3,bestCombo:25,hardClears:1},achievements:['first-cut'],claimedAchievements:['first-cut']});
+  const profile=makeProfile({coins:1000,unlockedSkills:['focus-root','slow-super'],selectedSuper:'slow-super',stats:{correct:250,coinsEarned:600,superUses:3,bestCombo:25,hardClears:1},achievements:['first-cut'],claimedAchievements:['first-cut']});
   const expectedSkills=saved(profile.unlockedSkills),expectedStats=saved(profile.stats);
   for(const id of ['gaming','sleep','master']) assert.equal(buyWorld(profile,id).ok,true);
   assert.equal(buyBackground(profile,'moon-isles').ok,true);
@@ -295,6 +295,46 @@ test('world and background purchases preserve skill, achievement, currency histo
   assert.deepEqual(restored.claimedAchievements,['first-cut']);
   assert.deepEqual(restored.unlockedWorlds,['study','gaming','sleep','master']);
   assert.deepEqual(restored.selectedBackgrounds,{study:'classroom',gaming:'game-room',sleep:'moon-isles'});
-  assert.equal(profile.coins,160);
+  assert.equal(profile.coins,140);
   assert.deepEqual(profile.achievements,['first-cut']);
+});
+
+test('each of the twelve long-term milestones unlocks only at its actual counter threshold', () => {
+  const ids=['correct-1000','correct-2500','combo-50','combo-75','runs-10','runs-25','supers-25','supers-100','hard-5','hard-20','coins-500','coins-1500'];
+  for(const id of ids) {
+    const achievement=ACHIEVEMENTS.find(item=>item.id===id);assert.ok(achievement,id);
+    const profile=makeProfile({coins:17});
+    if(achievement.stat==='totalRuns')profile.totalRuns=achievement.target-1;
+    else profile.stats[achievement.stat]=achievement.target-1;
+    unlockAchievements(profile);assert.equal(profile.achievements.includes(id),false,id);
+    assert.equal(getAchievementProgress(profile,id).current,achievement.target-1);
+    if(achievement.stat==='totalRuns')profile.totalRuns++;
+    else profile.stats[achievement.stat]++;
+    assert.ok(unlockAchievements(profile).includes(id),id);assert.equal(profile.coins,17);
+    assert.deepEqual(getAchievementProgress(profile,id),{current:achievement.target,target:achievement.target,unlocked:true,claimed:false});
+    const claimed=claimAchievement(profile,id);assert.equal(claimed.ok,true);assert.ok(claimed.reward>=3&&claimed.reward<=20);
+    const before=saved(profile);assert.equal(claimAchievement(profile,id).ok,false);assert.deepEqual(profile,before);
+  }
+});
+
+test('new milestone rewards stay modest compared with the full collection and never auto-claim one another', () => {
+  assert.equal(ACHIEVEMENTS.length,24);
+  assert.ok(ACHIEVEMENTS.every(item=>item.reward>=3&&item.reward<=20));
+  const collection=SKILLS.reduce((sum,item)=>sum+item.cost,0)+WORLDS.reduce((sum,item)=>sum+item.cost,0)+BACKGROUNDS.reduce((sum,item)=>sum+item.cost,0);
+  const rewards=ACHIEVEMENTS.reduce((sum,item)=>sum+item.reward,0);
+  assert.ok(collection>2000);assert.ok(rewards<collection*.12);
+  const profile=makeProfile({totalRuns:25,stats:{correct:2500,coinsEarned:1500,superUses:100,bestCombo:75,hardClears:20}});
+  unlockAchievements(profile);assert.equal(profile.coins,0);assert.equal(profile.claimedAchievements.length,0);
+  const reward=claimAchievement(profile,'coins-1500');assert.equal(reward.reward,20);assert.equal(profile.coins,20);assert.deepEqual(profile.claimedAchievements,['coins-1500']);
+});
+
+
+test('open speed is continuous at the timed curve boundary and increases far beyond its old cap', () => {
+  for(const difficulty of DIFFICULTIES) {
+    const before=getOpenSpeedFactor(difficulty.id,90-.000001),at=getOpenSpeedFactor(difficulty.id,90),after=getOpenSpeedFactor(difficulty.id,90+.000001);
+    assert.ok(before<=at&&at<after);assert.ok(after-before<.000001);
+    let prior=at;
+    for(const seconds of [120,300,3600,60000]){const speed=getOpenSpeedFactor(difficulty.id,seconds);assert.ok(speed>prior);assert.ok(Number.isFinite(speed));prior=speed;}
+    assert.equal(getOpenSpeedFactor(difficulty.id,-1),1);assert.equal(getOpenSpeedFactor(difficulty.id,NaN),1);
+  }
 });
