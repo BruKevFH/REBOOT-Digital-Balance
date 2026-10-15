@@ -4,7 +4,7 @@ from zipfile import ZipFile, ZipInfo, ZIP_DEFLATED
 from hashlib import sha256
 
 ROOT=Path(__file__).resolve().parents[1]/'notification-ninja'
-NAME='Notification-Ninja-1.1.0'
+NAME='Notification-Ninja-1.2.0'
 FILES=['index.html','styles.css','sw.js','manifest.webmanifest','favicon.svg','dist/ninja.js','dist/build.json']
 INSTRUCTIONS='''NOTIFICATION NINJA – MASTER YOUR DIGITAL BALANCE
 
@@ -18,13 +18,34 @@ Mit gedrückter Maustaste oder Finger durch Ablenkungen WISCHEN.
 Sinnvolle Inhalte bewusst bis zum oberen Rand durchlassen.
 Die aktuelle Situation entscheidet: Gaming passt zur Gaming-Zeit,
 kann aber beim Lernen oder vor dem Schlafen ablenken.
-Fünf richtige Entscheidungen aktivieren Focus Flow für fünf Sekunden.
-Goldene Power-ups bieten Zeitlupe, Schild und Bonusmultiplikator.
+Fünf richtige Entscheidungen aktivieren Focus Flow.
+Goldene Power-ups bieten Zeitlupe, Schild, Bonuspunkte und Münzen.
 Esc: Pause. M oder Musik-Schalter: Musik an/aus.
-Du hast fünf Herzen, langsamere Objekte und klare WISCHEN-/BEHALTEN-Hilfen.
-Eine verpasste Ablenkung erhöht Overload, kostet aber kein Herz.
+Entspannt: 5 Herzen. Normal: 4. Profi: 3. Das Tempo steigt mit der Zeit.
+Ein falscher Schnitt ODER eine durchgelassene Ablenkung kostet ein Herz.
+Schilde schützen vor einem Fehler. WISCHEN-/BEHALTEN-Hilfen siehst du nur
+im Training. Im Spiel entscheiden Gegenstand und aktuelles Ziel.
 Klassenzimmer, Gaming-Zimmer und Schlafzimmer haben eigene Hintergründe
 und passende Objekte: Bücher, Controller, Kissen und vieles mehr.
+
+Sammle Rundenmünzen durch gute Entscheidungen, Kombos und Münzobjekte.
+Am Rundenende werden sie gesichert, auch wenn deine Herzen aufgebraucht sind.
+Neun Fähigkeiten in drei Zweigen: Fokus, Schutz, Münzen/Kombos.
+Kaufe zuerst den Vorgänger; schalte eine Super frei und rüste sie aus.
+Gute Entscheidungen laden deine Super: bei 100% Taste oder Leertaste drücken.
+Es gibt Zeitzauber, Rettungsschirm und Aufräum-Wirbel.
+Neue Fähigkeiten und die ausgerüstete Super gelten ab der nächsten Runde.
+Zwölf Erfolge bieten einmalige Münzbelohnungen zum Abholen.
+
+Deine Zimmerkarte beginnt im kostenlosen Schulzimmer. Kaufe danach
+Gaming-Zimmer (35), Schlafzimmer (75) und Balance Master (120 Münzen).
+Die Kampagne endet vor gesperrten Räumen und sichert dabei deine Münzen.
+Im Ninja-Basar findest du Spielorte, Hintergründe und vier Ninja-Designs.
+Papiergarten (60), Pixelbucht (85) und Mondinseln (110 Münzen) erfordern
+ihren Spielort. Nach dem Kaufen auswählen und eine neue Runde beginnen.
+Kleidung und Wischspur ändern sich passend zu deinem Ninja-Design.
+Über Training kannst du die Übungsrunde jederzeit wiederholen.
+Münzregen, Combo-Party und Fokus-Welle wechseln als Bonusphasen.
 
 Tutorial, Study, Gaming, Sleep und Balance Master stehen bereit.
 Das Gaming-Rundenlimit wählst du selbst (45, 60 oder 90 Sekunden).

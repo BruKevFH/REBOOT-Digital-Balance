@@ -1,10 +1,14 @@
 # Notification Ninja – Master Your Digital Balance
 
-Ein buntes Browser-Arcade-Spiel mit echter Maus- und Touch-Wischsteuerung. Spiele im sonnigen Klassenzimmer, gemütlichen Gaming-Zimmer und Schlafzimmer bei Mondlicht. Bücher, Controller, Kissen und andere passende Objekte fliegen durchs Bild: Ablenkungen zerschneiden, sinnvolle Dinge durchlassen. Die richtige Aktion ändert sich zwischen Lernen, Gaming und Schlaf; klare WISCHEN-/BEHALTEN-Hinweise helfen dir dabei.
+Ein buntes Browser-Arcade-Spiel mit echter Maus- und Touch-Wischsteuerung. Spiele im sonnigen Klassenzimmer, gemütlichen Gaming-Zimmer und Schlafzimmer bei Mondlicht. Bücher, Controller, Kissen und andere passende Objekte fliegen durchs Bild: Ablenkungen zerschneiden, sinnvolle Dinge durchlassen. Die richtige Aktion ändert sich zwischen Lernen, Gaming und Schlaf. WISCHEN-/BEHALTEN-Hinweise erklären die Regeln im Training; danach entscheidest du selbst anhand der Objekte und deines aktuellen Ziels.
 
-**[Jetzt spielen](https://brukevfh.github.io/REBOOT-Digital-Balance/notification-ninja/)** · **[Vollständiges Offline-ZIP](notification-ninja/downloads/Notification-Ninja-1.1.0.zip)** · **[Spielanleitung](notification-ninja/README.md)** · **[Ablaufdiagramm & Beispiel-Gantt](notification-ninja/PLAN.md)**
+**[Jetzt spielen](https://brukevfh.github.io/REBOOT-Digital-Balance/notification-ninja/)** · **[Vollständiges Offline-ZIP 1.2.0](notification-ninja/downloads/Notification-Ninja-1.2.0.zip)** · **[Spielanleitung](notification-ninja/README.md)** · **[Ablaufdiagramm & Beispiel-Gantt](notification-ninja/PLAN.md)**
 
-Tutorial, vier Levels, fünf Herzen und langsamere Objekte machen den Einstieg leichter. Dazu kommen Focus Flow, drei Power-ups, Bonusanimationen und eigene Musik pro Zimmer. Getrennte Arcade-/Balance-Wertungen, bewusste Zeitentscheidungen, lokale Highscores und vier Klingen-Skins sorgen für neue Ziele. `npm run build:ninja`, `npm run test:ninja` und `npm run package:ninja` gehören zu Notification Ninja; `npm test` prüft alle Spiele.
+Wähle **Entspannt, Normal oder Profi** mit fünf, vier oder drei Herzen. Sowohl ein falscher Schnitt als auch eine durchgelassene Ablenkung kosten ein Herz; ein Schild fängt einen Fehler ab. Das Tempo steigt während der Runde bis zu einer festen Grenze. Wiederkehrende Münz-, Combo- und Fokuswellen sorgen für Abwechslung, während die Levelzeit normal weiterläuft.
+
+Verdiene Münzen und öffne neue Räume auf der Zimmerkarte: Das Klassenzimmer ist frei, Gaming, Sleep und Master werden nacheinander gekauft. Im **Ninja-Basar** gibt es eigene Hintergrundwelten und Klingen-Skins mit unterschiedlichen Designs und Wischspuren. Schalte außerdem einen **Fähigkeitenbaum mit neun Knoten** frei und rüste eine Superfähigkeit aus: Zeitlupe, Schild oder Ablenkungs-Sweep. Erfolge haben einzeln abholbare Münzbelohnungen. Dazu kommen Tutorial, vier Levels, Focus Flow, Power-ups, Bonusanimationen, Musik pro Zimmer, vier Klingen-Skins und lokale Highscores. Fortschritt bleibt auf deinem Gerät; es gibt keine Anmeldung und keine echten Käufe.
+
+`npm run build:ninja`, `npm run test:ninja` und `npm run package:ninja` gehören zu Notification Ninja; `npm test` prüft alle Spiele. Die bisherigen Downloads [1.1.0](notification-ninja/downloads/Notification-Ninja-1.1.0.zip) und [1.0.0](notification-ninja/downloads/Notification-Ninja-1.0.0.zip) bleiben verfügbar.
 
 Die übrigen Spiele bleiben separat erreichbar:
 

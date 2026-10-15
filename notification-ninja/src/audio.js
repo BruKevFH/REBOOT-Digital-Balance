@@ -22,7 +22,7 @@ export function createAudio() {
   let context = null, master = null, music = null, effects = null, noise = null;
   let enabled = false, unlocked = false, disposed = false, unlocking = null;
   let playing = false, mode = 'study', contextMode = 'study', flow = false, nextBeat = null, step = 0;
-  let scheduledSteps = 0, eventCount = 0, lastEvent = null, lastError = null;
+  let scheduledSteps = 0, eventCount = 0, lastEvent = null, lastError = null, pace = 1, bonusPhase = null;
   const voices = new Set();
 
   function ramp(param, value, seconds = 0.025) {
@@ -174,7 +174,10 @@ export function createAudio() {
     const now = context.currentTime;
     for (const entry of [...voices]) if (entry.end + 0.1 < now) release(entry, true);
     if (nextBeat === null || nextBeat < now - 0.15 || Number(dt) > 1) nextBeat = now + 0.035;
-    const interval = 60 / currentStyle().bpm / 2;
+    // A gentle musical lift follows the rising pace without turning the calm rooms into a rush.
+    pace = 1 + Math.min(0.18, Math.max(0, Number(state.speedFactor || 1) - 1) * 0.25);
+    bonusPhase = typeof state.bonusPhase === 'string' ? state.bonusPhase : state.bonusPhase?.id || null;
+    const interval = 60 / currentStyle().bpm / pace / 2;
     let count = 0;
     while (nextBeat < now + 0.12 && count++ < 8) { schedule(nextBeat); nextBeat += interval; }
   }
@@ -196,6 +199,24 @@ export function createAudio() {
       const lift = Math.min(4, Math.floor(Number(event?.combo || event?.count || 5) / 5));
       sparkle([523, 659, 784].map(hz => hz * 2 ** (lift / 12)), 0.038, 0.055);
     }
+    else if (name === 'coin-earned') {
+      sparkle([1046, 1568, 2093], 0.035, 0.038);
+    } else if (name === 'super-used') {
+      const id = event?.id || event?.skillId;
+      if (id === 'slow-super') {
+        tone(880, 0.65, 0.055, time, 'effects', 'sine', 220);
+        sparkle([784, 659, 523], 0.13, 0.025);
+      } else if (id === 'shield-super') sparkle([392, 523, 659, 784, 1046], 0.045, 0.05);
+      else {
+        hiss(time, 0.24, 0.06, 1200, 'effects');
+        tone(220, 0.35, 0.05, time, 'effects', 'triangle', 1046);
+        sparkle([523, 659, 784, 1046], 0.045, 0.045);
+      }
+    } else if (name === 'achievement-unlocked') sparkle([523, 659, 784, 1046, 1318, 1568], 0.075, 0.06);
+    else if (name === 'skill-unlocked') sparkle([392, 523, 659, 784, 1046], 0.065, 0.052);
+    else if (name === 'bonus-phase-start') sparkle([659, 784, 1046, 784, 1318], 0.055, 0.05);
+    else if (name === 'bonus-phase-end') sparkle([784, 659, 523], 0.075, 0.035);
+    else if (name === 'second-chance') sparkle([330, 440, 523, 659, 880], 0.07, 0.05);
     else if (name === 'flow-started') sparkle([440, 554, 659, 880, 1046], 0.055);
     else if (name === 'level-complete' || name === 'victory') sparkle([523, 659, 784, 1046, 1318, 1568], 0.09, 0.06);
     else if (name === 'ended') sparkle([392, 494, 587, 784], 0.085, 0.045);
@@ -219,7 +240,7 @@ export function createAudio() {
     return { enabled, unlocked, contextState: context?.state || 'locked', activeVoices: voices.size,
       musicVoices: [...voices].filter(entry => entry.group === 'music').length,
       mode, context: contextMode, bpm: currentStyle().bpm, instrument: currentStyle().instrument,
-      playing, flow, scheduledSteps, eventCount, lastEvent, volume: enabled ? MASTER_VOLUME : 0, lastError };
+      playing, flow, pace, effectiveBpm: Math.round(currentStyle().bpm * pace), bonusPhase, scheduledSteps, eventCount, lastEvent, volume: enabled ? MASTER_VOLUME : 0, lastError };
   }
 
   return Object.freeze({ unlock, setEnabled, update, play, dispose, getStats });
