@@ -114,7 +114,7 @@ test('legacy progression migrates without resetting coins, skins, skills, worlds
   const saved=JSON.parse(storage.getItem(STORAGE_KEY));delete saved.profile.player;storage.setItem(STORAGE_KEY,JSON.stringify(saved));
   const expected=structuredClone(saved.profile),restored=new NinjaGame({storage});
   assert.equal(restored.storageFailed,false);
-  assert.deepEqual(restored.profile,{...expected,player:{username:'',createdAt:0,guideSeen:[],notifications:[]}});
+  assert.deepEqual(restored.profile,{...expected,unlockedSkins:[...expected.unlockedSkins,'dawn'],journey:{...expected.journey,seenRanks:['dawn']},player:{username:'',createdAt:0,guideSeen:[],notifications:[]}});
   const xp=getPlayerProgress(restored.profile);
   assert.equal(xp.xp,123*5+4*10+8*25);
   restored.setUsername('Veteran');
@@ -153,7 +153,7 @@ test('identity can be set when storage is blocked and exported snapshots remain 
   assert.equal(game.setUsername('Offline Ninja').ok,true);assert.equal(game.markGuideSeen('welcome').ok,true);assert.equal(game.storageFailed,true);
   const snapshot=game.getSnapshot();snapshot.profile.player.username='Changed';snapshot.profile.player.guideSeen.push('shop');
   assert.equal(game.profile.player.username,'Offline Ninja');assert.deepEqual(game.profile.player.guideSeen,['welcome']);
-  const exported=game.exportData();assert.equal(exported.version,'1.6.0');assert.equal(exported.profile.player.username,'Offline Ninja');
+  const exported=game.exportData();assert.equal(exported.version,'1.7.2');assert.equal(exported.profile.player.username,'Offline Ninja');
   assert.equal(game.start({mode:'study'}).ok,true);
 });
 
@@ -230,17 +230,40 @@ test('identity edits, guide acknowledgements and progression purchases preserve 
   assert.equal(restored.profile.coins,85);assert.equal(restored.profile.player.guideSeen.includes('first-achievement'),true);
 });
 
-test('opening one inbox item marks only that item read and survives reloading', () => {
-  const storage=new Storage(),game=new NinjaGame({storage});
+test('viewing one unlock dismisses only its inbox item, preserves rewards and survives reloading', () => {
+  class CountedStorage extends Storage {writes=0;setItem(key,value){super.setItem(key,value);this.writes++;}}
+  const storage=new CountedStorage(),game=new NinjaGame({storage,now:()=>1000});
+  game.profile.coins=47;game.profile.achievements=['first-cut'];
   game.addNotification({type:'achievement',ref:'first-cut'});
   game.addNotification({type:'skill',ref:'focus-root'});
-  assert.deepEqual(game.markNotificationRead('skill:focus-root'),{ok:true,id:'skill:focus-root'});
-  assert.equal(game.profile.player.notifications.find(n=>n.id==='skill:focus-root').read,true);
-  assert.equal(game.profile.player.notifications.find(n=>n.id==='achievement:first-cut').read,false);
-  assert.equal(game.markNotificationRead('missing:item').ok,false);
+  game.addNotification({type:'level',ref:'2'});
+  game.start({mode:'study',tutorial:false});game.nextLevel();game.pause();
+  const before=game.getSnapshot(),expected=structuredClone(before.profile),writes=storage.writes;
+  expected.player.notifications.find(item=>item.id==='achievement:first-cut').read=true;
+  assert.deepEqual(game.markNotificationRead('achievement:first-cut'),{ok:true,id:'achievement:first-cut'});
+  assert.deepEqual(game.profile,expected,'viewing an achievement does not claim its coins or alter other progress');
+  assert.deepEqual(game.state,before.state,'reading the inbox never changes the run');
+  assert.equal(storage.writes,writes+1);
+  assert.equal(game.profile.player.notifications.filter(item=>!item.read).length,2);
   const saved=storage.getItem(STORAGE_KEY);
-  assert.equal(game.markNotificationRead('skill:focus-root').ok,true);
-  assert.equal(storage.getItem(STORAGE_KEY),saved);
-  const restored=new NinjaGame({storage});
-  assert.equal(restored.profile.player.notifications.filter(n=>!n.read).length,1);
+  assert.deepEqual(game.markNotificationRead('achievement:first-cut'),{ok:true,id:'achievement:first-cut'});
+  assert.equal(storage.getItem(STORAGE_KEY),saved);assert.equal(storage.writes,writes+1,'repeat views do not rewrite the save');
+  const restored=new NinjaGame({storage,now:()=>1000});
+  assert.deepEqual(restored.profile,expected);
+  assert.deepEqual(restored.markNotificationsRead(),{ok:true,count:2},'bulk action only dismisses the two remaining items');
+  assert.deepEqual(restored.markNotificationsRead(),{ok:true,count:0});
+  assert.equal(new NinjaGame({storage,now:()=>1000}).profile.player.notifications.every(item=>item.read),true);
+});
+
+test('unknown and forged inbox IDs cannot dismiss notifications, write saves or award rewards', () => {
+  class CountedStorage extends Storage {writes=0;setItem(key,value){super.setItem(key,value);this.writes++;}}
+  const storage=new CountedStorage(),game=new NinjaGame({storage,now:()=>1000});
+  game.profile.coins=23;game.addNotification({type:'achievement',ref:'first-cut'});
+  const before=game.getSnapshot(),saved=storage.getItem(STORAGE_KEY),writes=storage.writes;
+  const forged={toString(){throw new Error('an inbox ID must never be coerced');}};
+  for(const id of [null,undefined,0,{},[],forged,'','achievement:first-cut ','achievement:missing','skill:focus-root','__proto__','x'.repeat(97)]){
+    const result=game.markNotificationRead(id);assert.equal(result.ok,false);assert.ok(result.reason);
+    assert.deepEqual(game.getSnapshot(),before);assert.equal(storage.getItem(STORAGE_KEY),saved);assert.equal(storage.writes,writes);
+  }
+  assert.equal(new NinjaGame({storage,now:()=>1000}).profile.player.notifications[0].read,false);
 });

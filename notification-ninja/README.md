@@ -2,9 +2,11 @@
 
 Ein buntes, deutschsprachiges Arcade-Spiel über digitale Ablenkung: Wische durch störende Inhalte und lass hilfreiche Dinge passieren. Ein sonniges Klassenzimmer, ein gemütliches Gaming-Zimmer und ein Schlafzimmer bei Mondlicht begleiten deinen Tag. Bücher, Controller, Trinkflaschen, Kissen und andere gezeichnete Objekte passen zur jeweiligen Umgebung.
 
-**[Im Browser spielen](https://brukevfh.github.io/REBOOT-Digital-Balance/notification-ninja/)** · **[Vollständiges Spiel 1.7.0 herunterladen](downloads/Notification-Ninja-1.7.0.zip)**
+**[Homepage](https://brukevfh.github.io/REBOOT-Digital-Balance/notification-ninja/home.html)** · **[Im Browser spielen](https://brukevfh.github.io/REBOOT-Digital-Balance/notification-ninja/)** · **[Vollständiges Spiel 1.7.2 herunterladen](downloads/Notification-Ninja-1.7.2.zip)**
 
 ## Spielen
+
+Die eigene [Homepage](home.html) erklärt das Spiel und führt mit „Jetzt spielen“ zu deinem Dojo. Sie ist auch im Download enthalten. Der Homepage-Link im Spiel erhält deinen Namen, dein Profil und einen pausierten Run; Abmelden ist eine getrennte Aktion.
 
 Öffne das Spiel in einem aktuellen Browser mit JavaScript. Die Startseite führt dich in dein Dojo. Wähle beim ersten Start einen **Ninja-Namen mit 3–18 Zeichen**. Erlaubt sind Buchstaben, Zahlen, Leerzeichen, `_` und `-`. Dein lokales Spielerprofil braucht kein Passwort und keine E-Mail. Hast du dich abgemeldet, kannst du von der Startseite mit deinem gespeicherten Profil zurückkehren.
 
@@ -16,7 +18,7 @@ Die Online-Version speichert ihre Laufzeitdateien nach dem vollständigen ersten
 
 Unten im Spielfeld steht dein größeres, um die Mitte angeordnetes Ninja-Team: **ein Ninja auf Entspannt, zwei auf Normal und drei auf Profi**. Alle tragen den beim Start des Runs ausgerüsteten Look. Jeder Ninja holt sichtbar aus; der Gegenstand folgt dabei tatsächlich seiner Hand, löst sich beim Wurf und wächst auf dem Weg ins Spielfeld auf seine volle Größe. Während des Ausholens und des kurzen Anflugs sind die Gegenstände vor Schnitten geschützt. Erst nach dieser Phase kannst du sie zerschneiden. So kannst du die Ninjas und ihre Würfe sehen, bevor deine Entscheidung zählt.
 
-Die Spielfläche nutzt den Platz bis zum unteren Bildschirmrand. Eine **schmale rechte Infoleiste** bündelt Zeit, Münzen, Tempo und kompakte Statusanzeigen; für sie ist eigener Platz reserviert. Flugobjekte bleiben im Spielfeld links daneben. Auf großen Bildschirmen ist sie 88 Pixel breit, auf schmalen Mobilbildschirmen 52 Pixel, mit eigenen Zwischen- und Querformatgrößen.
+Die Spielfläche nutzt den Platz bis zum unteren Bildschirmrand. Eine **schmale rechte Infoleiste** bündelt Zeit, Münzen, Tempo und kompakte Statusanzeigen; für sie ist eigener Platz reserviert. Flugobjekte bleiben im Spielfeld links daneben. Auf großen Bildschirmen ist sie 112 Pixel breit, auf schmalen Mobilbildschirmen 68 Pixel, mit eigenen Zwischen- und Querformatgrößen. Die größere Super-Taste unten links zeigt zusätzlich den Namen ihrer Fähigkeit und ein deutliches Bild.
 
 Die **Super-Taste sitzt separat unten links** und lässt sich mit dem Daumen erreichen. Bei voller Ladung pulsiert sie und zeigt **„SUPER BEREIT!“** an; zusätzlich erscheint beim Bereitwerden ein kurzer Hinweis. Während des Trainings und im Open Run wird sie ausgeblendet. Auf Geräten mit reduzierten Bewegungsanimationen bleibt der Hinweis ohne Pulsieren sichtbar.
 
@@ -34,7 +36,7 @@ Du bekommst **5 XP pro richtiger Entscheidung, 10 XP pro eingesetztem Super und 
 
 Dein Mentor **Meister NIM** ist ein eigener Fuchs-Sensei mit Schal, Ohren und Schweif. Er spricht mit dir in animierten Hinweisfenstern. Er erklärt am Anfang den Einstieg, im Training die Wischbewegung und das Durchlassen und später neue Freischaltungen und Supers. Während einer Erklärung stehen Objekte und Rundenuhr still. Bestätigte Erklärungen werden lokal gemerkt. Das Training lässt sich jederzeit wiederholen; die WISCHEN-/BEHALTEN-Hilfen erscheinen dort weiter.
 
-Die Glocke öffnet deine **Mitteilungen**. Neue Fähigkeiten, Räume, Hintergründe, Skins, Erfolge und erreichte Level werden dort mit passenden Bildern gesammelt. Ein Zähler markiert ungelesene Mitteilungen; du kannst sie als gelesen markieren und zur passenden Sammlung wechseln. Das lokale Postfach hält bis zu 50 Mitteilungen bereit. Freischaltmitteilungen erscheinen innerhalb des Spiels und benötigen keine Browser-Push-Berechtigung.
+Die Glocke öffnet deine **Mitteilungen**. Neue Fähigkeiten, Räume, Hintergründe, Skins, Erfolge und erreichte Level werden dort mit passenden Bildern gesammelt. Der Posteingang zeigt nur ungelesene Mitteilungen. „Ansehen“ markiert genau den gewählten Eintrag als gelesen, öffnet seine Sammlung und blendet ihn dauerhaft aus dem Posteingang aus – auch nach Zurückgehen und Neuladen. „Alle als gelesen markieren“ bleibt als Sammelaktion verfügbar. Freischaltungen und noch nicht abgeholte Münzbelohnungen bleiben erhalten. Das lokale Postfach hält bis zu 50 Mitteilungen bereit. Freischaltmitteilungen erscheinen innerhalb des Spiels und benötigen keine Browser-Push-Berechtigung.
 
 ### Ninja-Ränge und verdiente Outfits
 
@@ -201,13 +203,15 @@ Alle Benachrichtigungen, Boni und Münzen sind Spielsimulationen. Es gibt keine 
 
 Hilfreiche Dinge unberührt passieren lassen. Ein Schnitt folgt deiner tatsächlichen Wischbewegung. Im Tutorial lernst du den Unterschied zwischen Ablenkung und hilfreichem Signal.
 
+Beim Rückweg ins Dojo oder zur Ergebnisansicht werden Kamerawackeln und temporäre Spieleffekte zurückgesetzt. Trefferfeedback bleibt auf die aktive Runde beschränkt.
+
 ## Daten und Offline-Nutzung
 
 Dein Ninja-Profil ist ein **lokales Spielerprofil** mit Nutzername. Name, Fortschritt, bestätigte NIM-Hinweise, Mitteilungen und Einstellungen liegen in **localStorage**. Es gibt kein Passwortkonto mit Wiederherstellung oder Gerätesynchronisierung. Ein anderer Browser oder ein anderes Gerät hat einen eigenen Spielstand. Ergebnisse werden erst durch ausdrückliches Veröffentlichen an die gemeinsame Rangliste gesendet; Münzen und Profil-XP bleiben lokal. Wenn dein Browser die Speicherung blockiert, bleibt das Spiel für die laufende Sitzung spielbar; Ergebnisse werden dann nicht online veröffentlicht. Das Löschen der Website-Daten entfernt den lokalen Fortschritt.
 
 Online-Version, lokale HTTP-Version und direkt geöffnete Dateien können getrennte Speicherplätze verwenden. Die lokale Dateinutzung kann von den Browser-Einstellungen abhängen. Ältere Spielstände behalten ihr vorhandenes Guthaben, ihre Skins, Erfolge und Freischaltungen. Fehlt ein Ninja-Name, ergänzt du ihn beim Einstieg; Level und XP werden aus den bisherigen gespeicherten Statistiken berechnet. Bereits gespeicherte ältere Runs lassen sich fortsetzen; für neue Runs gelten die Raumfreischaltungen.
 
-Ältere vollständige Downloads bleiben verfügbar: [Version 1.6.0](downloads/Notification-Ninja-1.6.0.zip), [Version 1.5.0](downloads/Notification-Ninja-1.5.0.zip), [Version 1.4.0](downloads/Notification-Ninja-1.4.0.zip), [Version 1.3.0](downloads/Notification-Ninja-1.3.0.zip), [Version 1.2.0](downloads/Notification-Ninja-1.2.0.zip), [Version 1.1.0](downloads/Notification-Ninja-1.1.0.zip) und [Version 1.0.0](downloads/Notification-Ninja-1.0.0.zip).
+Ältere vollständige Downloads bleiben verfügbar: [Version 1.7.0](downloads/Notification-Ninja-1.7.0.zip), [Version 1.6.0](downloads/Notification-Ninja-1.6.0.zip), [Version 1.5.0](downloads/Notification-Ninja-1.5.0.zip), [Version 1.4.0](downloads/Notification-Ninja-1.4.0.zip), [Version 1.3.0](downloads/Notification-Ninja-1.3.0.zip), [Version 1.2.0](downloads/Notification-Ninja-1.2.0.zip), [Version 1.1.0](downloads/Notification-Ninja-1.1.0.zip) und [Version 1.0.0](downloads/Notification-Ninja-1.0.0.zip).
 
 ## Gemeinsame Rangliste
 
@@ -241,6 +245,7 @@ Das [Ablaufdiagramm und die Beispielplanung](PLAN.md) beschreiben Spielablauf, t
 
 ```text
 notification-ninja/
+├── home.html                 # Eigene Homepage, ohne Spielstart oder Profiländerung
 ├── index.html, styles.css     # Startmenü, HUD und Dialoge
 ├── src/game.js               # Regeln, Kontextwechsel und Spielstände
 ├── src/progression.js        # Schwierigkeit, Räume, Shop, Fähigkeiten und Erfolge

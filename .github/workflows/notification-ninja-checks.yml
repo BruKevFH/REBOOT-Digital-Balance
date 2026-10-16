@@ -5,14 +5,20 @@ on:
       - 'notification-ninja/**'
       - 'tests/ninja*.mjs'
       - 'scripts/build_ninja.mjs'
+      - 'scripts/package_ninja.py'
       - 'package.json'
       - 'package-lock.json'
+      - '.github/workflows/notification-ninja-checks.yml'
   push:
     branches:
-      - feature/notification-ninja-immersive-openrun
+      - main
     paths:
       - 'notification-ninja/**'
       - 'tests/ninja*.mjs'
+      - 'scripts/build_ninja.mjs'
+      - 'scripts/package_ninja.py'
+      - 'package.json'
+      - 'package-lock.json'
       - '.github/workflows/notification-ninja-checks.yml'
 jobs:
   test-and-build:
@@ -28,8 +34,41 @@ jobs:
       - run: npm ci --ignore-scripts
       - run: npm run test:ninja
       - run: npm run build:ninja
-      - name: Check homepage and ES module entry
+      - name: Verify bundled entry and offline homepage routes
         run: |
-          test -f notification-ninja/home.html
-          test -f notification-ninja/src/main.js
-          grep -q 'type="module"' notification-ninja/index.html
+          node --input-type=module <<'NODE'
+          import assert from 'node:assert/strict';
+          import {readFileSync,existsSync} from 'node:fs';
+          import vm from 'node:vm';
+          const root='notification-ninja/';
+          const index=readFileSync(root+'index.html','utf8');
+          assert.match(index,/<script\s+src="\.\/dist\/ninja\.js"\s+defer><\/script>/);
+          new vm.Script(readFileSync(root+'dist/ninja.js','utf8'));
+          const metadata=JSON.parse(readFileSync(root+'dist/build.json','utf8'));
+          assert.equal(metadata.entry,'index.html');
+          const home=readFileSync(root+'home.html','utf8');
+          assert(home.includes('href="./index.html"'));
+          assert(home.includes("serviceWorker.register('./sw.js')"));
+          const handlers=new Map(),cached=[];
+          const cache={addAll:async assets=>cached.push(...assets),match:async url=>({cachedUrl:url})};
+          const scope='https://example.test/REBOOT-Digital-Balance/notification-ninja/';
+          const context={URL,self:{registration:{scope},skipWaiting:async()=>{},addEventListener:(type,fn)=>handlers.set(type,fn)},caches:{open:async name=>{assert(name.endsWith(metadata.version));return cache;}},fetch:async()=>{throw new Error('Offline');}};
+          vm.runInNewContext(readFileSync(root+'sw.js','utf8'),context);
+          let install;
+          handlers.get('install')({waitUntil:promise=>install=promise});
+          await install;
+          for(const asset of cached)assert(existsSync(root+(asset==='./'?'index.html':asset.slice(2))),asset);
+          assert(cached.includes('./home.html'));
+          assert(cached.includes('./dist/ninja.js'));
+          assert(!cached.some(asset=>asset.startsWith('./src/')));
+          for(const [path,expected]of [['home.html?source=install','home.html'],['index.html?v='+metadata.version,'index.html'],['','index.html']]){
+            let response;
+            handlers.get('fetch')({request:{method:'GET',url:scope+path,mode:'navigate'},respondWith:promise=>response=promise});
+            assert(response,path);
+            assert.equal((await response).cachedUrl,scope+expected);
+          }
+          let unrelated=false;
+          handlers.get('fetch')({request:{method:'GET',url:scope+'unknown-page.html',mode:'navigate'},respondWith:()=>unrelated=true});
+          assert.equal(unrelated,false);
+          console.log('Bundled runtime, complete precache and distinct homepage/game offline routes verified.');
+          NODE

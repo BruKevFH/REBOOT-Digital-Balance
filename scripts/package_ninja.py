@@ -4,8 +4,8 @@ from zipfile import ZipFile, ZipInfo, ZIP_DEFLATED
 from hashlib import sha256
 
 ROOT=Path(__file__).resolve().parents[1]/'notification-ninja'
-NAME='Notification-Ninja-1.7.0'
-FILES=['index.html','styles.css','sw.js','manifest.webmanifest','favicon.svg','dist/ninja.js','dist/build.json','leaderboard-config.json']
+NAME='Notification-Ninja-1.7.2'
+FILES=['index.html','home.html','styles.css','sw.js','manifest.webmanifest','favicon.svg','dist/ninja.js','dist/build.json','leaderboard-config.json']
 INSTRUCTIONS='''NOTIFICATION NINJA – MASTER YOUR DIGITAL BALANCE
 
 Die gesamte ZIP entpacken. Im Spielordner index.html in einem aktuellen
@@ -14,7 +14,9 @@ Alle Grafiken, Effekte, Musik und Spielregeln sind lokal enthalten.
 Keine Installation und kein Passwort nötig. Das lokale Spiel braucht keine API.
 Wähle zuerst einen Ninja-Namen (3–18 Zeichen). Dein Profil mit Münzen,
 XP und Level bleibt auf diesem Gerät; den Namen kannst du im Profil ändern.
-Die Startseite führt in dein Dojo. Abmelden erhält deinen Fortschritt.
+home.html ist die eigene Homepage mit Spielinfos und Jetzt-spielen-Knopf.
+index.html öffnet das Spiel direkt. Der Homepage-Link im Dojo erhält dein
+Profil und deinen pausierten Run; Abmelden bleibt eine getrennte Aktion.
 Profil löschen verlangt deinen aktuellen Namen zur Bestätigung und löscht
 Notification-Ninja-Daten. Andere Spiele bleiben erhalten. Falls du Ergebnisse
 veröffentlicht hast, werden zuerst deine Online-Einträge gelöscht.
@@ -34,7 +36,10 @@ die Taste drücken. Esc verlässt die große Spielansicht, sonst pausiert es.
 Meister NIM, dein eigener Fuchs-Sensei, erklärt im Training das Wischen
 und Durchlassen. Während der Erklärungen pausiert die Runde.
 Neue Kräfte erklärt er beim Freischalten.
-Mitteilungen sammeln deine letzten 50 Freischaltungen. Abholbereite
+Der Posteingang zeigt ungelesene Mitteilungen. Ansehen markiert genau
+eine Mitteilung als gelesen und blendet sie dauerhaft aus. Freischaltungen
+und noch nicht abgeholte Münzbelohnungen bleiben erhalten. Dein Profil
+behält die letzten 50 Mitteilungen. Abholbereite
 Erfolgsbelohnungen stehen ganz oben, bis du die Münzen abholst. Danach
 wandern sie nach unten; neue Ziele bleiben darüber sichtbar. Dein Fähigkeitenbaum
 wächst aus der Mitte in drei verbundenen Wurzelzweigen.
