@@ -329,12 +329,12 @@ test('new milestone rewards stay modest compared with the full collection and ne
 });
 
 
-test('open speed is continuous at the timed curve boundary and increases far beyond its old cap', () => {
+test('one gentle open-run speed curve stays continuous and keeps increasing without a limit', () => {
   for(const difficulty of DIFFICULTIES) {
     const before=getOpenSpeedFactor(difficulty.id,90-.000001),at=getOpenSpeedFactor(difficulty.id,90),after=getOpenSpeedFactor(difficulty.id,90+.000001);
     assert.ok(before<=at&&at<after);assert.ok(after-before<.000001);
     let prior=at;
     for(const seconds of [120,300,3600,60000]){const speed=getOpenSpeedFactor(difficulty.id,seconds);assert.ok(speed>prior);assert.ok(Number.isFinite(speed));prior=speed;}
-    assert.equal(getOpenSpeedFactor(difficulty.id,-1),1);assert.equal(getOpenSpeedFactor(difficulty.id,NaN),1);
+    assert.equal(getOpenSpeedFactor(difficulty.id,-1),.82);assert.equal(getOpenSpeedFactor(difficulty.id,NaN),.82);
   }
 });
