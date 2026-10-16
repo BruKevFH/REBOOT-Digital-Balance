@@ -303,6 +303,10 @@ export class NinjaGame {
     player.notifications=[notification,...player.notifications].slice(0,50);this.profile.player=player;this.save();return {ok:true,notification:clone(notification)};}
   markNotificationsRead(){const player=normalizePlayer(this.profile),unread=player.notifications.filter(item=>!item.read).length;
     if(unread){for(const item of player.notifications)item.read=true;this.profile.player=player;this.save();}return {ok:true,count:unread};}
+  markNotificationRead(id){const player=normalizePlayer(this.profile),item=player.notifications.find(entry=>entry.id===id);
+    if(!item)return fail('Mitteilung nicht gefunden.');
+    if(!item.read){item.read=true;this.profile.player=player;this.save();}
+    return {ok:true,id};}
   _progressAllowed(){return !this.state.started||this.state.ended||this.state.paused||this.state.scene==='home';}
   buyWorld(id){if(!this._progressAllowed())return fail('Pausiere den Run oder öffne das Hauptmenü, um eine Welt freizuschalten.');const result=purchaseWorld(this.profile,id);if(result.ok)this.save();return result;}
   buyBackground(id){if(!this._progressAllowed())return fail('Pausiere den Run oder öffne das Hauptmenü, um einen Hintergrund freizuschalten.');const result=purchaseBackground(this.profile,id);if(result.ok)this.save();return result;}
