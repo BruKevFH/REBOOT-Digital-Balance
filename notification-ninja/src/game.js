@@ -1,9 +1,11 @@
 import { THROW_RECOVERY, getThrowerLayout, getThrowerPose, isThrowReady } from './throwers.js';
 import { GUIDE_IDS, normalizePlayer, validateUsername, validateNotification } from './player.js';
+import { normalizeJourney, recordDailyRun, claimDailyReward as claimDaily, applyRankUnlocks } from './journey.js';
 export { GUIDE_IDS, normalizePlayer, validateUsername, getPlayerProgress } from './player.js';
 import { DIFFICULTIES, SKILLS, ACHIEVEMENTS, WORLDS, BACKGROUNDS, buyWorld as purchaseWorld, buyBackground as purchaseBackground, equipBackground, sanitizeProgress, buySkill as purchaseSkill, equipSuper, claimAchievement as claimReward, unlockAchievements, getDifficulty, getSpeedFactor, getOpenSpeedFactor } from './progression.js';
 export { DIFFICULTIES, SKILLS, ACHIEVEMENTS, WORLDS, BACKGROUNDS } from './progression.js';
 export const STORAGE_KEY = 'notification-ninja:save:v1';
+export const OPEN_RULESET = 'open-v2';
 export const LEVELS = [
   {id:'study',context:'study',title:'Lernen',duration:75,description:'Schulaufträge behalten. Streaks und Clips wegwischen.',goal:'Relevanz folgt deinem aktuellen Ziel.'},
   {id:'gaming',context:'gaming',title:'Gaming mit Grenze',duration:90,description:'Spielsignale dürfen jetzt wichtig sein. Deine gewählte Grenze bleibt sichtbar.',goal:'45, 60 oder 90 Sekunden: Du entscheidest am Limit.'},
@@ -14,7 +16,10 @@ export const SKINS = [
   {id:'default',name:'Ninja Mint',cost:0,color:'#75f6cd'},
   {id:'solar',name:'Solar Slice',cost:80,color:'#ffd171'},
   {id:'mint',name:'Arctic Focus',cost:180,color:'#83deff'},
-  {id:'neon',name:'Violet Flow',cost:320,color:'#d8a3ff'}
+  {id:'neon',name:'Violet Flow',cost:320,color:'#d8a3ff'},
+  {id:'dawn',name:'Morgenwind',cost:0,color:'#f6b85c',unlock:'rank',rank:'dawn'},
+  {id:'shadow',name:'Schatten-Ninja',cost:0,color:'#6570ab',unlock:'rank',rank:'shadow'},
+  {id:'grandmaster',name:'Großmeister',cost:0,color:'#e9d29a',unlock:'rank',rank:'grandmaster'}
 ];
 const kinds = (study,gaming,sleep) => ({study,gaming,sleep});
 export const CONTENT = [
@@ -76,7 +81,7 @@ function emptyState(seed,skin='default') {return {
   started:false,scene:'home',mode:'campaign',levelIndex:0,stageIndex:0,context:'study',isTutorial:false,
   tutorialDecisions:0,tutorialCuts:0,tutorialPassed:0,tutorialResults:null,tutorialReason:null,
   difficulty:'easy',maxLives:5,speedFactor:1,runCoins:0,coinRemainder:0,superCharge:0,selectedSuper:null,skillIds:[],reviveUsed:false,bonusCoinPending:false,backgrounds:{study:'classroom',gaming:'game-room',sleep:'bedroom'},nextLockedWorld:null,bonusPhase:null,bonusClock:0,bonusNextAt:20,bonusSequence:0,
-  objects:[],score:0,scoreArcade:0,balance:50,balanceScore:100,combo:0,bestCombo:0,decisionStreak:0,overload:0,lives:MAX_LIVES,
+  objects:[],score:0,scoreArcade:0,balance:50,balanceScore:100,combo:0,bestCombo:0,decisionStreak:0,bestDecisionStreak:0,comboMilestones:[],lastMistake:null,openRuleset:null,overload:0,lives:MAX_LIVES,
   elapsed:0,stageElapsed:0,duration:75,remaining:75,awaitingNext:false,paused:false,stopAvailable:false,
   extensionUsed:false,sleepContinued:false,effects:{slow:0,shield:0,multiplier:0,flow:0},metrics:metrics(),stageMetrics:stageMetrics(),
   skin,ended:false,credited:false,result:null,awardedCoins:0,rng:seed,runSerial:0,objectSequence:0,spawnCount:0,spawnTimer:.5,
@@ -102,6 +107,7 @@ export class NinjaGame {
     this.storageFailed=false;this.storageError=null;
     if(storage===undefined){try{storage=typeof window!=='undefined'?globalThis.localStorage:null;}catch{storage=null;this.storageFailed=true;this.storageError='unavailable';}}
     this.storage=storage;this.profile=profile();this.state=emptyState(this.seed);this._restore();
+    normalizeJourney(this.profile,this._time());this.initialJourneyEvents=applyRankUnlocks(this.profile,this._time());
   }
   _time(){try{return number(this.now(),Date.now(),0,8640000000000000);}catch{return Date.now();}}
   _random(){let x=this.state.rng;x^=x<<13;x^=x>>>17;x^=x<<5;this.state.rng=(x>>>0)||1;return this.state.rng/4294967296;}
@@ -131,7 +137,7 @@ export class NinjaGame {
     s.duration=s.mode==='open'?0:s.isTutorial?60:s.levelIndex===1?s.gamingLimit:level.duration;s.remaining=s.duration;
     s.combo=0;s.decisionStreak=0;s.effects={slow:0,shield:0,multiplier:0,flow:0};s.overload=Math.max(0,s.overload-15);
     s.stopAvailable=false;s.extensionUsed=false;s.sleepContinued=false;s.pendingContext=null;s.masterSwitchIndex=0;s.spawnTimer=s.mode==='open'?1.4:.5;s.spawnCount=0;s.stageMetrics=stageMetrics();s.bonusPhase=null;s.bonusCoinPending=false;s.bonusClock=0;s.bonusNextAt=20;s.bonusSequence=0;
-    if(!s.metrics.contextsPlayed.includes(s.context))s.metrics.contextsPlayed.push(s.context);}
+    s.speedFactor=this._speed();if(!s.metrics.contextsPlayed.includes(s.context))s.metrics.contextsPlayed.push(s.context);}
   start({mode='campaign',gamingLimit=90,skin=this.profile.selectedSkin,tutorial=true,difficulty='easy',forceTutorial=false}={}) {
     if(!DIFFICULTIES.some(item=>item.id===difficulty))return fail('Wähle einen gültigen Schwierigkeitsgrad.');
     if(!MODES.includes(mode))return fail('Wähle einen gültigen Spielmodus.');
@@ -140,7 +146,7 @@ export class NinjaGame {
     if(!SKIN_MAP.has(skin)||!this.profile.unlockedSkins.includes(skin))return fail('Dieser Skin ist noch nicht freigeschaltet.');
     if(mode==='open')difficulty='normal';
     const serial=this.state.runSerial+1,runSeed=mode==='open'?hash(`${this.seed}:open:${difficulty}`):hash(`${this.seed}:${mode}:${gamingLimit}`);this.state=emptyState(runSeed,skin);
-    const s=this.state;s.started=true;s.startedAt=this._time();s.mode=mode;s.gamingLimit=gamingLimit;s.runSerial=serial;
+    const s=this.state;s.started=true;s.startedAt=this._time();s.mode=mode;s.openRuleset=mode==='open'?OPEN_RULESET:null;s.gamingLimit=gamingLimit;s.runSerial=serial;
     s.isTutorial=mode==='campaign'&&tutorial!==false&&(forceTutorial===true||!this.profile.tutorialCompleted);s.stageIndex=s.isTutorial?-1:0;s.levelIndex=PLANS[mode][0];
     s.difficulty=difficulty;s.maxLives=s.isTutorial?5:mode==='open'?3:this._difficulty().lives;s.lives=s.maxLives;s.selectedSuper=mode==='open'?null:this.profile.selectedSuper;s.skillIds=mode==='open'?[]:[...this.profile.unlockedSkills];s.backgrounds=clone(this.profile.selectedBackgrounds);
     s.scene='briefing';s.awaitingNext=true;this._resetStage();if(!s.isTutorial&&this._hasSkill('guard-root'))s.effects.shield=1;this._record('start',{mode,gamingLimit,difficulty,tutorial:s.isTutorial});this.save();return {ok:true,state:s,events:[]};
@@ -172,8 +178,11 @@ export class NinjaGame {
     // drift means a swipe at one object cannot accidentally meet its neighbour.
     const available=lanes.filter(x=>!this.state.objects.some(obj=>Math.abs((obj.launch?.laneX??obj.x)-x)<obj.radius+radius+24));
     if(!available.length)return null;
-    const x=available[Math.floor(this._random()*available.length)],span=Math.max(120,this.height-40),gravity=span*.08,flight=((this.state.isTutorial?4.6:this.state.mode==='open'?4.4:this._difficulty().flight)+this._random()*.6)/this.state.speedFactor;
-    const target=-radius-2,release=actor?getThrowerPose(actor,.22,.22):null,y=release?release.handY:this.height+radius+6,distance=y-target,vy=-(distance/flight+.5*gravity*flight);
+    const x=available[Math.floor(this._random()*available.length)],span=Math.max(120,this.height-40),flight=((this.state.isTutorial?4.6:this.state.mode==='open'?4.4:this._difficulty().flight)+this._random()*.6)/this.state.speedFactor;
+    const target=-radius-2,release=actor?getThrowerPose(actor,.22,.22):null,y=release?release.handY:this.height+radius+6,distance=y-target;
+    // A longer Open flight must really grant more reaction time. Excess gravity
+    // would otherwise send the object over its target early and back down later.
+    const gravity=this.state.mode==='open'?Math.min(span*.08,distance/(flight*flight)):span*.08,vy=-(distance/flight+.5*gravity*flight);
     const obj={id:`ninja-${this.state.runSerial}-${++this.state.objectSequence}`,contentId:id,label:content.label,text:content.text,
       kind:content.powerup?'powerup':content.kindByContext[this.state.context],powerup:content.powerup||null,context:this.state.context,
       x,y,vx:0,vy,gravity,radius,age:0};
@@ -196,16 +205,19 @@ export class NinjaGame {
     for(const id of ids){const throwerIndex=this._availableThrower();if(throwerIndex===null)break;const obj=this._spawnContent(id,throwerIndex);if(obj){if(id==='power-coins')s.bonusCoinPending=false;s.spawnCount++;events.push({type:'spawned',...clone(obj)});}}
     const finale=s.levelIndex===3&&s.stageElapsed>=75&&!s.pendingContext;
     s.spawnTimer+=s.isTutorial?1.8:(s.mode==='open'?1.7:this._difficulty().spawn)*(finale?.77:s.levelIndex===3?.9:s.context==='sleep'?1.08:s.context==='gaming'?.92:1)/s.speedFactor;}
-  _good(events){const s=this.state;s.metrics.correctDecisions++;s.stageMetrics.correctDecisions++;s.decisionStreak++;this._balance();
+  _good(events,obj){const s=this.state;s.metrics.correctDecisions++;s.stageMetrics.correctDecisions++;s.decisionStreak++;s.bestDecisionStreak=Math.max(s.bestDecisionStreak,s.decisionStreak);this._balance();
     if(s.isTutorial)s.tutorialDecisions++;
     else {if(s.mode!=='open'&&!this._superSlicing)s.superCharge=Math.min(100,s.superCharge+8+(this._hasSkill('focus-root')?2:0));
-      if(s.metrics.correctDecisions%(this._hasSkill('coin-root')?12:14)===0)this._earnCoins(1,events,'correct-decisions');}
+      if(s.metrics.correctDecisions%(this._hasSkill('coin-root')?12:14)===0)this._earnCoins(1,events,'correct-decisions');
+      const points={10:250,25:750,50:2000}[s.decisionStreak];
+      if(points&&!s.comboMilestones.includes(s.decisionStreak)){s.comboMilestones.push(s.decisionStreak);this._arcade(points);events.push({type:'combo-milestone',milestone:s.decisionStreak,streak:s.decisionStreak,points,context:obj?.context||s.context,x:obj?.x??this.width/2,y:obj?.y??this.height/2});}}
     if(s.decisionStreak%5===0){const duration=5+(!s.isTutorial&&this._hasSkill('flow-boost')?2:0);s.effects.flow=duration;s.metrics.flowTriggers++;events.push({type:'flow-started',duration});if(!s.isTutorial)this._achievement('flow-five');}}
   _mistake(obj,kind,events){const s=this.state;
+    s.lastMistake={context:obj.context,contentId:obj.contentId,kind,protected:s.effects.shield>0,elapsed:s.elapsed};s.combo=0;s.decisionStreak=0;
     if(s.effects.shield){s.effects.shield=0;s.metrics.shieldedMistakes++;s.stageMetrics.shieldedMistakes++;
       events.push({type:kind==='useful'?'useful-mistake':'distraction-missed',id:obj.id,contentId:obj.contentId,kind:obj.kind,x:obj.x,y:obj.y,protected:true,points:0});return;}
     const key=kind==='useful'?'usefulMistakes':'missedDistractions';s.metrics[key]++;s.stageMetrics[key]++;
-    s.combo=0;s.decisionStreak=0;s.balance=Math.max(0,s.balance-(kind==='useful'?12:6));s.overload=Math.min(100,s.overload+(kind==='useful'?18:12));
+    s.balance=Math.max(0,s.balance-(kind==='useful'?12:6));s.overload=Math.min(100,s.overload+(kind==='useful'?18:12));
     s.lives=Math.max(0,s.lives-1);s.metrics.lifeLost++;if(s.overload>=100)s.overload=60;this._balance();
     events.push({type:kind==='useful'?'useful-mistake':'distraction-missed',id:obj.id,contentId:obj.contentId,kind:obj.kind,x:obj.x,y:obj.y,protected:false,points:0});
     events.push({type:'life-lost',lives:s.lives,reason:kind==='useful'?'useful-cut':'distraction-missed'});
@@ -218,7 +230,7 @@ export class NinjaGame {
     s.metrics.cuts++;s.stageMetrics.cuts++;s.combo++;s.bestCombo=Math.max(s.bestCombo,s.combo);s.balance=Math.min(100,s.balance+1);s.overload=Math.max(0,s.overload-3);
     if(s.isTutorial)s.tutorialCuts++;
     const multiplier=Math.min(4,1+Math.floor(s.combo/4))*(s.effects.multiplier>0?2:1)*(s.bonusPhase?.id==='combo-party'?2:1),points=s.isTutorial?0:100*multiplier;
-    this._arcade(points);this._good(events);if(s.combo%25===0)this._earnCoins(1,events,'combo',{x:obj.x,y:obj.y});events.push({type:'sliced',id:obj.id,contentId:obj.contentId,kind:obj.kind,context:obj.context,x:obj.x,y:obj.y,points,combo:s.combo,multiplier,chain});
+    this._arcade(points);this._good(events,obj);if(s.combo%25===0)this._earnCoins(1,events,'combo',{x:obj.x,y:obj.y});events.push({type:'sliced',id:obj.id,contentId:obj.contentId,kind:obj.kind,context:obj.context,x:obj.x,y:obj.y,points,combo:s.combo,multiplier,chain});
     if(!s.isTutorial)this._achievement('first-cut');
   }
   swipe(value){if(!this._playable())return [];let points=Array.isArray(value)?value:isObject(value)?[{x:value.x1,y:value.y1},{x:value.x2,y:value.y2}]:[];
@@ -236,7 +248,7 @@ export class NinjaGame {
     if(obj.kind==='distraction'){this._mistake(obj,'distraction',events);return;}
     s.metrics.usefulPassed++;s.stageMetrics.usefulPassed++;s.balance=Math.min(100,s.balance+5);s.overload=Math.max(0,s.overload-2);
     if(s.isTutorial)s.tutorialPassed++;
-    const points=s.isTutorial?0:100*(s.effects.multiplier>0?2:1)*(s.bonusPhase?.id==='combo-party'?2:1);this._arcade(points);this._good(events);
+    const points=s.isTutorial?0:100*(s.effects.multiplier>0?2:1)*(s.bonusPhase?.id==='combo-party'?2:1);this._arcade(points);this._good(events,obj);
     events.push({type:'useful-passed',id:obj.id,contentId:obj.contentId,kind:obj.kind,context:obj.context,x:obj.x,y:obj.y,points});}
   _master(events){const s=this.state;if(s.levelIndex!==3||s.isTutorial)return;
     const sequence=['study','gaming','sleep','study'];
@@ -266,7 +278,7 @@ export class NinjaGame {
   _endTutorial(reason,events){const s=this.state;if(!s.isTutorial)return;
     s.tutorialResults={decisions:s.tutorialDecisions,cuts:s.tutorialCuts,passed:s.tutorialPassed,elapsed:s.stageElapsed,reason};s.tutorialReason=reason;
     this.profile.tutorialCompleted=true;s.isTutorial=false;s.stageIndex=0;s.levelIndex=0;s.score=s.scoreArcade=0;s.balance=50;s.balanceScore=100;s.maxLives=this._difficulty().lives;s.lives=s.maxLives;s.overload=0;s.elapsed=0;s.speedFactor=1;
-    s.metrics=metrics();s.scene='briefing';s.awaitingNext=true;s.paused=false;this._resetStage();if(this._hasSkill('guard-root'))s.effects.shield=1;this._record('tutorial-complete',{reason});events.push({type:'tutorial-complete',reason,levelIndex:0});this.save();}
+    s.metrics=metrics();s.bestDecisionStreak=0;s.comboMilestones=[];s.lastMistake=null;s.scene='briefing';s.awaitingNext=true;s.paused=false;this._resetStage();if(this._hasSkill('guard-root'))s.effects.shield=1;this._record('tutorial-complete',{reason});events.push({type:'tutorial-complete',reason,levelIndex:0});this.save();}
   skipTutorial(){if(!this.state.started||this.state.ended||!this.state.isTutorial)return fail('Es ist kein Tutorial aktiv.');const events=[];this._endTutorial('skipped',events);return {ok:true,events};}
   _endStage(reason,events){const s=this.state;if(s.mode==='open'||s.ended||s.scene==='briefing')return;
     const summary={levelIndex:s.levelIndex,context:LEVELS[s.levelIndex].id,elapsed:s.stageElapsed,reason,...clone(s.stageMetrics)};
@@ -291,7 +303,8 @@ export class NinjaGame {
       const bonus=eligible&&completed?2+(s.metrics.healthyStops>0?1:0):0;const coins=Math.min(MAX,s.runCoins+bonus);s.awardedCoins=coins;this.profile.coins=Math.min(MAX,this.profile.coins+coins);this.profile.totalRuns++;
       this.profile.totalRuns=Math.min(MAX,this.profile.totalRuns);this.profile.highScores[s.mode]=Math.max(this.profile.highScores[s.mode],s.score);if((s.mode==='campaign'||s.mode==='master')&&['complete','healthy-stop'].includes(result))this._achievement('context-master');
       const stats=this.profile.stats;stats.correct=Math.min(MAX,stats.correct+s.metrics.correctDecisions);stats.coinsEarned=Math.min(MAX,stats.coinsEarned+coins);stats.superUses=Math.min(MAX,stats.superUses+s.metrics.superUses);stats.bestCombo=Math.max(stats.bestCombo,s.bestCombo);
-      if(s.difficulty==='hard'&&['complete','healthy-stop'].includes(result))stats.hardClears=Math.min(MAX,stats.hardClears+1);for(const id of unlockAchievements(this.profile))events.push({type:'achievement-unlocked',id});}
+      if(s.difficulty==='hard'&&['complete','healthy-stop'].includes(result))stats.hardClears=Math.min(MAX,stats.hardClears+1);for(const id of unlockAchievements(this.profile))events.push({type:'achievement-unlocked',id});
+      events.push(...recordDailyRun(this.profile,s,this._time()),...applyRankUnlocks(this.profile,this._time()));}
     events.push({type:'ended',result,score:s.score,scoreArcade:s.scoreArcade,balanceScore:s.balanceScore,coins:s.awardedCoins});this._record('ended',{result});this.save();}
   setUsername(value){const result=validateUsername(value);if(!result.ok)return fail(result.reason);const player=normalizePlayer(this.profile);
     this.profile.player={...player,username:result.username,createdAt:player.username?player.createdAt:this._time()};this.save();return {ok:true,username:result.username};}
@@ -310,6 +323,7 @@ export class NinjaGame {
   buySkill(id){if(!this._progressAllowed())return fail('Pausiere den Run oder öffne das Hauptmenü. Neue Fähigkeiten gelten im nächsten Run.');const result=purchaseSkill(this.profile,id);if(result.ok)this.save();return result;}
   selectSuper(id){if(!this._progressAllowed())return fail('Pausiere den Run oder öffne das Hauptmenü. Die Superwahl gilt im nächsten Run.');const result=equipSuper(this.profile,id);if(result.ok)this.save();return result;}
   claimAchievement(id){const result=claimReward(this.profile,id);if(result.ok)this.save();return result;}
+  claimDailyReward(id){const result=claimDaily(this.profile,id,this._time());if(result.ok){result.achievements=unlockAchievements(this.profile);this.save();}return result;}
   activateSuper(){const s=this.state;if(!this._playable()||s.isTutorial)return fail('Deine Superfähigkeit ist nur im laufenden Run verfügbar.');
     if(!s.selectedSuper||!s.skillIds.includes(s.selectedSuper))return fail('Schalte zuerst eine Superfähigkeit frei und rüste sie für einen neuen Run aus.');
     if(s.superCharge<100)return fail('Deine Superfähigkeit lädt sich durch richtige Entscheidungen auf.');
@@ -318,6 +332,7 @@ export class NinjaGame {
     else {this._superSlicing=true;try{for(const obj of [...s.objects])if(obj.kind==='distraction'&&isThrowReady(obj))this._slice(obj,events,true);}finally{this._superSlicing=false;}}
     this._record('super-used',{id});this.save();return {ok:true,events};}
   buySkin(id){const skin=SKIN_MAP.get(id);if(!skin)return fail('Unbekannter Skin.');if(this.profile.unlockedSkins.includes(id))return fail('Dieser Skin ist bereits freigeschaltet.');
+    if(skin.unlock==='rank')return fail('Dieses Outfit verdienst du mit deinem Ninja-Rang.');
     if(this.profile.coins<skin.cost)return fail('Dafür fehlen Coins.');this.profile.coins-=skin.cost;this.profile.unlockedSkins.push(id);this.save();return {ok:true,id,coins:this.profile.coins};}
   selectSkin(id){if(!SKIN_MAP.has(id)||!this.profile.unlockedSkins.includes(id))return fail('Schalte diesen Skin zuerst frei.');this.profile.selectedSkin=id;this.state.skin=id;this.save();return {ok:true,id};}
   save(){if(!this.storage||typeof this.storage.setItem!=='function'){this.storageFailed=true;this.storageError='unavailable';return fail('Lokales Speichern ist nicht verfügbar. Diese Sitzung bleibt spielbar.');}
@@ -328,10 +343,11 @@ export class NinjaGame {
     const p=saved.profile;if(isObject(p)){this.profile.coins=integer(p.coins);this.profile.totalRuns=integer(p.totalRuns);for(const mode of MODES)this.profile.highScores[mode]=integer(p.highScores?.[mode]);
       this.profile.unlockedSkins=[...new Set(['default',...(Array.isArray(p.unlockedSkins)?p.unlockedSkins:[]).filter(id=>SKIN_MAP.has(id))])];
       this.profile.selectedSkin=this.profile.unlockedSkins.includes(p.selectedSkin)?p.selectedSkin:'default';this.profile.tutorialCompleted=p.tutorialCompleted===true;
-      this.profile.achievements=[...new Set((Array.isArray(p.achievements)?p.achievements:[]).filter(id=>ACHIEVEMENTS.some(item=>item.id===id)))];Object.assign(this.profile,sanitizeProgress(p));this.profile.player=normalizePlayer(p);}
+      this.profile.achievements=[...new Set((Array.isArray(p.achievements)?p.achievements:[]).filter(id=>ACHIEVEMENTS.some(item=>item.id===id)))];Object.assign(this.profile,sanitizeProgress(p));this.profile.player=normalizePlayer(p);this.profile.journey=normalizeJourney({...this.profile,journey:p.journey},this._time());}
     const source=saved.state;if(!isObject(source)||!MODES.includes(source.mode)||!['home','briefing','playing','limit-choice','results'].includes(source.scene))throw new Error('state');
     const s=emptyState(integer(source.rng,this.seed,1,0xffffffff),this.profile.selectedSkin);s.mode=source.mode;s.gamingLimit=[45,60,90].includes(source.gamingLimit)?source.gamingLimit:90;
     s.started=source.started===true;s.isTutorial=source.isTutorial===true&&s.mode==='campaign';s.difficulty=s.mode==='open'?'normal':DIFFICULTIES.some(item=>item.id===source.difficulty)?source.difficulty:'easy';s.maxLives=s.isTutorial?5:s.mode==='open'?3:getDifficulty(s.difficulty).lives;
+    s.openRuleset=s.mode==='open'?(source.openRuleset===OPEN_RULESET&&source.difficulty==='normal'&&source.maxLives===3?OPEN_RULESET:'legacy'):null;
     if(!Number.isInteger(source.stageIndex)||source.stageIndex<(s.isTutorial?-1:0)||source.stageIndex>=PLANS[s.mode].length)throw new Error('stage');
     s.stageIndex=source.stageIndex;
     if(s.isTutorial&&s.stageIndex!==-1)throw new Error('tutorial');s.levelIndex=s.isTutorial?0:PLANS[s.mode][s.stageIndex];if(source.levelIndex!==s.levelIndex)throw new Error('level');
@@ -345,10 +361,14 @@ export class NinjaGame {
     s.stageElapsed=number(source.stageElapsed,0,0,s.mode==='open'?1000000:s.duration);s.remaining=s.mode==='open'?0:Math.max(0,s.duration-s.stageElapsed);s.elapsed=number(source.elapsed,0,0,1000000);
     if(s.scene==='limit-choice'&&s.stageElapsed<s.duration-.001)throw new Error('limit');
     for(const key of ['score','combo','bestCombo','decisionStreak','objectSequence','runSerial','spawnCount','tutorialDecisions','tutorialCuts','tutorialPassed','awardedCoins'])s[key]=integer(source[key]);
+    s.comboMilestones=[...new Set((Array.isArray(source.comboMilestones)?source.comboMilestones:[]).filter(value=>[10,25,50].includes(value)))].sort((a,b)=>a-b);
+    const mistake=source.lastMistake;
+    if(isObject(mistake)&&CONTEXTS.includes(mistake.context)&&['useful','distraction'].includes(mistake.kind)&&CONTENT_MAP.get(mistake.contentId)?.kindByContext?.[mistake.context]===mistake.kind)s.lastMistake={context:mistake.context,contentId:mistake.contentId,kind:mistake.kind,protected:mistake.protected===true,elapsed:number(mistake.elapsed,0,0,s.elapsed)};
     s.scoreArcade=s.score;s.balance=number(source.balance,50,0,100);s.overload=number(source.overload,0,0,100);s.lives=integer(source.lives,s.maxLives,0,s.maxLives);
     if(!s.ended&&s.lives===0)throw new Error('lives');s.stopAvailable=s.scene==='limit-choice'||s.levelIndex===2&&s.stageElapsed>=8&&!s.ended;
     s.effects={slow:number(source.effects?.slow,0,0,8),shield:integer(source.effects?.shield,0,0,1),multiplier:number(source.effects?.multiplier,0,0,10),flow:number(source.effects?.flow,0,0,7)};
     for(const key of Object.keys(s.metrics))if(!['contextsPlayed','stageStats'].includes(key))s.metrics[key]=integer(source.metrics?.[key]);
+    s.bestDecisionStreak=Math.max(s.decisionStreak,integer(source.bestDecisionStreak,0,0,s.metrics.correctDecisions));
     s.metrics.contextsPlayed=[...new Set((Array.isArray(source.metrics?.contextsPlayed)?source.metrics.contextsPlayed:[]).filter(value=>CONTEXTS.includes(value)))];
     s.metrics.stageStats=(Array.isArray(source.metrics?.stageStats)?source.metrics.stageStats:[]).slice(0,4).filter(item=>isObject(item)&&Number.isInteger(item.levelIndex)&&item.levelIndex>=0&&item.levelIndex<4).map(item=>({levelIndex:item.levelIndex,context:LEVELS[item.levelIndex].id,elapsed:number(item.elapsed,0,0,105),reason:['time','stop'].includes(item.reason)?item.reason:'time',...Object.fromEntries(Object.keys(stageMetrics()).map(key=>[key,integer(item[key])]))}));
     const completed=s.isTutorial?0:s.stageIndex+(s.scene==='results'&&source.result!=='lives'?1:0);
@@ -379,6 +399,6 @@ export class NinjaGame {
     this.state=s;this._balance();const targetWidth=this.width,targetHeight=this.height;this.width=savedWidth;this.height=savedHeight;this.resize(targetWidth,targetHeight);
   }catch{this.state=emptyState(this.seed,this.profile.selectedSkin);this.storageFailed=true;this.storageError='unreadable';}}
   getSnapshot(){return clone({state:this.state,profile:this.profile,width:this.width,height:this.height,storageFailed:this.storageFailed});}
-  exportData(){return clone({game:'Notification Ninja',version:'1.6.0',schemaVersion:1,width:this.width,height:this.height,profile:this.profile,state:this.state});}
+  exportData(){return clone({game:'Notification Ninja',version:'1.7.0',schemaVersion:1,width:this.width,height:this.height,profile:this.profile,state:this.state});}
 }
 export const Game = NinjaGame;

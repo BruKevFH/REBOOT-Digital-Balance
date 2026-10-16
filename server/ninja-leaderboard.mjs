@@ -6,7 +6,8 @@ import {createHash,randomBytes,randomUUID,timingSafeEqual} from 'node:crypto';
 import {DatabaseSync} from 'node:sqlite';
 
 const MODES=new Set(['open']);
-const DIFFICULTIES=new Set(['easy','normal','hard']);
+const OPEN_RULESET='open-v2';
+const OPEN_DIFFICULTY='normal';
 const hash=value=>createHash('sha256').update(value).digest('hex');
 const fail=(status,message,code)=>Object.assign(new Error(message),{status,code});
 const username=value=>typeof value==='string'&&!/[\p{Cc}\p{Cf}\u2028\u2029]/u.test(value)?value.normalize('NFC').trim().replace(/\s+/gu,' '):'';
@@ -42,8 +43,12 @@ export function createNinjaLeaderboardServer({databasePath=':memory:',allowedOri
   const db=new DatabaseSync(databasePath);
   db.exec(`PRAGMA foreign_keys=ON; PRAGMA journal_mode=WAL;
     CREATE TABLE IF NOT EXISTS ninja_players(id TEXT PRIMARY KEY,token_hash TEXT NOT NULL,name TEXT NOT NULL,created_at INTEGER NOT NULL);
-    CREATE TABLE IF NOT EXISTS ninja_runs(player_id TEXT NOT NULL REFERENCES ninja_players(id) ON DELETE CASCADE,run_id TEXT NOT NULL,mode TEXT NOT NULL,difficulty TEXT NOT NULL,score INTEGER NOT NULL,duration REAL NOT NULL,decisions INTEGER NOT NULL,submitted_at INTEGER NOT NULL,PRIMARY KEY(player_id,run_id));
+    CREATE TABLE IF NOT EXISTS ninja_runs(player_id TEXT NOT NULL REFERENCES ninja_players(id) ON DELETE CASCADE,run_id TEXT NOT NULL,mode TEXT NOT NULL,difficulty TEXT NOT NULL,score INTEGER NOT NULL,duration REAL NOT NULL,decisions INTEGER NOT NULL,submitted_at INTEGER NOT NULL,ruleset TEXT NOT NULL DEFAULT 'legacy',PRIMARY KEY(player_id,run_id));
     CREATE INDEX IF NOT EXISTS ninja_ranks ON ninja_runs(mode,difficulty,score DESC);`);
+  // Existing scores used different heart counts and speed curves. Keep every
+  // record and identity, but never mix those results into the three-heart board.
+  if(!db.prepare('PRAGMA table_info(ninja_runs)').all().some(column=>column.name==='ruleset'))db.exec("ALTER TABLE ninja_runs ADD COLUMN ruleset TEXT NOT NULL DEFAULT 'legacy'");
+  db.exec('CREATE INDEX IF NOT EXISTS ninja_open_ranks_v2 ON ninja_runs(mode,ruleset,difficulty,score DESC)');
   const rate=new Map();
   function limit(key,max,window=3600000){
     const stamp=now();let entry=rate.get(key);if(!entry||stamp-entry.start>=window){entry={start:stamp,count:0};rate.set(key,entry);}
@@ -61,7 +66,7 @@ export function createNinjaLeaderboardServer({databasePath=':memory:',allowedOri
   }
   async function handle(req,res){
     const url=new URL(req.url,'http://localhost');
-    if(url.pathname==='/health'&&req.method==='GET')return json(res,200,{ok:true,service:'notification-ninja-leaderboard'});
+    if(url.pathname==='/health'&&req.method==='GET')return json(res,200,{ok:true,service:'notification-ninja-leaderboard',apiVersion:2,ruleset:OPEN_RULESET});
     if(requireHTTPS&&req.headers['x-forwarded-proto']!=='https')throw fail(426,'HTTPS ist erforderlich.');
     const origin=req.headers.origin;
     if(!origin||!origins.has(origin))throw fail(403,'Diese Spiel-Webseite ist nicht zugelassen.');
@@ -86,26 +91,27 @@ export function createNinjaLeaderboardServer({databasePath=':memory:',allowedOri
       const player=identity(req);db.prepare('DELETE FROM ninja_players WHERE id=?').run(player.id);
       return json(res,200,{ok:true,deleted:true});
     }
-    if(req.method==='POST'&&url.pathname==='/v1/runs'){
+    if(req.method==='POST'&&['/v1/runs','/v2/runs'].includes(url.pathname)){
       const player=identity(req),body=await readJSON(req),name=username(body.username);
-      if(!validName(name)||typeof body.runId!=='string'||!/^[A-Za-z0-9_-]{8,96}$/.test(body.runId)||!MODES.has(body.mode)||!DIFFICULTIES.has(body.difficulty)||body.result!=='lives'||!integer(body.score,0,20000000)||!Number.isFinite(body.duration)||body.duration<5||body.duration>86400||!integer(body.decisions,0,900000)||body.decisions>body.duration*15+20||body.score>body.decisions*1000+5000)throw fail(400,'Dieser Run kann nicht in die Rangliste eingetragen werden.');
-      const old=db.prepare('SELECT mode,difficulty,score,duration,decisions FROM ninja_runs WHERE player_id=? AND run_id=?').get(player.id,body.runId);
-      if(old){if(['mode','difficulty','score','duration','decisions'].some(key=>old[key]!==body[key]))throw fail(409,'Diese Run-ID wurde bereits für einen anderen Run verwendet.');return json(res,200,{ok:true,duplicate:true,playerId:player.id});}
+      if(body.ruleset!==OPEN_RULESET||body.difficulty!==OPEN_DIFFICULTY)throw fail(400,'Nur aktuelle Open Runs mit drei Herzen gehören in diese Rangliste.');
+      if(!validName(name)||typeof body.runId!=='string'||!/^[A-Za-z0-9_-]{8,96}$/.test(body.runId)||!MODES.has(body.mode)||body.result!=='lives'||!integer(body.score,0,20000000)||!Number.isFinite(body.duration)||body.duration<5||body.duration>86400||!integer(body.decisions,0,900000)||body.decisions>body.duration*15+20||body.score>body.decisions*1000+5000)throw fail(400,'Dieser Run kann nicht in die Rangliste eingetragen werden.');
+      const old=db.prepare('SELECT mode,difficulty,ruleset,score,duration,decisions FROM ninja_runs WHERE player_id=? AND run_id=?').get(player.id,body.runId);
+      if(old){if(['mode','difficulty','ruleset','score','duration','decisions'].some(key=>old[key]!==body[key]))throw fail(409,'Diese Run-ID wurde bereits für einen anderen Run verwendet.');return json(res,200,{ok:true,duplicate:true,playerId:player.id,ruleset:OPEN_RULESET});}
       limit(`runs:${player.id}`,60);
       db.exec('BEGIN IMMEDIATE');try{
         db.prepare('UPDATE ninja_players SET name=? WHERE id=?').run(name,player.id);
-        db.prepare('INSERT INTO ninja_runs(player_id,run_id,mode,difficulty,score,duration,decisions,submitted_at) VALUES(?,?,?,?,?,?,?,?)').run(player.id,body.runId,body.mode,body.difficulty,body.score,body.duration,body.decisions,now());
+        db.prepare('INSERT INTO ninja_runs(player_id,run_id,mode,difficulty,score,duration,decisions,submitted_at,ruleset) VALUES(?,?,?,?,?,?,?,?,?)').run(player.id,body.runId,body.mode,body.difficulty,body.score,body.duration,body.decisions,now(),OPEN_RULESET);
         db.exec('COMMIT');
       }catch(error){db.exec('ROLLBACK');throw error;}
-      return json(res,201,{ok:true,duplicate:false,playerId:player.id});
+      return json(res,201,{ok:true,duplicate:false,playerId:player.id,ruleset:OPEN_RULESET});
     }
-    if(req.method==='GET'&&url.pathname==='/v1/leaderboard'){
-      const mode=url.searchParams.get('mode')||'open',difficulty=url.searchParams.get('difficulty')||'normal';
-      if(!MODES.has(mode)||!DIFFICULTIES.has(difficulty))throw fail(400,'Wähle einen gültigen Modus und Schwierigkeitsgrad.');
+    if(req.method==='GET'&&['/v1/leaderboard','/v2/leaderboard'].includes(url.pathname)){
+      const mode=url.searchParams.get('mode')||'open',difficulty=url.searchParams.get('difficulty')||OPEN_DIFFICULTY,ruleset=url.searchParams.get('ruleset')||OPEN_RULESET;
+      if(!MODES.has(mode)||difficulty!==OPEN_DIFFICULTY||ruleset!==OPEN_RULESET)throw fail(400,'Es gibt eine gemeinsame Open-Run-Rangliste mit drei Herzen.');
       const amount=Number(url.searchParams.get('limit')||25);if(!integer(amount,1,50))throw fail(400,'Die Rangliste zeigt höchstens 50 Plätze.');
-      const rows=db.prepare(`WITH best AS (SELECT r.*,ROW_NUMBER() OVER(PARTITION BY player_id ORDER BY score DESC,submitted_at ASC,run_id ASC) AS personal FROM ninja_runs r WHERE mode=? AND difficulty=?),ranked AS (SELECT player_id,p.name,score,submitted_at,ROW_NUMBER() OVER(ORDER BY score DESC,submitted_at ASC,player_id ASC) AS rank FROM best JOIN ninja_players p ON p.id=best.player_id WHERE personal=1) SELECT * FROM ranked ORDER BY rank`).all(mode,difficulty);
+      const rows=db.prepare(`WITH best AS (SELECT r.*,ROW_NUMBER() OVER(PARTITION BY player_id ORDER BY score DESC,submitted_at ASC,run_id ASC) AS personal FROM ninja_runs r WHERE mode=? AND difficulty=? AND ruleset=?),ranked AS (SELECT player_id,p.name,score,submitted_at,ROW_NUMBER() OVER(ORDER BY score DESC,submitted_at ASC,player_id ASC) AS rank FROM best JOIN ninja_players p ON p.id=best.player_id WHERE personal=1) SELECT * FROM ranked ORDER BY rank`).all(mode,difficulty,ruleset);
       const player=identity(req,true),publicRow=row=>({rank:row.rank,playerId:row.player_id,username:row.name,score:row.score,submittedAt:row.submitted_at});
-      return json(res,200,{ok:true,mode,difficulty,totalPlayers:rows.length,entries:rows.slice(0,amount).map(publicRow),own:player?(rows.find(row=>row.player_id===player.id)?publicRow(rows.find(row=>row.player_id===player.id)):null):null});
+      return json(res,200,{ok:true,mode,difficulty,ruleset,totalPlayers:rows.length,entries:rows.slice(0,amount).map(publicRow),own:player?(rows.find(row=>row.player_id===player.id)?publicRow(rows.find(row=>row.player_id===player.id)):null):null});
     }
     throw fail(404,'Dieser Ranglisten-Endpunkt existiert nicht.');
   }

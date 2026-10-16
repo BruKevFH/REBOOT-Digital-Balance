@@ -1,6 +1,7 @@
 const MAX_VOICES = 32;
 const MASTER_VOLUME = 0.4;
 const STYLES = {
+  menu: { bpm: 72, root: 57, arp: [0, null, 7, null, 12, null, 9, 7, 4, null, 7, null, 9, null, 4, null], chords: [0, 5, 0, 7], instrument: 'dojo-pluck' },
   study: { bpm: 100, root: 60, arp: [0, 4, 7, 12, 9, 7, 4, null, 2, 5, 9, 12, 7, 4, 2, null], chords: [0, 5, 7, 0], instrument: 'pizzicato' },
   gaming: { bpm: 116, root: 60, arp: [7, 12, 7, 4, 9, null, 7, 4, 0, 4, 7, 12, 9, 7, 4, null], chords: [0, 5, 0, 7], instrument: 'marimba' },
   sleep: { bpm: 80, root: 60, arp: [12, null, 7, null, 4, 7, 0, null, 9, null, 7, 4, 2, null, 0, null], chords: [0, 5, 0, 7], instrument: 'music-box' }
@@ -132,26 +133,26 @@ export function createAudio() {
   }
 
   function pluck(frequency, time, instrument, volume = 0.045) {
-    const bell = instrument === 'music-box', wood = instrument === 'marimba';
-    tone(frequency, bell ? 0.85 : wood ? 0.24 : 0.2, volume, time, 'music', bell || wood ? 'sine' : 'triangle');
+    const bell = instrument === 'music-box', wood = instrument === 'marimba', calm = instrument === 'dojo-pluck';
+    tone(frequency, calm ? 1.25 : bell ? 0.85 : wood ? 0.24 : 0.2, volume, time, 'music', bell || wood || calm ? 'sine' : 'triangle');
     // A short, quiet overtone supplies the pick, wooden strike or music-box tine.
-    tone(frequency * (wood ? 3 : 2.005), bell ? 0.42 : 0.045, volume * (bell ? 0.2 : 0.12), time, 'music', 'sine');
+    tone(frequency * (wood ? 3 : 2.005), calm ? 0.36 : bell ? 0.42 : 0.045, volume * (calm ? 0.08 : bell ? 0.2 : 0.12), time, 'music', 'sine');
   }
 
   function schedule(time) {
     const style = currentStyle(), beat = step % 8;
     const shift = style.chords[Math.floor(step / 16) % style.chords.length];
-    const quiet = style.instrument === 'music-box', gaming = style.instrument === 'marimba';
+    const calm = style.instrument === 'dojo-pluck', quiet = style.instrument === 'music-box' || calm, gaming = style.instrument === 'marimba';
     const melody = style.arp[step % style.arp.length];
-    if (melody !== null) pluck(note(style.root + shift + melody), time, style.instrument, quiet ? 0.033 : 0.054);
+    if (melody !== null) pluck(note(style.root + shift + melody), time, style.instrument, calm ? 0.028 : quiet ? 0.033 : 0.054);
     if (beat % 4 === 0) {
-      tone(note(style.root - 24 + shift + (beat === 4 ? 7 : 0)), quiet ? 0.8 : 0.22,
-        quiet ? 0.023 : 0.055, time, 'music', 'sine');
+      tone(note(style.root - 24 + shift + (beat === 4 ? 7 : 0)), calm ? 1.6 : quiet ? 0.8 : 0.22,
+        calm ? 0.018 : quiet ? 0.023 : 0.055, time, 'music', 'sine');
       if (!quiet) tone(105, 0.1, gaming ? 0.07 : 0.03, time, 'music', 'sine', 48);
     }
     if (beat === 0) {
       for (const [index, interval] of [0, 4, 7].entries())
-        tone(note(style.root - 12 + shift + interval), quiet ? 1.1 : 0.38, quiet ? 0.01 : 0.018,
+        tone(note(style.root - 12 + shift + interval), calm ? 2.3 : quiet ? 1.1 : 0.38, calm ? 0.007 : quiet ? 0.01 : 0.018,
           time + index * 0.015, 'music', quiet ? 'sine' : 'triangle');
     }
     if (!quiet && beat % 4 === 2) hiss(time, 0.055, gaming ? 0.028 : 0.012, 1800);
@@ -164,19 +165,20 @@ export function createAudio() {
   function update(state = {}, dt = 0) {
     if (!context || !enabled || !unlocked || disposed) return;
     const scene = state.scene ?? state.phase ?? (state.started && !state.ended ? 'playing' : 'home');
-    const active = scene === 'playing' && state.paused !== true && state.ended !== true;
+    const isMenu = state.isMenu === true || ['menu', 'home', 'landing', 'onboarding'].includes(scene);
+    const active = state.paused !== true && (isMenu || scene === 'playing' && state.ended !== true) && globalThis.document?.hidden !== true;
     if (!active || context.state !== 'running') { if (playing || nextBeat !== null) quietMusic(); return; }
-    const selected = styleFor(state), selectedContext = ['study', 'gaming', 'sleep'].includes(state.context) ? state.context : 'study';
+    const selected = isMenu ? 'menu' : styleFor(state), selectedContext = ['study', 'gaming', 'sleep'].includes(state.context) ? state.context : 'study';
     if (mode !== selected) { quietMusic(); mode = selected; step = 0; }
     if (contextMode !== selectedContext) { if (mode === 'master') { quietMusic(); step = 0; } contextMode = selectedContext; }
-    flow = Number(state.effects?.flow ?? state.flow ?? 0) > 0;
-    if (!playing) { playing = true; ramp(music.gain, mode === 'sleep' || mode === 'master' && contextMode === 'sleep' ? 0.58 : 0.92, 0.12); }
+    flow = !isMenu && Number(state.effects?.flow ?? state.flow ?? 0) > 0;
+    if (!playing) { playing = true; ramp(music.gain, isMenu ? 0.48 : mode === 'sleep' || mode === 'master' && contextMode === 'sleep' ? 0.58 : 0.92, isMenu ? 0.35 : 0.12); }
     const now = context.currentTime;
     for (const entry of [...voices]) if (entry.end + 0.1 < now) release(entry, true);
     if (nextBeat === null || nextBeat < now - 0.15 || Number(dt) > 1) nextBeat = now + 0.035;
     // A gentle musical lift follows the rising pace without turning the calm rooms into a rush.
-    pace = 1 + Math.min(0.18, Math.max(0, Number(state.speedFactor || 1) - 1) * 0.25);
-    bonusPhase = typeof state.bonusPhase === 'string' ? state.bonusPhase : state.bonusPhase?.id || null;
+    pace = isMenu ? 1 : 1 + Math.min(0.18, Math.max(0, Number(state.speedFactor || 1) - 1) * 0.25);
+    bonusPhase = isMenu ? null : typeof state.bonusPhase === 'string' ? state.bonusPhase : state.bonusPhase?.id || null;
     const interval = 60 / currentStyle().bpm / pace / 2;
     let count = 0;
     while (nextBeat < now + 0.12 && count++ < 8) { schedule(nextBeat); nextBeat += interval; }
@@ -198,6 +200,18 @@ export function createAudio() {
     else if (name === 'combo') {
       const lift = Math.min(4, Math.floor(Number(event?.combo || event?.count || 5) / 5));
       sparkle([523, 659, 784].map(hz => hz * 2 ** (lift / 12)), 0.038, 0.055);
+    }
+    else if (name === 'combo-milestone') {
+      const milestone = Number(event?.milestone);
+      if (milestone === 10) sparkle([440, 554, 659, 880], 0.065, 0.044);
+      else if (milestone === 25) {
+        sparkle([440, 554, 659, 880, 1109], 0.065, 0.047);
+        tone(220, 0.32, 0.035, time, 'effects', 'sine', 440);
+      } else if (milestone === 50) {
+        sparkle([440, 554, 659, 880, 1109, 1319, 1760], 0.065, 0.049);
+        tone(220, 0.46, 0.035, time, 'effects', 'sine', 440);
+        tone(659, 0.38, 0.022, time + 0.39, 'effects', 'sine');
+      } else return false;
     }
     else if (name === 'coin-earned') {
       sparkle([1046, 1568, 2093], 0.035, 0.038);

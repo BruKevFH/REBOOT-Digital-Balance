@@ -60,8 +60,20 @@ export function createFullscreen({target=document.documentElement,button,onChang
   doc.addEventListener('fullscreenchange',changed);doc.addEventListener('webkitfullscreenchange',changed);
   doc.addEventListener('keydown',escape,true);
   update(false);
-  const enter=()=>isActive()?Promise.resolve({active:true,native:nativeActive()}):toggle();
-  return {toggle,enter,isActive,getStats:()=>({active:isActive(),native:nativeActive(),mode:nativeActive()?'native':focused?'focus':'window',nativeAvailable:nativeAvailable(),nativeRequests,fallbackEntries,changes,pending}),dispose(){
+  const prepare=()=>isActive()?{active:true,native:nativeActive()}:enterFocus();
+  const enter=async()=>{
+    if(disposed||pending||nativeActive())return {active:isActive(),native:nativeActive(),pending};
+    if(!nativeAvailable())return focused?{active:true,native:false,mode:'focus'}:enterFocus();
+    pending=true;nativeRequests++;
+    try{
+      await request().call(target);
+      if(disposed)return {active:false,native:false,mode:'window'};
+      if(nativeActive()){focused=false;update();return {active:true,native:true,mode:'native'};}
+      return focused?{active:true,native:false,mode:'focus'}:enterFocus();
+    }catch(_error){return disposed?{active:false,native:false,mode:'window'}:focused?{active:true,native:false,mode:'focus'}:enterFocus();}
+    finally{pending=false;}
+  };
+  return {toggle,enter,prepare,isActive,getStats:()=>({active:isActive(),native:nativeActive(),mode:nativeActive()?'native':focused?'focus':'window',nativeAvailable:nativeAvailable(),nativeRequests,fallbackEntries,changes,pending}),dispose(){
     if(disposed)return;disposed=true;
     for(const item of buttons)item.removeEventListener('click',clicked);
     doc.removeEventListener('fullscreenchange',changed);doc.removeEventListener('webkitfullscreenchange',changed);doc.removeEventListener('keydown',escape,true);

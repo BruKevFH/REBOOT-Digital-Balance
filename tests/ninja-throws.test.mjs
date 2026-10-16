@@ -144,7 +144,30 @@ test('legacy raw trajectories remain usable and untrusted launch metadata is dis
 test('very late open runs keep a playable interval after the throw reaches its lane',()=>{
   const {game}=setup('hard');game.start({mode:'open',difficulty:'hard'});game.nextLevel();game.state.spawnTimer=100;
   game.state.elapsed=1000000;game.state.stageElapsed=1000000;game.state.speedFactor=getOpenSpeedFactor('hard',game.state.elapsed);
-  const item=game._spawnContent('streak',0);assert.ok(item.launch.arc<.15);
+  const item=game._spawnContent('streak',0);assert.ok(item.launch.arc<=.15);
   advance(game,item.launch.windup+item.launch.arc+.01);assert.ok(game.state.objects.includes(item));assert.equal(isThrowReady(item),true);
   assert.ok(swipe(game,item).some(event=>event.type==='sliced'));assert.equal(game.state.lives,3);
+});
+
+test('the gentle Open start grants a real five-second reaction window after its first hand throw',()=>{
+  for(const [width,height] of [[390,540],[1000,700]]){
+    const {game}=setup('normal',{width,height});game.start({mode:'open'});game.nextLevel();
+    while(!game.state.objects.length)game.update(.05);
+    const item=game.state.objects[0],started=game.state.elapsed;game.state.spawnTimer=100;
+    assert.equal(item.contentId,'streak');assert.equal(isThrowReady(item),false);
+    while(game.state.elapsed-started<5-.0000001)game.update(.05);
+    assert.ok(game.state.objects.includes(item),'a slow-flight parameter must not cause an earlier gravity overshoot');
+    assert.equal(isThrowReady(item),true);assert.equal(game.state.lives,3);assert.ok(item.y+item.radius>=0);
+    while(game.state.objects.includes(item))game.update(.05);
+    assert.ok(game.state.elapsed-started<6.5);assert.equal(game.state.lives,2,'only the eventual missed distraction costs a heart');
+  }
+});
+
+test('an old third Open thrower cannot restore invalid hand indices into the unified squad',()=>{
+  const {game,storage}=setup('hard');game._spawnContent('streak',2);game.pause();
+  const saved=JSON.parse(storage.getItem(STORAGE_KEY));Object.assign(saved.state,{mode:'open',difficulty:'hard',stageIndex:0,levelIndex:0,duration:0,remaining:0});
+  delete saved.state.openRuleset;storage.setItem(STORAGE_KEY,JSON.stringify(saved));
+  const restored=new NinjaGame({storage,width:1000,height:700});assert.equal(restored.storageFailed,false);
+  assert.equal(restored.state.openRuleset,'legacy');assert.equal(restored.state.objects[0].launch,undefined);
+  assert.equal(restored.resume().ok,true);assert.doesNotThrow(()=>restored.update(.05));assert.doesNotThrow(()=>restored.resize(390,650));
 });

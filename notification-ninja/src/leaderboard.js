@@ -1,4 +1,5 @@
 const STORAGE_KEY='notification-ninja:leaderboard:v1';
+const OPEN_RULESET='open-v2';
 const fail=reason=>({ok:false,reason});
 const loopback=hostname=>['localhost','127.0.0.1','[::1]'].includes(hostname);
 
@@ -36,15 +37,18 @@ export function createLeaderboard({configURL='./leaderboard-config.json',storage
     return initPromise;
   }
   const auth=()=>identity&&identity.endpoint===config?.endpoint?{Authorization:`Bearer ${identity.playerId}.${identity.token}`} : {};
-  async function load({mode='open',difficulty='normal',limit=25}={}){
+  async function load({limit=25}={}){
     await init();if(!config)return fail(status.message);
-    const query=new URLSearchParams({mode,difficulty,limit:String(limit)});
-    const result=await request(`${config.endpoint}/v1/leaderboard?${query}`,{headers:auth()});
+    // One shared, three-heart competition; campaign difficulty never filters it.
+    const query=new URLSearchParams({mode:'open',difficulty:'normal',ruleset:OPEN_RULESET,limit:String(limit)});
+    let result=await request(`${config.endpoint}/v2/leaderboard?${query}`,{headers:auth()});
+    if(result.ok&&result.ruleset!==OPEN_RULESET)result=fail('Die Rangliste wird gerade aktualisiert. Versuche es später erneut.');
     status.online=result.ok===true;status.message=result.ok?'Gemeinsame Online-Rangliste':result.reason;
     return result;
   }
   async function submit(run,retry=true){
     await init();if(!config)return fail(status.message);
+    if(run?.mode!=='open'||run.ruleset!==OPEN_RULESET||run.difficulty!=='normal'||run.result!=='lives')return fail('Nur aktuelle Open Runs mit drei Herzen können veröffentlicht werden.');
     if(credentialsFailed||!storage)return fail('Speichern ist blockiert. Eine löschbare Ranglisten-Anmeldung kann auf diesem Gerät nicht gespeichert werden.');
     if(identity&&identity.endpoint!==config.endpoint)return fail('Deine bisherigen Online-Einträge gehören zu einer anderen Rangliste. Lösche diese zuerst, bevor du den neuen Server verwendest.');
     if(!identity){
@@ -59,7 +63,7 @@ export function createLeaderboard({configURL='./leaderboard-config.json',storage
         return fail(cleaned.ok?'Die Anmeldung konnte nicht gespeichert werden. Es wurde kein Ergebnis veröffentlicht.':'Die Anmeldung konnte nicht gespeichert werden. Es wurde kein Ergebnis veröffentlicht; der leere Ranglisten-Zugang konnte gerade nicht entfernt werden.');
       }
     }
-    const result=await request(`${config.endpoint}/v1/runs`,{method:'POST',headers:{'Content-Type':'application/json',...auth()},body:JSON.stringify(run)});
+    const result=await request(`${config.endpoint}/v2/runs`,{method:'POST',headers:{'Content-Type':'application/json',...auth()},body:JSON.stringify(run)});
     if(result.code==='UNKNOWN_PLAYER'&&retry){
       // An ephemeral free host can lose its database. No remote entries remain for this ID.
       try{storage.removeItem(STORAGE_KEY);}catch{return fail('Der alte Ranglisten-Zugang konnte nicht aktualisiert werden.');}

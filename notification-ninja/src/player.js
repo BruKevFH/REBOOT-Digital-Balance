@@ -2,7 +2,7 @@ import {SKILLS,WORLDS,BACKGROUNDS,ACHIEVEMENTS} from './progression.js';
 
 /** Local player identity and progress derived from existing gameplay counters. */
 export const GUIDE_IDS = Object.freeze([
-  'welcome','training-intro','training-swipe','training-keep','training-complete',
+  'daily-ready','rank:beginner','rank:dawn','rank:shadow','rank:temple','rank:grandmaster','welcome','training-intro','training-swipe','training-keep','training-complete',
   'first-coins','first-powerup','first-flow','first-skill','first-super-unlock',
   'super-ready','first-super-use','first-world','first-background','first-skin',
   'first-achievement','first-reward','profile','world-map','shop','skills',
@@ -10,7 +10,7 @@ export const GUIDE_IDS = Object.freeze([
   ...SKILLS.map(item => `skill:${item.id}`),
   ...WORLDS.map(item => `world:${item.id}`),
   ...BACKGROUNDS.map(item => `background:${item.id}`),
-  ...['default','solar','mint','neon'].map(id => `skin:${id}`),
+  ...['default','solar','mint','neon','dawn','shadow','grandmaster'].map(id => `skin:${id}`),
   ...ACHIEVEMENTS.map(item => `achievement:${item.id}`)
 ]);
 

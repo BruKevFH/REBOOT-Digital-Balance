@@ -1,6 +1,6 @@
 {
   "name": "Notification Ninja – Master Your Digital Balance",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "engine": "Canvas 2D / Web Audio",
   "style": "Illustrated cartoon arcade",
   "entry": "index.html",
@@ -25,7 +25,19 @@
   ],
   "realHandThrows": true,
   "fullscreen": true,
-  "hudLayout": "sidebar",
+  "hudLayout": "compact-sidebar-super-dock",
   "largeHearts": true,
+  "ninjaRanks": 5,
+  "skins": 7,
+  "dailyChallenges": 3,
+  "comboMilestones": [
+    10,
+    25,
+    50
+  ],
+  "dynamicWorld": true,
+  "menuMusic": true,
+  "openRuleset": "open-v2",
+  "openHearts": 3,
   "leaderboard": "optional-open-run-service"
 }

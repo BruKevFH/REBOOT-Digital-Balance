@@ -4,7 +4,7 @@ from zipfile import ZipFile, ZipInfo, ZIP_DEFLATED
 from hashlib import sha256
 
 ROOT=Path(__file__).resolve().parents[1]/'notification-ninja'
-NAME='Notification-Ninja-1.6.0'
+NAME='Notification-Ninja-1.7.0'
 FILES=['index.html','styles.css','sw.js','manifest.webmanifest','favicon.svg','dist/ninja.js','dist/build.json','leaderboard-config.json']
 INSTRUCTIONS='''NOTIFICATION NINJA – MASTER YOUR DIGITAL BALANCE
 
@@ -23,20 +23,24 @@ Je nach Schwierigkeit werfen 1 / 2 / 3 große Ninjas in deinem ausgewählten
 Look die echten Gegenstände aus ihrer Hand ins Feld. Ausholen und Anflug
 sind geschützt; erst im freien Flug kannst du die Gegenstände schneiden.
 Neue Runs übernehmen die Auswahl. Ein gespeicherter Run behält seinen Look.
-Große Herzsymbole zeigen deine verbleibenden Chancen. Rundenuhr, Münzen,
-Tempo und Super stehen kompakt rechts; das Spielfeld reicht bis nach unten.
-Die Vollbild-Taste oben rechts gibt dir mehr Spielfläche. Unterstützt dein
+Große Herzsymbole zeigen deine verbleibenden Chancen. Rundenuhr, Münzen
+und Tempo stehen schmal rechts; das Spielfeld reicht bis nach unten.
+Deine Super hat eine eigene Taste unten links und meldet SUPER BEREIT!
+Die große Spielansicht startet sofort. Mit der ersten passenden Eingabe wird
+echtes Vollbild angefordert; die Taste oben rechts kann die Ansicht wechseln. Unterstützt dein
 Browser kein echtes Vollbild, öffnet sie eine große Spielansicht mit kompakter
 Anzeige; die Browserleiste kann dabei sichtbar bleiben. Zum Verlassen erneut
 die Taste drücken. Esc verlässt die große Spielansicht, sonst pausiert es.
 Meister NIM, dein eigener Fuchs-Sensei, erklärt im Training das Wischen
 und Durchlassen. Während der Erklärungen pausiert die Runde.
 Neue Kräfte erklärt er beim Freischalten.
-Mitteilungen sammeln deine letzten 50 Freischaltungen. Oben sind neue Ziele,
-unten deine erreichten Erfolge und gekauften Kräfte. Dein Fähigkeitenbaum
+Mitteilungen sammeln deine letzten 50 Freischaltungen. Abholbereite
+Erfolgsbelohnungen stehen ganz oben, bis du die Münzen abholst. Danach
+wandern sie nach unten; neue Ziele bleiben darüber sichtbar. Dein Fähigkeitenbaum
 wächst aus der Mitte in drei verbundenen Wurzelzweigen.
 Die feste Zurück-Taste bringt dich zur vorherigen Ansicht zurück.
-Die Musik startet nach deinem Klick auf Spielen. Du kannst sie ausschalten.
+Die entspannte Dojo-Musik beginnt nach deiner ersten Eingabe im Hauptmenü.
+Im Spiel wechselt sie passend zum Raum. Du kannst sie ausschalten.
 
 Mit gedrückter Maustaste oder Finger durch Ablenkungen WISCHEN.
 Sinnvolle Inhalte bewusst bis zum oberen Rand durchlassen.
@@ -45,7 +49,8 @@ kann aber beim Lernen oder vor dem Schlafen ablenken.
 Fünf richtige Entscheidungen aktivieren Focus Flow.
 Goldene Power-ups bieten Zeitlupe, Schild, Bonuspunkte und Münzen.
 Esc: Pause. M oder Musik-Schalter: Musik an/aus.
-Entspannt: 5 Herzen. Normal: 4. Profi: 3. Das Tempo steigt mit der Zeit.
+Normale Räume: Entspannt 5 Herzen, Normal 4, Profi 3. Das Tempo steigt.
+Open Run hat unabhängig davon genau drei Herzen und einen einzigen Modus.
 Nach 15, 30 und 60 Sekunden wird es deutlich schneller. Normale Räume
 erreichen nach 90 aktiven Sekunden ihre Tempospitze.
 Ein falscher Schnitt ODER eine durchgelassene Ablenkung kostet ein Herz.
@@ -54,9 +59,10 @@ im Training. Im Spiel entscheiden Gegenstand und aktuelles Ziel.
 Klassenzimmer, Gaming-Zimmer und Schlafzimmer haben eigene Hintergründe
 und passende Objekte: Bücher, Controller, Kissen und vieles mehr.
 
-Der kostenlose OPEN RUN läuft im Lernkontext ohne Zeitlimit, bis deine
-Herzen aufgebraucht sind. Auch nach 90 oder 300 Sekunden steigt das Tempo
-weiter. Gekaufte Fähigkeiten und Supers sind dort ausgeschaltet.
+Der kostenlose OPEN RUN hat genau drei Herzen, einen langsamen Einstieg
+und kein Zeitlimit. Die ersten Flugobjekte geben über fünf Sekunden Zeit.
+Das Tempo steigt mit der aktiven Spielzeit immer weiter, auch nach 300 Sekunden.
+Gekaufte Fähigkeiten und Supers sind dort ausgeschaltet.
 Fliegende Power-ups und Focus Flow bleiben dabei; Looks sind kosmetisch.
 
 Sammle Rundenmünzen: eine Grundmünze je 14 richtige Entscheidungen,
@@ -90,6 +96,21 @@ Kleidung und Wischspur ändern sich passend zu deinem Ninja-Design.
 Über Training kannst du die Übungsrunde jederzeit wiederholen.
 Münzregen, Combo-Party und Fokus-Welle wechseln als Bonusphasen.
 
+NEU: DEIN WEG ZUM GROSSMEISTER
+Fünf Ninja-Ränge wachsen mit deinen gesicherten XP: Anfänger, Morgenwind,
+Schatten-Ninja, Tempelwächter und Großmeister bei 0 / 350 / 1500 / 4500 /
+10000 XP. Morgenwind, Schatten-Ninja und Großmeister schenken dir eigene
+Outfits mit Wurfverzierungen. In deiner Garderobe auswählen; keine Münzen nötig.
+Täglich gibt es drei wechselnde Missionen mit 2 / 3 / 4 Münzen Belohnung.
+Gewertete Runden ab acht richtigen Entscheidungen und 15 Sekunden zählen
+(bewusster Gaming-/Schlaf-Stopp ab acht Sekunden); Training zählt nicht.
+Geschaffte Belohnungen im Dojo ausdrücklich abholen, höchstens neun pro Tag.
+Bei 10 / 25 / 50 richtigen Entscheidungen in Folge feiern deine Ninjas mit
+Animationen, Fanfaren und 250 / 750 / 2000 Bonuspunkten, einmal je Run.
+Die Kulisse verändert sich nach 30 / 60 / 120 / 180 aktiven Sekunden mit
+Wolken, Tempellicht und Blüten. NIM erklärt nach der Runde deinen letzten
+Fehler passend zur Lernsituation und gibt einen kurzen Tipp.
+
 Training, Open Run, Study, Gaming, Sleep und Balance Master stehen bereit.
 Das Gaming-Rundenlimit wählst du selbst (45, 60 oder 90 Sekunden).
 Nach Ablauf darfst du bewusst aufhören oder einmal 15 Sekunden verlängern.
@@ -104,8 +125,9 @@ Das Spiel ist eine Lernsimulation; Balance und Overload sind Spielwerte.
 Ergebnisse lassen sich im Spiel als JSON exportieren.
 
 Die gemeinsame Rangliste ist mit https://notification-ninja-ranking.onrender.com
-verbunden. Nur ausdrücklich veröffentlichte Open Runs zählen, getrennt nach
-Schwierigkeit. Es gibt keine erfundenen Mitspieler. Ohne Internet werden keine
+verbunden. Nur ausdrücklich veröffentlichte neue Open Runs zählen in einer
+gemeinsamen Wertung mit denselben drei Herzen und demselben Tempo. Die neue gemeinsame Wertung zählt nur die neuen Drei-Herz-Runs. Alte
+Ergebnisse bleiben getrennt. Es gibt keine erfundenen Mitspieler. Offline werden keine
 Ergebnisse übertragen; das lokale Spiel funktioniert weiterhin.
 Zum Veröffentlichen die GitHub-Pages-Version verwenden. Ein lokal geöffneter
 Download hat eine andere Herkunft und darf deshalb nicht an die öffentliche
