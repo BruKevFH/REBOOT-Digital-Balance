@@ -130,7 +130,7 @@ export class NinjaGame {
   _resetStage(){const s=this.state,level=LEVELS[s.levelIndex];s.context=level.context;s.objects=[];s.stageElapsed=0;
     s.duration=s.mode==='open'?0:s.isTutorial?60:s.levelIndex===1?s.gamingLimit:level.duration;s.remaining=s.duration;
     s.combo=0;s.decisionStreak=0;s.effects={slow:0,shield:0,multiplier:0,flow:0};s.overload=Math.max(0,s.overload-15);
-    s.stopAvailable=false;s.extensionUsed=false;s.sleepContinued=false;s.pendingContext=null;s.masterSwitchIndex=0;s.spawnTimer=.5;s.spawnCount=0;s.stageMetrics=stageMetrics();s.bonusPhase=null;s.bonusCoinPending=false;s.bonusClock=0;s.bonusNextAt=20;s.bonusSequence=0;
+    s.stopAvailable=false;s.extensionUsed=false;s.sleepContinued=false;s.pendingContext=null;s.masterSwitchIndex=0;s.spawnTimer=s.mode==='open'?1.4:.5;s.spawnCount=0;s.stageMetrics=stageMetrics();s.bonusPhase=null;s.bonusCoinPending=false;s.bonusClock=0;s.bonusNextAt=20;s.bonusSequence=0;
     if(!s.metrics.contextsPlayed.includes(s.context))s.metrics.contextsPlayed.push(s.context);}
   start({mode='campaign',gamingLimit=90,skin=this.profile.selectedSkin,tutorial=true,difficulty='easy',forceTutorial=false}={}) {
     if(!DIFFICULTIES.some(item=>item.id===difficulty))return fail('Wähle einen gültigen Schwierigkeitsgrad.');
@@ -138,10 +138,11 @@ export class NinjaGame {
     if(!['campaign','open'].includes(mode)&&!this.profile.unlockedWorlds.includes(mode))return fail('Schalte diese Welt zuerst mit Münzen im Weltplan frei.');
     if(![45,60,90].includes(gamingLimit))return fail('Die Gaming-Grenze muss 45, 60 oder 90 Sekunden sein.');
     if(!SKIN_MAP.has(skin)||!this.profile.unlockedSkins.includes(skin))return fail('Dieser Skin ist noch nicht freigeschaltet.');
+    if(mode==='open')difficulty='normal';
     const serial=this.state.runSerial+1,runSeed=mode==='open'?hash(`${this.seed}:open:${difficulty}`):hash(`${this.seed}:${mode}:${gamingLimit}`);this.state=emptyState(runSeed,skin);
     const s=this.state;s.started=true;s.startedAt=this._time();s.mode=mode;s.gamingLimit=gamingLimit;s.runSerial=serial;
     s.isTutorial=mode==='campaign'&&tutorial!==false&&(forceTutorial===true||!this.profile.tutorialCompleted);s.stageIndex=s.isTutorial?-1:0;s.levelIndex=PLANS[mode][0];
-    s.difficulty=difficulty;s.maxLives=s.isTutorial?5:this._difficulty().lives;s.lives=s.maxLives;s.selectedSuper=mode==='open'?null:this.profile.selectedSuper;s.skillIds=mode==='open'?[]:[...this.profile.unlockedSkills];s.backgrounds=clone(this.profile.selectedBackgrounds);
+    s.difficulty=difficulty;s.maxLives=s.isTutorial?5:mode==='open'?3:this._difficulty().lives;s.lives=s.maxLives;s.selectedSuper=mode==='open'?null:this.profile.selectedSuper;s.skillIds=mode==='open'?[]:[...this.profile.unlockedSkills];s.backgrounds=clone(this.profile.selectedBackgrounds);
     s.scene='briefing';s.awaitingNext=true;this._resetStage();if(!s.isTutorial&&this._hasSkill('guard-root'))s.effects.shield=1;this._record('start',{mode,gamingLimit,difficulty,tutorial:s.isTutorial});this.save();return {ok:true,state:s,events:[]};
   }
   nextLevel(){const s=this.state;if(!s.started||s.ended||!s.awaitingNext||s.scene!=='briefing')return fail('Es wartet kein neues Level.');
@@ -171,7 +172,7 @@ export class NinjaGame {
     // drift means a swipe at one object cannot accidentally meet its neighbour.
     const available=lanes.filter(x=>!this.state.objects.some(obj=>Math.abs((obj.launch?.laneX??obj.x)-x)<obj.radius+radius+24));
     if(!available.length)return null;
-    const x=available[Math.floor(this._random()*available.length)],span=Math.max(120,this.height-40),gravity=span*.08,flight=((this.state.isTutorial?4.6:this._difficulty().flight)+this._random()*.6)/this.state.speedFactor;
+    const x=available[Math.floor(this._random()*available.length)],span=Math.max(120,this.height-40),gravity=span*.08,flight=((this.state.isTutorial?4.6:this.state.mode==='open'?4.4:this._difficulty().flight)+this._random()*.6)/this.state.speedFactor;
     const target=-radius-2,release=actor?getThrowerPose(actor,.22,.22):null,y=release?release.handY:this.height+radius+6,distance=y-target,vy=-(distance/flight+.5*gravity*flight);
     const obj={id:`ninja-${this.state.runSerial}-${++this.state.objectSequence}`,contentId:id,label:content.label,text:content.text,
       kind:content.powerup?'powerup':content.kindByContext[this.state.context],powerup:content.powerup||null,context:this.state.context,
@@ -194,7 +195,7 @@ export class NinjaGame {
       });}
     for(const id of ids){const throwerIndex=this._availableThrower();if(throwerIndex===null)break;const obj=this._spawnContent(id,throwerIndex);if(obj){if(id==='power-coins')s.bonusCoinPending=false;s.spawnCount++;events.push({type:'spawned',...clone(obj)});}}
     const finale=s.levelIndex===3&&s.stageElapsed>=75&&!s.pendingContext;
-    s.spawnTimer+=s.isTutorial?1.8:this._difficulty().spawn*(finale?.77:s.levelIndex===3?.9:s.context==='sleep'?1.08:s.context==='gaming'?.92:1)/s.speedFactor;}
+    s.spawnTimer+=s.isTutorial?1.8:(s.mode==='open'?1.7:this._difficulty().spawn)*(finale?.77:s.levelIndex===3?.9:s.context==='sleep'?1.08:s.context==='gaming'?.92:1)/s.speedFactor;}
   _good(events){const s=this.state;s.metrics.correctDecisions++;s.stageMetrics.correctDecisions++;s.decisionStreak++;this._balance();
     if(s.isTutorial)s.tutorialDecisions++;
     else {if(s.mode!=='open'&&!this._superSlicing)s.superCharge=Math.min(100,s.superCharge+8+(this._hasSkill('focus-root')?2:0));
@@ -330,7 +331,7 @@ export class NinjaGame {
       this.profile.achievements=[...new Set((Array.isArray(p.achievements)?p.achievements:[]).filter(id=>ACHIEVEMENTS.some(item=>item.id===id)))];Object.assign(this.profile,sanitizeProgress(p));this.profile.player=normalizePlayer(p);}
     const source=saved.state;if(!isObject(source)||!MODES.includes(source.mode)||!['home','briefing','playing','limit-choice','results'].includes(source.scene))throw new Error('state');
     const s=emptyState(integer(source.rng,this.seed,1,0xffffffff),this.profile.selectedSkin);s.mode=source.mode;s.gamingLimit=[45,60,90].includes(source.gamingLimit)?source.gamingLimit:90;
-    s.started=source.started===true;s.isTutorial=source.isTutorial===true&&s.mode==='campaign';s.difficulty=DIFFICULTIES.some(item=>item.id===source.difficulty)?source.difficulty:'easy';s.maxLives=s.isTutorial?5:getDifficulty(s.difficulty).lives;
+    s.started=source.started===true;s.isTutorial=source.isTutorial===true&&s.mode==='campaign';s.difficulty=s.mode==='open'?'normal':DIFFICULTIES.some(item=>item.id===source.difficulty)?source.difficulty:'easy';s.maxLives=s.isTutorial?5:s.mode==='open'?3:getDifficulty(s.difficulty).lives;
     if(!Number.isInteger(source.stageIndex)||source.stageIndex<(s.isTutorial?-1:0)||source.stageIndex>=PLANS[s.mode].length)throw new Error('stage');
     s.stageIndex=source.stageIndex;
     if(s.isTutorial&&s.stageIndex!==-1)throw new Error('tutorial');s.levelIndex=s.isTutorial?0:PLANS[s.mode][s.stageIndex];if(source.levelIndex!==s.levelIndex)throw new Error('level');
