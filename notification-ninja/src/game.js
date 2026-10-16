@@ -461,6 +461,6 @@ export class NinjaGame {
     this.state=s;this._balance();const targetWidth=this.width,targetHeight=this.height;this.width=savedWidth;this.height=savedHeight;this.resize(targetWidth,targetHeight);
   }catch{this.state=emptyState(this.seed,this.profile.selectedSkin);this.storageFailed=true;this.storageError='unreadable';}}
   getSnapshot(){return clone({state:this.state,profile:this.profile,width:this.width,height:this.height,storageFailed:this.storageFailed});}
-  exportData(){return clone({game:'Notification Ninja',version:'1.8.0',schemaVersion:1,width:this.width,height:this.height,profile:this.profile,state:this.state});}
+  exportData(){return clone({game:'Notification Ninja',version:'1.8.1',schemaVersion:1,width:this.width,height:this.height,profile:this.profile,state:this.state});}
 }
 export const Game = NinjaGame;

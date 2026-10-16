@@ -1,3 +1,16 @@
+# Notification Ninja 1.8.1 – eigenständiger Spieleinstieg
+
+Geprüft am **16. Oktober 2026**. Die Verweise auf andere Spiele wurden aus dem Dojo-Footer und der Homepage entfernt, ebenso zugehörige ungenutzte CSS-Selektoren und der alte Datei-Handler. Hosting-Adresse und lokale Spielstände bleiben erhalten. Der neue Download enthält ausschließlich den bereinigten aktuellen Spieleinstieg.
+
+- **253 Tests bestanden**, keine Fehler oder übersprungenen Tests; produktives Bundle erfolgreich gebaut.
+- Tatsächliche Worker-Installation und getrennte Homepage-/Spiel-Offline-Routen geprüft.
+- Desktop 1280×800 und Touch-Viewport 390×844: Homepage → Spiel → neues Profil → Dojo → Homepage → Spiel. Keine sichtbaren fremden Spielnamen oder Verweise aus dem Ninja-Pfad. Profil und Fortschritt erhalten; keine JavaScript-Fehler.
+- ZIP: **155.069 Bytes**, CRC und aktuelle HTML-/Bundle-Dateien geprüft. SHA-256: `166a861b6013b584cb0e6df33853fe34f2ce68f843938e42817a77f3b0fa1c41`. Download: `downloads/Notification-Ninja-1.8.1.zip`.
+
+Aktuelle Nachweise: `/workspace/ninja-checks/v181/tests.txt` und `standalone-report.json`. Die folgenden umfangreichen Funktionsprüfungen gehören zum unveränderten Regelstand 1.8.0 und werden nicht als neue Browserdurchläufe gezählt.
+
+---
+
 # Notification Ninja 1.8.0 – Prüfbericht
 
 Geprüft am **16. Oktober 2026** mit Node.js 24, Python 3 und Chromium/Playwright. Die neue Version ergänzt Karriere, Boss-Duelle und Wochenaufgaben. Die bestehenden Spiele im Projektroot und unter `mind-maze/` bleiben unverändert.

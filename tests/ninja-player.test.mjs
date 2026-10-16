@@ -153,7 +153,7 @@ test('identity can be set when storage is blocked and exported snapshots remain 
   assert.equal(game.setUsername('Offline Ninja').ok,true);assert.equal(game.markGuideSeen('welcome').ok,true);assert.equal(game.storageFailed,true);
   const snapshot=game.getSnapshot();snapshot.profile.player.username='Changed';snapshot.profile.player.guideSeen.push('shop');
   assert.equal(game.profile.player.username,'Offline Ninja');assert.deepEqual(game.profile.player.guideSeen,['welcome']);
-  const exported=game.exportData();assert.equal(exported.version,'1.8.0');assert.equal(exported.profile.player.username,'Offline Ninja');
+  const exported=game.exportData();assert.equal(exported.version,'1.8.1');assert.equal(exported.profile.player.username,'Offline Ninja');
   assert.equal(game.start({mode:'study'}).ok,true);
 });
 

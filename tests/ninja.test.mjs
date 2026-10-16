@@ -930,7 +930,7 @@ test('legacy profiles migrate safely and extended live state survives a paused r
   enhanced.game.state.bonusClock=19.99;enhanced.game.update(.05);enhanced.game.pause();
   const resumed=new NinjaGame({storage:enhanced.storage,width:800,height:600});
   for(const key of ['skillIds','selectedSuper','runCoins','superCharge','bonusPhase','bonusClock','reviveUsed'])assert.deepEqual(resumed.state[key],enhanced.game.state[key],key);
-  assert.ok(resumed.state.effects.slow>7);assert.deepEqual(resumed.profile,enhanced.game.profile);assert.equal(resumed.exportData().version,'1.8.0');
+  assert.ok(resumed.state.effects.slow>7);assert.deepEqual(resumed.profile,enhanced.game.profile);assert.equal(resumed.exportData().version,'1.8.1');
 });
 
 

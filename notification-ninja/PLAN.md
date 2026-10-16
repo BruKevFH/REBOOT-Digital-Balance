@@ -1,6 +1,6 @@
 # Notification Ninja: Ablauf und Weiterentwicklung
 
-Diese Übersicht dokumentiert den Spielablauf von Version 1.8.0 und ordnet die technischen Aufgaben. Der Zeitplan am Ende ist ein **anpassbares Beispiel für Weiterentwicklung**. Seine Daten sind keine vereinbarte Projektfrist.
+Diese Übersicht dokumentiert den Spielablauf von Version 1.8.1 und ordnet die technischen Aufgaben. Der Zeitplan am Ende ist ein **anpassbares Beispiel für Weiterentwicklung**. Seine Daten sind keine vereinbarte Projektfrist.
 
 ## Ablauf der Bildschirme
 

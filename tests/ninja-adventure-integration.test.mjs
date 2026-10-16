@@ -95,7 +95,7 @@ test('new week removes old unclaimed progress while retaining earned currency, c
 
 test('weekly descriptors and authored skins use one identity across rewards, wardrobe and inbox',()=>{
   const {game}=setup();for(const id of ['lotus','ember','tide']){const skin=SKINS.find(item=>item.id===id);assert.equal(skin.unlock,'weekly');assert.equal(game.buySkin(id).ok,false);assert.equal(game.addNotification({type:'skin',ref:id}).ok,true);}
-  const gift=getWeeklyReward(game.profile,time);assert.equal(SKINS.find(skin=>skin.id===gift.id).name,gift.skin.name);assert.equal(game.exportData().version,'1.8.0');
+  const gift=getWeeklyReward(game.profile,time);assert.equal(SKINS.find(skin=>skin.id===gift.id).name,gift.skin.name);assert.equal(game.exportData().version,'1.8.1');
 });
 
 test('invalid boss mission metadata cannot turn a saved normal run into a boss victory or erase the wallet',()=>{
