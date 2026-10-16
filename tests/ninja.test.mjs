@@ -1244,3 +1244,16 @@ test('old profiles gain an empty open highscore without losing finite records an
   Object.assign(forged.state,{scene:'results',ended:true,result:'complete'});storage.setItem(STORAGE_KEY,JSON.stringify(forged));
   const rejected=new NinjaGame({storage});assert.equal(rejected.state.scene,'home');assert.equal(rejected.storageFailed,true);assert.equal(rejected.profile.coins,77);assert.equal(rejected.profile.highScores.study,12345);
 });
+
+test('open run is always one fair mode with exactly three hearts and a gentle beginning', () => {
+  for(const requested of ['easy','normal','hard']){
+    const game=new NinjaGame({storage:new Storage()});
+    assert.equal(game.start({mode:'open',difficulty:requested,tutorial:false}).ok,true);
+    assert.equal(game.state.difficulty,'normal');
+    assert.equal(game.state.maxLives,3);
+    assert.equal(game.state.lives,3);
+    game.nextLevel();
+    assert.ok(game.state.spawnTimer>1);
+    assert.ok(game.state.speedFactor<=1);
+  }
+});
