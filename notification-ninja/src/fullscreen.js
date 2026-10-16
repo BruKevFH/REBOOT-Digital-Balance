@@ -60,7 +60,8 @@ export function createFullscreen({target=document.documentElement,button,onChang
   doc.addEventListener('fullscreenchange',changed);doc.addEventListener('webkitfullscreenchange',changed);
   doc.addEventListener('keydown',escape,true);
   update(false);
-  return {toggle,isActive,getStats:()=>({active:isActive(),native:nativeActive(),mode:nativeActive()?'native':focused?'focus':'window',nativeAvailable:nativeAvailable(),nativeRequests,fallbackEntries,changes,pending}),dispose(){
+  const enter=()=>isActive()?Promise.resolve({active:true,native:nativeActive()}):toggle();
+  return {toggle,enter,isActive,getStats:()=>({active:isActive(),native:nativeActive(),mode:nativeActive()?'native':focused?'focus':'window',nativeAvailable:nativeAvailable(),nativeRequests,fallbackEntries,changes,pending}),dispose(){
     if(disposed)return;disposed=true;
     for(const item of buttons)item.removeEventListener('click',clicked);
     doc.removeEventListener('fullscreenchange',changed);doc.removeEventListener('webkitfullscreenchange',changed);doc.removeEventListener('keydown',escape,true);
