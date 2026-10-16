@@ -229,3 +229,18 @@ test('identity edits, guide acknowledgements and progression purchases preserve 
   const restored=new NinjaGame({storage});assert.equal(restored.profile.player.username,'Kai_8');assert.deepEqual(restored.profile.player.notifications,expected);
   assert.equal(restored.profile.coins,85);assert.equal(restored.profile.player.guideSeen.includes('first-achievement'),true);
 });
+
+test('opening one inbox item marks only that item read and survives reloading', () => {
+  const storage=new Storage(),game=new NinjaGame({storage});
+  game.addNotification({type:'achievement',ref:'first-cut'});
+  game.addNotification({type:'skill',ref:'focus-root'});
+  assert.deepEqual(game.markNotificationRead('skill:focus-root'),{ok:true,id:'skill:focus-root'});
+  assert.equal(game.profile.player.notifications.find(n=>n.id==='skill:focus-root').read,true);
+  assert.equal(game.profile.player.notifications.find(n=>n.id==='achievement:first-cut').read,false);
+  assert.equal(game.markNotificationRead('missing:item').ok,false);
+  const saved=storage.getItem(STORAGE_KEY);
+  assert.equal(game.markNotificationRead('skill:focus-root').ok,true);
+  assert.equal(storage.getItem(STORAGE_KEY),saved);
+  const restored=new NinjaGame({storage});
+  assert.equal(restored.profile.player.notifications.filter(n=>!n.read).length,1);
+});
