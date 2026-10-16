@@ -1,0 +1,35 @@
+name: Notification Ninja checks
+on:
+  pull_request:
+    paths:
+      - 'notification-ninja/**'
+      - 'tests/ninja*.mjs'
+      - 'scripts/build_ninja.mjs'
+      - 'package.json'
+      - 'package-lock.json'
+  push:
+    branches:
+      - feature/notification-ninja-immersive-openrun
+    paths:
+      - 'notification-ninja/**'
+      - 'tests/ninja*.mjs'
+      - '.github/workflows/notification-ninja-checks.yml'
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npm run test:ninja
+      - run: npm run build:ninja
+      - name: Check homepage and ES module entry
+        run: |
+          test -f notification-ninja/home.html
+          test -f notification-ninja/src/main.js
+          grep -q 'type="module"' notification-ninja/index.html

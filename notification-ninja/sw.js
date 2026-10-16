@@ -1,7 +1,7 @@
 const SCOPE=new URL(self.registration.scope);
 const PREFIX=`notification-ninja:${SCOPE.pathname}:`;
-const CACHE=`${PREFIX}1.7.0`;
-const ASSETS=['./','./index.html','./styles.css','./dist/ninja.js','./dist/build.json','./leaderboard-config.json','./manifest.webmanifest','./favicon.svg'];
+const CACHE=`${PREFIX}1.7.1`;
+const ASSETS=['./','./index.html','./home.html','./styles.css','./src/main.js','./src/game.js','./src/renderer.js','./src/audio.js','./src/fullscreen.js','./src/throwers.js','./src/mentor.js','./src/player.js','./src/local-profile.js','./src/leaderboard.js','./src/art.js','./src/progression.js','./leaderboard-config.json','./manifest.webmanifest','./favicon.svg'];
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(ASSETS)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key.startsWith(PREFIX)&&key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim())));
 self.addEventListener('fetch',event=>{
