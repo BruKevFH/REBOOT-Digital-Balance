@@ -93,12 +93,13 @@ export function getSpeedFactor(id,elapsed=0) {
   return difficulty.speedCap;
 }
 
-/** Ranked open play follows the familiar early ramp, then keeps accelerating without a time cap. */
-export function getOpenSpeedFactor(id,elapsed=0) {
+/** One balanced endless mode: forgiving at first, steadily harder without a hard cap. */
+export function getOpenSpeedFactor(_id,elapsed=0) {
   const seconds=typeof elapsed==='number'&&Number.isFinite(elapsed)?Math.max(0,elapsed):0;
-  if(seconds<=90)return getSpeedFactor(id,seconds);
-  const difficulty=getDifficulty(id),rate={easy:.65,normal:1,hard:1.35}[difficulty.id];
-  return difficulty.speedCap+Math.log1p((seconds-90)/30)*rate;
+  if(seconds<=25)return .82+.003*seconds;
+  if(seconds<=120)return .895+.006*(seconds-25);
+  if(seconds<=240)return 1.465+.006*(seconds-120);
+  return 2.185+.5*Math.log1p((seconds-240)/24);
 }
 
 export const getSkill = id => skillMap.get(id) || null;
