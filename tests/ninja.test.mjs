@@ -1,8 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { NinjaGame, Game, LEVELS, SKINS, CONTENT, STORAGE_KEY, OPEN_RULESET, DIFFICULTIES, SKILLS, WORLDS, BACKGROUNDS } from '../notification-ninja/src/game.js';
-import { getOpenSpeedFactor } from '../notification-ninja/src/progression.js';
-import { getDailyChallenges } from '../notification-ninja/src/journey.js';
+import { NinjaGame, Game, LEVELS, SKINS, CONTENT, STORAGE_KEY, DIFFICULTIES, SKILLS, WORLDS, BACKGROUNDS } from '../notification-ninja/src/game.js';
 import { isThrowReady } from '../notification-ninja/src/throwers.js';
 
 class Storage {
@@ -56,8 +54,7 @@ test('authored levels, skins and contextual notification meanings are distinct a
   assert.equal(Game, NinjaGame);
   assert.equal(STORAGE_KEY, 'notification-ninja:save:v1');
   assert.equal(LEVELS.length, 4);
-  assert.deepEqual(SKINS.filter(skin=>skin.unlock!=='rank').map(skin => [skin.id, skin.cost]), [['default', 0], ['solar', 80], ['mint', 180], ['neon', 320]]);
-  assert.deepEqual(SKINS.filter(skin=>skin.unlock==='rank').map(skin=>[skin.id,skin.rank]),[['dawn','dawn'],['shadow','shadow'],['grandmaster','grandmaster']]);
+  assert.deepEqual(SKINS.map(skin => [skin.id, skin.cost]), [['default', 0], ['solar', 80], ['mint', 180], ['neon', 320]]);
   const byId = new Map(CONTENT.map(content => [content.id, content]));
   assert.equal(byId.size, CONTENT.length);
   for (const content of CONTENT) {
@@ -467,7 +464,7 @@ test('results reward and high score survive loading without duplicate profile aw
   assert.equal(game.nextLevel().ok, false);
   game.update(0.05);
   assert.deepEqual(game.profile, profile);
-  const restored = new NinjaGame({ storage, now:()=>100000 });
+  const restored = new NinjaGame({ storage });
   assert.deepEqual(restored.profile, profile);
   assert.equal(restored.resumeRun().ok, false);
   restored.update(0.05);
@@ -843,7 +840,7 @@ test('coins accrue from correct decisions, collectables and combos, then settle 
   assert.equal(game.state.runCoins,3,'one decision coin, one collectible coin and one combo coin');
   assert.equal(game.profile.coins,0,'pending coins cannot be spent mid-run');
   nearEnd(game,75);const awarded=game.state.awardedCoins;assert.equal(awarded,5);assert.equal(game.profile.coins,awarded);
-  const before=structuredClone(game.profile),restored=new NinjaGame({storage,now:()=>100000});
+  const before=structuredClone(game.profile),restored=new NinjaGame({storage});
   restored.update(.05);assert.deepEqual(restored.profile,before);assert.equal(restored.profile.stats.coinsEarned,awarded);
 });
 
@@ -929,7 +926,7 @@ test('legacy profiles migrate safely and extended live state survives a paused r
   enhanced.game.state.bonusClock=19.99;enhanced.game.update(.05);enhanced.game.pause();
   const resumed=new NinjaGame({storage:enhanced.storage,width:800,height:600});
   for(const key of ['skillIds','selectedSuper','runCoins','superCharge','bonusPhase','bonusClock','reviveUsed'])assert.deepEqual(resumed.state[key],enhanced.game.state[key],key);
-  assert.ok(resumed.state.effects.slow>7);assert.deepEqual(resumed.profile,enhanced.game.profile);assert.equal(resumed.exportData().version,'1.7.0');
+  assert.ok(resumed.state.effects.slow>7);assert.deepEqual(resumed.profile,enhanced.game.profile);assert.equal(resumed.exportData().version,'1.6.0');
 });
 
 
@@ -1162,7 +1159,7 @@ test('old saved money, paid unlocks and pending coins survive the new price list
   game.profile.achievements=['first-cut','flow-five'];game.profile.claimedAchievements=['first-cut'];
   game.state.runCoins=50;game.state.metrics.correctDecisions=20;game.pause();
   const saved=JSON.parse(storage.getItem(STORAGE_KEY));delete saved.state.stageMetrics.earnedCoins;storage.setItem(STORAGE_KEY,JSON.stringify(saved));
-  const restored=new NinjaGame({storage,width:800,height:600,now:()=>100000});assert.equal(restored.storageFailed,false);assert.deepEqual(restored.profile,game.profile);
+  const restored=new NinjaGame({storage,width:800,height:600});assert.equal(restored.storageFailed,false);assert.deepEqual(restored.profile,game.profile);
   assert.equal(restored.state.runCoins,50);assert.equal(restored.claimAchievement('first-cut').ok,false);
   restored.resume();nearEnd(restored,75);assert.equal(restored.state.awardedCoins,52);assert.equal(restored.profile.coins,2969);
 });
@@ -1187,7 +1184,7 @@ test('open play survives the old 75 and 90 second limits and keeps accelerating 
     assert.ok(game.state.speedFactor>earlier);earlier=game.state.speedFactor;
     assert.ok(Math.abs(game.state.stageElapsed-seconds)<.051);
   }
-  assert.ok(Math.abs(game.state.speedFactor-getOpenSpeedFactor('normal',300))<.001);assert.ok(game.state.speedFactor>2.8&&game.state.speedFactor<3);assert.equal(game.state.metrics.stageStats.length,0);
+  assert.ok(game.state.speedFactor>4);assert.equal(game.state.metrics.stageStats.length,0);
   assert.equal(game.nextLevel().ok,false);assert.equal(game.requestStop().ok,false);
 });
 
@@ -1201,7 +1198,7 @@ test('only losing all hearts ends an open round and its local highscore and scar
   assert.equal(game.profile.stats.correct,correct);assert.equal(game.profile.stats.hardClears,0);
   assert.equal(game.profile.achievements.includes('context-master'),false);assert.equal(game.profile.achievements.includes('hard-clear'),false);assert.equal(game.profile.achievements.includes('careful-stage'),false);
   assert.ok(game.state.awardedCoins>0&&game.state.awardedCoins<=12);
-  const before=structuredClone(game.profile),restored=new NinjaGame({storage,now:()=>100000});
+  const before=structuredClone(game.profile),restored=new NinjaGame({storage});
   assert.equal(restored.storageFailed,false);assert.equal(restored.state.result,'lives');assert.equal(restored.profile.highScores.open,game.state.score);
   restored.update(.05);assert.equal(restored.resumeRun().ok,false);assert.deepEqual(restored.profile,before);
 });
@@ -1248,105 +1245,15 @@ test('old profiles gain an empty open highscore without losing finite records an
   const rejected=new NinjaGame({storage});assert.equal(rejected.state.scene,'home');assert.equal(rejected.storageFailed,true);assert.equal(rejected.profile.coins,77);assert.equal(rejected.profile.highScores.study,12345);
 });
 
-test('every previous difficulty starts the same three-heart ranked Open rules from the first frame', () => {
-  const starts=[];
-  for(const difficulty of ['easy','normal','hard']){
-    const {game}=setup('open',{difficulty});
-    assert.equal(game.state.difficulty,'normal');assert.equal(game.state.maxLives,3);assert.equal(game.state.lives,3);
-    assert.equal(game.state.openRuleset,OPEN_RULESET);assert.equal(game.state.speedFactor,.82);assert.equal(game.state.spawnTimer,1.4);
-    assert.equal(game.state.selectedSuper,null);assert.deepEqual(game.state.skillIds,[]);
-    const events=[];for(let frame=0;frame<27;frame++)events.push(...game.update(.05));
-    assert.equal(events.some(event=>event.type==='spawned'),false,'the first throw gives the player an orientation moment');
-    events.push(...game.update(.05));assert.ok(events.some(event=>event.type==='spawned'));
-    starts.push(game.getSnapshot().state);
+test('open run is always one fair mode with exactly three hearts and a gentle beginning', () => {
+  for(const requested of ['easy','normal','hard']){
+    const game=new NinjaGame({storage:new Storage()});
+    assert.equal(game.start({mode:'open',difficulty:requested,tutorial:false}).ok,true);
+    assert.equal(game.state.difficulty,'normal');
+    assert.equal(game.state.maxLives,3);
+    assert.equal(game.state.lives,3);
+    game.nextLevel();
+    assert.ok(game.state.spawnTimer>1);
+    assert.ok(game.state.speedFactor<=1);
   }
-  assert.deepEqual(starts[0],starts[1]);assert.deepEqual(starts[1],starts[2]);
-});
-
-test('legacy Open runs keep their record and remaining hearts but cannot become a current ranked run on reload', () => {
-  for(const difficulty of ['easy','normal','hard']){
-    const {game,storage}=setup('open');game.profile.coins=73;game.profile.highScores.open=9100;game.pause();
-    const saved=JSON.parse(storage.getItem(STORAGE_KEY));delete saved.state.openRuleset;
-    saved.state.difficulty=difficulty;saved.state.maxLives=DIFFICULTIES.find(item=>item.id===difficulty).lives;saved.state.lives=saved.state.maxLives;
-    storage.setItem(STORAGE_KEY,JSON.stringify(saved));const restored=new NinjaGame({storage,now:()=>100000});
-    assert.equal(restored.storageFailed,false);assert.equal(restored.state.openRuleset,'legacy');assert.equal(restored.state.difficulty,'normal');
-    assert.equal(restored.state.maxLives,3);assert.equal(restored.state.lives,3);assert.equal(restored.profile.coins,73);assert.equal(restored.profile.highScores.open,9100);
-    restored.save();assert.equal(new NinjaGame({storage,now:()=>100000}).state.openRuleset,'legacy','saving does not promote old results');
-    assert.equal(restored.start({mode:'open'}).ok,true);assert.equal(restored.state.openRuleset,OPEN_RULESET);
-  }
-});
-
-test('mixed correct decisions trigger the three special combos once per run and never award extra coins', () => {
-  const {game,storage}=setup('open'),milestones=[];
-  for(let decision=1;decision<=50;decision++){
-    const before=game.state.score,events=decision%2?cut(game).events:passUseful(game),special=ofType(events,'combo-milestone');
-    milestones.push(...special);
-    const ordinary=events.filter(event=>['sliced','useful-passed'].includes(event.type)).reduce((sum,event)=>sum+event.points,0);
-    assert.equal(game.state.score-before,ordinary+special.reduce((sum,event)=>sum+event.points,0));
-    assert.equal(special.length,[10,25,50].includes(decision)?1:0);
-  }
-  assert.deepEqual(milestones.map(event=>[event.milestone,event.points]),[[10,250],[25,750],[50,2000]]);
-  assert.equal(game.state.bestDecisionStreak,50);assert.equal(game.state.metrics.correctDecisions,50);assert.equal(game.state.runCoins,5);
-  cut(game,'homework');assert.equal(game.state.decisionStreak,0);game.pause();
-  const restored=new NinjaGame({storage,now:()=>100000,width:800,height:600});restored.resume();
-  assert.deepEqual(restored.state.comboMilestones,[10,25,50]);assert.equal(restored.state.bestDecisionStreak,50);
-  for(let decision=0;decision<50;decision++)assert.equal(ofType(cut(restored).events,'combo-milestone').length,0,'already celebrated milestones cannot be farmed');
-  restored.start({mode:'open'});restored.nextLevel();let next=[];for(let decision=0;decision<10;decision++)next=cut(restored).events;
-  assert.equal(ofType(next,'combo-milestone')[0].milestone,10,'a fresh run can celebrate again');
-});
-
-test('training remains unscored and a shielded mistake still breaks a correct-decision streak', () => {
-  const {game:training}=setup('campaign',{tutorial:true});
-  for(let decision=0;decision<10;decision++)assert.equal(ofType(cut(training).events,'combo-milestone').length,0);
-  assert.equal(training.state.score,0);assert.deepEqual(training.state.comboMilestones,[]);
-  const {game}=setup('gaming');for(let decision=0;decision<4;decision++)cut(game);cut(game,'power-shield');
-  const lives=game.state.lives;cut(game,'gaming-invite');assert.equal(game.state.lives,lives);
-  assert.equal(game.state.decisionStreak,0);assert.equal(game.state.combo,0);assert.equal(game.state.bestDecisionStreak,4);
-  assert.deepEqual(game.state.lastMistake,{context:'gaming',contentId:'gaming-invite',kind:'useful',protected:true,elapsed:0});
-});
-
-test('the last real mistake retains its object context across reloads and rejects invented lesson data', () => {
-  const {game,storage}=setup('gaming');game.state.objects=[];object(game,'ad',{y:-200,vy:-100,age:2});game.update(.05);game.pause();
-  const expected={context:'gaming',contentId:'ad',kind:'distraction',protected:false,elapsed:.05};assert.deepEqual(game.state.lastMistake,expected);
-  const restored=new NinjaGame({storage,now:()=>100000});assert.deepEqual(restored.state.lastMistake,expected);
-  const saved=JSON.parse(storage.getItem(STORAGE_KEY));saved.state.lastMistake={context:'sleep',contentId:'teddy',kind:'distraction',elapsed:Infinity};
-  saved.state.comboMilestones=[10,10,25,99,'50'];storage.setItem(STORAGE_KEY,JSON.stringify(saved));
-  const safe=new NinjaGame({storage,now:()=>100000});assert.equal(safe.state.lastMistake,null);assert.deepEqual(safe.state.comboMilestones,[10,25]);
-});
-
-test('rank outfits require earned XP and can be equipped after the core credits a qualifying run', () => {
-  const {game,storage}=setup('study');
-  for(const id of ['dawn','shadow','grandmaster']){const before=structuredClone(game.profile);assert.equal(game.buySkin(id).ok,false);assert.equal(game.selectSkin(id).ok,false);assert.deepEqual(game.profile,before);}
-  for(let decision=0;decision<65;decision++)cut(game);const events=nearEnd(game,75);
-  assert.equal(game.profile.stats.correct,65);assert.equal(game.profile.totalRuns,1);
-  assert.ok(events.some(event=>event.type==='rank-unlocked'&&event.id==='dawn'));assert.ok(game.profile.unlockedSkins.includes('dawn'));
-  assert.equal(game.profile.selectedSkin,'default','earning a rank does not replace the equipped outfit');
-  assert.equal(game.selectSkin('dawn').ok,true);const restored=new NinjaGame({storage,now:()=>100000});
-  assert.equal(restored.profile.selectedSkin,'dawn');assert.equal(restored.state.skin,'dawn');assert.deepEqual(restored.initialJourneyEvents,[]);
-});
-
-test('a real completed run advances daily tasks and their wallet rewards survive exactly one explicit claim', () => {
-  const {game,storage}=setup('study',{difficulty:'normal'}),events=[];
-  while(game.state.scene==='playing')events.push(...autoplayFrame(game));
-  assert.equal(game.state.result,'complete');assert.equal(game.state.credited,true);assert.equal(game.profile.totalRuns,1);
-  const completed=getDailyChallenges(game.profile,100000).filter(task=>task.completed);
-  assert.ok(completed.length>0);assert.deepEqual(new Set(events.filter(event=>event.type==='daily-completed').map(event=>event.id)),new Set(completed.map(task=>task.id)));
-  assert.equal(game.profile.journey.claimed.length,0,'finishing a challenge only makes its reward available');
-  const before=game.profile.coins,lifetime=game.profile.stats.coinsEarned;let reward=0;
-  for(const task of completed){const result=game.claimDailyReward(task.id);assert.equal(result.ok,true);assert.equal(result.reward,task.reward);reward+=result.reward;assert.equal(game.claimDailyReward(task.id).ok,false);}
-  assert.equal(game.profile.coins,before+reward);assert.equal(game.profile.stats.coinsEarned,lifetime+reward);
-  const restored=new NinjaGame({storage,now:()=>100000});
-  for(const task of completed){assert.equal(restored.claimDailyReward(task.id).ok,false);assert.equal(getDailyChallenges(restored.profile,100000).find(item=>item.id===task.id).claimed,true);}
-  assert.equal(restored.profile.coins,before+reward);assert.equal(restored.profile.journey.lastRunOrdinal,1);
-});
-
-test('existing earned XP grants the new rank outfits without charging or replacing an old purchase', () => {
-  const {game,storage}=setup('study');game.pause();game.profile.coins=81;game.profile.stats.correct=300;
-  game.profile.unlockedSkins=['default','solar'];game.profile.selectedSkin='solar';game.state.skin='solar';game.save();
-  const saved=JSON.parse(storage.getItem(STORAGE_KEY));delete saved.profile.journey;storage.setItem(STORAGE_KEY,JSON.stringify(saved));
-  const restored=new NinjaGame({storage,now:()=>100000});
-  assert.equal(restored.profile.coins,81);assert.equal(restored.profile.stats.correct,300);assert.equal(restored.profile.selectedSkin,'solar');
-  assert.deepEqual(restored.profile.unlockedSkins,['default','solar','dawn','shadow']);
-  assert.deepEqual(restored.initialJourneyEvents.map(event=>event.id),['dawn','shadow']);
-  restored.save();assert.deepEqual(new NinjaGame({storage,now:()=>100000}).initialJourneyEvents,[]);
 });
