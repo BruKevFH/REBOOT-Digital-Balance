@@ -1,6 +1,6 @@
 {
   "name": "Notification Ninja – Master Your Digital Balance",
-  "version": "1.7.2",
+  "version": "1.8.0",
   "engine": "Canvas 2D / Web Audio",
   "style": "Illustrated cartoon arcade",
   "entry": "index.html",
@@ -30,8 +30,16 @@
   "hudLayout": "compact-sidebar-super-dock",
   "largeHearts": true,
   "ninjaRanks": 5,
-  "skins": 7,
+  "skins": 10,
   "dailyChallenges": 3,
+  "careerMissions": 8,
+  "autoplayBosses": 3,
+  "weeklyChallenges": 3,
+  "weeklyOutfits": [
+    "lotus",
+    "ember",
+    "tide"
+  ],
   "comboMilestones": [
     10,
     25,

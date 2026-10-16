@@ -1,6 +1,6 @@
 # Notification Ninja: Ablauf und Weiterentwicklung
 
-Diese Übersicht dokumentiert den Spielablauf von Version 1.7.2 und ordnet die technischen Aufgaben. Der Zeitplan am Ende ist ein **anpassbares Beispiel für Weiterentwicklung**. Seine Daten sind keine vereinbarte Projektfrist.
+Diese Übersicht dokumentiert den Spielablauf von Version 1.8.0 und ordnet die technischen Aufgaben. Der Zeitplan am Ende ist ein **anpassbares Beispiel für Weiterentwicklung**. Seine Daten sind keine vereinbarte Projektfrist.
 
 ## Ablauf der Bildschirme
 
@@ -25,6 +25,19 @@ flowchart TD
     Home --> Achievements[Erfolge: abholbare Münzen / offene Ziele / Sammlung]
     Home --> Daily[Drei Tagesmissionen: Fortschritt und Münzen abholen]
     Daily --> Home
+    Home --> Career[Karrierekarte: acht verbundene Missionen]
+    Career --> Mission[Voraussetzungen und gekaufte Räume prüfen]
+    Mission --> Boss[Drei Autoplay-Bosse: 20 / 28 / 36 Treffer]
+    Boss --> Cue[1,35 Sekunden Wellenwarnung und drei Kontextphasen]
+    Cue --> BossEnd[Boss besiegt oder drei Herzen verbraucht]
+    BossEnd --> Career
+    Career --> CareerClaim[Einmalige Missionsmünzen abholen]
+    CareerClaim --> Home
+    Home --> Weekly[Drei Wochenaufgaben: Montag bis Sonntag]
+    End --> Weekly
+    Weekly --> WeeklyClaim[Münzen und bei drei Zielen Wochenlook abholen]
+    WeeklyClaim --> Wardrobe[Lotuswächter / Glutfuchs / Gezeitengeist]
+    Wardrobe --> Home
     Home --> Scores[Lokale Highscores]
     Home --> Open[Ein Open Run: drei Herzen und langsamer Einstieg]
     Open --> Faster[Tempo steigt weiter, bis Herzen aufgebraucht]

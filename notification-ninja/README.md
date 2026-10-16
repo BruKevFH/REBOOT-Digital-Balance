@@ -2,7 +2,7 @@
 
 Ein buntes, deutschsprachiges Arcade-Spiel über digitale Ablenkung: Wische durch störende Inhalte und lass hilfreiche Dinge passieren. Ein sonniges Klassenzimmer, ein gemütliches Gaming-Zimmer und ein Schlafzimmer bei Mondlicht begleiten deinen Tag. Bücher, Controller, Trinkflaschen, Kissen und andere gezeichnete Objekte passen zur jeweiligen Umgebung.
 
-**[Homepage](https://brukevfh.github.io/REBOOT-Digital-Balance/notification-ninja/home.html)** · **[Im Browser spielen](https://brukevfh.github.io/REBOOT-Digital-Balance/notification-ninja/)** · **[Vollständiges Spiel 1.7.2 herunterladen](downloads/Notification-Ninja-1.7.2.zip)**
+**[Homepage](https://brukevfh.github.io/REBOOT-Digital-Balance/notification-ninja/home.html)** · **[Im Browser spielen](https://brukevfh.github.io/REBOOT-Digital-Balance/notification-ninja/)** · **[Vollständiges Spiel 1.8.0 herunterladen](downloads/Notification-Ninja-1.8.0.zip)**
 
 ## Spielen
 
@@ -57,6 +57,16 @@ Die drei Rang-Outfits werden **verdient und nicht gekauft**. Sie stehen nach dem
 Im Dojo warten jeden Tag **drei wechselnde Aufgaben** mit Belohnungen von zwei, drei und vier Münzen, zusammen höchstens **neun Münzen pro Tag**. Beispiele sind richtige Entscheidungen, sinnvolle Dinge behalten, eine fehlerfreie Serie oder eine Minute im Open Run. Alle Aufgaben sind im freien Lernzimmer oder Open Run erreichbar. Der Wechsel folgt dem lokalen Kalendertag deines Geräts; offene Tagesbelohnungen solltest du vor dem Tageswechsel abholen.
 
 Fortschritt zählt erst, wenn eine Runde einmalig abgerechnet wurde und mindestens **acht richtige Entscheidungen und 15 aktive Sekunden** erreicht hat. Für einen bewussten Gaming-/Sleep-Stopp reichen acht aktive Sekunden. Training zählt nicht. Geschaffte, noch nicht abgeholte Aufgaben stehen zuerst; die Belohnung kommt erst durch **Münzen abholen** ins Guthaben und kann an diesem Tag nur einmal abgeholt werden. Danach rückt die Karte hinter die offenen Aufgaben.
+
+## Karrierekarte, Autoplay-Bosse und Wochenaufgaben
+
+Die **Karrierekarte** erreichst du direkt aus deinem Dojo. Acht verbundene Missionen führen vom Lernzimmer zu drei Autoplay-Duellen. Die Karte zeigt Voraussetzungen, Fortschritt und offene Belohnungen. Die erste Mission ist kostenlos. Spätere Missionen in Gaming, Sleep und Master setzen die entsprechenden gekauften Räume voraus. Ein erledigtes Ziel öffnet den nächsten Weg; die einmalige Münzbelohnung holst du gesondert ab. Wiederholen zahlt sie nicht erneut aus.
+
+Die drei **Autoplay-Bosse** haben 20, 28 und 36 Trefferpunkte. Jeder richtige Schnitt und jedes bewusst durchgelassene hilfreiche Objekt verursacht einen Treffer. Optionale Power-ups ersetzen keine richtige Entscheidung. Alle Duelle beginnen mit drei Herzen und ohne gekaufte Fähigkeiten oder Supers. Angekündigte Wellen und drei Kontextphasen sorgen für Abwechslung; vor einem Wechsel verlassen die bisherigen Objekte das Feld. Schulsachen, Team-Signale und Ruheobjekte erhalten dadurch ihre zur Situation passende Bedeutung. Der Boss ist besiegt, wenn seine Trefferpunkte auf null fallen. Bei null Herzen kannst du die Mission erneut versuchen. Boss-Ergebnisse werden nicht in die Open-Run-Rangliste übertragen.
+
+Unter **Wochenaufgaben** stehen drei wechselnde Ziele mit abholbaren vier, fünf und sechs Münzen (zusammen höchstens 15 Münzen pro Woche). Erledigst du alle drei, kannst du zusätzlich den Wochenlook abholen. Lotus, Glut und Gezeiten wechseln im Rhythmus von drei Wochen und bringen eigene Verzierungen und Wurfeffekte mit. Sie sind kosmetisch, nicht für Münzen erhältlich und bleiben nach dem Verdienen dauerhaft in deiner Garderobe. Der bisher ausgewählte Look wird nicht automatisch ersetzt. Bereits besessene Wochenlooks können bei einer späteren Wiederkehr nicht doppelt vergeben werden.
+
+Wochen beginnen am **Montag nach dem lokalen Kalender deines Geräts**. Fortschritt zählt aus einmalig abgeschlossenen, ausreichend gespielten Runden; Training zählt nicht. Eine Runde aus der vorigen Woche kann nicht nachträglich für die neue Woche angerechnet werden. Nicht abgeholte Wochenbelohnungen gehören zur jeweiligen Woche; gesicherte Münzen und Outfits bleiben erhalten. Alle neuen Fortschritte werden im bestehenden lokalen Profil gespeichert.
 
 ## Open Run – bis zum letzten Herz
 
@@ -251,6 +261,8 @@ notification-ninja/
 ├── src/progression.js        # Schwierigkeit, Räume, Shop, Fähigkeiten und Erfolge
 ├── src/player.js             # Lokaler Name, abgeleitete XP, Hinweise und Mitteilungen
 ├── src/journey.js            # XP-Ränge, verdiente Outfits und drei Tagesmissionen
+├── src/adventure.js          # Karrierekarte, Wochenaufgaben und ausdrückliche Belohnungen
+├── src/boss.js               # Drei Autoplay-Bosse und ihre Wellenzustände
 ├── src/mentor.js             # NIM-Dialoge, Erkläranimationen und Fokussteuerung
 ├── src/art.js                # Eigene Upgrade-, Erfolgs- und Dojo-Illustrationen
 ├── src/local-profile.js      # Lokale Anmeldung und Profil-Löschung

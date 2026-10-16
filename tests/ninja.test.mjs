@@ -56,7 +56,8 @@ test('authored levels, skins and contextual notification meanings are distinct a
   assert.equal(Game, NinjaGame);
   assert.equal(STORAGE_KEY, 'notification-ninja:save:v1');
   assert.equal(LEVELS.length, 4);
-  assert.deepEqual(SKINS.filter(skin=>skin.unlock!=='rank').map(skin => [skin.id, skin.cost]), [['default', 0], ['solar', 80], ['mint', 180], ['neon', 320]]);
+  assert.deepEqual(SKINS.filter(skin=>!skin.unlock).map(skin => [skin.id, skin.cost]), [['default', 0], ['solar', 80], ['mint', 180], ['neon', 320]]);
+  assert.deepEqual(SKINS.filter(skin=>skin.unlock==='weekly').map(skin=>skin.id),['lotus','ember','tide']);
   assert.deepEqual(SKINS.filter(skin=>skin.unlock==='rank').map(skin=>[skin.id,skin.rank]),[['dawn','dawn'],['shadow','shadow'],['grandmaster','grandmaster']]);
   const byId = new Map(CONTENT.map(content => [content.id, content]));
   assert.equal(byId.size, CONTENT.length);
@@ -929,7 +930,7 @@ test('legacy profiles migrate safely and extended live state survives a paused r
   enhanced.game.state.bonusClock=19.99;enhanced.game.update(.05);enhanced.game.pause();
   const resumed=new NinjaGame({storage:enhanced.storage,width:800,height:600});
   for(const key of ['skillIds','selectedSuper','runCoins','superCharge','bonusPhase','bonusClock','reviveUsed'])assert.deepEqual(resumed.state[key],enhanced.game.state[key],key);
-  assert.ok(resumed.state.effects.slow>7);assert.deepEqual(resumed.profile,enhanced.game.profile);assert.equal(resumed.exportData().version,'1.7.2');
+  assert.ok(resumed.state.effects.slow>7);assert.deepEqual(resumed.profile,enhanced.game.profile);assert.equal(resumed.exportData().version,'1.8.0');
 });
 
 

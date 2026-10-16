@@ -4,7 +4,7 @@ from zipfile import ZipFile, ZipInfo, ZIP_DEFLATED
 from hashlib import sha256
 
 ROOT=Path(__file__).resolve().parents[1]/'notification-ninja'
-NAME='Notification-Ninja-1.7.2'
+NAME='Notification-Ninja-1.8.0'
 FILES=['index.html','home.html','styles.css','sw.js','manifest.webmanifest','favicon.svg','dist/ninja.js','dist/build.json','leaderboard-config.json']
 INSTRUCTIONS='''NOTIFICATION NINJA – MASTER YOUR DIGITAL BALANCE
 
@@ -101,7 +101,36 @@ Kleidung und Wischspur ändern sich passend zu deinem Ninja-Design.
 Über Training kannst du die Übungsrunde jederzeit wiederholen.
 Münzregen, Combo-Party und Fokus-Welle wechseln als Bonusphasen.
 
-NEU: DEIN WEG ZUM GROSSMEISTER
+NEU IN 1.8: KARRIERE, AUTOPLAY-BOSSE UND WOCHENAUFGABEN
+Öffne die Karrierekarte im Dojo: Acht verbundene Missionen führen durch
+Lernen, Gaming, Schlaf und drei Autoplay-Duelle. Die ersten Missionen sind
+kostenlos. Für Missionen in Gaming, Sleep und Master kaufst du zuvor die
+passenden Räume. Geschaffte Ziele öffnen die nächsten Pfade. Ihre einmaligen
+Münzbelohnungen holst du ausdrücklich ab; Wiederholen zahlt sie nicht erneut.
+Der Autoplay-Späher hat 20, der Wächter 28 und der Meister 36 Trefferpunkte.
+Richtige Schnitte und bewusst durchgelassene hilfreiche Dinge schwächen ihn.
+Den Drachen selbst brauchst du nicht zu schneiden. Alle Duelle haben drei
+Herzen, keine gekauften Fähigkeiten und kein Zeitlimit. Jede neue Welle wird
+1,35 Sekunden vorher angekündigt. Drei Phasen wechseln zwischen Lernen,
+Gaming und Schlaf; alte Gegenstände verlassen vor dem Wechsel das Feld.
+Bei null Boss-Energie gewinnst du, bei null Herzen kannst du neu versuchen.
+Boss-Ergebnisse zählen nicht für die gemeinsame Open-Run-Rangliste.
+Die Schlaf-Karrieremission bietet den bewussten Stopp erst an, wenn du acht
+richtige Entscheidungen erreicht hast. Verzichte für dieses Ziel auf den Bonus.
+
+Drei Wochenaufgaben bieten zusammen 15 Münzen zum einmaligen Abholen.
+Erledigst du alle drei, kannst du zusätzlich das Wochen-Outfit freischalten:
+Lotuswächter, Glutfuchs oder Gezeitengeist mit eigenen Verzierungen und
+Wurfeffekten. Diese Looks sind kosmetisch und nicht für Münzen erhältlich.
+Sie bleiben in deiner Garderobe und werden nicht automatisch angezogen.
+Neue Aufgaben beginnen montags nach dem lokalen Kalender deines Geräts.
+Eine Runde aus der Vorwoche zählt nicht für die neue Woche. Noch offene
+Wochenbelohnungen wechseln mit der Woche; gesicherte Münzen und Looks bleiben.
+Die drei Outfits kehren alle drei Wochen wieder; bereits verdiente werden
+nicht doppelt vergeben. Qualifizierende Runden zählen nach ihrem Abschluss,
+Training zählt nicht. Ein erneutes Laden rechnet keine Runde doppelt ab.
+
+DEIN WEG ZUM GROSSMEISTER
 Fünf Ninja-Ränge wachsen mit deinen gesicherten XP: Anfänger, Morgenwind,
 Schatten-Ninja, Tempelwächter und Großmeister bei 0 / 350 / 1500 / 4500 /
 10000 XP. Morgenwind, Schatten-Ninja und Großmeister schenken dir eigene
@@ -116,7 +145,7 @@ Die Kulisse verändert sich nach 30 / 60 / 120 / 180 aktiven Sekunden mit
 Wolken, Tempellicht und Blüten. NIM erklärt nach der Runde deinen letzten
 Fehler passend zur Lernsituation und gibt einen kurzen Tipp.
 
-Training, Open Run, Study, Gaming, Sleep und Balance Master stehen bereit.
+Training, Open Run, Study, Gaming, Sleep, Balance Master und Karriere stehen bereit.
 Das Gaming-Rundenlimit wählst du selbst (45, 60 oder 90 Sekunden).
 Nach Ablauf darfst du bewusst aufhören oder einmal 15 Sekunden verlängern.
 In Sleep kannst du deine Punkte sichern und die virtuelle Nacht abschließen.
@@ -152,7 +181,7 @@ output=ROOT/'downloads'/f'{NAME}.zip'
 output.parent.mkdir(exist_ok=True)
 with ZipFile(output,'w',ZIP_DEFLATED) as z:
     for name in FILES+['START-HIER.txt']:
-        info=ZipInfo(f'{NAME}/{name}',(2026,10,15,0,0,0));info.compress_type=ZIP_DEFLATED;info.external_attr=0o100644<<16
+        info=ZipInfo(f'{NAME}/{name}',(2026,10,16,0,0,0));info.compress_type=ZIP_DEFLATED;info.external_attr=0o100644<<16
         z.writestr(info,INSTRUCTIONS.encode() if name=='START-HIER.txt' else (ROOT/name).read_bytes())
 with ZipFile(output) as z:
     assert z.testzip() is None

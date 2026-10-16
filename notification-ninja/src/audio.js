@@ -192,6 +192,23 @@ export function createAudio() {
     if (name === 'sliced') {
       tone((1120 + eventCount % 5 * 65) * (flow ? 1.15 : 1), 0.047, 0.1, time, 'effects', 'triangle', 720);
       hiss(time, 0.025, 0.03, 4500, 'effects');
+    } else if (name === 'boss-hit') {
+      // A wooden impact and a quiet upward chime give correct choices a physical reply.
+      tone(170, 0.075, 0.055, time, 'effects', 'sine', 95);
+      tone(660, 0.13, 0.024, time + 0.025, 'effects', 'triangle', 820);
+    } else if (name === 'boss-cue' || name === 'boss-telegraph') {
+      // Two spaced bamboo knocks announce the wave before it arrives.
+      tone(240, 0.11, 0.045, time, 'effects', 'sine', 150);
+      tone(300, 0.13, 0.045, time + 0.2, 'effects', 'sine', 190);
+    } else if (name === 'boss-wave') {
+      hiss(time, 0.12, 0.025, 1400, 'effects');
+      tone(165, 0.18, 0.045, time, 'effects', 'sine', 82);
+    } else if (name === 'boss-phase') {
+      sparkle([330, 440, 494, 659], 0.095, 0.034);
+      tone(110, 0.32, 0.035, time, 'effects', 'sine', 165);
+    } else if (name === 'boss-defeated') {
+      sparkle([392, 494, 587, 784, 988, 1175], 0.09, 0.044);
+      tone(196, 0.5, 0.03, time, 'effects', 'sine', 392);
     } else if (name === 'useful-mistake') {
       tone(150, 0.26, 0.11, time, 'effects', 'triangle', 62);
       tone(92, 0.22, 0.055, time + 0.025, 'effects', 'sine');
