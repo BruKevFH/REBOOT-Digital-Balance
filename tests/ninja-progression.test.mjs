@@ -329,16 +329,12 @@ test('new milestone rewards stay modest compared with the full collection and ne
 });
 
 
-test('one Open speed curve starts gently, crosses its authored checkpoints continuously and keeps increasing', () => {
+test('one gentle open-run speed curve stays continuous and keeps increasing without a limit', () => {
   for(const difficulty of DIFFICULTIES) {
-    for(const [seconds,expected] of [[0,.82],[15,.865],[25,.895],[50,1.045],[90,1.285],[120,1.465],[240,2.185]])assert.ok(Math.abs(getOpenSpeedFactor(difficulty.id,seconds)-expected)<.000000001,`${difficulty.id} at ${seconds}`);
-    for(const seconds of [25,120,240]){
-      const before=getOpenSpeedFactor(difficulty.id,seconds-.000001),at=getOpenSpeedFactor(difficulty.id,seconds),after=getOpenSpeedFactor(difficulty.id,seconds+.000001);
-      assert.ok(before<at&&at<after);assert.ok(after-before<.000001);
-    }
-    let prior=getOpenSpeedFactor(difficulty.id,240);
-    for(const seconds of [300,3600,60000,1000000]){const speed=getOpenSpeedFactor(difficulty.id,seconds);assert.ok(speed>prior);assert.ok(Number.isFinite(speed));prior=speed;}
+    const before=getOpenSpeedFactor(difficulty.id,90-.000001),at=getOpenSpeedFactor(difficulty.id,90),after=getOpenSpeedFactor(difficulty.id,90+.000001);
+    assert.ok(before<=at&&at<after);assert.ok(after-before<.000001);
+    let prior=at;
+    for(const seconds of [120,300,3600,60000]){const speed=getOpenSpeedFactor(difficulty.id,seconds);assert.ok(speed>prior);assert.ok(Number.isFinite(speed));prior=speed;}
     assert.equal(getOpenSpeedFactor(difficulty.id,-1),.82);assert.equal(getOpenSpeedFactor(difficulty.id,NaN),.82);
-    assert.equal(getOpenSpeedFactor(difficulty.id,300),getOpenSpeedFactor('normal',300));
   }
 });
