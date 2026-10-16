@@ -148,3 +148,51 @@ body.is-fullscreen-game.is-playing{--game-top:80px}
 }
 @media(max-width:350px){.heart-icon{width:26px;height:26px}#lives-value{font-size:26px;gap:3px}.lives-count{font-size:9px}.lives-block{padding-inline:5px}.context-block>strong{font-size:15px}.level-label{font-size:7px}.score-block>strong{font-size:21px}.combo-block>strong{font-size:19px}}
 @media(orientation:landscape) and (max-height:520px){body.is-playing{--game-top:78px;--game-sidebar:108px}body.is-fullscreen-game.is-playing{--game-top:68px}.hud-top{grid-template-columns:minmax(120px,1fr) 120px 202px 94px;grid-template-rows:1fr;gap:12px;padding:7px 12px;padding-top:calc(7px + env(safe-area-inset-top,0px))}.context-block{grid-column:1;grid-row:1}.context-block>strong{font-size:18px}.level-label{font-size:8px}.scoreboard{grid-column:2;grid-row:1;gap:16px;text-align:center}.score-block>strong{font-size:25px}.combo-block>strong{font-size:23px}.lives-block{grid-column:3;grid-row:1;justify-self:center}.heart-icon{width:28px;height:28px}#lives-value{font-size:28px;gap:4px}.lives-title{font-size:8px}.lives-count{font-size:10px}.is-playing .global-nav{top:calc((var(--game-top) - 44px)/2 + env(safe-area-inset-top,0px));right:max(12px,env(safe-area-inset-right,0px))}.is-playing .global-nav>#skins-button,.is-playing .global-nav>#help-button,.is-playing .global-nav>#sound-toggle{display:none}.hud-sidebar{gap:8px;padding:9px 7px;padding-right:calc(7px + env(safe-area-inset-right,0px));padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))}.sidebar-title{font-size:8px}.time-block{padding:5px}.time-block>span{font-size:8px}.time-block>strong{font-size:22px}.meter-cluster{gap:7px}.meter-block>span{font-size:8px;margin-bottom:3px}.meter-track{height:6px}.run-wallet small{display:none}.run-wallet>span{width:20px;height:20px;font-size:12px}.run-wallet strong{font-size:15px}.speed-badge{padding:5px;font-size:8px}.speed-badge strong{font-size:10px}.super-button{min-height:48px;padding:7px 5px;gap:5px}.super-symbol{font-size:21px}.super-copy>strong{font-size:9px}.super-keyhint{display:none}.legend{font-size:9px}.legend-chip{font-size:8px;padding:4px}.stop-button{min-height:44px;font-size:10px}.hud-sidebar>.effect-chips>span{font-size:8px;padding:4px}}
+
+
+/* v1.7 immersive arcade layout: maximize the active swipe surface. */
+body.is-playing{--game-top:76px;--game-sidebar:104px}
+body.is-fullscreen-game.is-playing{--game-top:70px}
+.is-playing .hud-top{grid-template-columns:minmax(105px,1fr) minmax(125px,180px) minmax(160px,230px) 120px;gap:12px}
+.is-playing .hud-sidebar{gap:9px;padding:9px 7px}
+.is-playing .sidebar-title,.is-playing .legend,.is-playing .flow-block{display:none}
+.is-playing .hud-sidebar .time-block{padding:6px}
+.is-playing .hud-sidebar .time-block>strong{font-size:24px}
+.is-playing .hud-sidebar .meter-cluster{gap:6px}
+.is-playing .hud-sidebar .round-extras{gap:5px}
+.is-playing .hud-sidebar .meter-block>span{font-size:9px}
+.is-playing .super-dock{position:fixed;z-index:6;bottom:max(16px,env(safe-area-inset-bottom,0px));left:max(14px,env(safe-area-inset-left,0px));width:clamp(120px,15vw,185px);pointer-events:auto}
+.is-playing .super-dock .super-button{min-height:62px;border-width:3px;box-shadow:0 5px 0 var(--ink)}
+.is-playing .super-dock .super-button:disabled{opacity:.85}
+.is-playing .super-dock .super-button.is-ready{background:#ffe06b;box-shadow:0 0 0 5px #f6c55a55,0 5px 0 var(--ink);animation:super-ready 1.2s ease-in-out infinite}
+.is-playing .super-ready-hint:not([hidden]){display:block;margin-bottom:7px;padding:8px 6px;text-align:center;border:2px solid #9b5b1f;border-radius:10px;color:#603b12;background:#ffcf52;font-size:12px;font-weight:950;box-shadow:0 0 15px #ffc54c;animation:super-ready 1s ease-in-out infinite}
+.is-playing .super-dock:has(.super-button:disabled):not(:has(.is-ready)){opacity:.75}
+.claim-reward-flag{display:none}
+.has-claimable-rewards #achievements-button{order:-10;border-color:#bc6926;background:#fff0ae}
+.has-claimable-rewards #achievements-button .claim-reward-flag{display:block;position:absolute;top:-9px;right:5px;padding:4px 7px;border-radius:9px;background:#ffd05b;border:1px solid #a16c2d;font-size:10px;font-weight:900;white-space:nowrap}
+#achievements-button{position:relative}
+.unclaimed-rewards{border:2px solid #d89b40;border-radius:14px;padding:10px;background:#fff0ca}
+.unclaimed-rewards h3{font-size:18px}
+@media(max-width:760px){
+ body.is-playing{--game-top:92px;--game-sidebar:60px}
+ body.is-fullscreen-game.is-playing{--game-top:84px}
+ .is-playing .hud-top{grid-template-columns:minmax(0,1fr) 112px;grid-template-rows:37px 36px;gap:5px 7px}
+ .is-playing .lives-block{padding:3px 5px}
+ .is-playing .heart-icon{width:30px;height:30px}
+ .is-playing .hud-sidebar{gap:7px;padding:6px 3px}
+ .is-playing .hud-sidebar .time-block>strong{font-size:18px}
+ .is-playing .hud-sidebar .meter-block>span{font-size:7px}
+ .is-playing .hud-sidebar .meter-track{height:6px}
+ .is-playing .hud-sidebar .round-extras{font-size:9px}
+ .is-playing .super-dock{left:8px;bottom:calc(10px + env(safe-area-inset-bottom,0px));width:105px}
+ .is-playing .super-dock .super-button{min-height:50px;padding:5px 3px}
+ .is-playing .super-dock .super-copy>strong{font-size:9px}
+ .is-playing .super-ready-hint:not([hidden]){font-size:9px;padding:5px 2px}
+}
+@media(max-width:350px){.is-playing .heart-icon{width:25px;height:25px}}
+@media(orientation:landscape) and (max-height:520px){
+ body.is-playing{--game-top:66px;--game-sidebar:85px}
+ body.is-fullscreen-game.is-playing{--game-top:60px}
+ .is-playing .hud-top{grid-template-columns:minmax(90px,1fr) 110px 165px 90px;grid-template-rows:1fr}
+ .is-playing .super-dock{width:110px;bottom:7px;left:8px}
+}
