@@ -82,7 +82,7 @@ const metrics = () => ({cuts:0,usefulPassed:0,usefulMistakes:0,missedDistraction
 const stageMetrics = () => ({cuts:0,usefulPassed:0,usefulMistakes:0,missedDistractions:0,shieldedMistakes:0,correctDecisions:0,score:0,earnedCoins:0});
 function profile() {return {coins:0,totalRuns:0,highScores:scoreKeys(),unlockedSkins:['default'],selectedSkin:'default',achievements:[],tutorialCompleted:false,player:normalizePlayer({}),...sanitizeProgress({})};}
 function emptyState(seed,skin='default') {return {
-  started:false,scene:'home',mode:'campaign',boss:null,missionId:null,levelIndex:0,stageIndex:0,context:'study',isTutorial:false,
+  started:false,scene:'home',mode:'campaign',boss:null,missionId:null,quickRound:false,levelIndex:0,stageIndex:0,context:'study',isTutorial:false,
   tutorialDecisions:0,tutorialCuts:0,tutorialPassed:0,tutorialResults:null,tutorialReason:null,
   difficulty:'easy',maxLives:5,speedFactor:1,runCoins:0,coinRemainder:0,superCharge:0,selectedSuper:null,skillIds:[],reviveUsed:false,bonusCoinPending:false,backgrounds:{study:'classroom',gaming:'game-room',sleep:'bedroom'},nextLockedWorld:null,bonusPhase:null,bonusClock:0,bonusNextAt:20,bonusSequence:0,
   objects:[],score:0,scoreArcade:0,balance:50,balanceScore:100,combo:0,bestCombo:0,decisionStreak:0,bestDecisionStreak:0,comboMilestones:[],lastMistake:null,openRuleset:null,overload:0,lives:MAX_LIVES,
@@ -140,29 +140,33 @@ export class NinjaGame {
     this.state.balanceScore=correct+wrong?Math.round(100*correct/(correct+wrong)):100;
     this.state.balanceScore=Math.max(0,Math.min(100,this.state.balanceScore+m.healthyStops*5-m.limitExtensions*5-m.sleepContinues*8));}
   _resetStage(){const s=this.state,level=LEVELS[s.levelIndex];s.context=level.context;s.objects=[];s.stageElapsed=0;
-    s.duration=['open','boss'].includes(s.mode)?0:s.isTutorial?60:s.levelIndex===1?s.gamingLimit:level.duration;s.remaining=s.duration;
+    s.duration=['open','boss'].includes(s.mode)?0:s.isTutorial?60:s.levelIndex===1?s.gamingLimit:s.quickRound?45:level.duration;s.remaining=s.duration;
     s.combo=0;s.decisionStreak=0;s.effects={slow:0,shield:0,multiplier:0,flow:0};s.overload=Math.max(0,s.overload-15);
     s.stopAvailable=false;s.extensionUsed=false;s.sleepContinued=false;s.pendingContext=null;s.masterSwitchIndex=0;s.spawnTimer=['open','boss'].includes(s.mode)?1.4:.5;s.spawnCount=0;s.stageMetrics=stageMetrics();s.bonusPhase=null;s.bonusCoinPending=false;s.bonusClock=0;s.bonusNextAt=20;s.bonusSequence=0;
     s.speedFactor=this._speed();if(!s.metrics.contextsPlayed.includes(s.context))s.metrics.contextsPlayed.push(s.context);}
-  start({mode='campaign',bossId=null,missionId=null,gamingLimit=90,skin=this.profile.selectedSkin,tutorial=true,difficulty='easy',forceTutorial=false}={}) {
+  start({mode='campaign',bossId=null,missionId=null,quickRound=false,gamingLimit=90,skin=this.profile.selectedSkin,tutorial=true,difficulty='easy',forceTutorial=false}={}) {
     if(!DIFFICULTIES.some(item=>item.id===difficulty))return fail('Wähle einen gültigen Schwierigkeitsgrad.');
     if(!MODES.includes(mode))return fail('Wähle einen gültigen Spielmodus.');
+    if(typeof quickRound!=='boolean'||quickRound&&(!CONTEXTS.includes(mode)||missionId!==null))return fail('Wähle für eine Alltagsrunde Lernen, Gaming oder Schlafen.');
     if(mode==='boss'&&!getBoss(bossId))return fail('Wähle einen gültigen Autoplay-Boss.');
     if(missionId!==null&&(typeof missionId!=='string'||!/^[-a-z0-9]{1,48}$/.test(missionId)))return fail('Unbekannte Mission.');
     if(mode==='boss'&&missionId===null)missionId=CAREER_MISSIONS.find(mission=>mission.bossId===bossId)?.id||null;
     if(missionId!==null){const mission=getCareerMission(this.profile,missionId,this._time());
       if(!mission||mission.mode!==mode||mission.bossId!==(mode==='boss'?bossId:null))return fail('Diese Mission passt nicht zu diesem Spielmodus.');
       if(mission.locked)return fail(mission.worldLocked?'Schalte zuerst den Raum dieser Mission im Basar frei.':'Schaffe zuerst die verbundenen Vorgängermissionen.');}
-    if(!['campaign','open','boss'].includes(mode)&&!this.profile.unlockedWorlds.includes(mode))return fail('Schalte diese Welt zuerst mit Münzen im Weltplan frei.');
+    if(!quickRound&&!['campaign','open','boss'].includes(mode)&&!this.profile.unlockedWorlds.includes(mode))return fail('Schalte diese Welt zuerst mit Münzen im Weltplan frei.');
     if(![45,60,90].includes(gamingLimit))return fail('Die Gaming-Grenze muss 45, 60 oder 90 Sekunden sein.');
     if(!SKIN_MAP.has(skin)||!this.profile.unlockedSkins.includes(skin))return fail('Dieser Skin ist noch nicht freigeschaltet.');
     if(['open','boss'].includes(mode))difficulty='normal';
-    const serial=this.state.runSerial+1,runSeed=mode==='open'?hash(`${this.seed}:open:${difficulty}`):hash(`${this.seed}:${mode}:${gamingLimit}`);this.state=emptyState(runSeed,skin);
-    const s=this.state;s.started=true;s.startedAt=this._time();s.mode=mode;s.openRuleset=mode==='open'?OPEN_RULESET:null;s.boss=mode==='boss'?createBossState(bossId):null;s.missionId=missionId;s.gamingLimit=gamingLimit;s.runSerial=serial;
+    const serial=this.state.runSerial+1,runSeed=mode==='open'?hash(`${this.seed}:open:${difficulty}`):quickRound?hash(`${this.seed}:quick:${mode}:${gamingLimit}:${serial}`):hash(`${this.seed}:${mode}:${gamingLimit}`);this.state=emptyState(runSeed,skin);
+    const s=this.state;s.started=true;s.startedAt=this._time();s.mode=mode;s.openRuleset=mode==='open'?OPEN_RULESET:null;s.boss=mode==='boss'?createBossState(bossId):null;s.missionId=missionId;s.quickRound=quickRound;s.gamingLimit=gamingLimit;s.runSerial=serial;
     s.isTutorial=mode==='campaign'&&tutorial!==false&&(forceTutorial===true||!this.profile.tutorialCompleted);s.stageIndex=s.isTutorial?-1:0;s.levelIndex=PLANS[mode][0];
     s.difficulty=difficulty;s.maxLives=s.isTutorial?5:['open','boss'].includes(mode)?3:this._difficulty().lives;s.lives=s.maxLives;s.selectedSuper=['open','boss'].includes(mode)?null:this.profile.selectedSuper;s.skillIds=['open','boss'].includes(mode)?[]:[...this.profile.unlockedSkills];s.backgrounds=clone(this.profile.selectedBackgrounds);
     s.scene='briefing';s.awaitingNext=true;this._resetStage();if(!s.isTutorial&&this._hasSkill('guard-root'))s.effects.shield=1;this._record('start',{mode,bossId:s.boss?.id||null,missionId,gamingLimit,difficulty,tutorial:s.isTutorial});this.save();return {ok:true,state:s,events:[]};
   }
+  startQuickRound(context,options={}){
+    if(!CONTEXTS.includes(context))return fail('Wähle Lernen, Gaming oder Schlafen.');
+    return this.start({mode:context,quickRound:true,tutorial:false,difficulty:options?.difficulty??'easy',gamingLimit:options?.gamingLimit??45});}
   startMission(id,options={}){const mission=getCareerMission(this.profile,id,this._time());
     if(!mission)return fail('Diese Mission gibt es nicht.');
     if(mission.locked)return fail(mission.worldLocked?'Schalte zuerst den Raum dieser Mission im Basar frei.':'Schaffe zuerst die verbundenen Vorgängermissionen.');
@@ -186,7 +190,7 @@ export class NinjaGame {
     for(let offset=0;offset<actors.length;offset++){const index=(s.objectSequence+offset)%actors.length;
       if(!s.objects.some(obj=>obj.launch?.throwerIndex===index&&obj.age<obj.launch.windup+THROW_RECOVERY))return index;}
     return null;}
-  _spawnContent(id,throwerIndex=null){if(this.state.objects.length>=50)return null;const content=CONTENT_MAP.get(id);if(!content)return null;
+  _spawnContent(id,throwerIndex=null){const limit=this.state.quickRound?({easy:2,normal:3,hard:4}[this.state.difficulty]||2):50;if(this.state.objects.length>=limit)return null;const content=CONTENT_MAP.get(id);if(!content)return null;
     const actors=getThrowerLayout(this.width,this.height,this.state.difficulty),actor=throwerIndex===null?null:actors[throwerIndex];
     if(throwerIndex!==null&&(!actor||this.state.objects.some(obj=>obj.launch?.throwerIndex===throwerIndex&&obj.age<obj.launch.windup+THROW_RECOVERY)))return null;
     const radius=this._radius(),inset=radius+8,laneCount=Math.min(5,Math.max(2,Math.floor((this.width-inset*2)/(radius*2+28))+1));
@@ -195,11 +199,11 @@ export class NinjaGame {
     // drift means a swipe at one object cannot accidentally meet its neighbour.
     const available=lanes.filter(x=>!this.state.objects.some(obj=>Math.abs((obj.launch?.laneX??obj.x)-x)<obj.radius+radius+24));
     if(!available.length)return null;
-    const x=available[Math.floor(this._random()*available.length)],span=Math.max(120,this.height-40),flight=((this.state.isTutorial?4.6:this.state.mode==='open'?4.4:this.state.mode==='boss'?4.7:this._difficulty().flight)+this._random()*.6)/this.state.speedFactor;
+    const x=available[Math.floor(this._random()*available.length)],span=Math.max(120,this.height-40),flight=((this.state.isTutorial?4.6:this.state.mode==='open'?4.4:this.state.mode==='boss'?4.7:this.state.quickRound?Math.max(4.6,this._difficulty().flight):this._difficulty().flight)+this._random()*.6)/this.state.speedFactor;
     const target=-radius-2,release=actor?getThrowerPose(actor,.22,.22):null,y=release?release.handY:this.height+radius+6,distance=y-target;
     // A longer Open flight must really grant more reaction time. Excess gravity
     // would otherwise send the object over its target early and back down later.
-    const gravity=['open','boss'].includes(this.state.mode)?Math.min(span*.08,distance/(flight*flight)):span*.08,vy=-(distance/flight+.5*gravity*flight);
+    const gravity=this.state.quickRound||['open','boss'].includes(this.state.mode)?Math.min(span*.08,distance/(flight*flight)):span*.08,vy=-(distance/flight+.5*gravity*flight);
     const obj={id:`ninja-${this.state.runSerial}-${++this.state.objectSequence}`,contentId:id,label:content.label,text:content.text,
       kind:content.powerup?'powerup':content.kindByContext[this.state.context],powerup:content.powerup||null,context:this.state.context,
       x,y,vx:0,vy,gravity,radius,age:0};
@@ -336,6 +340,10 @@ export class NinjaGame {
     if(!(s.levelIndex===1&&s.scene==='limit-choice'||s.levelIndex===2&&s.scene==='playing'&&s.stopAvailable))return fail('Die Stoppentscheidung wird an deiner Grenze oder in der Ruhephase verfügbar.');
     const events=[];s.metrics.healthyStops++;this._arcade(100);s.balance=Math.min(100,s.balance+10);s.overload=Math.max(0,s.overload-15);this._balance();this._achievement('healthy-stop');
     events.push({type:'healthy-stop',levelIndex:s.levelIndex,points:100});this._endStage('stop',events);return {ok:true,events};}
+  finishRound(){const s=this.state;
+    if(!s.started||s.ended||!['briefing','playing','limit-choice'].includes(s.scene))return fail('Es ist keine laufende Runde zum Beenden vorhanden.');
+    const events=[];if(s.mode==='open')s.openRuleset=null;
+    this._finishRun('stopped',events);return {ok:true,events};}
   continueAfterLimit(){const s=this.state;if(s.paused||s.ended||s.scene!=='limit-choice'||s.levelIndex!==1||s.extensionUsed)return fail('Eine Verlängerung ist hier nicht verfügbar.');
     s.extensionUsed=true;s.metrics.limitExtensions++;s.duration+=15;s.remaining=15;s.scene='playing';s.stopAvailable=false;s.overload=Math.min(99,s.overload+15);this._balance();this._record('limit-extended',{seconds:15,overload:15});this.save();
     return {ok:true,seconds:15,overload:15,events:[{type:'limit-continued',seconds:15,overload:15}]};}
@@ -343,14 +351,20 @@ export class NinjaGame {
     s.sleepContinued=true;s.metrics.sleepContinues++;this._arcade(200);s.overload=Math.min(99,s.overload+15);this._balance();this._record('sleep-continued',{points:200,overload:15});this.save();return {ok:true,points:200,overload:15,events:[{type:'sleep-continued',points:200,overload:15}]};}
   _finishRun(result,events){const s=this.state;if(s.ended)return;s.ended=true;s.scene='results';s.result=result;s.finishedAt=this._time();s.objects=[];s.awaitingNext=false;s.paused=false;s.stopAvailable=false;s.bonusPhase=null;s.bonusCoinPending=false;if(s.boss){s.boss.cueRemaining=0;s.boss.burstRemaining=0;}this._balance();
     if(!s.credited&&!s.isTutorial){s.credited=true;const eligible=s.metrics.correctDecisions>=12,completed=['complete','healthy-stop','locked'].includes(result);
-      const bonus=eligible&&completed?2+(s.metrics.healthyStops>0?1:0):0;const coins=Math.min(MAX,s.runCoins+bonus);s.awardedCoins=coins;this.profile.coins=Math.min(MAX,this.profile.coins+coins);this.profile.totalRuns++;
-      this.profile.totalRuns=Math.min(MAX,this.profile.totalRuns);this.profile.highScores[s.mode]=Math.max(this.profile.highScores[s.mode],s.score);if((s.mode==='campaign'||s.mode==='master')&&['complete','healthy-stop'].includes(result))this._achievement('context-master');
+      const bonus=eligible&&completed?2+(s.metrics.healthyStops>0?1:0):0;const coins=Math.min(MAX,s.runCoins+bonus);s.awardedCoins=coins;this.profile.coins=Math.min(MAX,this.profile.coins+coins);
+      const qualifiedStop=result!=='stopped'||s.metrics.correctDecisions>=8&&s.elapsed>=15;
+      if(!qualifiedStop){this.profile.stats.coinsEarned=Math.min(MAX,this.profile.stats.coinsEarned+coins);for(const id of unlockAchievements(this.profile))events.push({type:'achievement-unlocked',id});}
+      else {
+      this.profile.totalRuns=Math.min(MAX,this.profile.totalRuns+1);this.profile.highScores[s.mode]=Math.max(this.profile.highScores[s.mode],s.score);if((s.mode==='campaign'||s.mode==='master')&&['complete','healthy-stop'].includes(result))this._achievement('context-master');
       const stats=this.profile.stats;stats.correct=Math.min(MAX,stats.correct+s.metrics.correctDecisions);stats.coinsEarned=Math.min(MAX,stats.coinsEarned+coins);stats.superUses=Math.min(MAX,stats.superUses+s.metrics.superUses);stats.bestCombo=Math.max(stats.bestCombo,s.bestCombo);
       if(s.difficulty==='hard'&&['complete','healthy-stop'].includes(result))stats.hardClears=Math.min(MAX,stats.hardClears+1);for(const id of unlockAchievements(this.profile))events.push({type:'achievement-unlocked',id});
-      events.push(...recordDailyRun(this.profile,s,this._time()),...applyRankUnlocks(this.profile,this._time()),...recordAdventureRun(this.profile,s,this._time()));}
+      events.push(...recordDailyRun(this.profile,s,this._time()),...applyRankUnlocks(this.profile,this._time()),...recordAdventureRun(this.profile,s,this._time()));}}
     events.push({type:'ended',result,score:s.score,scoreArcade:s.scoreArcade,balanceScore:s.balanceScore,coins:s.awardedCoins});this._record('ended',{result});this.save();}
   setUsername(value){const result=validateUsername(value);if(!result.ok)return fail(result.reason);const player=normalizePlayer(this.profile);
-    this.profile.player={...player,username:result.username,createdAt:player.username?player.createdAt:this._time()};this.save();return {ok:true,username:result.username};}
+    delete player.guest;this.profile.player={...player,username:result.username,createdAt:player.username?player.createdAt:this._time()};this.save();return {ok:true,username:result.username};}
+  enterGuest(){const player=normalizePlayer(this.profile);
+    if(!player.username){this.profile.player={...player,username:'Ninja',createdAt:this._time(),guest:true};this.save();}
+    return {ok:true,guest:this.profile.player.guest===true,username:this.profile.player.username};}
   markGuideSeen(id){if(!GUIDE_IDS.includes(id))return fail('Unbekannter Guide-Hinweis.');const player=normalizePlayer(this.profile);
     if(!player.guideSeen.includes(id)){player.guideSeen.push(id);this.profile.player=player;this.save();}return {ok:true,id};}
   addNotification(value){const result=validateNotification(value);if(!result.ok)return fail(result.reason);const player=normalizePlayer(this.profile);
@@ -398,24 +412,26 @@ export class NinjaGame {
       this.profile.achievements=[...new Set((Array.isArray(p.achievements)?p.achievements:[]).filter(id=>ACHIEVEMENTS.some(item=>item.id===id)))];Object.assign(this.profile,sanitizeProgress(p));this.profile.player=normalizePlayer(p);this.profile.journey=normalizeJourney({...this.profile,journey:p.journey},this._time());this.profile.adventure=normalizeAdventure({...this.profile,adventure:p.adventure},this._time());}
     const source=saved.state;if(!isObject(source)||!MODES.includes(source.mode)||!['home','briefing','playing','limit-choice','results'].includes(source.scene))throw new Error('state');
     const s=emptyState(integer(source.rng,this.seed,1,0xffffffff),this.profile.selectedSkin);s.mode=source.mode;s.gamingLimit=[45,60,90].includes(source.gamingLimit)?source.gamingLimit:90;
+    s.quickRound=source.quickRound===true;
+    if(s.quickRound&&(!CONTEXTS.includes(s.mode)||source.missionId!==null&&source.missionId!==undefined))throw new Error('quick round');
     s.boss=s.mode==='boss'?restoreBossState(source.boss):null;if(s.mode==='boss'&&!s.boss)throw new Error('boss');
     s.missionId=typeof source.missionId==='string'&&/^[-a-z0-9]{1,48}$/.test(source.missionId)?source.missionId:null;
     if(s.mode==='boss'&&s.missionId===null)s.missionId=CAREER_MISSIONS.find(mission=>mission.bossId===s.boss.id)?.id||null;
     if(s.missionId!==null){const mission=getCareerMission(this.profile,s.missionId,this._time());
       if(!mission||mission.mode!==s.mode||mission.bossId!==(s.mode==='boss'?s.boss.id:null)||mission.locked){if(s.mode==='boss')throw new Error('boss mission');s.missionId=null;}}
     s.started=source.started===true;s.isTutorial=source.isTutorial===true&&s.mode==='campaign';s.difficulty=['open','boss'].includes(s.mode)?'normal':DIFFICULTIES.some(item=>item.id===source.difficulty)?source.difficulty:'easy';s.maxLives=s.isTutorial?5:['open','boss'].includes(s.mode)?3:getDifficulty(s.difficulty).lives;
-    s.openRuleset=s.mode==='open'?(source.openRuleset===OPEN_RULESET&&source.difficulty==='normal'&&source.maxLives===3?OPEN_RULESET:'legacy'):null;
+    s.openRuleset=s.mode==='open'&&source.result!=='stopped'?(source.openRuleset===OPEN_RULESET&&source.difficulty==='normal'&&source.maxLives===3?OPEN_RULESET:'legacy'):null;
     if(!Number.isInteger(source.stageIndex)||source.stageIndex<(s.isTutorial?-1:0)||source.stageIndex>=PLANS[s.mode].length)throw new Error('stage');
     s.stageIndex=source.stageIndex;
     if(s.isTutorial&&s.stageIndex!==-1)throw new Error('tutorial');s.levelIndex=s.isTutorial?0:PLANS[s.mode][s.stageIndex];if(source.levelIndex!==s.levelIndex)throw new Error('level');
     s.scene=source.scene;s.ended=source.ended===true;s.credited=source.credited===true||s.ended;s.awaitingNext=s.scene==='briefing';s.paused=source.paused===true;
-    if(s.mode==='open'&&s.ended&&source.result!=='lives')throw new Error('open result');
+    if(s.mode==='open'&&s.ended&&!['lives','stopped'].includes(source.result))throw new Error('open result');
     if(s.ended!== (s.scene==='results')||s.scene==='limit-choice'&&(s.levelIndex!==1||s.isTutorial))throw new Error('scene');
     s.context=CONTEXTS.includes(source.context)?source.context:LEVELS[s.levelIndex].context;
     if(s.mode==='boss'&&s.context!==getBoss(s.boss.id).phases[s.boss.phase].context)throw new Error('boss context');
     if(s.mode!=='boss'&&s.levelIndex!==3&&s.context!==LEVELS[s.levelIndex].context)throw new Error('context');
     s.extensionUsed=source.extensionUsed===true&&s.levelIndex===1;s.sleepContinued=source.sleepContinued===true&&s.levelIndex===2;
-    s.duration=['open','boss'].includes(s.mode)?0:s.isTutorial?60:s.levelIndex===1?s.gamingLimit+(s.extensionUsed?15:0):LEVELS[s.levelIndex].duration;
+    s.duration=['open','boss'].includes(s.mode)?0:s.isTutorial?60:s.levelIndex===1?s.gamingLimit+(s.extensionUsed?15:0):s.quickRound?45:LEVELS[s.levelIndex].duration;
     s.stageElapsed=number(source.stageElapsed,0,0,['open','boss'].includes(s.mode)?1000000:s.duration);s.remaining=['open','boss'].includes(s.mode)?0:Math.max(0,s.duration-s.stageElapsed);s.elapsed=number(source.elapsed,0,0,1000000);
     if(s.scene==='limit-choice'&&s.stageElapsed<s.duration-.001)throw new Error('limit');
     for(const key of ['score','combo','bestCombo','decisionStreak','objectSequence','runSerial','spawnCount','tutorialDecisions','tutorialCuts','tutorialPassed','awardedCoins'])s[key]=integer(source[key]);
@@ -429,7 +445,7 @@ export class NinjaGame {
     s.bestDecisionStreak=Math.max(s.decisionStreak,integer(source.bestDecisionStreak,0,0,s.metrics.correctDecisions));
     s.metrics.contextsPlayed=[...new Set((Array.isArray(source.metrics?.contextsPlayed)?source.metrics.contextsPlayed:[]).filter(value=>CONTEXTS.includes(value)))];
     s.metrics.stageStats=(Array.isArray(source.metrics?.stageStats)?source.metrics.stageStats:[]).slice(0,4).filter(item=>isObject(item)&&Number.isInteger(item.levelIndex)&&item.levelIndex>=0&&item.levelIndex<4).map(item=>({levelIndex:item.levelIndex,context:LEVELS[item.levelIndex].id,elapsed:number(item.elapsed,0,0,105),reason:['time','stop'].includes(item.reason)?item.reason:'time',...Object.fromEntries(Object.keys(stageMetrics()).map(key=>[key,integer(item[key])]))}));
-    const completed=s.isTutorial||s.mode==='boss'?0:s.stageIndex+(s.scene==='results'&&source.result!=='lives'?1:0);
+    const completed=s.isTutorial||s.mode==='boss'?0:s.stageIndex+(s.scene==='results'&&!['lives','stopped'].includes(source.result)?1:0);
     if(s.started&&(s.metrics.stageStats.length!==completed||s.metrics.stageStats.some((item,index)=>item.levelIndex!==PLANS[s.mode][index])))throw new Error('progress');
     for(const key of Object.keys(s.stageMetrics))s.stageMetrics[key]=integer(source.stageMetrics?.[key]);
     s.runCoins=integer(source.runCoins);s.coinRemainder=number(source.coinRemainder,0,0,.999999999);s.superCharge=number(source.superCharge,0,0,100);
@@ -446,10 +462,10 @@ export class NinjaGame {
     s.spawnTimer=number(source.spawnTimer,.5,0,2);s.masterSwitchIndex=integer(source.masterSwitchIndex,0,0,3);s.pendingContext=CONTEXTS.includes(source.pendingContext)&&s.levelIndex===3?source.pendingContext:null;
     if(s.levelIndex===3&&(s.context!==['study','gaming','sleep','study'][s.masterSwitchIndex]||s.stageElapsed+.0000001<s.masterSwitchIndex*25||s.pendingContext&&s.pendingContext!==['gaming','sleep','study'][s.masterSwitchIndex]))throw new Error('master context');
     if(s.mode==='boss'){
-      if(s.metrics.correctDecisions!==s.boss.maxHealth-s.boss.health||s.boss.defeated&&!s.ended||s.ended&&!['lives','complete'].includes(source.result)||s.ended&&(source.result==='complete')!==s.boss.defeated||!s.ended&&s.scene==='limit-choice')throw new Error('boss result');
+      if(s.metrics.correctDecisions!==s.boss.maxHealth-s.boss.health||s.boss.defeated&&!s.ended||s.ended&&!['lives','complete','stopped'].includes(source.result)||s.ended&&(source.result==='complete')!==s.boss.defeated||!s.ended&&s.scene==='limit-choice')throw new Error('boss result');
       s.spawnTimer=number(source.spawnTimer,1.4,0,3);
     }
-    s.skin=this.profile.unlockedSkins.includes(source.skin)?source.skin:this.profile.selectedSkin;s.result=['complete','healthy-stop','lives','locked'].includes(source.result)?source.result:null;
+    s.skin=this.profile.unlockedSkins.includes(source.skin)?source.skin:this.profile.selectedSkin;s.result=['complete','healthy-stop','lives','locked','stopped'].includes(source.result)?source.result:null;
     if(s.result==='locked'){if(!s.ended||s.mode!=='campaign'||s.stageIndex+1>=PLANS.campaign.length)throw new Error('locked world');s.nextLockedWorld=LEVELS[PLANS.campaign[s.stageIndex+1]].id;}
     s.startedAt=number(source.startedAt,this._time());if(s.ended)s.finishedAt=number(source.finishedAt,this._time());
     s.tutorialReason=['learned','timeout','skipped'].includes(source.tutorialReason)?source.tutorialReason:null;
@@ -461,6 +477,6 @@ export class NinjaGame {
     this.state=s;this._balance();const targetWidth=this.width,targetHeight=this.height;this.width=savedWidth;this.height=savedHeight;this.resize(targetWidth,targetHeight);
   }catch{this.state=emptyState(this.seed,this.profile.selectedSkin);this.storageFailed=true;this.storageError='unreadable';}}
   getSnapshot(){return clone({state:this.state,profile:this.profile,width:this.width,height:this.height,storageFailed:this.storageFailed});}
-  exportData(){return clone({game:'Notification Ninja',version:'1.8.1',schemaVersion:1,width:this.width,height:this.height,profile:this.profile,state:this.state});}
+  exportData(){return clone({game:'Notification Ninja',version:'2.0.0',schemaVersion:1,width:this.width,height:this.height,profile:this.profile,state:this.state});}
 }
 export const Game = NinjaGame;

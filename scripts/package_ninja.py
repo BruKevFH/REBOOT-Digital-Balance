@@ -4,176 +4,93 @@ from zipfile import ZipFile, ZipInfo, ZIP_DEFLATED
 from hashlib import sha256
 
 ROOT=Path(__file__).resolve().parents[1]/'notification-ninja'
-NAME='Notification-Ninja-1.8.1'
-FILES=['index.html','home.html','styles.css','sw.js','manifest.webmanifest','favicon.svg','dist/ninja.js','dist/build.json','leaderboard-config.json']
-INSTRUCTIONS='''NOTIFICATION NINJA – MASTER YOUR DIGITAL BALANCE
+NAME='Notification-Ninja-2.0.0'
+FILES=['index.html','home.html','styles.css','sw.js','manifest.webmanifest','favicon.svg','dist/ninja.js','dist/home.js','dist/build.json','leaderboard-config.json','assets/dojo-study.png','assets/dojo-gaming.png','assets/dojo-sleep.png','assets/focus-village.png','branding/Notification-Ninja-Logo.png']
+INSTRUCTIONS='''NOTIFICATION NINJA
+DEUTSCH / ENGLISH
 
-Die gesamte ZIP entpacken. Im Spielordner index.html in einem aktuellen
-Chrome, Edge oder Firefox öffnen. Maus oder Touch und JavaScript erforderlich.
-Alle Grafiken, Effekte, Musik und Spielregeln sind lokal enthalten.
-Keine Installation und kein Passwort nötig. Das lokale Spiel braucht keine API.
-Wähle zuerst einen Ninja-Namen (3–18 Zeichen). Dein Profil mit Münzen,
-XP und Level bleibt auf diesem Gerät; den Namen kannst du im Profil ändern.
-home.html ist die eigene Homepage mit Spielinfos und Jetzt-spielen-Knopf.
-index.html öffnet das Spiel direkt. Der Homepage-Link im Dojo erhält dein
-Profil und deinen pausierten Run; Abmelden bleibt eine getrennte Aktion.
-Profil löschen verlangt deinen aktuellen Namen zur Bestätigung und löscht
-Notification-Ninja-Daten. Andere Spiele bleiben erhalten. Falls du Ergebnisse
-veröffentlicht hast, werden zuerst deine Online-Einträge gelöscht.
-Deine Garderobe zeigt gekaufte Looks und dein echtes ausgewähltes Ninja-Bild.
-Je nach Schwierigkeit werfen 1 / 2 / 3 große Ninjas in deinem ausgewählten
-Look die echten Gegenstände aus ihrer Hand ins Feld. Ausholen und Anflug
-sind geschützt; erst im freien Flug kannst du die Gegenstände schneiden.
-Neue Runs übernehmen die Auswahl. Ein gespeicherter Run behält seinen Look.
-Große Herzsymbole zeigen deine verbleibenden Chancen. Rundenuhr, Münzen
-und Tempo stehen schmal rechts; das Spielfeld reicht bis nach unten.
-Deine Super hat eine eigene Taste unten links und meldet SUPER BEREIT!
-Die große Spielansicht startet sofort. Mit der ersten passenden Eingabe wird
-echtes Vollbild angefordert; die Taste oben rechts kann die Ansicht wechseln. Unterstützt dein
-Browser kein echtes Vollbild, öffnet sie eine große Spielansicht mit kompakter
-Anzeige; die Browserleiste kann dabei sichtbar bleiben. Zum Verlassen erneut
-die Taste drücken. Esc verlässt die große Spielansicht, sonst pausiert es.
-Meister NIM, dein eigener Fuchs-Sensei, erklärt im Training das Wischen
-und Durchlassen. Während der Erklärungen pausiert die Runde.
-Neue Kräfte erklärt er beim Freischalten.
-Der Posteingang zeigt ungelesene Mitteilungen. Ansehen markiert genau
-eine Mitteilung als gelesen und blendet sie dauerhaft aus. Freischaltungen
-und noch nicht abgeholte Münzbelohnungen bleiben erhalten. Dein Profil
-behält die letzten 50 Mitteilungen. Abholbereite
-Erfolgsbelohnungen stehen ganz oben, bis du die Münzen abholst. Danach
-wandern sie nach unten; neue Ziele bleiben darüber sichtbar. Dein Fähigkeitenbaum
-wächst aus der Mitte in drei verbundenen Wurzelzweigen.
-Die feste Zurück-Taste bringt dich zur vorherigen Ansicht zurück.
-Die entspannte Dojo-Musik beginnt nach deiner ersten Eingabe im Hauptmenü.
-Im Spiel wechselt sie passend zum Raum. Du kannst sie ausschalten.
+DEUTSCH
 
-Mit gedrückter Maustaste oder Finger durch Ablenkungen WISCHEN.
-Sinnvolle Inhalte bewusst bis zum oberen Rand durchlassen.
-Die aktuelle Situation entscheidet: Gaming passt zur Gaming-Zeit,
-kann aber beim Lernen oder vor dem Schlafen ablenken.
-Fünf richtige Entscheidungen aktivieren Focus Flow.
-Goldene Power-ups bieten Zeitlupe, Schild, Bonuspunkte und Münzen.
-Esc: Pause. M oder Musik-Schalter: Musik an/aus.
-Normale Räume: Entspannt 5 Herzen, Normal 4, Profi 3. Das Tempo steigt.
-Open Run hat unabhängig davon genau drei Herzen und einen einzigen Modus.
-Nach 15, 30 und 60 Sekunden wird es deutlich schneller. Normale Räume
-erreichen nach 90 aktiven Sekunden ihre Tempospitze.
-Ein falscher Schnitt ODER eine durchgelassene Ablenkung kostet ein Herz.
-Schilde schützen vor einem Fehler. WISCHEN-/BEHALTEN-Hilfen siehst du nur
-im Training. Im Spiel entscheiden Gegenstand und aktuelles Ziel.
-Klassenzimmer, Gaming-Zimmer und Schlafzimmer haben eigene Hintergründe
-und passende Objekte: Bücher, Controller, Kissen und vieles mehr.
+1. Die gesamte ZIP entpacken und home.html oder index.html öffnen.
+2. Deutsch oder English auswählen. Die Sprache bleibt auf diesem Gerät.
+3. Direkt als Gast spielen oder freiwillig einen Ninja-Namen wählen.
+   Keine E-Mail, kein Passwort und keine Pflichtregistrierung.
+4. Lernen, Gaming oder Schlafen auswählen. Alle drei kurzen Alltagsrunden
+   sind kostenlos spielbar. Lernen und Schlafen dauern 45 Sekunden;
+   beim Gaming sind auch 60 oder 90 Sekunden möglich.
+5. Mit gedrückter Maustaste oder Finger durch Ablenkungen wischen.
+   Hilfreiche Dinge unberührt lassen. Dein aktuelles Ziel entscheidet.
+   NIM erklärt die Regeln im Training; nur dort gibt es Lösungshinweise.
 
-Der kostenlose OPEN RUN hat genau drei Herzen, einen langsamen Einstieg
-und kein Zeitlimit. Die ersten Flugobjekte geben über fünf Sekunden Zeit.
-Das Tempo steigt mit der aktiven Spielzeit immer weiter, auch nach 300 Sekunden.
-Gekaufte Fähigkeiten und Supers sind dort ausgeschaltet.
-Fliegende Power-ups und Focus Flow bleiben dabei; Looks sind kosmetisch.
+Über Pause kannst du fortsetzen oder die Runde bewusst beenden.
+Ergebnis und Reflexionsfrage helfen beim Übertragen in den Alltag.
+Beenden und Pause machen ist ebenso erreichbar wie eine neue Runde.
+In den Einstellungen: Deutsch/Englisch, ruhige Effekte und Musik an/aus.
+Ruhige Effekte verringern Partikel, Kamerawackeln und Feieranimationen.
+Das gewählte Tempo gilt für normale und kurze Alltagsrunden.
 
-Sammle Rundenmünzen: eine Grundmünze je 14 richtige Entscheidungen,
-je Münzobjekt und je voller 25er-Combo. Münzgespür senkt 14 auf 12.
-Schwierigkeit und Boni verändern den Verdienst. Pro Abschnitt gelten
-8 / 10 / 12 Spielmünzen als Grenze; Goldener Lauf erhöht diese um 25 %,
-abgerundet. Ein Open Run zählt als ein fortlaufender Abschnitt.
-Am Rundenende werden sie gesichert, auch wenn deine Herzen aufgebraucht sind.
-Ein regulärer Abschluss ab 12 richtigen Entscheidungen gibt 2 Münzen extra,
-ein bewusster Gaming-/Sleep-Stopp dann eine weitere. Bei null Herzen
-gibt es diesen Abschlussbonus nicht. Ein einzelner perfekter Study-Run
-kann ohne Münzfähigkeiten höchstens 10 / 12 / 14 Münzen sichern.
-Neun Fähigkeiten in drei Zweigen: Fokus, Schutz, Münzen/Kombos.
-Die Stufen kosten 35, 90 und 180 Münzen.
-Kaufe zuerst den Vorgänger; schalte eine Super frei und rüste sie aus.
-Gute Entscheidungen laden deine Super: bei 100% Taste oder Leertaste drücken.
-Es gibt Zeitzauber, Rettungsschirm und Aufräum-Wirbel.
-Neue Fähigkeiten und die ausgerüstete Super gelten ab der nächsten normalen
-Runde; im Open Run sind sie deaktiviert. 24 Erfolge mit eigenen Bildabzeichen
-bieten einmalige Münzbelohnungen zum Abholen.
+Dein lokales Profil speichert Münzen, XP, Skins und Freischaltungen.
+Einen Gast kannst du später freiwillig benennen. Abmelden erhält Fortschritt;
+Profil löschen verlangt eine Bestätigung. Es gibt keine Gerätesynchronisierung.
+Sprache und ruhige Effekte sind allgemeine Einstellungen dieses Geräts.
 
-Deine Zimmerkarte beginnt im kostenlosen Schulzimmer. Kaufe danach
-Gaming-Zimmer (80), Schlafzimmer (180) und Balance Master (320 Münzen).
-Die Kampagne endet vor gesperrten Räumen und sichert dabei deine Münzen.
-Im Ninja-Basar findest du Spielorte, Hintergründe und vier Ninja-Designs.
-Papiergarten (160), Pixelbucht (220) und Mondinseln (280 Münzen) erfordern
-ihren Spielort. Nach dem Kaufen auswählen und eine neue Runde beginnen.
-Ninja Mint ist frei; Solar Slice kostet 80, Arctic Focus 180 und
-Violet Flow 320 Münzen. Vorhandenes Guthaben und Freischaltungen bleiben.
-Kleidung und Wischspur ändern sich passend zu deinem Ninja-Design.
-Über Training kannst du die Übungsrunde jederzeit wiederholen.
-Münzregen, Combo-Party und Fokus-Welle wechseln als Bonusphasen.
+Dein Abenteuer bleibt erhalten: Karrierekarte mit acht Missionen, drei
+Autoplay-Bosse, drei Wochen- und Tagesaufgaben, Ninja-Ränge, Garderobe,
+24 Erfolge, neun Fähigkeiten und eigene Hintergrundwelten. Zusätzliche
+Kampagnenräume und Designs werden mit erspielten Münzen freigeschaltet.
+Belohnungen ausdrücklich abholen; Ausrüstung ändert sich nicht automatisch.
 
-NEU IN 1.8: KARRIERE, AUTOPLAY-BOSSE UND WOCHENAUFGABEN
-Öffne die Karrierekarte im Dojo: Acht verbundene Missionen führen durch
-Lernen, Gaming, Schlaf und drei Autoplay-Duelle. Die ersten Missionen sind
-kostenlos. Für Missionen in Gaming, Sleep und Master kaufst du zuvor die
-passenden Räume. Geschaffte Ziele öffnen die nächsten Pfade. Ihre einmaligen
-Münzbelohnungen holst du ausdrücklich ab; Wiederholen zahlt sie nicht erneut.
-Der Autoplay-Späher hat 20, der Wächter 28 und der Meister 36 Trefferpunkte.
-Richtige Schnitte und bewusst durchgelassene hilfreiche Dinge schwächen ihn.
-Den Drachen selbst brauchst du nicht zu schneiden. Alle Duelle haben drei
-Herzen, keine gekauften Fähigkeiten und kein Zeitlimit. Jede neue Welle wird
-1,35 Sekunden vorher angekündigt. Drei Phasen wechseln zwischen Lernen,
-Gaming und Schlaf; alte Gegenstände verlassen vor dem Wechsel das Feld.
-Bei null Boss-Energie gewinnst du, bei null Herzen kannst du neu versuchen.
-Boss-Ergebnisse zählen nicht für die gemeinsame Open-Run-Rangliste.
-Die Schlaf-Karrieremission bietet den bewussten Stopp erst an, wenn du acht
-richtige Entscheidungen erreicht hast. Verzichte für dieses Ziel auf den Bonus.
+Open Run: drei Herzen, langsamer Einstieg, kein Zeitlimit, steigendes Tempo.
+Gekaufte Fähigkeiten und Supers sind dort ausgeschaltet. Ein bewusst
+abgebrochener Run zählt nicht für die gemeinsame Rangliste. Zum freiwilligen
+Veröffentlichen ist ein selbst gewählter öffentlicher Ninja-Name nötig.
 
-Drei Wochenaufgaben bieten zusammen 15 Münzen zum einmaligen Abholen.
-Erledigst du alle drei, kannst du zusätzlich das Wochen-Outfit freischalten:
-Lotuswächter, Glutfuchs oder Gezeitengeist mit eigenen Verzierungen und
-Wurfeffekten. Diese Looks sind kosmetisch und nicht für Münzen erhältlich.
-Sie bleiben in deiner Garderobe und werden nicht automatisch angezogen.
-Neue Aufgaben beginnen montags nach dem lokalen Kalender deines Geräts.
-Eine Runde aus der Vorwoche zählt nicht für die neue Woche. Noch offene
-Wochenbelohnungen wechseln mit der Woche; gesicherte Münzen und Looks bleiben.
-Die drei Outfits kehren alle drei Wochen wieder; bereits verdiente werden
-nicht doppelt vergeben. Qualifizierende Runden zählen nach ihrem Abschluss,
-Training zählt nicht. Ein erneutes Laden rechnet keine Runde doppelt ab.
+Falls der Browser lokale Dateien einschränkt, den entpackten Ordner über
+HTTP öffnen. Das vollständige Spiel enthält alle Grafiken, Übersetzungen
+und Musik lokal. Online-Rangliste nur über die veröffentlichte Webversion;
+Münzen und dein lokales Profil funktionieren ohne diese Verbindung.
 
-DEIN WEG ZUM GROSSMEISTER
-Fünf Ninja-Ränge wachsen mit deinen gesicherten XP: Anfänger, Morgenwind,
-Schatten-Ninja, Tempelwächter und Großmeister bei 0 / 350 / 1500 / 4500 /
-10000 XP. Morgenwind, Schatten-Ninja und Großmeister schenken dir eigene
-Outfits mit Wurfverzierungen. In deiner Garderobe auswählen; keine Münzen nötig.
-Täglich gibt es drei wechselnde Missionen mit 2 / 3 / 4 Münzen Belohnung.
-Gewertete Runden ab acht richtigen Entscheidungen und 15 Sekunden zählen
-(bewusster Gaming-/Schlaf-Stopp ab acht Sekunden); Training zählt nicht.
-Geschaffte Belohnungen im Dojo ausdrücklich abholen, höchstens neun pro Tag.
-Bei 10 / 25 / 50 richtigen Entscheidungen in Folge feiern deine Ninjas mit
-Animationen, Fanfaren und 250 / 750 / 2000 Bonuspunkten, einmal je Run.
-Die Kulisse verändert sich nach 30 / 60 / 120 / 180 aktiven Sekunden mit
-Wolken, Tempellicht und Blüten. NIM erklärt nach der Runde deinen letzten
-Fehler passend zur Lernsituation und gibt einen kurzen Tipp.
+ENGLISH
 
-Training, Open Run, Study, Gaming, Sleep, Balance Master und Karriere stehen bereit.
-Das Gaming-Rundenlimit wählst du selbst (45, 60 oder 90 Sekunden).
-Nach Ablauf darfst du bewusst aufhören oder einmal 15 Sekunden verlängern.
-In Sleep kannst du deine Punkte sichern und die virtuelle Nacht abschließen.
+1. Extract the whole ZIP and open home.html or index.html.
+2. Choose Deutsch or English. Your choice is remembered on this device.
+3. Play as a guest, or choose a Ninja name if you want one.
+   No email, password or required registration.
+4. Choose Study, Gaming or Sleep. All three short everyday rounds are free.
+   Study and Sleep last 45 seconds; Gaming also offers 60 or 90 seconds.
+5. Hold the mouse button or use your finger to swipe through distractions.
+   Leave helpful things untouched. What matters depends on your current goal.
+   NIM explains the rules in training; answer hints appear only there.
 
-Fortschritt, Highscores, Münzen und Skins bleiben lokal im Browser.
-XP: 5 je richtige Entscheidung, 10 je Super, 25 je beendete Runde;
-gesichert am Rundenende. Training vergibt keine Run-XP.
-Bei eingeschränkter Dateispeicherung bleibt die Sitzung spielbar.
-Falls lokale Dateien eingeschränkt sind, den Ordner über HTTP öffnen.
-Das Spiel ist eine Lernsimulation; Balance und Overload sind Spielwerte.
-Ergebnisse lassen sich im Spiel als JSON exportieren.
+Pause lets you resume or end a round deliberately. Your result and a short
+reflection question connect the game with everyday life. Ending and taking
+a break is as easy to find as starting another round. Settings include
+language, calm effects and music. Calm effects reduce particles, screen
+shake and celebration animations. Your chosen pace applies to short and
+regular everyday rounds.
 
-Die gemeinsame Rangliste ist mit https://notification-ninja-ranking.onrender.com
-verbunden. Nur ausdrücklich veröffentlichte neue Open Runs zählen in einer
-gemeinsamen Wertung mit denselben drei Herzen und demselben Tempo. Die neue gemeinsame Wertung zählt nur die neuen Drei-Herz-Runs. Alte
-Ergebnisse bleiben getrennt. Es gibt keine erfundenen Mitspieler. Offline werden keine
-Ergebnisse übertragen; das lokale Spiel funktioniert weiterhin.
-Zum Veröffentlichen die GitHub-Pages-Version verwenden. Ein lokal geöffneter
-Download hat eine andere Herkunft und darf deshalb nicht an die öffentliche
-Rangliste senden.
-Der kostenlose Render-Dienst kann nach einer Pause ungefähr eine Minute zum
-Starten brauchen. Warte kurz und öffne die Rangliste bei Bedarf erneut.
-Bei Render Free geht die Online-Rangliste durch Einschlafen, Neustart oder
-Deployment verloren. Lokale Münzen und Profile bleiben erhalten.
-Betriebsanleitung:
-https://github.com/BruKevFH/REBOOT-Digital-Balance/blob/main/server/README_NINJA.md
+Your local profile keeps coins, XP, outfits and unlocks on this device.
+Guests may choose a name later. Signing out keeps progress; deleting a
+profile requires confirmation. There is no account sync across devices.
+Language and calm effects are general preferences for this device.
 
-https://brukevfh.github.io/REBOOT-Digital-Balance/notification-ninja/
+Your adventure remains: eight career missions, three Autoplay bosses,
+daily and weekly tasks, Ninja ranks, wardrobe, 24 achievements, nine skills
+and extra backgrounds. Earn coins to unlock campaign rooms and designs.
+Claim rewards explicitly; new equipment is not equipped automatically.
+
+Open Run has three hearts, a gentle start, no timer and increasing speed.
+Purchased skills and Supers are disabled. Ending early does not qualify for
+the shared leaderboard. Publishing is optional and needs a chosen public
+Ninja name. Local downloads cannot publish to the public service.
+
+If local file access is restricted, serve the extracted folder over HTTP.
+Graphics, both languages and music are included; no extra download is needed.
+Your coins and local progress work offline. The free online ranking service
+may take a moment to wake up and may lose scores after a restart.
+
+PLAY ONLINE / ONLINE SPIELEN
+https://brukevfh.github.io/REBOOT-Digital-Balance/notification-ninja/home.html
 '''
 for name in FILES:
     if not (ROOT/name).is_file():raise SystemExit(f'Missing runtime file: {name}')
@@ -181,7 +98,7 @@ output=ROOT/'downloads'/f'{NAME}.zip'
 output.parent.mkdir(exist_ok=True)
 with ZipFile(output,'w',ZIP_DEFLATED) as z:
     for name in FILES+['START-HIER.txt']:
-        info=ZipInfo(f'{NAME}/{name}',(2026,10,16,0,0,0));info.compress_type=ZIP_DEFLATED;info.external_attr=0o100644<<16
+        info=ZipInfo(f'{NAME}/{name}',(2026,10,27,0,0,0));info.compress_type=ZIP_DEFLATED;info.external_attr=0o100644<<16
         z.writestr(info,INSTRUCTIONS.encode() if name=='START-HIER.txt' else (ROOT/name).read_bytes())
 with ZipFile(output) as z:
     assert z.testzip() is None

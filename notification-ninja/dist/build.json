@@ -1,8 +1,23 @@
 {
-  "name": "Notification Ninja – Master Your Digital Balance",
-  "version": "1.8.1",
+  "name": "Notification Ninja",
+  "version": "2.0.0",
   "engine": "Canvas 2D / Web Audio",
-  "style": "Illustrated cartoon arcade",
+  "style": "Illustrated paper dojo",
+  "illustratedRoomArt": true,
+  "villageMap": true,
+  "logo": "branding/Notification-Ninja-Logo.png",
+  "languages": [
+    "de",
+    "en"
+  ],
+  "guestPlay": true,
+  "quickRounds": [
+    "study",
+    "gaming",
+    "sleep"
+  ],
+  "calmEffects": true,
+  "reflection": true,
   "entry": "index.html",
   "homepage": "home.html",
   "inbox": "unread-only",

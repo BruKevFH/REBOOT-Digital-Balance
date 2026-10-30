@@ -2,6 +2,7 @@ import {SKILLS,WORLDS,BACKGROUNDS,ACHIEVEMENTS} from './progression.js';
 
 /** Local player identity and progress derived from existing gameplay counters. */
 export const GUIDE_IDS = Object.freeze([
+  'quick-round','calm-view','reflection',
   'career','weekly','boss-intro','daily-ready','rank:beginner','rank:dawn','rank:shadow','rank:temple','rank:grandmaster','welcome','training-intro','training-swipe','training-keep','training-complete',
   'first-coins','first-powerup','first-flow','first-skill','first-super-unlock',
   'super-ready','first-super-use','first-world','first-background','first-skin',
@@ -69,6 +70,7 @@ export function normalizePlayer(profile) {
   return {
     username:name.ok ? name.username : '',
     createdAt:name.ok ? Math.min(MAX_DATE, count(source.createdAt)) : 0,
+    ...(name.ok&&name.username==='Ninja'&&source.guest===true?{guest:true}:{}),
     guideSeen:[...new Set((Array.isArray(source.guideSeen) ? source.guideSeen : [])
       .filter(id => GUIDE_IDS.includes(id)))],
     notifications:normalizeNotifications(source.notifications)

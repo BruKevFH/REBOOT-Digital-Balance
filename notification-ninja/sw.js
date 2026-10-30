@@ -1,7 +1,7 @@
 const SCOPE=new URL(self.registration.scope);
 const PREFIX=`notification-ninja:${SCOPE.pathname}:`;
-const CACHE=`${PREFIX}1.8.1`;
-const ASSETS=['./','./index.html','./home.html','./styles.css','./dist/ninja.js','./dist/build.json','./leaderboard-config.json','./manifest.webmanifest','./favicon.svg'];
+const CACHE=`${PREFIX}2.0.0`;
+const ASSETS=['./','./index.html','./home.html','./styles.css','./dist/ninja.js','./dist/home.js','./dist/build.json','./leaderboard-config.json','./manifest.webmanifest','./favicon.svg','./assets/dojo-study.png','./assets/dojo-gaming.png','./assets/dojo-sleep.png','./assets/focus-village.png','./branding/Notification-Ninja-Logo.png'];
 const NAVIGATION=new Map([
   [SCOPE.pathname,'./index.html'],
   [new URL('./index.html',SCOPE).pathname,'./index.html'],

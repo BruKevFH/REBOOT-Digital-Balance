@@ -2,13 +2,29 @@
 
 Ein buntes, deutschsprachiges Arcade-Spiel über digitale Ablenkung: Wische durch störende Inhalte und lass hilfreiche Dinge passieren. Ein sonniges Klassenzimmer, ein gemütliches Gaming-Zimmer und ein Schlafzimmer bei Mondlicht begleiten deinen Tag. Bücher, Controller, Trinkflaschen, Kissen und andere gezeichnete Objekte passen zur jeweiligen Umgebung.
 
-**[Homepage](https://brukevfh.github.io/REBOOT-Digital-Balance/notification-ninja/home.html)** · **[Im Browser spielen](https://brukevfh.github.io/REBOOT-Digital-Balance/notification-ninja/)** · **[Vollständiges Spiel 1.8.1 herunterladen](downloads/Notification-Ninja-1.8.1.zip)**
+**[Homepage](https://brukevfh.github.io/REBOOT-Digital-Balance/notification-ninja/home.html)** · **[Im Browser spielen](https://brukevfh.github.io/REBOOT-Digital-Balance/notification-ninja/)** · **[Vollständiges Spiel 2.0.0 herunterladen](downloads/Notification-Ninja-2.0.0.zip)**
+
+## Neu: ein klarer Einstieg in Deutsch und Englisch
+
+**[English instructions](README.en.md)** · **[Anforderungsabgleich](REQUIREMENTS.md)**
+
+Wähle auf der Homepage oder in den Einstellungen **Deutsch / English**. Menüs, Regeln, NIM-Erklärungen, fliegende Objektbeschriftungen, Fehlermeldungen und Ergebnisse wechseln gemeinsam. Deine Sprache bleibt auf dem Gerät gespeichert. Der Wechsel verändert weder Münzen noch laufende Runde, Namen oder Ranglisten-Regeln.
+
+Starte direkt als **Gast**; du brauchst keine personenbezogene Eingabe. Drei große Situationskarten öffnen kostenlose Alltagsrunden: **Lernen, Gaming, Schlafen**. Lernen und Schlafen dauern 45 Sekunden; Gaming bietet zusätzlich 60 oder 90 Sekunden. Jede Einführung nennt ein klares Ziel und ein konkretes Beispiel. Wähle Entspannt, Normal oder Profi. Kurze Runden begrenzen die gleichzeitigen Objekte auf zwei, drei oder vier und geben einen sanften Einstieg. Die zusätzlich kaufbaren Räume gehören weiterhin zur Kampagne und Karriere; Alltagsrunden umgehen diese Käufe nur für den kurzen Lernablauf.
+
+Über **Pause → Runde beenden** kannst du jederzeit bewusst aufhören. Bereits erspielte Münzen werden einmalig gesichert, ohne einen Sieg oder Abschlussbonus vorzutäuschen. Leere Sofortabbrüche bringen keine Run-XP. Ein vorzeitig beendeter Open Run zählt nicht für die gemeinsame Rangliste.
+
+Nach der Runde verbindet eine kurze, situationsbezogene **Reflexionsfrage** das Spiel mit dem Alltag. Die Auswahl ist freiwillig, vergibt keine Münzen und verlangt keinen Freitext. **Neue Runde** und **Beenden & Pause machen** sind gleich gut erreichbar. Die Pauseansicht startet keine neue Runde automatisch.
+
+In den Einstellungen kannst du **ruhige Effekte** aktivieren: keine Partikelregen, Kamerawackler oder großen Comboanimationen, aber weiterhin klarer Text und spielnotwendige Würfe. Die Bewegungseinstellung des Betriebssystems wird ebenfalls berücksichtigt. Musik bleibt unabhängig abschaltbar.
+
+Die finale Wortmarke enthält keinen Zusatzslogan. [Logo als PNG](branding/Notification-Ninja-Logo.png) · [Logo als PDF](branding/Notification-Ninja-Logo.pdf). Die Gestaltung folgt den Mock-ups des Konzeptdokuments: Creme, Mint, Koralle, Gold und Lavendel, runde Karten, dunkle Konturen, große Bedienziele und detailliert illustrierte Dojo-Räume und eine gemeinsame Dorfkarte für die drei Situationen. Die umfangreichen Systeme bleiben unter **Dein Abenteuer** erhalten und stehen dem kurzen Kernablauf nicht im Weg. Es gibt keine Diagnoseabfrage und keine medizinische Profilbildung.
 
 ## Spielen
 
 Die eigene [Homepage](home.html) erklärt das Spiel und führt mit „Jetzt spielen“ zu deinem Dojo. Sie ist auch im Download enthalten. Der Homepage-Link im Spiel erhält deinen Namen, dein Profil und einen pausierten Run; Abmelden ist eine getrennte Aktion.
 
-Öffne das Spiel in einem aktuellen Browser mit JavaScript. Die Startseite führt dich in dein Dojo. Wähle beim ersten Start einen **Ninja-Namen mit 3–18 Zeichen**. Erlaubt sind Buchstaben, Zahlen, Leerzeichen, `_` und `-`. Dein lokales Spielerprofil braucht kein Passwort und keine E-Mail. Hast du dich abgemeldet, kannst du von der Startseite mit deinem gespeicherten Profil zurückkehren.
+Öffne das Spiel in einem aktuellen Browser mit JavaScript. Die Startseite führt dich in dein Dojo. Du kannst direkt als Gast spielen. Einen **Ninja-Namen mit 3–18 Zeichen** wählst du nur, wenn du das möchtest. Erlaubt sind Buchstaben, Zahlen, Leerzeichen, `_` und `-`. Dein lokales Spielerprofil braucht kein Passwort und keine E-Mail. Ein Name ist nur für das freiwillige Veröffentlichen eines Open Runs nötig. Hast du dich abgemeldet, kannst du von der Startseite mit deinem gespeicherten Profil zurückkehren.
 
 Für den Download die **gesamte ZIP-Datei entpacken** und anschließend `index.html` öffnen. Alle Laufzeitdateien gehören zum Paket; eine Engine-Installation ist nicht erforderlich. Falls dein Browser lokale Dateien einschränkt, kannst du den entpackten Ordner über einen lokalen HTTP-Server öffnen.
 
@@ -255,6 +271,8 @@ Das [Ablaufdiagramm und die Beispielplanung](PLAN.md) beschreiben Spielablauf, t
 
 ```text
 notification-ninja/
+├── assets/                  # Drei illustrierte Dojo-Räume und Dorfkarte
+├── branding/                # Finales Logo als PNG und PDF
 ├── home.html                 # Eigene Homepage, ohne Spielstart oder Profiländerung
 ├── index.html, styles.css     # Startmenü, HUD und Dialoge
 ├── src/game.js               # Regeln, Kontextwechsel und Spielstände
@@ -263,6 +281,9 @@ notification-ninja/
 ├── src/journey.js            # XP-Ränge, verdiente Outfits und drei Tagesmissionen
 ├── src/adventure.js          # Karrierekarte, Wochenaufgaben und ausdrückliche Belohnungen
 ├── src/boss.js               # Drei Autoplay-Bosse und ihre Wellenzustände
+├── src/i18n.js, preferences.js # Sprache und ruhige Effekte, getrennt vom Spielstand
+├── src/locales/              # Englische Menüs, Kataloge, Hinweise und Homepage
+├── src/home.js              # Eigenständige zweisprachige Homepage ohne Spielengine
 ├── src/mentor.js             # NIM-Dialoge, Erkläranimationen und Fokussteuerung
 ├── src/art.js                # Eigene Upgrade-, Erfolgs- und Dojo-Illustrationen
 ├── src/local-profile.js      # Lokale Anmeldung und Profil-Löschung

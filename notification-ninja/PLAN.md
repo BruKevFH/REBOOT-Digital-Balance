@@ -1,6 +1,20 @@
 # Notification Ninja: Ablauf und Weiterentwicklung
 
-Diese Übersicht dokumentiert den Spielablauf von Version 1.8.1 und ordnet die technischen Aufgaben. Der Zeitplan am Ende ist ein **anpassbares Beispiel für Weiterentwicklung**. Seine Daten sind keine vereinbarte Projektfrist.
+Diese Übersicht dokumentiert den Spielablauf von Version 2.0.0 und ordnet die technischen Aufgaben. Der Zeitplan am Ende ist ein **anpassbares Beispiel für Weiterentwicklung**. Seine Daten sind keine vereinbarte Projektfrist.
+
+## Anpassung an die Konzeptvorgaben
+
+Der Kernablauf ist jetzt Homepage → Alltagssituation → kurze Runde → Ergebnis und Reflexion → bewusstes Ende. Die drei Alltagsrunden sind ohne Namen und ohne gekaufte Räume spielbar; die bestehende Karriere bleibt eine zusätzliche Vertiefung. Deutsch und Englisch werden während der Sitzung gewechselt, ohne die Regeln oder Spielstände umzuschreiben. Ruhige Effekte reduzieren Reize, der Pausenknopf bietet einen direkten Abschluss. Die Umsetzung fragt keine in der Konzeptphase beschriebenen Diagnosen ab.
+
+| Konzeptziel | Umsetzung |
+| --- | --- |
+| F01–F03: Einstieg, Situation, Wischen | Gaststart, drei Situationskarten, Ziel und Beispiel, Maus/Touch |
+| F04–F06: Feedback, Pause, Reflexion | Symbol/Text, stabile Pause, direkter Abschluss, freiwillige Alltagsfrage |
+| NF01–NF04: Klarheit, Bedienung, Mobilität, Zugänglichkeit | Kurze Texte, große Bedienziele, responsive Karten, DE/EN, ruhige Effekte und Ton-Aus |
+| NF05: Flüssiger Ablauf | Begrenzte Objekte in Alltagsrunden, gecachte Dojo-Grafiken, echte Eingabe-/Pauseprüfungen |
+| NF06: Datensparsamkeit | Vollständige Runde ohne Namen/E-Mail/Registrierung, freiwilliger Alias erst für öffentliche Rangliste |
+
+Bedienprüfungen erfolgen technisch im Browser; ein Test mit Jugendlichen beziehungsweise dem im Konzept noch nicht festgelegten physischen Testgerät wird nicht behauptet.
 
 ## Ablauf der Bildschirme
 
