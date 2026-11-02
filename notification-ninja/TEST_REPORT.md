@@ -86,3 +86,12 @@ Das statische **Gastspiel3.0.0 ist öffentlich veröffentlicht**: GitHub Pages m
 Nicht durchgeführt: physisches Safari-/iPhone-Spiel, Jugendliche als Testpersonen, festgelegte reale30FPS-Messung, professionelle Sicherheits-/Rechtszertifizierung. Direktes `file://` ist im verwalteten Browser eingeschränkt; der entpackte Download wurde über HTTP geprüft. Technische Replaygrenzen (40.000Befehle/2MiB) begrenzen die Ranglistenprüfung eines sehr langen Runs, nicht dessen Spielzeit. Kein Schutz gegen alle Bots behauptet.
 
 Frühere, unveränderte Fähigkeiten-, Effekt- und Mock-up-Prüfungen bleiben als Historie im Git-Verlauf nachvollziehbar; sie werden hier nicht als neue physische Tests ausgegeben.
+
+
+## Korrekturrunde nach 3.0.0 – separater Entwurfs-PR (02.11.2026)
+
+Der [Entwurfs-PR #4](https://github.com/BruKevFH/REBOOT-Digital-Balance/pull/4) enthält eine Korrektur der Homepagebeschreibung (18 Hauptmissionen + 8 Zusatzherausforderungen, DE/EN) sowie einen ausdrücklich bestätigten lokalen Gastprofil-Löschweg bei Ausfall des alten v2-Ranglistendienstes. Standardmäßig bleibt die Sperre der Gastprofildaten bis zur bestätigten Onlinelöschung erhalten. Eine nur lokale Löschung warnt davor, dass ein bereits veröffentlichter alter Eintrag online verbleiben kann, und erhält die frühere Löschberechtigung für einen späteren Versuch.
+
+Tatsächlich ausgeführte Prüfung für Commit `cdd542b64b3d2a3076451eced8ac5cdfb4177cf5` im [GitHub-Actions-Lauf #41517416662](https://github.com/BruKevFH/REBOOT-Digital-Balance/actions/runs/41517416662): `npm run test:ninja` **338 bestanden, 0 fehlgeschlagen** (sechs neue Regressionstests), `npm run build:ninja` erfolgreich, `npm run package:ninja` erfolgreich und Offline-Routen-/Bundleprüfung erfolgreich. Die Paketprüfung hat dabei ein neues lokales Artefakt im CI-Runner erzeugt; dieses wurde **nicht** automatisch in den Repository-Branch eingecheckt und ist **nicht** öffentlich veröffentlicht worden. Der Branch enthält die Quelländerungen, nicht die neu gebauten `dist/*.js` oder die neue ZIP-Datei.
+
+Vor einem produktiven Merge sind die Build-/Paket-Dateien lokal zu erzeugen und zusammen mit den Quelländerungen einzuchecken. Die bisherigen realen Browser-, Safari-, Zielgruppen- und Hostinggrenzen des 3.0.0-Berichts bleiben bestehen. Diese Korrekturrunde behauptet keine neue physische Gerätetestung oder öffentlich aktivierte v3-Konten.
