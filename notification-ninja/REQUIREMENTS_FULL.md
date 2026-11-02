@@ -91,3 +91,9 @@ Stand der technischen Abnahme: 02.11.2026. **G** heißt ausgeführte technische 
 | 24–28 | Bestätigte reale Serverkäufe, 24 Erfolge, NIM, echte Ergebnisse/Reflexion; neue geprüfte Rangliste lokal dauerhaft, öffentlich noch E. |
 | 29–32 | Logout, Passwortbestätigung vor Kontolöschung, Ladeansicht, fünf Fensterbreiten; Auth-/Browserprüfungen. |
 | 33–35 | Tatsächliche Maus-/Touchbedienung, Pflichtaktionen funktionsfähig, Test-/Hostinggrenzen offen benannt. |
+
+### Nachtrag: gezielte Fehlerkorrekturen nach Version 3.0
+
+- **Homepage / Kampagne:** Veraltete Angabe „acht Missionen“ ersetzt durch 18 Hauptmissionen und acht separate Herausforderungen; Deutsch und Englisch erhalten dieselbe Aussage. Regressionstest: `tests/ninja-guest-deletion.test.mjs`.
+- **Löschen des alten Gastprofils:** Der normale Weg bleibt fail-closed, solange eine frühere v2-Ranglistenlöschung nicht bestätigt werden kann. Nach dem Fehler kann der Nutzer ausdrücklich eine **nur lokale** Löschung wählen; die möglicherweise noch öffentliche v2-Publikation und der verbleibende Löschzugang werden klar benannt. Der v3-Kontolöschpfad bleibt unverändert. Regressionstests: `tests/ninja-guest-deletion.test.mjs`.
+- **Noch nicht abgeschlossen:** V3-Konten und geprüfte globale Rangliste auf dem öffentlichen HTTPS-Host mit dauerhaftem Storage; reale Safari-/Geräte- und Zielgruppentests; neue Build-Artefakte und Release-Paket vor Veröffentlichung synchronisieren.

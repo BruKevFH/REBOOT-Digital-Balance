@@ -1,5 +1,13 @@
 /** English copy for the existing Ninja interface. Stable data IDs and player names are never translated. */
 export const EN_UI = Object.freeze({
+  "Dein Name, Münzen, XP, Skins, Fähigkeiten, Erfolge und der gespeicherte Run werden von diesem Gerät gelöscht. Ein alter veröffentlichter Ranglisteneintrag wird zuerst beim Dienst entfernt. Ist der Dienst nicht erreichbar, kannst du nach einem deutlichen Warnhinweis ausdrücklich nur dein lokales Gastprofil löschen. Der Online-Eintrag kann dann bestehen bleiben.": "Your name, coins, XP, outfits, abilities, achievements and saved run are deleted from this device. A previously published leaderboard entry is removed from the old service first. If the service is unavailable, you can explicitly choose to delete only the local guest profile after a clear warning. The online entry may then remain.",
+  "Nur dieses Gastprofil löschen. Ich verstehe, dass ein alter Online-Ranglisteneintrag weiterhin öffentlich sein kann und der alte Löschzugang dafür auf diesem Gerät gespeichert bleibt.": "Delete only this guest profile. I understand that an old online leaderboard entry may remain public and its deletion credential will stay on this device.",
+  "Der alte Ranglistendienst konnte die Löschung nicht bestätigen. Dein lokales Profil bleibt erhalten. Du kannst es später erneut versuchen oder ausdrücklich nur die lokalen Daten löschen. Ein alter Online-Eintrag kann dann bestehen bleiben.": "The old leaderboard service could not confirm deletion. Your local profile remains intact. Try again later, or explicitly delete only local data. An old online entry may then remain.",
+  "Lokaler Spielstand gelöscht": "Local game data deleted",
+  "Dein Gastprofil ist gelöscht. Der alte Ranglistendienst hat die Löschung nicht bestätigt. Ein früher veröffentlichter Eintrag kann weiterhin online stehen. Der alte Ranglisten-Zugang bleibt für einen späteren Löschversuch auf diesem Gerät gespeichert.": "Your guest profile was deleted. The old leaderboard service did not confirm removal. A previously published score may still be online. The old leaderboard credential stays on this device so you can try deleting it later.",
+  "LOKALE LÖSCHUNG · ONLINE OFFEN": "LOCAL DATA DELETED · ONLINE UNCONFIRMED",
+  "Zur Startseite": "Back to start",
+
   "Lernzimmer": "Study room",
   "Konzentriere dich auf deine Schulaufgabe.": "Focus on your schoolwork.",
   "Notizbuch & Stift": "Notebook & pen",
