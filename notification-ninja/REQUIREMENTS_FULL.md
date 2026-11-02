@@ -96,4 +96,6 @@ Stand der technischen Abnahme: 02.11.2026. **G** heißt ausgeführte technische 
 
 - **Homepage / Kampagne:** Veraltete Angabe „acht Missionen“ ersetzt durch 18 Hauptmissionen und acht separate Herausforderungen; Deutsch und Englisch erhalten dieselbe Aussage. Regressionstest: `tests/ninja-guest-deletion.test.mjs`.
 - **Löschen des alten Gastprofils:** Der normale Weg bleibt fail-closed, solange eine frühere v2-Ranglistenlöschung nicht bestätigt werden kann. Nach dem Fehler kann der Nutzer ausdrücklich eine **nur lokale** Löschung wählen; die möglicherweise noch öffentliche v2-Publikation und der verbleibende Löschzugang werden klar benannt. Der v3-Kontolöschpfad bleibt unverändert. Regressionstests: `tests/ninja-guest-deletion.test.mjs`.
-- **Noch nicht abgeschlossen:** V3-Konten und geprüfte globale Rangliste auf dem öffentlichen HTTPS-Host mit dauerhaftem Storage; reale Safari-/Geräte- und Zielgruppentests; neue Build-Artefakte und Release-Paket vor Veröffentlichung synchronisieren.
+- **Release 3.0.1:** Quellstand, gebaute Bundles, Versionsmetadaten, Cache-Update und ZIP mit SHA-256 in `main` zusammengeführt; GitHub-Pages-Deployment erfolgreich. Die zuletzt im Release-Workflow ausgeführte Ninja-Suite bestand mit 339/339 Tests. Nachweise im [Prüfbericht](TEST_REPORT.md).
+
+- **Noch extern offen:** Öffentlicher HTTPS-Host mit persistentem Storage für v3-Konten und die verifizierte Rangliste; physische Safari-/Geräte- und Zielgruppenabnahme; unabhängiger HTTP-/Bytegleichheitsvergleich der öffentlich ausgelieferten 3.0.1-Dateien.
