@@ -602,7 +602,7 @@ export function createRenderer(canvas){
     if(wasGameplayScene&&!gameplayScene){clearTransientEffects();effectsResets++;}
     if(lastState.paused&&!wasPaused){bossBursts=[];particles=particles.filter(particle=>!particle.bossEffect);}wasPaused=lastState.paused===true;wasGameplayScene=gameplayScene;
     prepareSquad(lastState);animateEffects(lastState.paused?0:dt);
-    const cameraActive=gameplayScene&&!lastState.paused&&!reducedMotion;
+    const cameraActive=gameplayScene&&!lastState.paused&&!reducedMotion&&lastState.screenShake!==false;
     cameraOffset={x:cameraActive?Math.sin(time*29)*shake:0,y:cameraActive?Math.cos(time*23)*shake*.5:0};
     ctx.setTransform(dpr,0,0,dpr,0,0);ctx.globalAlpha=1;ctx.globalCompositeOperation='source-over';ctx.clearRect(0,0,width,height);ctx.save();ctx.translate(cameraOffset.x,cameraOffset.y);background(lastState,time);drawBoss(lastState);drawSuperEffects(time);lastObjectStyles=[];for(const o of Array.isArray(lastState.objects)?lastState.objects:[])drawObject(o,lastState,time);drawEffects(lastState);drawComboCelebration();drawTrail(lastState,time);ctx.restore();frames++;drawMilliseconds=performance.now()-began;
   }

@@ -3,6 +3,7 @@ on:
   pull_request:
     paths:
       - 'notification-ninja/**'
+      - 'server/**'
       - 'tests/ninja*.mjs'
       - 'scripts/build_ninja.mjs'
       - 'scripts/package_ninja.py'
@@ -14,6 +15,7 @@ on:
       - main
     paths:
       - 'notification-ninja/**'
+      - 'server/**'
       - 'tests/ninja*.mjs'
       - 'scripts/build_ninja.mjs'
       - 'scripts/package_ninja.py'
@@ -34,6 +36,7 @@ jobs:
       - run: npm ci --ignore-scripts
       - run: npm run test:ninja
       - run: npm run build:ninja
+      - run: npm run package:ninja
       - name: Verify bundled entry and offline homepage routes
         run: |
           node --input-type=module <<'NODE'

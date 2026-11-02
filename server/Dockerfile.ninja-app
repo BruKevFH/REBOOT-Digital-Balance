@@ -1,0 +1,9 @@
+FROM node:24-bookworm-slim
+WORKDIR /app
+COPY --chown=node:node server/ninja-service.mjs server/ninja-store.mjs server/ninja-auth.mjs server/ninja-game-service.mjs ./server/
+COPY --chown=node:node notification-ninja ./notification-ninja
+RUN mkdir -p /data && chown node:node /data
+USER node
+ENV NODE_ENV=production HOST=0.0.0.0 PORT=8083 DATA_DIR=/data
+EXPOSE 8083
+CMD ["node", "server/ninja-service.mjs"]

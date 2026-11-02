@@ -4,6 +4,11 @@ server/*.sqlite-wal
 node_modules/
 .env
 .env.*
+!.env.example
+server/data/
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
 *.log
 
 # Unreal-generated files and local builds

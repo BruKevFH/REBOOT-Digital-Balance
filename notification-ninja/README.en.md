@@ -1,60 +1,58 @@
 # Notification Ninja
 
-An illustrated browser arcade game about making digital choices that fit your situation. Play in **English or German**, using a mouse or touch.
+An illustrated browser arcade game in **English and German**. Slice distractions and let helpful items pass. Study, Gaming and Sleep use distinct dojo scenes and context rules. No extra brand name or slogan.
 
-**[Play](https://brukevfh.github.io/REBOOT-Digital-Balance/notification-ninja/home.html)** · **[Download 2.0.0](downloads/Notification-Ninja-2.0.0.zip)** · **[Deutsche Anleitung](README.md)**
+[German guide](README.md) · [Requirement matrix](REQUIREMENTS_FULL.md) · [Executed checks and limitations](TEST_REPORT.md)
 
-## Start without signing up
+## Run the complete application locally
 
-Choose **English** on the homepage or in Settings. You can play a complete round as a guest. No email, password, real name or registration is required. Progress stays in the browser on this device. You may choose a Ninja name later; a public alias is required only if you explicitly publish an Open Run score.
-
-Choose one of three free everyday situations:
-
-- **Study:** keep schoolwork and helpful breaks; swipe away unrelated interruptions.
-- **Gaming:** playing is welcome, while your chosen time limit still matters.
-- **Sleep:** leave calm bedtime signals alone and recognise the temptation of endless autoplay.
-
-Study and Sleep rounds last **45 seconds**. Gaming also offers 60 or 90 seconds. Pick Relaxed, Normal or Pro. Short rounds limit simultaneous objects and begin gently. These free rounds are separate from purchased campaign rooms, so existing unlocks retain their value.
-
-## How to play
-
-Hold the mouse button or drag a finger through a distraction. **Leave helpful objects untouched** until they leave the top of the screen. The current situation decides what is helpful. A missed distraction or a wrong cut costs a heart. Optional bonus objects do not cost a heart when missed.
-
-NIM explains swiping and keeping during training. Answer hints appear only there. The normal game shows recognisable objects and your current goal.
-
-**Pause** freezes time and objects. Resume when ready, or end the round deliberately. Earned coins are secured once; ending early does not pretend that you won. Empty immediate exits do not earn run XP. Afterward, an optional reflection question connects your choices with everyday life. **New round** and **End & take a break** are equally easy to reach. The break screen does not automatically start another round.
-
-## Make the game comfortable
-
-Settings contain language, **calm effects**, and music controls. Calm effects remove particle showers, screen shake and large celebrations while retaining clear text and essential object movement. The operating system's reduced-motion preference is also respected. Switching languages does not reset your round or change your name, coins or unlocks.
-
-## Illustrated worlds
-
-The desktop world map and three detailed dojo interiors follow the concept mock-ups. On phones, three large illustrated cards keep the same choices easy to reach. Scenery contains no fixed language labels; real HTML controls and Canvas objects switch with your language. Room illustrations load in the background; a playable vector fallback remains available if loading fails. The final logo has no slogan.
-
-## Your adventure
-
-The extra adventure area retains eight career missions, three Autoplay bosses, daily and weekly tasks, Ninja ranks, a wardrobe, nine skills and 24 achievements. Earn coins to unlock campaign rooms and extra designs. Claim rewards explicitly. New outfits stay in your wardrobe until you choose to equip them.
-
-**Open Run** has three hearts, no timer and steadily increasing speed. Purchased skills and Supers are disabled for a fair comparison. An early exit is unranked. Publishing your chosen alias and result to the shared leaderboard is always an explicit action. Local downloads cannot publish to the public service; use the hosted web version.
-
-## Saving and download
-
-Progress is local to this browser and device; there is no cross-device account sync. Signing out keeps progress. Deleting your profile requires confirmation and removes your saved game. If you published scores, online entries are deleted first. Language and calm effects are general device preferences.
-
-Extract the entire ZIP and open `home.html` or `index.html`. Both languages, graphics and music are bundled locally. If the browser restricts local files, serve the extracted folder over HTTP. Offline play does not require the leaderboard service. The free ranking demo may take time to wake up and may lose online scores after a restart.
-
-## Development
-
-Requires Node.js 24+ and Python 3:
+Requires Node.js24 and npm; Python3 only for ZIP packaging.
 
 ```sh
 npm ci
+npm run build:ninja
+npm run serve:ninja
+```
+
+Open **http://127.0.0.1:8083/notification-ninja/home.html**. One process serves the frontend and `/api/v3`, and creates the persistent SQLite database at `server/data/ninja.sqlite`. No external credentials or database process are needed. Restarting with the same DATA_DIR preserves accounts and progress.
+
+For static guest-only play, use `npm run serve` and open port8000. The ZIP includes the complete guest runtime; extract all files, then open home.html or serve them over HTTP if the browser restricts local files.
+
+## Play
+
+Guest play needs no name, email or registration. Choose a free short Study, Gaming or Sleep round. Hold the mouse button or swipe with a finger across distractions; leave useful signals untouched. A wrong cut or missed distraction costs a heart. NIM introduces rules in training; only training displays answer hints. Help also includes untimed, unranked button/keyboard practice.
+
+Pause freezes gameplay. Resume or deliberately stop; the result displays actual points, correct decisions and mistakes. Reflection is optional, local and unrewarded. Starting again and taking a break are equally available.
+
+There are **18 main missions**, six per world, with varied goals and short authored durations. Chapter completion unlocks further worlds; old purchased access remains. The previous eight challenges, three Autoplay bosses, 24 achievements, nine skills, cosmetic outfits, five ranks and daily/weekly tasks remain. Claim rewards explicitly; purchases and equipping are separate choices. Viewing one notification removes it from unread messages without claiming its reward.
+
+**Open Run** is a single mode with three hearts, two throwers, no time limit and gentle continuous acceleration. Purchased skills and Supers are disabled. An early exit is unranked. Completed account runs are replayed on the server before rewards become spendable; publishing a qualifying score is a separate explicit action.
+
+Settings include language, separate music/effects volume, master mute, calm effects and independent screen shake. Defaults: music40%, effects50%, unmuted, shake enabled; operating-system reduced motion is respected. Browser audio/fullscreen depend on a user gesture and device support.
+
+## Accounts and data
+
+Optional real accounts use a pseudonym, password and one-time recovery key. No email or invented mail service. Keep the recovery key; password recovery cannot be inferred from a name. Passwords use salted scrypt hashes. Session and recovery secrets are256bit random, hashed on the server. New v3 account tokens stay in sessionStorage; passwords are never stored in browser storage. A historical v2 device-deletion credential may remain in localStorage so old demo entries can still be removed; it is not a v3 account session.
+
+The server owns wallet, purchases and progress. Transactions and user-scoped idempotency keys prevent duplicate rewards and overspending. A guest can carry safe tutorial/settings information across once; arbitrary local money/XP/unlocks are not imported as verified funds. Existing guest progress remains separately on the original device. Signing out clears the account session; confirmed deletion requires the password and removes related account data.
+
+New account daily/weekly periods use UTC; guest tasks keep their previous local calendar. Reflection answers are not sent to the server. No ads, tracking or medical diagnoses are included.
+
+The new leaderboard accepts only server-started, seeded, replay-validated Open runs ending through lost hearts, explicitly published by the user. It never trusts a submitted client score. Only the best published run per account appears. Input-log limits bound verification costs; they do not end the playable endless run. Replay validation is not a guarantee against bots.
+
+## Public hosting status
+
+**Durable public account hosting is not connected yet.** GitHub Pages serves the static guest game. The previous free Render v2 leaderboard is a separate historical demo with ephemeral storage and basic plausibility checks. Its rows are not presented as verified v3 accounts.
+
+To enable public accounts, provision an actual HTTPS Node24/Docker service with persistent DATA_DIR, verify it survives restart, then set its real `/api/v3` endpoint in accounts-config.json. No paid product has been activated. [Exact deployment instructions](../server/README_NINJA_APP.md).
+
+## Checks
+
+```sh
 npm run test:ninja
+npm test
 npm run build:ninja
 npm run package:ninja
 ```
 
-`src/game.js` owns rules and saved runs; `src/i18n.js` translates presentation without rewriting stable IDs or player names. `src/preferences.js` stores language and calm effects separately. The standalone homepage has its own small bundle in `dist/home.js`. Both bundles are included in the offline cache and download.
-
-See [TEST_REPORT.md](TEST_REPORT.md) for actual checks and their limits. Browser emulation does not establish performance or compatibility on a physical iPhone, and no testing with teenage participants is claimed.
+Only executed tests are listed as passed in [TEST_REPORT](TEST_REPORT.md). Emulated Chromium touch checks do not replace a physical iPhone/Safari test, teenager usability sessions or frame-rate measurements on a specified real device.

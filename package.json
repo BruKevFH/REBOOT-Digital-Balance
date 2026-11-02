@@ -6,21 +6,24 @@
   "description": "REBOOT Neon Balance: a playable 3D browser game and offline download",
   "scripts": {
     "build": "node scripts/build.mjs",
-    "test": "node --test tests/game.test.mjs tests/maze.test.mjs tests/ninja.test.mjs tests/ninja-progression.test.mjs tests/ninja-player.test.mjs tests/ninja-session.test.mjs tests/ninja-leaderboard.test.mjs tests/ninja-throws.test.mjs tests/ninja-journey.test.mjs tests/ninja-adventure.test.mjs tests/ninja-boss.test.mjs tests/ninja-balance.test.mjs tests/ninja-i18n.test.mjs tests/ninja-adventure-integration.test.mjs",
+    "test": "node --test tests/*.test.mjs",
     "build:ninja": "node scripts/build_ninja.mjs",
-    "test:ninja": "node --test tests/ninja.test.mjs tests/ninja-progression.test.mjs tests/ninja-player.test.mjs tests/ninja-session.test.mjs tests/ninja-leaderboard.test.mjs tests/ninja-throws.test.mjs tests/ninja-journey.test.mjs tests/ninja-adventure.test.mjs tests/ninja-boss.test.mjs tests/ninja-balance.test.mjs tests/ninja-i18n.test.mjs tests/ninja-adventure-integration.test.mjs",
+    "test:ninja": "node --test tests/ninja*.test.mjs",
     "package:ninja": "python3 scripts/package_ninja.py",
     "build:maze": "node scripts/build_maze.mjs",
     "test:maze": "node --test tests/maze.test.mjs",
     "package:maze": "python3 scripts/package_maze.py",
     "package": "python3 scripts/package_download.py",
-    "serve": "python3 -m http.server 8000 --bind 127.0.0.1"
+    "serve": "python3 -m http.server 8000 --bind 127.0.0.1",
+    "serve:ninja": "node --env-file-if-exists=.env server/ninja-service.mjs",
+    "test:ninja:browser": "node scripts/check_ninja_browser.cjs"
   },
   "dependencies": {
     "three": "0.186.1"
   },
   "devDependencies": {
-    "esbuild": "0.28.2"
+    "esbuild": "0.28.2",
+    "playwright": "1.62.1"
   },
   "engines": {
     "node": ">=24"

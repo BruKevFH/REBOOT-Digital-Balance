@@ -1,0 +1,14 @@
+.git
+node_modules
+.npm-cache
+.env
+.env.*
+**/*.sqlite
+**/*.sqlite-shm
+**/*.sqlite-wal
+server/data
+test-results
+playwright-report
+Unreal/**/Binaries
+Unreal/**/Intermediate
+Unreal/**/Saved

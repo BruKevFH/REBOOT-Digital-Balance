@@ -1,3 +1,7 @@
+# Historische Ranglisten-Demo v2
+
+Für echte Konten, dauerhafte SQLite-Speicherung und Replay-geprüfte Ergebnisse gilt die neue [Anleitung zum integrierten Dienst v3](README_NINJA_APP.md). Der folgende Dienst bleibt eine getrennte historische Demo und wird nicht als verifizierte Kontenrangliste ausgegeben.
+
 # Gemeinsame Rangliste für Notification Ninja
 
 Das Spiel und alle lokalen Profile funktionieren weiterhin auf GitHub Pages. Eine gemeinsame Rangliste braucht zusätzlich diesen kleinen Node-Server; für dauerhafte Ergebnisse muss seine SQLite-Datei einen Neustart überleben. GitHub Pages führt keine Serverprogramme aus. Seit Version 1.6 ist `notification-ninja/leaderboard-config.json` mit **https://notification-ninja-ranking.onrender.com** verbunden. Version 1.7 verwendet eine gemeinsame Wertung mit drei Herzen und dem Regelsatz **`open-v2`**. Ergebnisse werden ausschließlich nach ausdrücklichem Veröffentlichen übertragen. Es gibt keine erfundenen Mitspieler.

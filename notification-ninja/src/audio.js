@@ -22,6 +22,7 @@ function styleFor(state) {
 export function createAudio() {
   let context = null, master = null, music = null, effects = null, noise = null;
   let enabled = false, unlocked = false, disposed = false, unlocking = null;
+  let mix = {musicVolume: .4, effectsVolume: .5, muted: false}, sceneMusicGain = .92;
   let playing = false, mode = 'study', contextMode = 'study', flow = false, nextBeat = null, step = 0;
   let scheduledSteps = 0, eventCount = 0, lastEvent = null, lastError = null, pace = 1, bonusPhase = null;
   const voices = new Set();
@@ -64,7 +65,7 @@ export function createAudio() {
   }
 
   function tone(frequency, duration, volume, time, group = 'effects', type = 'triangle', endFrequency) {
-    if (!context || !enabled || !unlocked || disposed) return false;
+    if (!context || !enabled || mix.muted || !unlocked || disposed || (group === 'music' ? mix.musicVolume : mix.effectsVolume) === 0) return false;
     const source = context.createOscillator(), gain = context.createGain();
     source.type = type;
     source.frequency.setValueAtTime(frequency, time);
@@ -74,7 +75,7 @@ export function createAudio() {
   }
 
   function hiss(time, duration, volume, cutoff, group = 'music') {
-    if (!context || !enabled || !unlocked || !noise) return false;
+    if (!context || !enabled || mix.muted || !unlocked || !noise || (group === 'music' ? mix.musicVolume : mix.effectsVolume) === 0) return false;
     const source = context.createBufferSource(), filter = context.createBiquadFilter(), gain = context.createGain();
     source.buffer = noise; filter.type = 'highpass'; filter.frequency.setValueAtTime(cutoff, time);
     source.connect(filter); filter.connect(gain); gain.connect(group === 'music' ? music : effects);
@@ -97,8 +98,8 @@ export function createAudio() {
           if (!AudioContextClass) throw new Error('WebAudio wird in diesem Browser nicht unterstützt.');
           context = new AudioContextClass();
           master = context.createGain(); music = context.createGain(); effects = context.createGain();
-          master.gain.value = enabled ? MASTER_VOLUME : 0;
-          music.gain.value = 0; effects.gain.value = 1;
+          master.gain.value = enabled && !mix.muted ? MASTER_VOLUME : 0;
+          music.gain.value = 0; effects.gain.value = mix.effectsVolume;
           music.connect(master); effects.connect(master); master.connect(context.destination);
           noise = context.createBuffer(1, Math.ceil(context.sampleRate * 0.3), context.sampleRate);
           const samples = noise.getChannelData(0);
@@ -124,8 +125,22 @@ export function createAudio() {
     if (disposed) return false;
     enabled = value === true;
     if (!enabled) { quietMusic(); stopVoices(); }
-    ramp(master?.gain, enabled ? MASTER_VOLUME : 0);
+    ramp(master?.gain, enabled && !mix.muted ? MASTER_VOLUME : 0);
     return enabled;
+  }
+
+  /** Independent buses; changing the mix never constructs or unlocks WebAudio. */
+  function setMix(value = {}) {
+    for (const field of ['musicVolume', 'effectsVolume'])
+      if (typeof value[field] === 'number' && Number.isFinite(value[field])) mix[field] = Math.max(0, Math.min(1, value[field]));
+    if (typeof value.muted === 'boolean') mix.muted = value.muted;
+    if (mix.muted) { quietMusic(); stopVoices(); }
+    else if (mix.musicVolume === 0) { quietMusic(); }
+    if (mix.effectsVolume === 0) stopVoices('effects');
+    ramp(master?.gain, enabled && !mix.muted ? MASTER_VOLUME : 0);
+    ramp(effects?.gain, mix.effectsVolume);
+    if (playing) ramp(music?.gain, sceneMusicGain * mix.musicVolume);
+    return {...mix};
   }
 
   function currentStyle() {
@@ -164,6 +179,7 @@ export function createAudio() {
 
   function update(state = {}, dt = 0) {
     if (!context || !enabled || !unlocked || disposed) return;
+    if (mix.muted || mix.musicVolume === 0) { if (playing || nextBeat !== null) quietMusic(); return; }
     const scene = state.scene ?? state.phase ?? (state.started && !state.ended ? 'playing' : 'home');
     const isMenu = state.isMenu === true || ['menu', 'home', 'landing', 'onboarding'].includes(scene);
     const active = state.paused !== true && (isMenu || scene === 'playing' && state.ended !== true) && globalThis.document?.hidden !== true;
@@ -172,7 +188,7 @@ export function createAudio() {
     if (mode !== selected) { quietMusic(); mode = selected; step = 0; }
     if (contextMode !== selectedContext) { if (mode === 'master') { quietMusic(); step = 0; } contextMode = selectedContext; }
     flow = !isMenu && Number(state.effects?.flow ?? state.flow ?? 0) > 0;
-    if (!playing) { playing = true; ramp(music.gain, isMenu ? 0.48 : mode === 'sleep' || mode === 'master' && contextMode === 'sleep' ? 0.58 : 0.92, isMenu ? 0.35 : 0.12); }
+    if (!playing) { playing = true; sceneMusicGain = isMenu ? 0.48 : mode === 'sleep' || mode === 'master' && contextMode === 'sleep' ? 0.58 : 0.92; ramp(music.gain, sceneMusicGain * mix.musicVolume, isMenu ? 0.35 : 0.12); }
     const now = context.currentTime;
     for (const entry of [...voices]) if (entry.end + 0.1 < now) release(entry, true);
     if (nextBeat === null || nextBeat < now - 0.15 || Number(dt) > 1) nextBeat = now + 0.035;
@@ -185,7 +201,7 @@ export function createAudio() {
   }
 
   function play(event) {
-    if (!context || !enabled || !unlocked || disposed || context.state !== 'running') return false;
+    if (!context || !enabled || mix.muted || mix.effectsVolume === 0 || !unlocked || disposed || context.state !== 'running') return false;
     const name = typeof event === 'string' ? event : event?.type;
     const time = context.currentTime + 0.004;
     const sparkle = (notes, gap = 0.045, volume = 0.052) => notes.forEach((hz, index) => tone(hz, 0.18, volume, time + gap * index));
@@ -271,8 +287,8 @@ export function createAudio() {
     return { enabled, unlocked, contextState: context?.state || 'locked', activeVoices: voices.size,
       musicVoices: [...voices].filter(entry => entry.group === 'music').length,
       mode, context: contextMode, bpm: currentStyle().bpm, instrument: currentStyle().instrument,
-      playing, flow, pace, effectiveBpm: Math.round(currentStyle().bpm * pace), bonusPhase, scheduledSteps, eventCount, lastEvent, volume: enabled ? MASTER_VOLUME : 0, lastError };
+      playing, flow, pace, effectiveBpm: Math.round(currentStyle().bpm * pace), bonusPhase, scheduledSteps, eventCount, lastEvent, volume: enabled && !mix.muted ? MASTER_VOLUME : 0, musicVolume: mix.musicVolume, effectsVolume: mix.effectsVolume, muted: mix.muted, musicGain: playing ? sceneMusicGain * mix.musicVolume : 0, effectsGain: mix.effectsVolume, lastError };
   }
 
-  return Object.freeze({ unlock, setEnabled, update, play, dispose, getStats });
+  return Object.freeze({ unlock, setEnabled, setMix, update, play, dispose, getStats });
 }

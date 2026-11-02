@@ -23,8 +23,8 @@ function play(game,clock,{openStop=100,sleepStop=8}={}){
 }
 function stageCareer(game){game.profile.unlockedWorlds=['study','gaming','sleep','master'];game.profile.adventure.completed=CAREER_MISSIONS.filter(m=>m.id!=='autoplay-overlord').map(m=>m.id);}
 
-test('career starts with one available mission and locked or mismatched requests preserve a running game',()=>{
-  const {game}=setup();assert.deepEqual(getCareerMissions(game.profile,time).filter(m=>m.available).map(m=>m.id),['study-focus']);
+test('career starts with the first main mission and optional legacy challenge and locked or mismatched requests preserve a running game',()=>{
+  const {game}=setup();assert.deepEqual(getCareerMissions(game.profile,time).filter(m=>m.available).map(m=>m.id),['study-01','study-focus']);
   assert.equal(game.startMission('study-focus').ok,true);game.nextLevel();game.update(.05);const before=clone(game.state);
   for(const request of [()=>game.startMission('autoplay-scout'),()=>game.startMission('unknown'),()=>game.start({mode:'boss',bossId:'scout'}),()=>game.start({mode:'open',missionId:'study-focus'}),()=>game.start({mode:'study',missionId:'unknown'})]){
     assert.equal(request().ok,false);assert.deepEqual(game.state,before);
@@ -95,7 +95,7 @@ test('new week removes old unclaimed progress while retaining earned currency, c
 
 test('weekly descriptors and authored skins use one identity across rewards, wardrobe and inbox',()=>{
   const {game}=setup();for(const id of ['lotus','ember','tide']){const skin=SKINS.find(item=>item.id===id);assert.equal(skin.unlock,'weekly');assert.equal(game.buySkin(id).ok,false);assert.equal(game.addNotification({type:'skin',ref:id}).ok,true);}
-  const gift=getWeeklyReward(game.profile,time);assert.equal(SKINS.find(skin=>skin.id===gift.id).name,gift.skin.name);assert.equal(game.exportData().version,'2.0.0');
+  const gift=getWeeklyReward(game.profile,time);assert.equal(SKINS.find(skin=>skin.id===gift.id).name,gift.skin.name);assert.equal(game.exportData().version,'3.0.0');
 });
 
 test('invalid boss mission metadata cannot turn a saved normal run into a boss victory or erase the wallet',()=>{

@@ -1,0 +1,321 @@
+{
+  "date": "2026-11-02",
+  "scope": "Local Node24/SQLite + desktop Chromium/emulated touch. No public account-hosting or physical-device acceptance claimed.",
+  "browserVersion": "Chromium151.0.7922.173 / Playwright1.62.1",
+  "viewports": [
+    {
+      "width": 360,
+      "touch": true,
+      "ok": true,
+      "errors": [],
+      "missing": [],
+      "homeSmall": [],
+      "settingsSmall": [],
+      "practiceSmall": []
+    },
+    {
+      "width": 390,
+      "touch": true,
+      "ok": true,
+      "errors": [],
+      "missing": [],
+      "homeSmall": [],
+      "settingsSmall": [],
+      "practiceSmall": []
+    },
+    {
+      "width": 768,
+      "touch": false,
+      "ok": true,
+      "errors": [],
+      "missing": [],
+      "homeSmall": [],
+      "settingsSmall": [],
+      "practiceSmall": []
+    },
+    {
+      "width": 1280,
+      "touch": false,
+      "ok": true,
+      "errors": [],
+      "missing": [],
+      "homeSmall": [],
+      "settingsSmall": [],
+      "practiceSmall": []
+    },
+    {
+      "width": 1920,
+      "touch": false,
+      "ok": true,
+      "errors": [],
+      "missing": [],
+      "homeSmall": [],
+      "settingsSmall": [],
+      "practiceSmall": []
+    }
+  ],
+  "realGuestRounds": [
+    {
+      "width": 360,
+      "room": "study",
+      "touch": true,
+      "cuts": 1,
+      "score": 100,
+      "elapsed": 1.2166000000000006,
+      "result": "stopped",
+      "dojoStable": true
+    },
+    {
+      "width": 360,
+      "room": "gaming",
+      "touch": true,
+      "cuts": 1,
+      "score": 100,
+      "elapsed": 2.6997999999999998,
+      "result": "stopped",
+      "dojoStable": true
+    },
+    {
+      "width": 360,
+      "room": "sleep",
+      "touch": true,
+      "cuts": 1,
+      "score": 100,
+      "elapsed": 2.983200000000002,
+      "result": "stopped",
+      "dojoStable": true
+    },
+    {
+      "width": 1280,
+      "room": "study",
+      "touch": false,
+      "cuts": 1,
+      "score": 100,
+      "elapsed": 1.1665999999999999,
+      "result": "stopped",
+      "dojoStable": true
+    },
+    {
+      "width": 1920,
+      "room": "study",
+      "touch": false,
+      "cuts": 1,
+      "score": 100,
+      "elapsed": 1.166600000000001,
+      "result": "stopped",
+      "dojoStable": true
+    }
+  ],
+  "accountShopAndPublishedOpen": {
+    "privateDatabaseOnly": true,
+    "errors": [],
+    "runs": [
+      {
+        "name": "first",
+        "score": 200,
+        "duration": 15.582599999999928,
+        "result": "lives",
+        "verified": true,
+        "skin": "solar",
+        "commands": 904
+      },
+      {
+        "name": "second",
+        "score": 800,
+        "duration": 34.36190000000015,
+        "result": "lives",
+        "verified": true,
+        "skin": "default",
+        "commands": 722
+      }
+    ],
+    "walletFixture": "120 test coins credited directly to a PRIVATE disposable SQLite wallet; not represented as earned play",
+    "skinPurchase": {
+      "price": 80,
+      "remaining": 40,
+      "confirmation": true,
+      "noAutoEquip": true,
+      "explicitEquip": true
+    },
+    "sharedLeaderboardRows": 5,
+    "currentTwoPlayersPresent": true,
+    "descendingOrder": true,
+    "passed": true
+  },
+  "accountRoutes": [
+    {
+      "width": 390,
+      "errors": [],
+      "loginRegisterBack": true,
+      "recoveryReload": true,
+      "recoveryLoginBack": true,
+      "closeRestoresStart": true,
+      "directRegisterReload": true,
+      "passed": true
+    },
+    {
+      "width": 1280,
+      "errors": [],
+      "loginRegisterBack": true,
+      "recoveryReload": true,
+      "recoveryLoginBack": true,
+      "closeRestoresStart": true,
+      "directRegisterReload": true,
+      "passed": true
+    }
+  ],
+  "offline": {
+    "passed": true,
+    "errors": [],
+    "checks": [
+      "first homepage visit precaches both language-ready standalone home and complete game",
+      "English homepage reloads offline with remembered language and no game engine",
+      "first offline game launch, real guestGaming swipe, saved score reload/resume, DEswitch and return to distinct offline homepage"
+    ]
+  },
+  "dockerPersistence": {
+    "nonRootContainerHealth": true,
+    "newContainerSameVolumePreservesAccountProfileAndSession": true,
+    "confirmedDeletionAndSessionRevocation": true,
+    "transport": "Local loopback HTTP with controlled-proxy headers; no public TLS deployment claimed"
+  },
+  "firstMissionBrowser": {
+    "passed": true,
+    "errors": [],
+    "geometry": [
+      {
+        "label": "initial1280",
+        "width": 1280,
+        "doc": 1280,
+        "body": 1280,
+        "cardCount": 26,
+        "chapters": 3
+      },
+      {
+        "label": "initial360",
+        "width": 360,
+        "doc": 360,
+        "body": 360,
+        "cardCount": 26,
+        "chapters": 3
+      }
+    ],
+    "cuts": 11,
+    "run": {
+      "result": "complete",
+      "elapsed": 30.015399999999545,
+      "correct": 19,
+      "lifeLost": 0,
+      "verified": true,
+      "coinsBeforeClaim": 4
+    },
+    "claim": {
+      "explicit": true,
+      "reward": 3,
+      "coins": 7,
+      "once": true
+    },
+    "nextMissionStarted": true
+  },
+  "accountRefresh": [
+    {
+      "width": 390,
+      "errors": [],
+      "refresh": true,
+      "focusTrapped": true,
+      "offlineHonest": true,
+      "reconnected": true,
+      "geometry": {
+        "width": 390,
+        "doc": 390,
+        "small": []
+      },
+      "englishPersistsAcrossLogin": true,
+      "cleanedUp": true,
+      "passed": true
+    },
+    {
+      "width": 1280,
+      "errors": [],
+      "refresh": true,
+      "focusTrapped": true,
+      "offlineHonest": true,
+      "reconnected": true,
+      "geometry": {
+        "width": 1280,
+        "doc": 1280,
+        "small": []
+      },
+      "englishPersistsAcrossLogin": true,
+      "cleanedUp": true,
+      "passed": true
+    }
+  ],
+  "notes": [
+    "Shop test funds were120 coins in a private disposable fixture, not claimed as earned play.",
+    "Leaderboard contains real previous private test runs as well as the current two accounts; no public test accounts created.",
+    "Campaign UI evidence recorded2026-10-30; subsequent canonical model/HTTP tests include all18missions.",
+    "Automated input can read diagnostic snapshots but does not overwrite gameplay or submit claimed score values."
+  ],
+  "guestTrainingAndFirstMission": {
+    "passed": true,
+    "errors": [],
+    "postRequests": [],
+    "seenGuides": [
+      "welcome",
+      "training-intro",
+      "training-swipe",
+      "training-keep",
+      "first-flow",
+      "training-complete",
+      "career",
+      "study",
+      "achievement:first-cut",
+      "achievement:flow-five",
+      "first-coins",
+      "achievement:careful-stage"
+    ],
+    "training": {
+      "decisions": 6,
+      "cuts": 4,
+      "passed": 2,
+      "elapsed": 14.365899999999924,
+      "reason": "learned",
+      "coins": 0,
+      "unscored": true
+    },
+    "mission": {
+      "id": "study-01",
+      "result": "complete",
+      "correct": 14,
+      "cuts": 7,
+      "usefulPassed": 7,
+      "elapsed": 30.01539999999934,
+      "guest": true
+    },
+    "dojoStable": true
+  },
+  "automatedTests": {
+    "allGames": 377,
+    "ninjaOnly": 332,
+    "failed": 0,
+    "skipped": 0
+  },
+  "extractedZip": {
+    "errors": [],
+    "passed": true,
+    "extractedZip": true,
+    "guest": true,
+    "accountsDisabled": true,
+    "actualTouchScore": 100,
+    "result": "stopped",
+    "downloadPointsToPublicOriginal": true
+  },
+  "zip": {
+    "name": "Notification-Ninja-3.0.0.zip",
+    "bytes": 9608705,
+    "sha256": "3dc282d3ee9312bb7e4c79e4eef00f8239bbfa3a6ce9f8072bc2823d9d0ffeee",
+    "runtimeFiles": 16,
+    "instructionsFiles": 1
+  }
+}

@@ -1,7 +1,7 @@
 const SCOPE=new URL(self.registration.scope);
 const PREFIX=`notification-ninja:${SCOPE.pathname}:`;
-const CACHE=`${PREFIX}2.0.0`;
-const ASSETS=['./','./index.html','./home.html','./styles.css','./dist/ninja.js','./dist/home.js','./dist/build.json','./leaderboard-config.json','./manifest.webmanifest','./favicon.svg','./assets/dojo-study.png','./assets/dojo-gaming.png','./assets/dojo-sleep.png','./assets/focus-village.png','./branding/Notification-Ninja-Logo.png'];
+const CACHE=`${PREFIX}3.0.0`;
+const ASSETS=['./','./index.html','./home.html','./styles.css','./dist/ninja.js','./dist/home.js','./dist/build.json','./leaderboard-config.json','./accounts-config.json','./manifest.webmanifest','./favicon.svg','./assets/dojo-study.png','./assets/dojo-gaming.png','./assets/dojo-sleep.png','./assets/focus-village.png','./branding/Notification-Ninja-Logo.png'];
 const NAVIGATION=new Map([
   [SCOPE.pathname,'./index.html'],
   [new URL('./index.html',SCOPE).pathname,'./index.html'],
@@ -12,7 +12,7 @@ self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=
 self.addEventListener('fetch',event=>{
   const url=new URL(event.request.url);
   if(event.request.method!=='GET'||url.origin!==SCOPE.origin||!url.pathname.startsWith(SCOPE.pathname))return;
-  if(url.href===new URL('./leaderboard-config.json',SCOPE).href){event.respondWith(fetch(event.request).then(response=>{if(response.ok){const copy=response.clone();event.waitUntil(caches.open(CACHE).then(cache=>cache.put(event.request,copy)));}return response;}).catch(()=>caches.open(CACHE).then(cache=>cache.match(event.request))));return;}
+  if(['./leaderboard-config.json','./accounts-config.json'].some(file=>url.href===new URL(file,SCOPE).href)){event.respondWith(fetch(event.request).then(response=>{if(response.ok){const copy=response.clone();event.waitUntil(caches.open(CACHE).then(cache=>cache.put(event.request,copy)));}return response;}).catch(()=>caches.open(CACHE).then(cache=>cache.match(event.request))));return;}
   if(event.request.mode==='navigate'){
     const fallback=NAVIGATION.get(url.pathname);
     if(fallback)event.respondWith(fetch(event.request).catch(()=>caches.open(CACHE).then(cache=>cache.match(new URL(fallback,SCOPE).href))));

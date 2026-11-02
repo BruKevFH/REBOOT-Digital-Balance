@@ -1,6 +1,6 @@
 {
   "name": "Notification Ninja",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "engine": "Canvas 2D / Web Audio",
   "style": "Illustrated paper dojo",
   "illustratedRoomArt": true,
@@ -47,7 +47,13 @@
   "ninjaRanks": 5,
   "skins": 10,
   "dailyChallenges": 3,
-  "careerMissions": 8,
+  "careerMissions": 26,
+  "mainMissions": 18,
+  "accountAPI": 3,
+  "accountSync": true,
+  "publicAccountsConfigured": false,
+  "backendRequiresPersistentHost": true,
+  "accessiblePractice": true,
   "autoplayBosses": 3,
   "weeklyChallenges": 3,
   "weeklyOutfits": [
@@ -64,5 +70,5 @@
   "menuMusic": true,
   "openRuleset": "open-v2",
   "openHearts": 3,
-  "leaderboard": "optional-open-run-service"
+  "leaderboard": "server-replay-explicit-publication"
 }

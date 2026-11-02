@@ -36,14 +36,14 @@ const count=value=>typeof value==='number'&&Number.isFinite(value)?Math.max(0,Ma
 const failure=reason=>({ok:false,reason});
 const add=(a,b)=>Math.min(MAX,a+b);
 
-function calendar(now=Date.now()) {
+function calendar(now=Date.now(),utc=false) {
   let date=new Date(now instanceof Date?now.getTime():now);
   if(!Number.isFinite(date.getTime())||date.getFullYear()<1970||date.getFullYear()>9999)date=new Date();
-  const year=date.getFullYear(),month=date.getMonth(),day=date.getDate();
+  const year=utc?date.getUTCFullYear():date.getFullYear(),month=utc?date.getUTCMonth():date.getMonth(),day=utc?date.getUTCDate():date.getDate();
   return {day:`${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`,ordinal:Math.floor(Date.UTC(year,month,day)/86400000)};
 }
-function tasksFor(now) {
-  const {ordinal}=calendar(now);
+function tasksFor(now,profile) {
+  const {ordinal}=calendar(now,profile?.accountCalendar==='utc');
   return TASK_COLUMNS.map((column,index)=>column[(ordinal+index)%column.length]);
 }
 function validRunId(value) {
@@ -61,7 +61,7 @@ function studyDecisions(state,stats,correct) {
 /** Only known journey keys/IDs survive; unrelated old progress is untouched. */
 export function normalizeJourney(profile,now=Date.now()) {
   const source=object(profile?.journey)?profile.journey:{};
-  const {day}=calendar(now),sameDay=source.day===day,tasks=tasksFor(now);
+  const {day}=calendar(now,profile?.accountCalendar==='utc'),sameDay=source.day===day,tasks=tasksFor(now,profile);
   const {xp}=getPlayerProgress(profile);
   const progress=Object.fromEntries(tasks.map(task=>[task.id,sameDay?Math.min(task.target,count(source.progress?.[task.id])):0]));
   const claimed=sameDay&&Array.isArray(source.claimed)
@@ -87,7 +87,7 @@ export function getRank(profile) {
 /** Descriptors are detached from the save and safe for presentation. */
 export function getDailyChallenges(profile,now=Date.now()) {
   const journey=normalizeJourney(profile,now);
-  return tasksFor(now).map(task=>({...task,day:journey.day,current:journey.progress[task.id],
+  return tasksFor(now,profile).map(task=>({...task,day:journey.day,current:journey.progress[task.id],
     completed:journey.progress[task.id]>=task.target,claimed:journey.claimed.includes(task.id)}));
 }
 
@@ -111,7 +111,7 @@ export function recordDailyRun(profile,state,now=Date.now()) {
     openSeconds:state.mode==='open'?Math.floor(elapsed):0,runs:1,
     study:studyDecisions(state,stats,correct)};
   const events=[];
-  for(const task of tasksFor(now)) {
+  for(const task of tasksFor(now,profile)) {
     const previous=journey.progress[task.id],value=values[task.metric];
     const current=Math.min(task.target,['streak','openSeconds'].includes(task.metric)?Math.max(previous,value):add(previous,value));
     journey.progress[task.id]=current;
@@ -123,7 +123,7 @@ export function recordDailyRun(profile,state,now=Date.now()) {
 /** Explicit, once-per-day wallet credit; completion never adds coins by itself. */
 export function claimDailyReward(profile,id,now=Date.now()) {
   if(!object(profile))return failure('Der Spielstand ist ungültig.');
-  const task=tasksFor(now).find(item=>item.id===id);
+  const task=tasksFor(now,profile).find(item=>item.id===id);
   if(!task)return failure('Diese Tagesaufgabe ist heute nicht verfügbar.');
   const journey=normalizeJourney(profile,now);
   if(journey.claimed.includes(id))return failure('Diese Tagesbelohnung hast du schon abgeholt.');

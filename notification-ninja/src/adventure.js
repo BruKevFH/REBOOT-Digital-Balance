@@ -17,7 +17,7 @@ export const WEEKLY_SKINS=freeze([
   {id:'tide',name:'Gezeitengeist',color:'#6ca9bc',unlock:'weekly',cost:0,description:'Wellenkrone, Muschelkragen und schimmernde Wasserwirbel.'}
 ]);
 
-export const CAREER_MISSIONS=freeze([
+export const LEGACY_MISSIONS=freeze([
   {id:'study-focus',title:'Der erste Fokus',description:'Beende eine Lernzimmer-Runde mit mindestens 20 richtigen Entscheidungen und höchstens 2 Fehlern.',icon:'study',mode:'study',bossId:null,requiredWorld:'study',requires:[],position:{x:50,y:52},target:20,reward:5},
   {id:'open-trial',title:'Der ruhige Atem',description:'Überlebe 45 Sekunden im unveränderten Open Run und triff dabei mindestens 20 richtige Entscheidungen.',icon:'clock',mode:'open',bossId:null,requiredWorld:null,requires:['study-focus'],position:{x:27,y:52},target:45,reward:6},
   {id:'autoplay-scout',title:'Autoplay-Späher',description:'Besiege den Autoplay-Späher. Er wechselt zwischen Lernen, Gaming und Schlaf: Deine richtigen Entscheidungen schwächen ihn.',icon:'boss',mode:'boss',bossId:'scout',requiredWorld:null,requires:['open-trial'],position:{x:8,y:52},target:bossHealth('scout'),reward:8},
@@ -27,6 +27,34 @@ export const CAREER_MISSIONS=freeze([
   {id:'balance-master',title:'Alle Welten im Griff',description:'Schließe Balance Master mit mindestens 20 richtigen Entscheidungen ab.',icon:'master',mode:'master',bossId:null,requiredWorld:'master',requires:['autoplay-scout'],position:{x:27,y:15},target:1,reward:8},
   {id:'autoplay-overlord',title:'Die letzte Endlosschleife',description:'Besiege den Autoplay-Meister und beende seine Endlosschleife. Nutze dein Wissen aus allen drei Alltagssituationen.',icon:'boss',mode:'boss',bossId:'overlord',requiredWorld:null,requires:['autoplay-guardian','balance-master'],position:{x:50,y:6},target:bossHealth('overlord'),reward:15}
 ]);
+/** Versioned authored campaign; IDs are permanent save keys, titles are presentation. */
+export const CAMPAIGN_VERSION=2;
+const main=(id,title,description,chapter,order,duration,objective,sequence,reward=4)=>({
+  id,title,description,chapter,order,duration,objective,sequence,reward,section:'main',icon:chapter,mode:chapter,bossId:null,requiredWorld:chapter,
+  requires:order>1?[`${chapter}-${String(order-1).padStart(2,'0')}`]:chapter==='gaming'?['study-06']:chapter==='sleep'?['gaming-06']:[],
+  position:{x:8+(order-1)*16.8,y:chapter==='study'?18:chapter==='gaming'?50:82},target:objective.target
+});
+export const MAIN_MISSIONS=freeze([
+  main('study-01','Ein klarer Anfang','Lerne die vier ersten Signale kennen. Triff in 30 Sekunden mindestens 8 richtige Entscheidungen.','study',1,30,{metric:'correct',target:8},['streak','homework','gameclip','pencil'],3),
+  main('study-02','Genau statt hektisch','Triff mindestens 10 richtige Entscheidungen und mache höchstens einen Fehler. Die Runde dauert 35 Sekunden.','study',2,35,{metric:'precision',target:10,maxErrors:1},['autoplay','urgent-school','ad','break','streak','homework']),
+  main('study-03','Platz für Wichtiges','Lass mindestens 6 hilfreiche Dinge unberührt durch. Schulmaterial und echte Pausen helfen dir beim Lernen.','study',3,40,{metric:'useful',target:6},['homework','streak','pencil','autoplay','break','urgent-school']),
+  main('study-04','Deine ruhige Serie','Schaffe 12 richtige Entscheidungen hintereinander. Ein Fehler unterbricht deine Serie.','study',4,40,{metric:'streak',target:12},['gameclip','pencil','scary-lure','urgent-school','autoplay','break']),
+  main('study-05','Echte Warnungen zählen','Lass 3 echte Sicherheitswarnungen unberührt durch. Aufdringliche Klick-Köder können warten.','study',5,45,{metric:'signal',target:3,contentId:'safety'},['safety','scary-lure','homework','safety','autoplay','streak']),
+  main('study-06','Fokusprüfung','Beende 50 Sekunden mit mindestens 16 richtigen Entscheidungen und 90 Prozent Genauigkeit. Danach öffnet sich die Gamingwelt.','study',6,50,{metric:'accuracy',target:90,minCorrect:16},['urgent-school','streak','pencil','gameclip','safety','autoplay','break','homework'],6),
+  main('gaming-01','Willkommen im Team','Jetzt sind Team-Einladungen und Spieltipps sinnvoll. Triff 8 richtige Entscheidungen und bestätige am Zeitlimit deinen Stopp.','gaming',1,30,{metric:'correct',target:8},['gaming-invite','autoplay','gameclip','ad','loot','streak'],3),
+  main('gaming-02','Gemeinsam statt endlos','Lass 6 hilfreiche Team- oder Pausensignale durch. Werbung und Autoplay bleiben Ablenkungen.','gaming',2,35,{metric:'useful',target:6},['gaming-invite','ad','loot','streak','gameclip','break']),
+  main('gaming-03','Werbung ohne Treffer','Triff 12 richtige Entscheidungen mit höchstens einem Fehler. Behalte den Überblick zwischen Werbung und Spieltipps.','gaming',3,40,{metric:'precision',target:12,maxErrors:1},['ad','gameclip','autoplay','loot','streak','gaming-invite']),
+  main('gaming-04','Team im Flow','Schaffe eine Serie von 14 richtigen Entscheidungen. Nutze die bekannte Bedeutung der Signale in deiner Gamingrunde.','gaming',4,45,{metric:'streak',target:14},['loot','streak','gaming-invite','ad','gameclip','autoplay']),
+  main('gaming-05','Warnung bleibt wichtig','Lass 3 echte Sicherheitswarnungen durch und spiele bis zu deiner vereinbarten Grenze.','gaming',5,45,{metric:'signal',target:3,contentId:'safety'},['safety','ad','gameclip','safety','streak','gaming-invite']),
+  main('gaming-06','Mein Limit gehört mir','Triff mindestens 16 richtige Entscheidungen und höre am 50-Sekunden-Limit auf. Keine Verlängerung. Danach öffnet sich die Schlafwelt.','gaming',6,50,{metric:'boundary',target:16,minElapsed:50},['gaming-invite','streak','loot','autoplay','break','ad','safety','gameclip'],6),
+  main('sleep-01','Abendruhe','Kissen, Teddy und Mond sind jetzt hilfreich. Triff in 30 Sekunden 8 richtige Entscheidungen.','sleep',1,30,{metric:'correct',target:8},['quiet','autoplay','teddy','streak','moon','gameclip'],3),
+  main('sleep-02','Ruhe darf bleiben','Lass mindestens 6 hilfreiche Ruhesignale unberührt. Nicht jede Meldung verlangt eine Antwort.','sleep',2,35,{metric:'useful',target:6},['quiet','streak','moon','autoplay','teddy','break']),
+  main('sleep-03','Kein falscher Alarm','Triff 12 richtige Entscheidungen mit höchstens einem Fehler. Schulaufträge können am späten Abend bis morgen warten.','sleep',3,40,{metric:'precision',target:12,maxErrors:1},['urgent-school','quiet','gameclip','moon','autoplay','teddy']),
+  main('sleep-04','Sternenserie','Schaffe 14 richtige Entscheidungen hintereinander. Bleib bei deinem Ziel, zur Ruhe zu kommen.','sleep',4,45,{metric:'streak',target:14},['streak','moon','scary-lure','quiet','autoplay','teddy']),
+  main('sleep-05','Sicher durch die Nacht','Lass 3 echte Sicherheitswarnungen durch. Sie bleiben auch am Abend wichtig; Klick-Köder nicht.','sleep',5,45,{metric:'signal',target:3,contentId:'safety'},['safety','scary-lure','quiet','safety','autoplay','moon']),
+  main('sleep-06','Ein gutes Ende','Triff mindestens 12 richtige Entscheidungen. Beende ab Sekunde 30 mit dem Stopp-Knopf, ohne das Bonusangebot anzunehmen.','sleep',6,50,{metric:'healthy-stop',target:12,minElapsed:30},['quiet','streak','moon','autoplay','teddy','gameclip','break','safety'],6)
+]);
+export const CAREER_MISSIONS=freeze([...MAIN_MISSIONS,...LEGACY_MISSIONS.map(mission=>({...mission,section:'challenge',chapter:null}))]);
 const MISSION_MAP=new Map(CAREER_MISSIONS.map(mission=>[mission.id,mission]));
 const BOSS_MAP=new Map(BOSS_DEFINITIONS.map(boss=>[boss.id,boss]));
 const WEEK_COLUMNS=freeze([
@@ -51,23 +79,25 @@ const RUN_MODES=new Set(['campaign','study','gaming','sleep','master','open','bo
 const RESULTS=new Set(['complete','healthy-stop','locked','lives']);
 const validId=value=>typeof value==='string'&&/^\d{1,16}:\d{1,16}:(?:campaign|study|gaming|sleep|master|open|boss)$/.test(value)?value:'';
 
-/** Local-calendar Monday boundaries also work through daylight-saving changes. */
-export function getWeekInfo(now=Date.now()) {
+/** Guests use local Mondays; accounts use fixed UTC Mondays across devices. */
+export function getWeekInfo(now=Date.now(),calendar='local') {
+  const utc=calendar==='utc',yearOf=date=>utc?date.getUTCFullYear():date.getFullYear(),monthOf=date=>utc?date.getUTCMonth():date.getMonth(),dayOf=date=>utc?date.getUTCDate():date.getDate();
+  const atMidnight=(year,month,day)=>utc?new Date(Date.UTC(year,month,day)):new Date(year,month,day);
   let date=new Date(now instanceof Date?now.getTime():now);
-  if(!Number.isFinite(date.getTime())||date.getFullYear()<1970||date.getFullYear()>9998)date=new Date();
-  const weekday=(date.getDay()+6)%7;
-  const monday=new Date(date.getFullYear(),date.getMonth(),date.getDate()-weekday);
-  const next=new Date(monday.getFullYear(),monday.getMonth(),monday.getDate()+7);
-  const ordinal=Math.floor(Date.UTC(monday.getFullYear(),monday.getMonth(),monday.getDate())/86400000);
+  if(!Number.isFinite(date.getTime())||yearOf(date)<1970||yearOf(date)>9998)date=new Date();
+  const weekday=((utc?date.getUTCDay():date.getDay())+6)%7;
+  const monday=atMidnight(yearOf(date),monthOf(date),dayOf(date)-weekday);
+  const next=atMidnight(yearOf(monday),monthOf(monday),dayOf(monday)+7);
+  const ordinal=Math.floor(Date.UTC(yearOf(monday),monthOf(monday),dayOf(monday))/86400000);
   const thursday=new Date((ordinal+3)*86400000),year=thursday.getUTCFullYear();
   const january4=new Date(Date.UTC(year,0,4));
   const firstMonday=Math.floor(january4.getTime()/86400000)-(january4.getUTCDay()+6)%7;
   const weekNumber=1+Math.floor((ordinal-firstMonday)/7),rotation=mod(Math.floor((ordinal-4)/7),3);
-  const end=new Date(next.getFullYear(),next.getMonth(),next.getDate()-1);
-  const format=value=>value.toLocaleDateString('de-DE',{day:'numeric',month:'long'});
+  const end=atMidnight(yearOf(next),monthOf(next),dayOf(next)-1);
+  const format=value=>value.toLocaleDateString('de-DE',{day:'numeric',month:'long',...(utc?{timeZone:'UTC'}:{})});
   return {week:`${year}-W${String(weekNumber).padStart(2,'0')}`,label:`${format(monday)} – ${format(end)}`,start:monday.getTime(),next:next.getTime(),daysRemaining:7-weekday,skinId:WEEKLY_SKINS[rotation].id,rotation};
 }
-function tasksFor(now){const {rotation}=getWeekInfo(now);return WEEK_COLUMNS.map((column,index)=>column[(rotation+index)%column.length]);}
+function tasksFor(now,calendar){const {rotation}=getWeekInfo(now,calendar);return WEEK_COLUMNS.map((column,index)=>column[(rotation+index)%column.length]);}
 
 /** Sanitizes only this feature's state; old balances, unlocks and records survive. */
 export function normalizeAdventure(profile,now=Date.now()) {
@@ -75,11 +105,15 @@ export function normalizeAdventure(profile,now=Date.now()) {
   for(const mission of CAREER_MISSIONS)if(Array.isArray(source.completed)&&source.completed.includes(mission.id)&&mission.requires.every(id=>completed.includes(id)))completed.push(mission.id);
   const claimed=CAREER_MISSIONS.filter(mission=>completed.includes(mission.id)&&Array.isArray(source.claimed)&&source.claimed.includes(mission.id)).map(mission=>mission.id);
   const progress=Object.fromEntries(CAREER_MISSIONS.map(mission=>[mission.id,completed.includes(mission.id)?mission.target:Math.min(mission.target-1,count(source.progress?.[mission.id]))]));
-  const info=getWeekInfo(now),tasks=tasksFor(now),oldWeek=object(source.weekly)?source.weekly:{},sameWeek=oldWeek.week===info.week;
+  const info=getWeekInfo(now,profile?.accountCalendar),tasks=tasksFor(now,profile?.accountCalendar),oldWeek=object(source.weekly)?source.weekly:{},sameWeek=oldWeek.week===info.week;
   const weeklyProgress=Object.fromEntries(tasks.map(task=>[task.id,sameWeek?Math.min(task.target,count(oldWeek.progress?.[task.id])):0]));
   const weeklyClaimed=tasks.filter(task=>sameWeek&&weeklyProgress[task.id]>=task.target&&Array.isArray(oldWeek.claimed)&&oldWeek.claimed.includes(task.id)).map(task=>task.id);
   const ownedWeeklySkins=WEEKLY_SKINS.filter(skin=>(Array.isArray(profile?.unlockedSkins)&&profile.unlockedSkins.includes(skin.id))||(Array.isArray(source.ownedWeeklySkins)&&source.ownedWeeklySkins.includes(skin.id))).map(skin=>skin.id);
-  const adventure={version:1,completed,claimed,progress,ownedWeeklySkins,
+  const best=Object.fromEntries(CAREER_MISSIONS.flatMap(mission=>{
+    const entry=source.best?.[mission.id];if(!object(entry))return [];
+    return [[mission.id,{score:count(entry.score),correct:count(entry.correct),accuracy:Math.min(100,count(entry.accuracy)),streak:count(entry.streak),elapsed:Math.min(1000000,Math.max(0,Number(entry.elapsed)||0)),completed:entry.completed===true}]];
+  }));
+  const adventure={version:CAMPAIGN_VERSION,completed,claimed,progress,best,ownedWeeklySkins,
     lastRunOrdinal:Math.min(count(profile?.totalRuns),count(source.lastRunOrdinal)),
     recentRunIds:[...new Set((Array.isArray(source.recentRunIds)?source.recentRunIds:[]).map(validId).filter(Boolean))].slice(-64),
     weekly:{week:info.week,progress:weeklyProgress,claimed:weeklyClaimed,skinClaimed:sameWeek&&oldWeek.skinClaimed===true&&tasks.every(task=>weeklyProgress[task.id]>=task.target)}};
@@ -87,26 +121,41 @@ export function normalizeAdventure(profile,now=Date.now()) {
   return adventure;
 }
 
-/** Missing worlds remain shop purchases; career completion never bypasses them. */
+/** Chapter progress opens the next world; earlier coin purchases remain valid. */
+export function applyCampaignWorldUnlocks(profile){
+  if(!object(profile))return [];
+  const completed=Array.isArray(profile.adventure?.completed)?profile.adventure.completed:[],events=[];
+  const worlds=Array.isArray(profile.unlockedWorlds)?profile.unlockedWorlds:['study'];
+  for(const [missionId,world]of [['study-06','gaming'],['gaming-06','sleep']])if(completed.includes(missionId)&&!worlds.includes(world)){
+    worlds.push(world);events.push({type:'campaign-world-unlocked',id:world});
+  }
+  profile.unlockedWorlds=worlds;return events;
+}
+export function getCampaignChapters(profile,now=Date.now()){
+  const missions=getCareerMissions(profile,now);
+  return ['study','gaming','sleep'].map((id,index)=>{const chapter=missions.filter(mission=>mission.chapter===id),completed=chapter.filter(mission=>mission.completed).length;
+    return {id,index:index+1,title:['Lernen','Gaming','Schlafen'][index],completed,total:6,unlocked:profile?.unlockedWorlds?.includes(id)||id==='study',missions:chapter};});
+}
+
 export function getCareerMissions(profile,now=Date.now()) {
-  const adventure=normalizeAdventure(profile,now),worlds=Array.isArray(profile?.unlockedWorlds)?profile.unlockedWorlds:['study'];
+  const adventure=normalizeAdventure(profile,now);applyCampaignWorldUnlocks(profile);const worlds=Array.isArray(profile?.unlockedWorlds)?profile.unlockedWorlds:['study'];
   return CAREER_MISSIONS.map(mission=>{
     const completed=adventure.completed.includes(mission.id),claimed=adventure.claimed.includes(mission.id);
     const missingRequirements=mission.requires.filter(id=>!adventure.completed.includes(id));
     const worldLocked=Boolean(mission.requiredWorld&&mission.requiredWorld!=='study'&&!worlds.includes(mission.requiredWorld));
     const locked=missingRequirements.length>0||worldLocked;
-    return {...detached(mission),current:adventure.progress[mission.id],completed,claimed,ready:completed&&!claimed,locked,available:!locked,missingRequirements,worldLocked};
+    return {...detached(mission),current:adventure.progress[mission.id],best:adventure.best[mission.id]?detached(adventure.best[mission.id]):null,status:completed?'completed':locked?'locked':'available',completed,claimed,ready:completed&&!claimed,locked,available:!locked,missingRequirements,worldLocked};
   });
 }
 export function getCareerMission(profile,id,now=Date.now()){return getCareerMissions(profile,now).find(mission=>mission.id===id)||null;}
 
 export function getWeeklyChallenges(profile,now=Date.now()) {
   const adventure=normalizeAdventure(profile,now);
-  return tasksFor(now).map(task=>({...task,week:adventure.weekly.week,current:adventure.weekly.progress[task.id],completed:adventure.weekly.progress[task.id]>=task.target,claimed:adventure.weekly.claimed.includes(task.id)}));
+  return tasksFor(now,profile?.accountCalendar).map(task=>({...task,week:adventure.weekly.week,current:adventure.weekly.progress[task.id],completed:adventure.weekly.progress[task.id]>=task.target,claimed:adventure.weekly.claimed.includes(task.id)}));
 }
 export function getWeeklyReward(profile,now=Date.now()) {
-  const adventure=normalizeAdventure(profile,now),info=getWeekInfo(now),skin=WEEKLY_SKINS.find(item=>item.id===info.skinId);
-  const completed=tasksFor(now).filter(task=>adventure.weekly.progress[task.id]>=task.target).length;
+  const adventure=normalizeAdventure(profile,now),info=getWeekInfo(now,profile?.accountCalendar),skin=WEEKLY_SKINS.find(item=>item.id===info.skinId);
+  const completed=tasksFor(now,profile?.accountCalendar).filter(task=>adventure.weekly.progress[task.id]>=task.target).length;
   const owned=adventure.ownedWeeklySkins.includes(skin.id),claimed=owned||adventure.weekly.skinClaimed;
   return {id:skin.id,skin:{...skin},week:info.week,ready:completed===3&&!claimed,claimed,completed,total:3,owned};
 }
@@ -120,12 +169,33 @@ function studyDecisions(state,stats,correct) {
 }
 function missionResult(mission,state,correct,errors,elapsed) {
   if(state.mode!==mission.mode)return {completed:false,current:0};
+  if(mission.section==='main'){
+    const objective=mission.objective,accuracy=correct+errors?Math.floor(correct/(correct+errors)*100):0;
+    const values={correct,precision:correct,useful:count(state.metrics?.usefulPassed),streak:count(state.bestDecisionStreak),signal:count(state.metrics?.helpfulById?.[objective.contentId]),accuracy,boundary:correct,'healthy-stop':correct};
+    const current=values[objective.metric]||0,finished=['complete','healthy-stop'].includes(state.result);
+    const completed=finished&&current>=objective.target&&correct>=8&&
+      (objective.maxErrors===undefined||errors<=objective.maxErrors)&&correct>=(objective.minCorrect||0)&&
+      (objective.metric!=='boundary'||state.result==='healthy-stop'&&count(state.metrics?.limitExtensions)===0&&!state.extensionUsed)&&
+      (objective.metric!=='healthy-stop'||state.result==='healthy-stop'&&count(state.metrics?.sleepContinues)===0&&!state.sleepContinued)&&
+      elapsed+.000001>=(objective.minElapsed||mission.duration-.05);
+    return {completed,current};
+  }
   if(mission.bossId){const boss=BOSS_MAP.get(mission.bossId);return {completed:state.result==='complete'&&state.boss?.id===boss.id&&state.boss.defeated===true&&state.boss.health===0&&correct>=boss.maxHealth,current:Math.max(0,boss.maxHealth-count(state.boss?.health))};}
   if(mission.id==='study-focus')return {completed:state.result==='complete'&&correct>=20&&errors<=2,current:Math.min(20,correct)};
   if(mission.id==='open-trial')return {completed:elapsed>=45&&correct>=20&&state.result==='lives',current:correct>=20?Math.floor(elapsed):0};
   if(mission.id==='gaming-boundary')return {completed:state.result==='healthy-stop'&&correct>=8&&elapsed>=15&&count(state.metrics?.limitExtensions)===0&&state.extensionUsed!==true,current:0};
   if(mission.id==='sleep-sanctuary')return {completed:state.result==='healthy-stop'&&correct>=8&&elapsed>=8&&count(state.metrics?.sleepContinues)===0&&state.sleepContinued!==true,current:0};
   return {completed:state.result==='complete'&&correct>=20,current:0};
+}
+
+/** Evaluate this attempt, independently of a reward already earned on an earlier run. */
+export function getMissionOutcome(state){
+  const mission=MISSION_MAP.get(state?.missionId);if(!mission)return null;
+  const stats=object(state.metrics)?state.metrics:{},correct=count(stats.correctDecisions);
+  const errors=add(add(count(stats.usefulMistakes),count(stats.missedDistractions)),count(stats.shieldedMistakes));
+  const elapsed=typeof state.elapsed==='number'&&Number.isFinite(state.elapsed)?Math.max(0,state.elapsed):0;
+  const result=missionResult(mission,state,correct,errors,elapsed);
+  return {id:mission.id,title:mission.title,target:mission.target,current:Math.min(mission.target,count(result.current)),passed:state.ended===true&&state.credited===true&&!state.isTutorial&&correct>=8&&elapsed>=(state.result==='healthy-stop'?8:15)&&result.completed};
 }
 
 /** Call once after core run credit. Training/abandonment never advances rewards. */
@@ -142,16 +212,22 @@ export function recordAdventureRun(profile,state,now=Date.now()) {
   if(correct<8||elapsed<(state.result==='healthy-stop'?8:15))return [];
   const errors=add(add(count(stats.usefulMistakes),count(stats.missedDistractions)),count(stats.shieldedMistakes)),events=[];
   const mission=MISSION_MAP.get(state.missionId);
+  if(mission&&mission.mode===state.mode){
+    const best={score:count(state.score),correct,accuracy:correct+errors?Math.floor(correct/(correct+errors)*100):0,streak:count(state.bestDecisionStreak),elapsed,completed:adventure.completed.includes(mission.id)||missionResult(mission,state,correct,errors,elapsed).completed};
+    const previous=adventure.best[mission.id];
+    if(!previous||best.score>previous.score)adventure.best[mission.id]=best;
+  }
   if(mission&&!adventure.completed.includes(mission.id)&&mission.requires.every(id=>adventure.completed.includes(id))&&(!mission.requiredWorld||mission.requiredWorld==='study'||profile.unlockedWorlds?.includes(mission.requiredWorld))){
     const result=missionResult(mission,state,correct,errors,elapsed);
     adventure.progress[mission.id]=Math.max(adventure.progress[mission.id],Math.min(mission.target-1,count(result.current)));
-    if(result.completed){adventure.completed.push(mission.id);adventure.progress[mission.id]=mission.target;events.push({type:'career-completed',id:mission.id,title:mission.title,reward:mission.reward});}
+    if(result.completed){if(adventure.best[mission.id])adventure.best[mission.id].completed=true;adventure.completed.push(mission.id);adventure.progress[mission.id]=mission.target;events.push({type:'career-completed',id:mission.id,title:mission.title,reward:mission.reward});}
   }
-  const week=getWeekInfo(now);
+  events.push(...applyCampaignWorldUnlocks(profile));
+  const week=getWeekInfo(now,profile?.accountCalendar);
   // Finishing an old saved run after Monday cannot fill the new week's tasks.
   if(startedAt<week.start||startedAt>=week.next||startedAt>new Date(now).getTime())return events;
   const values={correct,cuts:count(stats.cuts),useful:count(stats.usefulPassed),streak:count(state.bestDecisionStreak),precise:Number(correct>=20&&errors<=2),flow:count(stats.flowTriggers),openSeconds:state.mode==='open'?Math.floor(elapsed):0,runs:1,study:studyDecisions(state,stats,correct)};
-  for(const task of tasksFor(now)){
+  for(const task of tasksFor(now,profile?.accountCalendar)){
     const previous=adventure.weekly.progress[task.id],value=values[task.metric];
     const current=Math.min(task.target,['streak','openSeconds'].includes(task.metric)?Math.max(previous,value):add(previous,value));
     adventure.weekly.progress[task.id]=current;
@@ -170,7 +246,7 @@ export function claimCareerReward(profile,id,now=Date.now()){
 }
 export function claimWeeklyReward(profile,id,now=Date.now()){
   if(!object(profile))return fail('Der Spielstand ist ungültig.');
-  const task=tasksFor(now).find(item=>item.id===id);if(!task)return fail('Diese Wochenaufgabe ist gerade nicht verfügbar.');
+  const task=tasksFor(now,profile?.accountCalendar).find(item=>item.id===id);if(!task)return fail('Diese Wochenaufgabe ist gerade nicht verfügbar.');
   const adventure=normalizeAdventure(profile,now);
   if(adventure.weekly.progress[id]<task.target)return fail('Diese Wochenaufgabe ist noch nicht geschafft.');
   if(adventure.weekly.claimed.includes(id))return fail('Diese Wochenbelohnung hast du schon abgeholt.');

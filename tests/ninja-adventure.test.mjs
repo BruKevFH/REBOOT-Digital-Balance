@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {spawnSync} from 'node:child_process';
-import {CAREER_MISSIONS,AUTOPLAY_BOSSES,WEEKLY_SKINS,WEEKLY_CHALLENGES,getWeekInfo,normalizeAdventure,getCareerMissions,getCareerMission,recordAdventureRun,claimCareerReward,getWeeklyChallenges,getWeeklyReward,claimWeeklyReward,claimWeeklySkin} from '../notification-ninja/src/adventure.js';
+import {CAREER_MISSIONS,MAIN_MISSIONS,LEGACY_MISSIONS,AUTOPLAY_BOSSES,WEEKLY_SKINS,WEEKLY_CHALLENGES,getWeekInfo,normalizeAdventure,getCareerMissions,getCareerMission,recordAdventureRun,claimCareerReward,getWeeklyChallenges,getWeeklyReward,claimWeeklyReward,claimWeeklySkin} from '../notification-ninja/src/adventure.js';
 
 const copy=value=>JSON.parse(JSON.stringify(value));
 const when=(offset=0)=>new Date(2026,9,16+offset,12).getTime();
@@ -10,7 +10,7 @@ function finish(p,extra={},now=when()){
   p.totalRuns++;
   const state={ended:true,credited:true,isTutorial:false,mode:'open',result:'lives',elapsed:120,runSerial:p.totalRuns,startedAt:now-180000+p.totalRuns,
     bestDecisionStreak:50,metrics:{correctDecisions:60,cuts:40,usefulPassed:20,flowTriggers:12,usefulMistakes:0,missedDistractions:0,shieldedMistakes:0,limitExtensions:0,sleepContinues:0},...extra};
-  state.metrics={correctDecisions:60,cuts:40,usefulPassed:20,flowTriggers:12,usefulMistakes:0,missedDistractions:0,shieldedMistakes:0,limitExtensions:0,sleepContinues:0,...extra.metrics};
+  state.metrics={correctDecisions:60,cuts:40,usefulPassed:20,flowTriggers:12,helpfulById:{safety:3},usefulMistakes:0,missedDistractions:0,shieldedMistakes:0,limitExtensions:0,sleepContinues:0,...extra.metrics};
   return {state,events:recordAdventureRun(p,state,now)};
 }
 function finishMission(p,id,extra={},now=when()){
@@ -21,8 +21,8 @@ function allCareer(p,now=when()){
   for(const mission of CAREER_MISSIONS)finishMission(p,mission.id,{},now);
 }
 
-test('career is an authored connected eight-node map with three real boss targets',()=>{
-  assert.equal(CAREER_MISSIONS.length,8);
+test('career combines eighteen chapter missions and the eight preserved connected challenges',()=>{
+  assert.equal(CAREER_MISSIONS.length,26);assert.equal(MAIN_MISSIONS.length,18);assert.equal(LEGACY_MISSIONS.length,8);
   assert.deepEqual(AUTOPLAY_BOSSES.map(boss=>[boss.id,boss.maxHealth]),[['scout',20],['guardian',28],['overlord',36]]);
   const known=new Set();
   for(const mission of CAREER_MISSIONS){
@@ -32,8 +32,8 @@ test('career is an authored connected eight-node map with three real boss target
     if(mission.bossId)assert.equal(mission.target,AUTOPLAY_BOSSES.find(boss=>boss.id===mission.bossId).maxHealth);
     known.add(mission.id);
   }
-  assert.equal(CAREER_MISSIONS.filter(mission=>!mission.requires.length).length,1);
-  assert.equal(getCareerMissions(profile(),when()).filter(mission=>mission.available).length,1);
+  assert.equal(CAREER_MISSIONS.filter(mission=>!mission.requires.length).length,2);
+  assert.equal(getCareerMissions(profile(),when()).filter(mission=>mission.available).length,2);
 });
 
 test('migration preserves old wallet, purchases, records and equipped skin',()=>{
@@ -41,7 +41,7 @@ test('migration preserves old wallet, purchases, records and equipped skin',()=>
   normalizeAdventure(p,when());
   const {adventure,...previous}=p;
   assert.deepEqual(previous,before);
-  assert.equal(adventure.version,1);
+  assert.equal(adventure.version,2);
   assert.deepEqual(adventure.completed,[]);
   assert.deepEqual(adventure.claimed,[]);
   assert.equal(adventure.weekly.week,'2026-W42');
