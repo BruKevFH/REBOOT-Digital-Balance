@@ -61,7 +61,7 @@ export const EN_HOME=Object.freeze({
   'Du möchtest mehr entdecken?':'Want to explore further?',
   'Deine Karriere, neue Kräfte und besondere Looks warten im Dojo.':'Your career, new powers and special looks are waiting in the dojo.',
   'Deine Karrierekarte':'Your career map',
-  'Acht verbundene Missionen führen durch Lernen, Gaming und Schlaf. Neue Wege öffnen sich Schritt für Schritt.':'Eight connected missions lead through studying, gaming and sleep. New paths open one step at a time.',
+  '18 Hauptmissionen in drei Kapiteln führen durch Lernen, Gaming und Schlaf. Acht zusätzliche Herausforderungen und drei Bosse warten danach auf dich.':'18 main missions across three chapters take you through studying, gaming and sleep. Eight extra challenges and three bosses are waiting after that.',
   'Autoplay-Bosse & Open Run':'Autoplay bosses & Open Run',
   'Drei Boss-Duelle oder ein endloser Run mit drei Herzen: Diese zusätzlichen Herausforderungen wählst du selbst.':'Three boss duels or an endless run with three hearts: choose these extra challenges when you want to.',
   'Dein eigener Ninja-Look':'Your own ninja look',

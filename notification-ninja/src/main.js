@@ -16,6 +16,7 @@ import {getRank,getDailyChallenges,NINJA_RANKS} from './journey.js';
 import {getCareerMissions,getMissionOutcome,getWeeklyChallenges,getWeeklyReward,getWeekInfo,AUTOPLAY_BOSSES} from './adventure.js';
 import {isSignedIn,setSignedIn,deleteLocalProfile} from './local-profile.js';
 import {createLeaderboard} from './leaderboard.js';
+import {deleteGuestProfile} from './guest-profile-deletion.js';
 import {upgradeArt,dojoTreeArt} from './art.js';
 import {DIFFICULTIES,SKILLS,ACHIEVEMENTS,WORLDS,BACKGROUNDS,getAchievementProgress} from './progression.js';
 
@@ -285,14 +286,22 @@ function logout(){if(accountActive()){void leaveAccount();return;}game.pause();s
 function deleteProfileMenu(){
   if(accountActive()){accountUI.profile(game.profile);return;}
   if(!openMenu('delete-profile'))return;
-  dialog('Dein Ninja-Profil löschen?',`<div class="delete-profile-warning"><h3>Dieser Schritt lässt sich nicht rückgängig machen.</h3><p>Dein Name, Münzen, XP, Skins, Fähigkeiten, Erfolge und der gespeicherte Run werden von diesem Gerät gelöscht. Wenn du einen Ranglisteneintrag veröffentlicht hast, löschen wir ihn zuerst beim Dienst. Ist dieser nicht erreichbar, bleibt dein Profil erhalten und du kannst es erneut versuchen.</p></div><p class="muted">Du kannst vorher ${button('Dein Profil exportieren','export','ghost')}.</p><form id="delete-profile-form"><label for="delete-profile-name">Gib zur Bestätigung <strong data-user-text>${escape(game.profile.player.username)}</strong> ein.</label><input id="delete-profile-name" type="text" autocomplete="off" spellcheck="false" required><p id="delete-profile-error" role="alert"></p><button id="delete-profile-confirm" class="btn danger" type="submit">Profil endgültig löschen</button></form>`,button('Profil behalten','nav-back','ghost'),{label:'DEIN PROFIL · DAUERHAFT LÖSCHEN',classes:'delete-profile-panel'});
+  dialog('Dein Ninja-Profil löschen?',`<div class="delete-profile-warning"><h3>Dieser Schritt lässt sich nicht rückgängig machen.</h3><p>Dein Name, Münzen, XP, Skins, Fähigkeiten, Erfolge und der gespeicherte Run werden von diesem Gerät gelöscht. Ein alter veröffentlichter Ranglisteneintrag wird zuerst beim Dienst entfernt. Ist der Dienst nicht erreichbar, kannst du nach einem deutlichen Warnhinweis ausdrücklich nur dein lokales Gastprofil löschen. Der Online-Eintrag kann dann bestehen bleiben.</p></div><p class="muted">Du kannst vorher ${button('Dein Profil exportieren','export','ghost')}.</p><form id="delete-profile-form"><label for="delete-profile-name">Gib zur Bestätigung <strong data-user-text>${escape(game.profile.player.username)}</strong> ein.</label><input id="delete-profile-name" type="text" autocomplete="off" spellcheck="false" required><p id="delete-profile-error" role="alert"></p><label id="delete-local-only-option" class="account-check" hidden><input id="delete-local-only" type="checkbox"> Nur dieses Gastprofil löschen. Ich verstehe, dass ein alter Online-Ranglisteneintrag weiterhin öffentlich sein kann und der alte Löschzugang dafür auf diesem Gerät gespeichert bleibt.</label><button id="delete-profile-confirm" class="btn danger" type="submit">Profil endgültig löschen</button></form>`,button('Profil behalten','nav-back','ghost'),{label:'DEIN PROFIL · DAUERHAFT LÖSCHEN',classes:'delete-profile-panel'});
 }
 async function confirmDelete(event){
   event.preventDefault();if(deletionBusy)return;if($('delete-profile-name').value!==game.profile.player.username){$('delete-profile-error').textContent='Der Name stimmt noch nicht überein. Dein Profil wurde nicht gelöscht.';return;}
   deletionBusy=true;const button=$('delete-profile-confirm');button.disabled=true;button.textContent='Profil wird gelöscht …';
-  try{await leaderboard.init();const remote=await leaderboard.deletePlayer();if(!remote.ok)throw new Error('Dein Ranglisteneintrag konnte nicht gelöscht werden. Prüfe die Verbindung und versuche es erneut. Dein lokales Profil bleibt erhalten.');
-    const removed=deleteLocalProfile(game.storage);if(!removed.ok)throw new Error(removed.reason);
-    mentorResume=false;mentor.clear();pendingGuides.clear();localLoggedIn=false;const storage=game.storage;game=new NinjaGame({storage});knownUnlocks=currentUnlocks();knownLevel=1;mapToken='';overviewToken='';sound=true;audio.setEnabled(sound);updateSoundUI();showLanding();resetNavigation();toast(removed.sessionOnly?'Dein Profil dieser Sitzung wurde gelöscht.':'Dein lokales Ninja-Profil wurde gelöscht.');
+  try{
+    const allowLocalOnly=$('delete-local-only')?.checked===true;
+    const removed=await deleteGuestProfile({leaderboard,storage:game.storage,allowLocalOnly});
+    if(!removed.ok){
+      if(removed.remotePending){const fallback=$('delete-local-only-option');if(fallback)fallback.hidden=false;}
+      throw new Error(removed.reason);
+    }
+    mentorResume=false;mentor.clear();pendingGuides.clear();localLoggedIn=false;const storage=game.storage;game=new NinjaGame({storage});knownUnlocks=currentUnlocks();knownLevel=1;mapToken='';overviewToken='';sound=true;audio.setEnabled(sound);updateSoundUI();showLanding();resetNavigation();
+    if(removed.localOnly){
+      dialog('Lokaler Spielstand gelöscht',`<p>Dein Gastprofil ist gelöscht. Der alte Ranglistendienst hat die Löschung nicht bestätigt. Ein früher veröffentlichter Eintrag kann weiterhin online stehen. Der alte Ranglisten-Zugang bleibt für einen späteren Löschversuch auf diesem Gerät gespeichert.</p>`,button('Zur Startseite','home','primary'),{label:'LOKALE LÖSCHUNG · ONLINE OFFEN'});
+    }else toast(removed.sessionOnly?'Dein Profil dieser Sitzung wurde gelöscht.':'Dein lokales Ninja-Profil wurde gelöscht.');
   }catch(error){if($('delete-profile-error'))$('delete-profile-error').textContent=error.message;button.disabled=false;button.textContent='Profil endgültig löschen';}finally{deletionBusy=false;}
 }
 function leaderboardShell(message,entries=[],own=null){

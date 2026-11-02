@@ -117,3 +117,10 @@ Das ZIP enthält alle benötigten Bilder, beide Sprachen, Homepage, Bundle und e
 `src/game.js` simuliert Regeln; `progression.js`, `adventure.js`, `journey.js` halten zentrale Kataloge. `renderer.js` zeichnet, `audio.js` erzeugt Musik, `i18n.js` übersetzt die Darstellung. `accounts.js` spricht die API, `verified-run.js` protokolliert Runs, `account-ui.js` zeigt Formulare. `practice.js` ist die getrennte ungewertete Tastenübung. `server/ninja-service.mjs` liefert HTTP und statische Dateien; `ninja-auth.mjs` authentifiziert, `ninja-store.mjs` verwaltet SQLite und `ninja-game-service.mjs` validiert Fortschritt und Läufe.
 
 Projektteam laut Auftrag: Matteo Müller – Frontend; Kevin Brugger – Backend; beide programmieren. Daraus folgt keine Behauptung über die Urheberschaft einzelner Codezeilen.
+
+
+### Gastprofil-Löschung bei Ausfall der alten Rangliste
+
+Bei einem Gastprofil mit historischem v2-Ranglisteneintrag wird zuerst dessen Online-Löschung versucht. Ist der alte Dienst nicht erreichbar, bleibt das Gastprofil zunächst unangetastet. Danach kann der Spieler ausdrücklich eine **nur lokale** Löschung bestätigen. In diesem Fall können alte veröffentlichte Ranglisteneinträge weiterhin online bestehen; die alte Löschberechtigung bleibt zur späteren Wiederholung auf diesem Gerät gespeichert. Diese lokale Ausnahme betrifft **nicht** die separate serverseitige v3-Kontolöschung.
+
+Die öffentliche Homepage beschreibt 18 Hauptmissionen plus acht Zusatzherausforderungen; vorhandene Spielstände und Missions-IDs bleiben unverändert. Nach Änderungen an `src/` müssen `npm run build:ninja` und `npm run package:ninja` ausgeführt und die erzeugten Release-Dateien vor einer Pages-Veröffentlichung mit eingecheckt werden.
