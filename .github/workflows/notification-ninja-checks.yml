@@ -34,8 +34,8 @@ jobs:
           node-version: '24'
           cache: npm
       - run: npm ci --ignore-scripts
-      - run: npm run test:ninja
       - run: npm run build:ninja
+      - run: npm run test:ninja
       - run: npm run package:ninja
       - name: Verify bundled entry and offline homepage routes
         run: |

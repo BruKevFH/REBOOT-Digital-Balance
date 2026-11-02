@@ -124,3 +124,15 @@ Projektteam laut Auftrag: Matteo Müller – Frontend; Kevin Brugger – Backend
 Bei einem Gastprofil mit historischem v2-Ranglisteneintrag wird zuerst dessen Online-Löschung versucht. Ist der alte Dienst nicht erreichbar, bleibt das Gastprofil zunächst unangetastet. Danach kann der Spieler ausdrücklich eine **nur lokale** Löschung bestätigen. In diesem Fall können alte veröffentlichte Ranglisteneinträge weiterhin online bestehen; die alte Löschberechtigung bleibt zur späteren Wiederholung auf diesem Gerät gespeichert. Diese lokale Ausnahme betrifft **nicht** die separate serverseitige v3-Kontolöschung.
 
 Die öffentliche Homepage beschreibt 18 Hauptmissionen plus acht Zusatzherausforderungen; vorhandene Spielstände und Missions-IDs bleiben unverändert. Nach Änderungen an `src/` müssen `npm run build:ninja` und `npm run package:ninja` ausgeführt und die erzeugten Release-Dateien vor einer Pages-Veröffentlichung mit eingecheckt werden.
+
+
+### Version 3.0.1 – Release-Ablauf
+
+Build- und Service-Worker-Version bleiben **3.0.1**, damit vorhandene Offline-Installationen die aktualisierten Dateien beim nächsten regulären Update laden. In `notification-ninja/index.html` führen beide Downloadlinks zur ZIP-Datei `downloads/Notification-Ninja-3.0.1.zip`. Das Paket wird reproduzierbar durch `npm run package:ninja` erzeugt; ein ZIP ist keine Quelle für serverseitige Konten. Der alte Download 3.0.0 bleibt als historisches Archiv erhalten.
+
+```bash
+npm ci
+npm run build:ninja
+npm run test:ninja
+npm run package:ninja
+```
