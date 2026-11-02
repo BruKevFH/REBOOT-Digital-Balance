@@ -14,7 +14,7 @@ Lokal Frontend + API + dauerhafte SQLite-Datei: **http://127.0.0.1:8083/notifica
 
 Konten verwenden Pseudonym, Passwort und einmaligen Wiederherstellungscode. Der Server bestätigt Wallet, Käufe und Run-Ergebnisse; lokale Gastguthaben werden nicht beliebig importiert. Open Run bleibt ein Modus mit drei Herzen, langsamem Einstieg und ohne Zeitlimit. Skins sind dort kosmetisch. Ergebnisse erscheinen erst nach Prüfung und ausdrücklicher Veröffentlichung in der neuen Rangliste.
 
-**Für öffentliches Account-Hosting fehlt noch ein HTTPS-Dienst mit dauerhaftem Datenordner.** GitHub Pages liefert das Gastspiel aus. Die bisherige kostenlose Render-v2-Demo ist getrennt und besitzt keinen dauerhaften Speicher. Die vollständige lokale Umsetzung und exakten externen Einrichtungsschritte stehen in der [Backendanleitung](server/README_NINJA_APP.md). Keine Bezahlprodukte wurden aktiviert.
+**Das Gastspiel3.0.0 ist auf GitHub Pages veröffentlicht und bytegleich geprüft. Für öffentliches Account-Hosting fehlt noch ein HTTPS-Dienst mit dauerhaftem Datenordner.** GitHub Pages liefert das Gastspiel aus. Die bisherige kostenlose Render-v2-Demo ist getrennt und besitzt keinen dauerhaften Speicher. Die vollständige lokale Umsetzung und exakten externen Einrichtungsschritte stehen in der [Backendanleitung](server/README_NINJA_APP.md). Keine Bezahlprodukte wurden aktiviert.
 
 Vorhandene Gastspielstände, 24 Erfolge, neun Fähigkeiten, Skins, drei Bosse und Tages-/Wochenaufgaben bleiben erhalten. Finale Wortmarke ohne Slogan: [PNG](notification-ninja/branding/Notification-Ninja-Logo.png) · [PDF](notification-ninja/branding/Notification-Ninja-Logo.pdf).
 

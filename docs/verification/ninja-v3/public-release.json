@@ -1,0 +1,146 @@
+{
+  "commit": "350293effa88faa74160e5016192feb62d902365",
+  "base": "https://brukevfh.github.io/REBOOT-Digital-Balance/notification-ninja/",
+  "files": [
+    {
+      "file": "index.html",
+      "status": 200,
+      "bytes": 29759,
+      "byteIdentical": true,
+      "sha256": "23b01d9e4e9e4e9b60c0dbe53fe659061cc325df09395219055a225da99afcc1"
+    },
+    {
+      "file": "home.html",
+      "status": 200,
+      "bytes": 30742,
+      "byteIdentical": true,
+      "sha256": "39fa2d25caeb8bbecbfd8514c9dcab1e2bf6b85d185f1e4ce2e82ca7c36fc5e5"
+    },
+    {
+      "file": "styles.css",
+      "status": 200,
+      "bytes": 213117,
+      "byteIdentical": true,
+      "sha256": "c6a48f5df7ebbfd335bb688738f181a8330e562c8cfacf881fa8128c575b7c76"
+    },
+    {
+      "file": "sw.js",
+      "status": 200,
+      "bytes": 2031,
+      "byteIdentical": true,
+      "sha256": "5b3a70ba63823ece585242225723e4ef3598a7723518da0fcb7f680b0aa94fa1"
+    },
+    {
+      "file": "manifest.webmanifest",
+      "status": 200,
+      "bytes": 291,
+      "byteIdentical": true,
+      "sha256": "01ea063c79b541de937ffa448070ca7468f9ca5afd2031f733df9fbbfc7f3bb3"
+    },
+    {
+      "file": "favicon.svg",
+      "status": 200,
+      "bytes": 500,
+      "byteIdentical": true,
+      "sha256": "0fef905bbef94be1db88c34524bea08ca7d20392a605c010b550ef6152434964"
+    },
+    {
+      "file": "dist/ninja.js",
+      "status": 200,
+      "bytes": 510763,
+      "byteIdentical": true,
+      "sha256": "c7d9e18a22f772ffdf6dbfa68c3586d8fc4e0019ebf8b51f392bb8944e0f94de"
+    },
+    {
+      "file": "dist/home.js",
+      "status": 200,
+      "bytes": 143334,
+      "byteIdentical": true,
+      "sha256": "62b1f28ada9be0e5765ccbf4ea2e59f4a627bd8cf3224eedd6ae03fdaaaddea8"
+    },
+    {
+      "file": "dist/build.json",
+      "status": 200,
+      "bytes": 1501,
+      "byteIdentical": true,
+      "sha256": "94a961ecb3fbe8937c7da7f82f6793052bc1c6906c29d75031b7afa2ffefa273"
+    },
+    {
+      "file": "leaderboard-config.json",
+      "status": 200,
+      "bytes": 87,
+      "byteIdentical": true,
+      "sha256": "b1ad6d115e6d9e0827fa187ae0a9d7ef04a59cd97c332ed4176865b8b2ec8671"
+    },
+    {
+      "file": "accounts-config.json",
+      "status": 200,
+      "bytes": 121,
+      "byteIdentical": true,
+      "sha256": "fd4a54ae365d3f57d4b58a1ae937ad5a4d8d9a469c6e0f41904e62f95f863f2f"
+    },
+    {
+      "file": "assets/dojo-study.png",
+      "status": 200,
+      "bytes": 2039159,
+      "byteIdentical": true,
+      "sha256": "e952cc41abd5864c47b89f636a574c2d453225b29f4e68e1e44dd1abdcf3acef"
+    },
+    {
+      "file": "assets/dojo-gaming.png",
+      "status": 200,
+      "bytes": 2022168,
+      "byteIdentical": true,
+      "sha256": "a39d7acf17a9aeae459b35d4f1b51e241c6f8d3aaa3db6bc17422fc1025031e4"
+    },
+    {
+      "file": "assets/dojo-sleep.png",
+      "status": 200,
+      "bytes": 2009630,
+      "byteIdentical": true,
+      "sha256": "38c9167217e39b44152837658e4d719cec6e67b98cbd40ea5586359697df6ef6"
+    },
+    {
+      "file": "assets/focus-village.png",
+      "status": 200,
+      "bytes": 2462778,
+      "byteIdentical": true,
+      "sha256": "fe562b358085751b738a062ddbcf86335285bbe3a9dd6a7f65ff01ffb082f376"
+    },
+    {
+      "file": "branding/Notification-Ninja-Logo.png",
+      "status": 200,
+      "bytes": 1308440,
+      "byteIdentical": true,
+      "sha256": "a90ee8de90f54ff22ad9d38343fd3282bb0eb6f9f5d6eb21602b28a4b1c7c35e"
+    },
+    {
+      "file": "branding/Notification-Ninja-Logo.pdf",
+      "status": 200,
+      "bytes": 1583215,
+      "byteIdentical": true,
+      "sha256": "3d3c797f405be759c239ec9540f564248c39445b38027219c5f701a6673525b1"
+    },
+    {
+      "file": "downloads/Notification-Ninja-3.0.0.zip",
+      "status": 200,
+      "bytes": 9608705,
+      "byteIdentical": true,
+      "sha256": "3dc282d3ee9312bb7e4c79e4eef00f8239bbfa3a6ce9f8072bc2823d9d0ffeee"
+    },
+    {
+      "file": "downloads/Notification-Ninja-3.0.0.zip.sha256",
+      "status": 200,
+      "bytes": 95,
+      "byteIdentical": true,
+      "sha256": "d4b1e21f758dcd7ef6d9ae20e04c0996418e91ca15fd6abd65cf729a77d2b28d"
+    }
+  ],
+  "passed": true,
+  "date": "2026-11-02",
+  "pagesStatus": "built",
+  "ci": "success",
+  "ciURL": "https://github.com/BruKevFH/REBOOT-Digital-Balance/actions/runs/41505029113",
+  "accountAPIOnline": false,
+  "note": "Application runtime verified at this commit. Later documentation-only commits do not change these runtime bytes."
+}
