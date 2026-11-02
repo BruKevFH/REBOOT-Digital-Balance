@@ -42,7 +42,7 @@ jobs:
           assert(readFileSync(root+'sw.js','utf8').includes('3.0.1'));
           const game=readFileSync(root+'dist/ninja.js','utf8');
           const home=readFileSync(root+'dist/home.js','utf8');
-          assert(game.includes('Nur dieses Gastprofil löschen'));
+          assert(game.includes('delete-local-only-option'));
           assert(home.includes('18 Hauptmissionen'));
           for(const a of [root+'index.html',root+'downloads/Notification-Ninja-3.0.1.zip.sha256'])
             assert(readFileSync(a,'utf8').includes('Notification-Ninja-3.0.1.zip'));
