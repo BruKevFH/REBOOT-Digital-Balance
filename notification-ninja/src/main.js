@@ -105,6 +105,7 @@ function handleAccountClick(event){
   if(action==='logout'){event.preventDefault();event.stopImmediatePropagation();void leaveAccount();}else if(action==='delete-profile'){event.preventDefault();event.stopImmediatePropagation();accountUI.profile(game.profile);}
 }
 function navigateRoute(route,{replace=false}={}){
+  if(route==='guest'){if(accountActive()||localLoggedIn)showHome();else enterDojo();if(replace)history.replaceState(history.state,'','#worlds');return;}
   if(route==='account'){accountActive()?accountUI.profile(game.profile):accountUI.login();return;}
   const aliases={worlds:'home',campaign:'career',bazaar:'shop',dojo:'home'},target=aliases[route]||route;
   if(['login','register','recovery'].includes(target)){accountUI[target]();return;}
