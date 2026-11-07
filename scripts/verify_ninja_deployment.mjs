@@ -103,8 +103,8 @@ export async function verifyNinjaDeployment(value, {
     },
   });
   insist(preflight.headers.get('access-control-allow-origin') === pagesOrigin &&
-    /\\bPOST\\b/.test(preflight.headers.get('access-control-allow-methods') || '') &&
-    /\\bcontent-type\\b/i.test(preflight.headers.get('access-control-allow-headers') || ''),
+    /\bPOST\b/.test(preflight.headers.get('access-control-allow-methods') || '') &&
+    /\bcontent-type\b/i.test(preflight.headers.get('access-control-allow-headers') || ''),
   'Registration CORS preflight is not configured for GitHub Pages.');
   checks.push('Registration CORS preflight');
 
@@ -114,17 +114,17 @@ export async function verifyNinjaDeployment(value, {
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const candidate = process.argv[2];
   if (!candidate || process.argv.length !== 3) {
-    process.stderr.write('Usage: npm run verify:ninja:deployment -- https://YOUR-ACCOUNT-SERVICE.onrender.com\\n');
+    process.stderr.write('Usage: npm run verify:ninja:deployment -- https://YOUR-ACCOUNT-SERVICE.onrender.com\n');
     process.exitCode = 2;
   } else {
     try {
       const result = await verifyNinjaDeployment(candidate);
-      process.stdout.write(result.checks.map(item => 'PASS ' + item).join('\\n') + '\\n');
-      process.stdout.write('Public backend preflight passed: ' + result.origin + '\\n');
-      process.stdout.write('Next: manually test two accounts, restart Render, confirm Neon persistence and delete test data.\\n');
-      process.stdout.write('Only then enable notification-ninja/accounts-config.json with endpoint ' + result.configuredEndpoint + '\\n');
+      process.stdout.write(result.checks.map(item => 'PASS ' + item).join('\n') + '\n');
+      process.stdout.write('Public backend preflight passed: ' + result.origin + '\n');
+      process.stdout.write('Next: manually test two accounts, restart Render, confirm Neon persistence and delete test data.\n');
+      process.stdout.write('Only then enable notification-ninja/accounts-config.json with endpoint ' + result.configuredEndpoint + '\n');
     } catch (error) {
-      process.stderr.write('Deployment preflight FAILED: ' + error.message + '\\n');
+      process.stderr.write('Deployment preflight FAILED: ' + error.message + '\n');
       process.exitCode = 1;
     }
   }
