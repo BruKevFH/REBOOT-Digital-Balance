@@ -269,7 +269,7 @@ body:not(.is-playing) .global-nav{display:none}
   .home-profile-tools .player-chip-avatar{width:27px;height:27px}
   .home-profile-tools .player-chip-avatar>svg{width:27px;height:27px}
   .home-profile-tools .player-chip-copy>strong{max-width:68px}
-  .home-profile-tools .notifications-button{width:43px;height:43px}
+  .home-profile-tools .notifications-button{width:45px;min-width:45px;height:45px}
   .ninja-hub{grid-template-columns:90px minmax(0,1fr);gap:8px;padding:13px}
   .hub-portrait{max-width:90px}
   .hub-identity h1{font-size:21px!important}
