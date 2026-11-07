@@ -101,3 +101,28 @@ export function awardReflectionSeal(storage,scope,context){
  catch{return {earned:true,saved:false,seals};}
 }
 export function clearReflectionSeals(storage,scope){try{storage?.removeItem(key(scope));return true;}catch{return false;}}
+
+
+const escapeHTML=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+/** Render only authored feedback. Event handlers and all rewards live in main.js. */
+export function renderReflectionQuest({context='study',step='choice',choice=null,reason=null,seals=[],reward=null}={}){
+ const q=reflectionQuest(context),collected=seals.includes(context),total=seals.length;
+ const decisions=`<h3 id="reflection-question">${escapeHTML(q.situation)}</h3>
+   <div class="reflection-quest-choices">${q.answers.map((label,index)=>`<button type="button" class="reflection-quest-option" data-reflection-choice="${index+1}"><span class="reflection-choice-number">${index+1}</span><span>${escapeHTML(label)}</span><span aria-hidden="true">→</span></button>`).join('')}</div>`;
+ const reasons=`<div class="reflection-explanation is-encouraging"><strong>Guter Ansatz! Aber warum hilft dir das?</strong><p>${escapeHTML(q.why)}</p></div><div class="reflection-quest-choices">${q.reasons.map((label,index)=>`<button type="button" class="reflection-quest-option" data-reflection-reason="${index+1}"><span class="reflection-choice-number">${index+1}</span><span>${escapeHTML(label)}</span><span aria-hidden="true">→</span></button>`).join('')}</div>`;
+ const incorrect=`<div class="reflection-explanation is-reconsider"><strong>Schau noch einmal auf dein Ziel.</strong><p>${escapeHTML(q.wrong[choice]||q.explanation)}</p><button type="button" class="btn ghost" data-action="reflection-retry">Andere Entscheidung versuchen →</button></div>`;
+ const because=`<div class="reflection-explanation is-reconsider"><strong>Ein wichtiger Unterschied!</strong><p>${escapeHTML(q.reasonWrong[reason]||q.explanation)}</p><button type="button" class="btn ghost" data-action="reflection-retry">Begründung erneut wählen →</button></div>`;
+ const success=`<div class="reflection-complete"><span class="reflection-medal" aria-hidden="true">${escapeHTML(q.icon)}</span><div><span class="eyebrow">${reward?.earned?'NEUES ERKENNTNIS-SIEGEL':'DEIN SIEGEL IST SCHON GESICHERT'}</span><h3>${escapeHTML(q.seal)} ${reward?.earned?'freigeschaltet!':'gehört dir!'}</h3><p>${escapeHTML(q.explanation)}</p><p class="reflection-transfer"><strong>Deine Idee für den Alltag:</strong> ${escapeHTML(q.takeaway)}</p></div></div>
+   <div class="reflection-reward"><strong>✦ ${reward?.earned?'1 Erkenntnis-Siegel gesammelt':'Schon in deiner Sammlung'}</strong><span>${total} / 3 Themen erkundet</span></div>
+   ${total===3?'<p class="reflection-master">✦ Alle drei Wege verstanden – Erkenntnis-Meister!</p>':''}
+   ${reward&&!reward.saved?'<p class="reflection-storage-warning">Speichern ist hier blockiert. Das Siegel gilt nur für diese geöffnete Sitzung.</p>':''}`;
+ const inner=step==='choice'?decisions:step==='reason'?reasons:step==='wrong-choice'?incorrect:step==='wrong-reason'?because:step==='success'?success:'';
+ const progress=step==='choice'||step==='wrong-choice'?1:step==='reason'||step==='wrong-reason'?2:3;
+ return `<section class="reflection-quest" aria-labelledby="reflection-quest-heading">
+  <header class="reflection-quest-header"><span class="eyebrow">NIMS ENTSCHEIDUNGS-DOJO</span><span class="reflection-seal-progress">✦ ${total} / 3 Siegel</span></header>
+  <div class="reflection-quest-intro"><span class="reflection-nim" aria-hidden="true">忍</span><div><small>${escapeHTML(q.label)} · EINE ALLTAGSSITUATION</small><h3 id="reflection-quest-heading">Was würdest du wirklich tun?</h3><p>Überlege erst, was zu deinem Ziel passt – dann, warum. Auch eine zweite Überlegung ist willkommen.</p></div></div>
+  <div class="reflection-quest-steps" aria-label="Dein Lernweg" data-step="${progress}"><span>01 · ENTSCHEIDEN</span><span>02 · BEGRÜNDEN</span><span>03 · LERNMOMENT</span></div>
+  ${inner}
+  <p class="reflection-quest-note">${collected?'Dieses Thema hast du bereits gemeistert. Du kannst die Situation trotzdem noch einmal durchdenken.':'Für eine passende Entscheidung mit guter Begründung erhältst du einmalig ein Erkenntnis-Siegel.'} Die Siegel sind reine Lernabzeichen, keine zusätzlichen Münzen oder Ranglistenpunkte. Sie bleiben auf diesem Gerät und werden nicht mit dem Konto synchronisiert.</p>
+ </section>`;
+}
