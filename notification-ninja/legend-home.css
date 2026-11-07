@@ -50,7 +50,7 @@ body::before{content:"";position:absolute;top:0;left:0;right:0;height:620px;z-in
  background:center / cover no-repeat url("./assets/dojo-study.png");
  filter:saturate(.88);transition:transform .33s
 }
-.situation-card:nth-child(2)::before{background-image:url("./assets/dojo-gaming.png")}
+.situation-card:nth-child(2)::before{background-image:url("./assets/dojo-gaming.svg")}
 .situation-card:nth-child(3)::before{background-image:url("./assets/dojo-sleep.png")}
 .situation-card::after{content:"";position:absolute;z-index:-1;inset:0;background:linear-gradient(0deg,#0d1e30ef 0%,#16304cc7 53%,#11253b3d 100%)}
 .situation-card:hover,.situation-card:nth-child(2):hover,.situation-card:nth-child(3):hover{transform:translateY(-5px);box-shadow:0 18px 28px #1429375a;border-color:#dbd6a5!important}
