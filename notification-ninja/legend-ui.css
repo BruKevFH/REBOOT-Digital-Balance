@@ -1073,3 +1073,9 @@ html[data-ninja-theme=relaxed] .legend-career-hero .legend-kicker{color:#287a60!
 @keyframes arcade-traveler{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
 @media(prefers-reduced-motion:reduce){.arcade-map-traveler>span{animation:none!important}}
 .calm-view .arcade-map-traveler>span{animation:none!important}
+
+/* Minimum 44px touch targets on every palette and sticky header control. */
+html[data-ninja-theme] .panel .panel-back,
+html[data-ninja-theme] .panel .panel-home,
+html[data-ninja-theme] .arcade-theme-cycle,
+html[data-ninja-theme] .ninja-theme-picker button{min-height:46px!important}
