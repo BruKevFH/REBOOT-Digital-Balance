@@ -57,5 +57,5 @@ test('new presentation is translated without changing player IDs',()=>{
  for(const text of ['Worauf hast du Lust?','Missionen und Bosse','Mehr entdecken','Endlos und fair'])
    assert(ui.includes(JSON.stringify(text)));
  for(const text of ['Jetzt spielen','Neu hier? Kostenloses Konto erstellen →'])
-   assert(home.includes(JSON.stringify(text)));
+   assert(home.includes(JSON.stringify(text))||home.includes("'"+text+"'"),'Missing translation: '+text);
 });
