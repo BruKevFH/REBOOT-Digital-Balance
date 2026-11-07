@@ -105,3 +105,41 @@ footer{color:#b6cbc4;border-color:#47666b}
  .situation-card,.situation-card:nth-child(2),.situation-card:nth-child(3){min-height:280px}
 }
 @media(prefers-reduced-motion:reduce){.situation-card::before,.situation-card{transition:none!important}}
+
+
+/* Info-only homepage: three explicit entry routes before reaching the Dojo. */
+.hero-actions.access-choices{
+ display:grid;grid-template-columns:max-content max-content;
+ align-items:center;gap:13px 14px;max-width:485px
+}
+.hero-actions.access-choices>.button{min-width:165px}
+.hero-actions.access-choices>.guest-home-link{
+ grid-column:1/-1;display:inline-flex;justify-content:center;min-height:48px;width:auto;
+ padding:9px 13px;text-align:center;font-size:14px;font-weight:850;text-decoration:none;
+ color:#a8f4d4;border:1px solid #6dafa0;border-radius:12px;background:#18394bc9;
+ transition:background .17s,border-color .17s
+}
+.hero-actions.access-choices>.guest-home-link:hover{background:#23575c;border-color:#9be4b9}
+.hero-note{max-width:525px!important;font-size:12px!important;line-height:1.8!important}
+.situation-card,.situation-card:nth-child(2),.situation-card:nth-child(3){
+ cursor:default!important;transform:none!important;
+}
+.situation-card:hover,.situation-card:nth-child(2):hover,.situation-card:nth-child(3):hover{
+ transform:none!important;box-shadow:0 12px 26px #12273b3d!important;border-color:#98b1a3!important
+}
+.situation-card:hover::before{transform:none!important}
+.situation-card .context-cta>span:first-child{font-size:11px;color:#d5eddb}
+.callout-actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:12px}
+.callout-actions .button{box-shadow:none}
+.callout-actions .button.secondary{background:#274d57;color:#ecfff3;border:1px solid #77b8a4;box-shadow:none}
+@media(max-width:760px){
+ .hero-actions.access-choices{grid-template-columns:1fr 1fr;max-width:540px}
+ .hero-actions.access-choices>.button{min-width:0;padding:13px 12px;font-size:13px}
+ .callout-actions{justify-content:flex-start}
+}
+@media(max-width:390px){
+ .hero-actions.access-choices{grid-template-columns:1fr}
+ .hero-actions.access-choices>.guest-home-link{grid-column:1}
+ .callout-actions{display:grid;grid-template-columns:1fr;width:100%}
+ .callout-actions .button{width:100%}
+}
