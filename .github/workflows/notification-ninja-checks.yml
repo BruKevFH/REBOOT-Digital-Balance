@@ -82,7 +82,8 @@ jobs:
           const metadata=JSON.parse(readFileSync(root+'dist/build.json','utf8'));
           assert.equal(metadata.entry,'index.html');
           const home=readFileSync(root+'home.html','utf8');
-          assert(home.includes('href="./index.html"'));
+          for(const route of ['login','register','guest'])assert(home.includes('href="./index.html#'+route+'"'));
+          assert(!home.includes('href="./index.html"'),'No direct play link from public info page');
           assert.match(home, /<script\s+src="\.\/dist\/home\.js"\s+defer><\/script>/);
           new vm.Script(readFileSync(root+'dist/home.js','utf8'));
           const handlers=new Map(),cached=[];
