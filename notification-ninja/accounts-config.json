@@ -1,1 +1,5 @@
-{"enabled":false,"apiVersion":3,"message":"Durable account hosting must be connected before public sign-in is enabled."}
+{
+  "enabled": true,
+  "apiVersion": 3,
+  "endpoint": "https://notification-ninja-accounts.onrender.com/api/v3"
+}
