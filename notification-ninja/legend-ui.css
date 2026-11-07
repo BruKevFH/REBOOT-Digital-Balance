@@ -375,9 +375,9 @@
 .legend-podium-step>strong{font-size:clamp(17px,2.1vw,24px);color:#246d65}
 .legend-podium-step>small{font-size:9px;color:#5c6962;text-align:center}
 .legend-podium-base{width:100%;height:110px;display:grid;place-items:center;border-radius:12px 12px 0 0;background:linear-gradient(140deg,#96abb9,#698a95);border:2px solid #738b96;box-shadow:inset 0 8px #ffffff29}
-.legend-podium-1 .legend-podium-base{height:75px}
-.legend-podium-0 .legend-podium-base{height:150px;background:linear-gradient(140deg,#f9d685,#d4a957);border-color:#c29b55}
-.legend-podium-2 .legend-podium-base{height:55px;background:linear-gradient(140deg,#d6ad92,#b7846d);border-color:#b17e69}
+.legend-podium-2 .legend-podium-base{height:75px}
+.legend-podium-1 .legend-podium-base{height:150px;background:linear-gradient(140deg,#f9d685,#d4a957);border-color:#c29b55}
+.legend-podium-3 .legend-podium-base{height:55px;background:linear-gradient(140deg,#d6ad92,#b7846d);border-color:#b17e69}
 .legend-podium-base>span{font-size:48px;font-weight:950;color:#fff5da;text-shadow:0 3px 10px #66482e44}
 .legend-podium-step.is-mine .legend-podium-name{color:#146a59;text-decoration:underline;text-decoration-thickness:2px}
 .legend-ranking-list{display:grid;gap:8px;margin:16px 0 10px;padding:0;list-style:none}
@@ -508,12 +508,17 @@
  .legend-rank-tabs button{font-size:11px}
  .legend-podium-medal{font-size:23px}
  .legend-podium-base{height:95px}
- .legend-podium-0 .legend-podium-base{height:125px}
- .legend-podium-1 .legend-podium-base{height:60px}
- .legend-podium-2 .legend-podium-base{height:43px}
+ .legend-podium-1 .legend-podium-base{height:125px}
+ .legend-podium-2 .legend-podium-base{height:60px}
+ .legend-podium-3 .legend-podium-base{height:43px}
  .legend-podium-base>span{font-size:35px}
 }
 @media(prefers-reduced-motion:reduce){
  .legend-mode-feature,.legend-mode-small,.legend-button,.legend-dojo-scene img,.legend-map-node .legend-node-orb{transition:none!important}
 }
 .calm-view .legend-mode-feature,.calm-view .legend-button,.calm-view .legend-dojo-scene img{transition:none!important}
+
+/* Access to the Basar remains visible when the mobile tab bar has five destinations. */
+.home-access-tools .access-bazaar{min-height:44px;padding:8px 13px;font-size:12px;font-weight:850;border:1px solid #547e79;border-radius:13px;background:#273e51;color:#ffe5a7;cursor:pointer}
+.home-access-tools .access-bazaar:hover{background:#365e63}
+@media(max-width:440px){.home-access-tools .access-bazaar{padding-inline:9px;font-size:11px}}
