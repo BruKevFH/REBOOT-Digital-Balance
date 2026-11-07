@@ -48,7 +48,7 @@ async function request(fetchImpl, origin, pathname, {method = 'GET', headers = {
 export async function verifyNinjaDeployment(value, {
   fetchImpl = globalThis.fetch,
   pagesOrigin = PAGES_ORIGIN,
-  timeoutMs = 15000,
+  timeoutMs = 110000,
 } = {}) {
   const origin = normalizePublicOrigin(value);
   const pages = new URL(pagesOrigin);
