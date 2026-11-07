@@ -2,7 +2,7 @@
   "name": "Notification Ninja",
   "version": "3.1.0",
   "engine": "Canvas 2D / Web Audio",
-  "style": "Illustrated paper dojo",
+  "style": "Focus-first illustrated dojo",
   "illustratedRoomArt": true,
   "villageMap": true,
   "logo": "branding/Notification-Ninja-Logo.png",
@@ -51,7 +51,7 @@
   "mainMissions": 18,
   "accountAPI": 3,
   "accountSync": true,
-  "publicAccountsConfigured": false,
+  "publicAccountsConfigured": true,
   "backendRequiresPersistentDatabase": true,
   "databaseAdapters": [
     "postgresql",
