@@ -213,3 +213,6 @@ html[data-ninja-theme=noir] .callout h2{color:#ffe3a2}
 html[data-ninja-theme=noir] .project-info{background:#191920;border-color:#76716a}
 @media(max-width:760px){.home-theme-switch{min-height:40px;padding:7px 9px;font-size:10px}}
 @media(max-width:390px){.home-theme-switch>small{display:none}}
+
+/* Give the hero access choices room on tablets without wrapping the top navigation. */
+@media(max-width:1100px){.top-nav .nav-links{display:none!important}.top-nav .nav-actions{margin-left:auto}}
