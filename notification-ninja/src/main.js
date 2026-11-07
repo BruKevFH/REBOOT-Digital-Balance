@@ -362,7 +362,7 @@ function briefing(){
 }
 function enterPlaying(){clear();scene('playing');if(mentor?.isOpen()){game.pause();mentorResume=!document.hidden;}else game.resume();renderHUD();save()}
 function sync(){
-  if(['home','landing','onboarding'].includes(ui)||[...menuKinds,'paused','sleep-choice'].includes(ui))return;
+  if(['home','landing','onboarding','practice'].includes(ui)||[...menuKinds,'paused','sleep-choice'].includes(ui))return;
   const s=game.state,token=`${s.scene}:${s.stageIndex}:${s.isTutorial}`;
   if(token===lastCoreToken)return;lastCoreToken=token;
   if(s.scene==='briefing')briefing();
