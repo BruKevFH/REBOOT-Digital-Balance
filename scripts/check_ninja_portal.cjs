@@ -87,6 +87,20 @@ async function acknowledge(p){for(let n=0;n<20&&(await read(p)).mentor.open;n++)
       assert.notEqual((await read(page)).ui,'home','Open Run shortcut really starts game');
       await page.locator('[data-action="home"]').first().click();
      }
+     if(width===768){
+      await page.locator('.dojo-tabs [data-game-route="dojos"]').click();await acknowledge(page);
+      assert.equal((await read(page)).ui,'dojos','Dojo navigation opens illustrated worlds');
+      assert.equal(await page.locator('.legend-dojo').count(),3,'Three real themed worlds');
+      assert.equal(await page.locator('.legend-dojo [data-quick-context]').count(),3);
+      await page.locator('.legend-dojo [data-game-route="campaign"]').first().click();await acknowledge(page);
+      assert.equal((await read(page)).ui,'career','Dojo route opens campaign');
+      assert.equal(await page.locator('.legend-map-node').count(),18);
+      assert.equal(await page.locator('.legend-boss-node').count(),3);
+      await page.locator('[data-mission-inspect="study-02"]').click();await acknowledge(page);
+      assert.equal(await page.locator('.legend-mission-inspector h3').innerText(),'Genau statt hektisch');
+      await page.locator('.panel-home').click();await acknowledge(page);
+      assert.equal((await read(page)).ui,'home');
+     }
      await page.locator('.home-access-tools [data-game-route="bazaar"]').click();await acknowledge(page);
      await page.locator('[data-shop-filter="owned"]').click();
      assert.equal(await page.locator('.shop-card.is-locked:visible').count(),0);
