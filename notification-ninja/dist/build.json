@@ -1,8 +1,8 @@
 {
   "name": "Notification Ninja",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "engine": "Canvas 2D / Web Audio",
-  "style": "Focus-first illustrated dojo",
+  "style": "Ninja Dojo – three consistent worlds, guest-first informational onboarding",
   "illustratedRoomArt": true,
   "villageMap": true,
   "logo": "branding/Notification-Ninja-Logo.png",
@@ -17,7 +17,7 @@
     "sleep"
   ],
   "calmEffects": true,
-  "reflection": true,
+  "reflection": "two-step contextual insight quest",
   "entry": "index.html",
   "homepage": "home.html",
   "inbox": "unread-only",
@@ -77,5 +77,10 @@
   "menuMusic": true,
   "openRuleset": "open-v2",
   "openHearts": 3,
-  "leaderboard": "server-replay-explicit-publication"
+  "leaderboard": "server-replay-explicit-publication",
+  "reflectionSeals": "3 cosmetic locally stored seals",
+  "shopTabs": [
+    "worlds",
+    "skins"
+  ]
 }
