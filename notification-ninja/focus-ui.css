@@ -207,7 +207,7 @@ body:not(.is-playing) .global-nav{display:none}
   .home-access-tools{grid-column:1/-1;justify-content:flex-end;gap:9px}
   .home-access-tools .access-settings{font-size:11px}
   .dojo-tabs{
-    position:fixed;z-index:16;left:0;right:0;bottom:0;
+    position:fixed;z-index:5;left:0;right:0;bottom:0;
     width:100%;max-width:none;margin:0;padding:7px 5px calc(8px + env(safe-area-inset-bottom,0px));
     gap:2px;border:0;border-top:1px solid #dce6db;border-radius:17px 17px 0 0;
     background:rgba(255,255,255,.96);backdrop-filter:blur(16px);
