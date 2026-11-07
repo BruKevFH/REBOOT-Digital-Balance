@@ -1079,3 +1079,6 @@ html[data-ninja-theme] .panel .panel-back,
 html[data-ninja-theme] .panel .panel-home,
 html[data-ninja-theme] .arcade-theme-cycle,
 html[data-ninja-theme] .ninja-theme-picker button{min-height:46px!important}
+
+/* Small viewport: icon-only theme button keeps a 46x46px hit area. */
+html[data-ninja-theme] .arcade-theme-cycle{min-width:46px!important}
