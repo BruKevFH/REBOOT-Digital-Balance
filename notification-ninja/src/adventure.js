@@ -20,12 +20,12 @@ export const WEEKLY_SKINS=freeze([
 export const LEGACY_MISSIONS=freeze([
   {id:'study-focus',title:'Der erste Fokus',description:'Beende eine Lernzimmer-Runde mit mindestens 20 richtigen Entscheidungen und höchstens 2 Fehlern.',icon:'study',mode:'study',bossId:null,requiredWorld:'study',requires:[],position:{x:50,y:52},target:20,reward:5},
   {id:'open-trial',title:'Der ruhige Atem',description:'Überlebe 45 Sekunden im unveränderten Open Run und triff dabei mindestens 20 richtige Entscheidungen.',icon:'clock',mode:'open',bossId:null,requiredWorld:null,requires:['study-focus'],position:{x:27,y:52},target:45,reward:6},
-  {id:'autoplay-scout',title:'Autoplay-Späher',description:'Besiege den Autoplay-Späher. Er wechselt zwischen Lernen, Gaming und Schlaf: Deine richtigen Entscheidungen schwächen ihn.',icon:'boss',mode:'boss',bossId:'scout',requiredWorld:null,requires:['open-trial'],position:{x:8,y:52},target:bossHealth('scout'),reward:8},
+  {id:'autoplay-scout',title:'Chaos-Sensei',description:'Besiege den Chaos-Sensei. Bewahre Fokus-Symbole, um seine Verteidigung zu öffnen; nutze dann deine richtigen Entscheidungen.',icon:'boss',mode:'boss',bossId:'scout',requiredWorld:null,requires:['open-trial'],position:{x:8,y:52},target:bossHealth('scout'),reward:8},
   {id:'gaming-boundary',title:'Deine Grenze zählt',description:'Beende eine Gaming-Runde bewusst an deiner Zeitgrenze, ohne Verlängerung: mindestens 8 richtige Entscheidungen und 15 Sekunden Spielzeit.',icon:'gaming',mode:'gaming',bossId:null,requiredWorld:'gaming',requires:['study-focus'],position:{x:69,y:32},target:1,reward:6},
   {id:'sleep-sanctuary',title:'Nachtruhe beschützen',description:'Nutze im Schlafzimmer bewusst den Stopp-Knopf, ohne vorher weiterzuspielen: mindestens 8 richtige Entscheidungen und 8 Sekunden Spielzeit.',icon:'sleep',mode:'sleep',bossId:null,requiredWorld:'sleep',requires:['study-focus'],position:{x:69,y:73},target:1,reward:6},
-  {id:'autoplay-guardian',title:'Feed-Wächter',description:'Besiege den stärkeren Feed-Wächter. Achte bei jedem Kontextwechsel darauf, was jetzt sinnvoll ist.',icon:'boss',mode:'boss',bossId:'guardian',requiredWorld:null,requires:['gaming-boundary','sleep-sanctuary'],position:{x:89,y:52},target:bossHealth('guardian'),reward:10},
+  {id:'autoplay-guardian',title:'Glitch-Shogun',description:'Besiege den Glitch-Shogun. Zwei zerteilte Glitch-Muster lösen seine Doppelgänger auf. Erst dann ist er verwundbar.',icon:'boss',mode:'boss',bossId:'guardian',requiredWorld:null,requires:['gaming-boundary','sleep-sanctuary'],position:{x:89,y:52},target:bossHealth('guardian'),reward:10},
   {id:'balance-master',title:'Alle Welten im Griff',description:'Schließe Balance Master mit mindestens 20 richtigen Entscheidungen ab.',icon:'master',mode:'master',bossId:null,requiredWorld:'master',requires:['autoplay-scout'],position:{x:27,y:15},target:1,reward:8},
-  {id:'autoplay-overlord',title:'Die letzte Endlosschleife',description:'Besiege den Autoplay-Meister und beende seine Endlosschleife. Nutze dein Wissen aus allen drei Alltagssituationen.',icon:'boss',mode:'boss',bossId:'overlord',requiredWorld:null,requires:['autoplay-guardian','balance-master'],position:{x:50,y:6},target:bossHealth('overlord'),reward:15}
+  {id:'autoplay-overlord',title:'Die letzte Endlosschleife',description:'Besiege den Albtraum-Oni. Bewahre Ruhe-Symbole, um sein kurzes Angriffsfenster zu öffnen. Beachte jede angekündigte Phase.',icon:'boss',mode:'boss',bossId:'overlord',requiredWorld:null,requires:['autoplay-guardian','balance-master'],position:{x:50,y:6},target:bossHealth('overlord'),reward:15}
 ]);
 /** Versioned authored campaign; IDs are permanent save keys, titles are presentation. */
 export const CAMPAIGN_VERSION=2;
@@ -75,9 +75,9 @@ const WEEK_COLUMNS=freeze([
   ]
 ]);
 export const WEEKLY_CHALLENGES=Object.freeze(WEEK_COLUMNS.flat());
-const RUN_MODES=new Set(['campaign','study','gaming','sleep','master','open','boss']);
+const RUN_MODES=new Set(['campaign','study','gaming','sleep','master','open','boss','boss-rush','daily']);
 const RESULTS=new Set(['complete','healthy-stop','locked','lives']);
-const validId=value=>typeof value==='string'&&/^\d{1,16}:\d{1,16}:(?:campaign|study|gaming|sleep|master|open|boss)$/.test(value)?value:'';
+const validId=value=>typeof value==='string'&&/^\d{1,16}:\d{1,16}:(?:campaign|study|gaming|sleep|master|open|boss|boss-rush|daily)$/.test(value)?value:'';
 
 /** Guests use local Mondays; accounts use fixed UTC Mondays across devices. */
 export function getWeekInfo(now=Date.now(),calendar='local') {

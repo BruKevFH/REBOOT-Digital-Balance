@@ -4,6 +4,13 @@ export const ACCOUNT_CACHE_PREFIX='notification-ninja:account-cache:v3:';
 const copy=value=>value==null?value:JSON.parse(JSON.stringify(value));
 const loopback=host=>['localhost','127.0.0.1','[::1]'].includes(host);
 export class AccountError extends Error{constructor(message,{code='REQUEST_FAILED',status=0,retryable=false}={}){super(message);this.name='AccountError';this.code=code;this.status=status;this.retryable=retryable;}}
+/** Friendly form feedback; the server independently enforces every signup rule. */
+export function validateRegistration({email,password,passwordConfirmation,privacyAccepted}={}){
+  if(typeof email!=='string'||email.length>254||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/u.test(email.trim()))return {ok:false,field:'email',message:'Bitte gib eine gültige E-Mail-Adresse ein.'};
+  if(password!==passwordConfirmation)return {ok:false,field:'passwordConfirmation',message:'Die Passwörter stimmen nicht überein.'};
+  if(privacyAccepted!==true)return {ok:false,field:'privacyAccepted',message:'Bitte stimme den Datenschutzhinweisen zu.'};
+  return {ok:true};
+}
 export function validateAccountsConfig(value,baseURL=globalThis.location?.href||'http://localhost/'){
   if(value?.enabled!==true)return {configured:false,message:'Online-Konten sind hier noch nicht verbunden. Du kannst als Gast spielen.'};
   let endpoint;try{endpoint=new URL(value.endpoint||'/api/v3',baseURL);}catch{return {configured:false,message:'Die Konto-Adresse ist ungültig.'};}

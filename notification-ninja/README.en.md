@@ -1,5 +1,7 @@
 # Notification Ninja
 
+**Development release 3.1.0:** PostgreSQL alongside local SQLite, a new account portal and Ninja hub, distinct bosses, Boss Rush and server-issued UTC daily runs. Public accounts remain disabled pending actual Render/Neon verification. See [validation and blockers](ULTIMATE_STATUS.md) and [server setup](../server/README_NINJA_APP.md).
+
 An illustrated browser arcade game in **English and German**. Slice distractions and let helpful items pass. Study, Gaming and Sleep use distinct dojo scenes and context rules. No extra brand name or slogan.
 
 [German guide](README.md) · [Requirement matrix](REQUIREMENTS_FULL.md) · [Executed checks and limitations](TEST_REPORT.md)
@@ -32,7 +34,7 @@ Settings include language, separate music/effects volume, master mute, calm effe
 
 ## Accounts and data
 
-Optional real accounts use a pseudonym, password and one-time recovery key. No email or invented mail service. Keep the recovery key; password recovery cannot be inferred from a name. Passwords use salted scrypt hashes. Session and recovery secrets are256bit random, hashed on the server. New v3 account tokens stay in sessionStorage; passwords are never stored in browser storage. A historical v2 device-deletion credential may remain in localStorage so old demo entries can still be removed; it is not a v3 account session.
+Optional new accounts require a Ninja name, private email address, confirmed password and privacy consent. Recovery uses a one-time key; email ownership verification and email delivery are not configured. Keep the recovery key; password recovery cannot be inferred from a name. Passwords use salted scrypt hashes. Session and recovery secrets are256bit random, hashed on the server. New v3 account tokens stay in sessionStorage; passwords are never stored in browser storage. A historical v2 device-deletion credential may remain in localStorage so old demo entries can still be removed; it is not a v3 account session.
 
 The server owns wallet, purchases and progress. Transactions and user-scoped idempotency keys prevent duplicate rewards and overspending. A guest can carry safe tutorial/settings information across once; arbitrary local money/XP/unlocks are not imported as verified funds. Existing guest progress remains separately on the original device. Signing out clears the account session; confirmed deletion requires the password and removes related account data.
 

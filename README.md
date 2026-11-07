@@ -1,5 +1,7 @@
 # Notification Ninja
 
+> **Entwicklungsstand 3.1.0 (07.11.2026):** PostgreSQL-/SQLite-Accountdienst, neues Registrierungsportal und Ninja-Hub, Boss Rush, UTC-Tages-Challenge und unterschiedliche Bossmechaniken. Die öffentliche Account-Anbindung bleibt bis zur tatsächlichen Render-/Neon-Abnahme deaktiviert. Nachweise und offene Deployment-Blocker: [ULTIMATE_STATUS.md](notification-ninja/ULTIMATE_STATUS.md). Lokaler Betrieb: [Backendanleitung](server/README_NINJA_APP.md).
+
 Eigenständiges Wischspiel über digitale Alltagsentscheidungen, auf **Deutsch und Englisch**, mit eigenen illustrierten Dojos. Kostenfreier Gaststart, drei kurze Alltagssituationen und NIM-Training. Ausbau 3.0 ergänzt echte optionale Accounts, 18 Hauptmissionen, acht zusätzliche Herausforderungen, separate Audio-/Bewegungseinstellungen und eine serverseitig nachgespielte Open-Run-Rangliste.
 
 **[Homepage](https://brukevfh.github.io/REBOOT-Digital-Balance/notification-ninja/home.html)** · **[Spielanleitung und Startbefehle](notification-ninja/README.md)** · **[Anforderungsmatrix](notification-ninja/REQUIREMENTS_FULL.md)** · **[Prüfbericht](notification-ninja/TEST_REPORT.md)** · **[Backendbetrieb](server/README_NINJA_APP.md)**
@@ -12,7 +14,7 @@ npm run serve:ninja
 
 Lokal Frontend + API + dauerhafte SQLite-Datei: **http://127.0.0.1:8083/notification-ninja/home.html**. Node.js24 nötig; kein externer Zugangsschlüssel. Als statisches Gastspiel: `npm run serve` und Port8000. Vollständiges Gast-ZIP: [Notification-Ninja-3.0.1.zip](notification-ninja/downloads/Notification-Ninja-3.0.1.zip).
 
-Konten verwenden Pseudonym, Passwort und einmaligen Wiederherstellungscode. Der Server bestätigt Wallet, Käufe und Run-Ergebnisse; lokale Gastguthaben werden nicht beliebig importiert. Open Run bleibt ein Modus mit drei Herzen, langsamem Einstieg und ohne Zeitlimit. Skins sind dort kosmetisch. Ergebnisse erscheinen erst nach Prüfung und ausdrücklicher Veröffentlichung in der neuen Rangliste.
+Neue Konten verlangen Ninja-Name, private E-Mail, Passwortbestätigung und Datenschutz-Zustimmung. Die Wiederherstellung verwendet einen einmaligen Code. Der Server bestätigt Wallet, Käufe und Run-Ergebnisse; lokale Gastguthaben werden nicht beliebig importiert. Open Run bleibt ein Modus mit drei Herzen, langsamem Einstieg und ohne Zeitlimit. Skins sind dort kosmetisch. Ergebnisse erscheinen erst nach Prüfung und ausdrücklicher Veröffentlichung in der neuen Rangliste.
 
 **Release 3.0.1 ergänzt eine konsistente Beschreibung der 18 Hauptmissionen sowie eine ausdrücklich bestätigte lokale Gastprofil-Löschung beim Ausfall des historischen Ranglistendienstes. Für öffentliches Account-Hosting fehlt weiterhin ein HTTPS-Dienst mit dauerhaftem Datenordner.** GitHub Pages liefert das Gastspiel aus. Die bisherige kostenlose Render-v2-Demo ist getrennt und besitzt keinen dauerhaften Speicher. Die vollständige lokale Umsetzung und exakten externen Einrichtungsschritte stehen in der [Backendanleitung](server/README_NINJA_APP.md). Keine Bezahlprodukte wurden aktiviert.
 

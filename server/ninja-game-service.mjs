@@ -1,3 +1,4 @@
+import {operation} from './ninja-operations.mjs';
 import {createHash,randomBytes,randomUUID} from 'node:crypto';
 import {NinjaGame,OPEN_RULESET} from '../notification-ninja/src/game.js';
 import {getPlayerProgress} from '../notification-ninja/src/player.js';
@@ -72,7 +73,7 @@ export function createNinjaGameService(store,{now=()=>Date.now(),maxCommands=GAM
   for(const [name,value,min,max]of [['maxCommands',maxCommands,1,200000],['maxLogBytes',maxLogBytes,256,8*1024*1024],['runTTL',runTTL,1000,7*24*60*60*1000],['wallClockTolerance',wallClockTolerance,0,10000]])if(!Number.isSafeInteger(value)||value<min||value>max)throw new TypeError(`Invalid ${name}.`);
   const db=store.db;
   const clock=()=>{const value=now();if(!Number.isSafeInteger(value)||value<0||value>MAX-runTTL)throw new TypeError('The game clock must return a valid timestamp.');return value;};
-  store.transaction(()=>{
+  if(store.dialect!=='postgres')store.transaction(()=>{
     db.exec(`
       CREATE TABLE IF NOT EXISTS ninja_game_migrations(version INTEGER PRIMARY KEY,applied_at INTEGER NOT NULL);
       CREATE TABLE IF NOT EXISTS ninja_ledger(
@@ -106,24 +107,24 @@ export function createNinjaGameService(store,{now=()=>Date.now(),maxCommands=GAM
     `);
     db.prepare('INSERT OR IGNORE INTO ninja_game_migrations(version,applied_at) VALUES(?,?)').run(1,clock());
   });
-  function getState(userId){
-    const state=store.getProfile(userId),game=profileModel(state.profile,clock());
+  function* getState(userId){
+    const state=(yield store.getProfile(userId)),game=profileModel(state.profile,clock());
     return {profile:clone(game.profile),revision:state.revision,serverNow:clock(),calendar:'utc'};
   }
-  function walletDelta(userId,delta,reference,kind,stamp){
+  function* walletDelta(userId,delta,reference,kind,stamp){
     if(!Number.isSafeInteger(delta))throw fail(500,'INVALID_WALLET_DELTA','Die Münzen konnten nicht berechnet werden.');
-    const current=store.getProfile(userId).profile.coins,next=current+delta;
+    const current=(yield store.getProfile(userId)).profile.coins,next=current+delta;
     if(!Number.isSafeInteger(next)||next<0)throw fail(409,'INSUFFICIENT_COINS','Dafür fehlen Münzen.');
-    db.prepare('UPDATE wallets SET balance=? WHERE user_id=?').run(next,userId);
-    db.prepare('INSERT INTO ninja_ledger(user_id,reference,kind,delta,balance_after,created_at) VALUES(?,?,?,?,?,?)').run(userId,reference,kind,delta,next,stamp);
+    (yield db.prepare('UPDATE wallets SET balance=? WHERE user_id=?').run(next,userId));
+    (yield db.prepare('INSERT INTO ninja_ledger(user_id,reference,kind,delta,balance_after,created_at) VALUES(?,?,?,?,?,?)').run(userId,reference,kind,delta,next,stamp));
   }
-  function action(userId,body){
+  function* action(userId,body){
     if(!object(body)||typeof body.type!=='string'||typeof body.idempotencyKey!=='string'||!keyPattern.test(body.idempotencyKey)||Object.keys(body).some(key=>!['type','id','payload','idempotencyKey'].includes(key)))throw bad('Für diese Aktion fehlt eine gültige Wiederholungskennung.');
     const id=body.id,stamp=clock(),bodyHash=hash(stringify({type:body.type,id:id??null,payload:body.payload??null}));
-    return store.transaction(()=>{
-      const previous=db.prepare('SELECT body_hash,response FROM ninja_actions WHERE user_id=? AND key=?').get(userId,body.idempotencyKey);
-      if(previous){if(previous.body_hash!==bodyHash)throw fail(409,'IDEMPOTENCY_CONFLICT','Diese Wiederholungskennung wurde bereits für eine andere Aktion verwendet.');return {...JSON.parse(previous.response),...getState(userId),replayed:true};}
-      const before=store.getProfile(userId).profile,game=profileModel(before,stamp);let result;
+    return store.transaction(function*(){
+      const previous=(yield db.prepare('SELECT body_hash,response FROM ninja_actions WHERE user_id=? AND key=?').get(userId,body.idempotencyKey));
+      if(previous){if(previous.body_hash!==bodyHash)throw fail(409,'IDEMPOTENCY_CONFLICT','Diese Wiederholungskennung wurde bereits für eine andere Aktion verwendet.');return {...JSON.parse(previous.response),...(yield* getState(userId)),replayed:true};}
+      const before=(yield store.getProfile(userId)).profile,game=profileModel(before,stamp);let result;
       const methods={
         'skin.buy':'buySkin','skin.equip':'selectSkin','world.buy':'buyWorld','background.buy':'buyBackground','background.equip':'selectBackground',
         'skill.buy':'buySkill','super.equip':'selectSuper','achievement.claim':'claimAchievement','daily.claim':'claimDailyReward',
@@ -147,20 +148,20 @@ export function createNinjaGameService(store,{now=()=>Date.now(),maxCommands=GAM
       }else throw bad('Diese Kontoaktion ist unbekannt.');
       checked(result);addNotifications(game,before,stamp);
       const delta=game.profile.coins-before.coins;
-      walletDelta(userId,delta,`action:${body.idempotencyKey}`,body.type,stamp);
-      const state=store.putProfile(userId,game.profile),response={profile:state.profile,revision:state.revision,action:clone(result)};
-      db.prepare('INSERT INTO ninja_actions(user_id,key,body_hash,response,created_at) VALUES(?,?,?,?,?)').run(userId,body.idempotencyKey,bodyHash,stringify(response),stamp);
+      (yield* walletDelta(userId,delta,`action:${body.idempotencyKey}`,body.type,stamp));
+      const state=(yield store.putProfile(userId,game.profile)),response={profile:state.profile,revision:state.revision,action:clone(result)};
+      (yield db.prepare('INSERT INTO ninja_actions(user_id,key,body_hash,response,created_at) VALUES(?,?,?,?,?)').run(userId,body.idempotencyKey,bodyHash,stringify(response),stamp));
       return response;
     });
   }
-  function startRun(userId,body){
+  function* startRun(userId,body){
     if(!object(body)||!['quick','mission','normal'].includes(body.kind)||Object.keys(body).some(key=>!['kind','context','mode','missionId','difficulty','gamingLimit','viewport','tutorial','forceTutorial'].includes(key)))throw bad('Wähle eine gültige Spielrunde.');
-    const viewport=validateViewport(body.viewport),stamp=clock(),seed=randomBytes(32).toString('hex'),id=randomUUID();
+    const viewport=validateViewport(body.viewport),stamp=clock(),seed=body.mode==='daily'?hash('notification-ninja:daily:'+new Date(stamp).toISOString().slice(0,10)):randomBytes(32).toString('hex'),id=randomUUID();
     if(body.difficulty!==undefined&&!['easy','normal','hard'].includes(body.difficulty))throw bad('Wähle einen gültigen Schwierigkeitsgrad.');
     if(body.gamingLimit!==undefined&&![45,60,90].includes(body.gamingLimit))throw bad('Wähle eine gültige Gaming-Grenze.');
     if(body.tutorial!==undefined&&typeof body.tutorial!=='boolean'||body.forceTutorial!==undefined&&typeof body.forceTutorial!=='boolean')throw bad();
-    return store.transaction(()=>{
-      const current=store.getProfile(userId),game=profileModel(current.profile,stamp);
+    return store.transaction(function*(){
+      const current=(yield store.getProfile(userId)),game=profileModel(current.profile,stamp);
       game.seed=new NinjaGame({seed,storage:null}).seed;game.width=viewport.width;game.height=viewport.height;
       const sequence=current.runSequence+1;if(!Number.isSafeInteger(sequence))throw fail(503,'RUN_SEQUENCE_LIMIT','Eine neue Runde ist gerade nicht verfügbar.');
       game.state.runSerial=sequence-1;
@@ -168,24 +169,24 @@ export function createNinjaGameService(store,{now=()=>Date.now(),maxCommands=GAM
       if(body.kind==='quick')started=game.startQuickRound(body.context,options);
       else if(body.kind==='mission')started=game.startMission(body.missionId,options);
       else{
-        if(!['campaign','study','gaming','sleep','master','open'].includes(body.mode))throw bad('Wähle einen gültigen Spielmodus.');
-        started=game.start({mode:body.mode,...options,tutorial:body.tutorial??(body.forceTutorial===true),forceTutorial:body.forceTutorial??false});
+        if(!['campaign','study','gaming','sleep','master','open','boss-rush','daily'].includes(body.mode))throw bad('Wähle einen gültigen Spielmodus.');
+        started=game.start({mode:body.mode,...options,...(body.mode==='daily'?{challengeDay:new Date(stamp).toISOString().slice(0,10)}:{}),tutorial:body.tutorial??(body.forceTutorial===true),forceTutorial:body.forceTutorial??false});
       }
       checked(started);const initial=game.exportData(),expiresAt=stamp+runTTL;
-      db.prepare("UPDATE ninja_runs SET status='superseded' WHERE user_id=? AND status='active'").run(userId);
-      db.prepare('UPDATE profiles SET run_sequence=? WHERE user_id=?').run(sequence,userId);
-      db.prepare("INSERT INTO ninja_runs(id,user_id,seed,started_at,expires_at,initial,profile_revision,status) VALUES(?,?,?,?,?,?,?,'active')").run(id,userId,seed,stamp,expiresAt,stringify(initial),current.revision);
+      (yield db.prepare("UPDATE ninja_runs SET status='superseded' WHERE user_id=? AND status='active'").run(userId));
+      (yield db.prepare('UPDATE profiles SET run_sequence=? WHERE user_id=?').run(sequence,userId));
+      (yield db.prepare("INSERT INTO ninja_runs(id,user_id,seed,started_at,expires_at,initial,profile_revision,status) VALUES(?,?,?,?,?,?,?,'active')").run(id,userId,seed,stamp,expiresAt,stringify(initial),current.revision));
       return {runId:id,seed,startedAt:stamp,expiresAt,initial,ruleset:initial.state.openRuleset||null};
     });
   }
-  function ownedRun(userId,id){if(typeof id!=='string'||!runPattern.test(id))throw fail(404,'RUN_NOT_FOUND','Diese Runde ist nicht verfügbar.');const row=db.prepare('SELECT * FROM ninja_runs WHERE id=? AND user_id=?').get(id,userId);if(!row)throw fail(404,'RUN_NOT_FOUND','Diese Runde ist nicht verfügbar.');return row;}
-  function finishRun(userId,id,body){
+  function* ownedRun(userId,id){if(typeof id!=='string'||!runPattern.test(id))throw fail(404,'RUN_NOT_FOUND','Diese Runde ist nicht verfügbar.');const row=(yield db.prepare('SELECT * FROM ninja_runs WHERE id=? AND user_id=?').get(id,userId));if(!row)throw fail(404,'RUN_NOT_FOUND','Diese Runde ist nicht verfügbar.');return row;}
+  function* finishRun(userId,id,body){
     if(!object(body)||!Array.isArray(body.commands)||Object.keys(body).some(key=>key!=='commands'))throw bad('Sende das vollständige Rundenprotokoll.');
     const json=stringify(body.commands);if(Buffer.byteLength(json)>maxLogBytes||body.commands.length>maxCommands)throw fail(413,'RUN_LOG_TOO_LARGE','Das Rundenprotokoll ist zu groß.');
-    const commandsHash=hash(json),stamp=clock(),row=ownedRun(userId,id);
+    const commandsHash=hash(json),stamp=clock(),row=(yield* ownedRun(userId,id));
     if(row.status==='finished'){
       if(row.commands_hash!==commandsHash)throw fail(409,'RUN_FINISH_CONFLICT','Diese Runde wurde bereits mit einem anderen Protokoll abgeschlossen.');
-      const previous=JSON.parse(row.response);return {...previous,...getState(userId),run:{...previous.run,published:row.published===1},replayed:true};
+      const previous=JSON.parse(row.response);return {...previous,...(yield* getState(userId)),run:{...previous.run,published:row.published===1},replayed:true};
     }
     if(row.status!=='active')throw fail(409,'RUN_SUPERSEDED','Diese Runde wurde durch einen neuen Start ersetzt.');
     if(stamp>row.expires_at)throw fail(410,'RUN_EXPIRED','Diese Runde ist abgelaufen. Dein lokales Übungsergebnis bleibt erhalten.');
@@ -203,14 +204,14 @@ export function createNinjaGameService(store,{now=()=>Date.now(),maxCommands=GAM
     }
     if(!game.state.ended||game.state.scene!=='results'||!['complete','healthy-stop','lives','locked','stopped'].includes(game.state.result))throw fail(422,'RUN_NOT_FINISHED','Die Runde ist noch nicht abgeschlossen.');
     if(!Number.isSafeInteger(game.state.score)||!Number.isSafeInteger(game.state.awardedCoins))throw fail(422,'INVALID_RUN_RESULT','Dieses Ergebnis konnte nicht geprüft werden.');
-    return store.transaction(()=>{
-      const fresh=ownedRun(userId,id);
+    return store.transaction(function*(){
+      const fresh=(yield* ownedRun(userId,id));
       if(fresh.status==='finished'){
         if(fresh.commands_hash!==commandsHash)throw fail(409,'RUN_FINISH_CONFLICT','Diese Runde wurde bereits anders abgeschlossen.');
-        return {...JSON.parse(fresh.response),...getState(userId),replayed:true};
+        return {...JSON.parse(fresh.response),...(yield* getState(userId)),replayed:true};
       }
       if(fresh.status!=='active')throw fail(409,'RUN_SUPERSEDED','Diese Runde wurde durch einen neuen Start ersetzt.');
-      const current=store.getProfile(userId),credited=profileModel(current.profile,stamp),before=clone(credited.profile);
+      const current=(yield store.getProfile(userId)),credited=profileModel(current.profile,stamp),before=clone(credited.profile);
       // Re-credit canonical final state onto the latest profile: purchases/claims made
       // while paused survive, and date-sensitive challenges use server time.
       credited.profile.achievements=[...new Set([...credited.profile.achievements,...game.profile.achievements.filter(value=>!initial.profile.achievements.includes(value))])];
@@ -218,38 +219,38 @@ export function createNinjaGameService(store,{now=()=>Date.now(),maxCommands=GAM
       credited.state=clone(game.state);credited.state.ended=false;credited.state.credited=false;
       credited._finishRun(game.state.result,[]);
       addNotifications(credited,before,stamp);
-      walletDelta(userId,credited.profile.coins-before.coins,`run:${id}`,'run.reward',stamp);
-      const saved=store.putProfile(userId,credited.profile),state=credited.state;
+      (yield* walletDelta(userId,credited.profile.coins-before.coins,`run:${id}`,'run.reward',stamp));
+      const saved=(yield store.putProfile(userId,credited.profile)),state=credited.state;
       const run={id,result:state.result,score:state.score,decisions:state.metrics.correctDecisions,duration:state.elapsed,verified:true,published:false,mode:state.mode,ruleset:state.openRuleset||null,awardedCoins:state.awardedCoins};
       const response={profile:saved.profile,revision:saved.revision,run};
-      db.prepare("UPDATE ninja_runs SET status='finished',commands_hash=?,response=?,finished_at=? WHERE id=?").run(commandsHash,stringify(response),stamp,id);
+      (yield db.prepare("UPDATE ninja_runs SET status='finished',commands_hash=?,response=?,finished_at=? WHERE id=?").run(commandsHash,stringify(response),stamp,id));
       return response;
     });
   }
-  function publishRun(userId,id){
-    return store.transaction(()=>{
-      const row=ownedRun(userId,id);
+  function* publishRun(userId,id){
+    return store.transaction(function*(){
+      const row=(yield* ownedRun(userId,id));
       if(row.status!=='finished')throw fail(409,'RUN_NOT_VERIFIED','Beende und prüfe zuerst deinen Open Run.');
       const run=JSON.parse(row.response).run;
       if(!run.verified||run.mode!=='open'||run.result!=='lives'||run.ruleset!==OPEN_RULESET||run.score<=0||run.decisions<=0||run.duration<=0)throw fail(409,'RUN_NOT_RANKED','Nur ein geprüfter Open Run bis zum letzten Herz zählt für die Rangliste.');
       const stamp=clock();
-      db.prepare('INSERT OR IGNORE INTO ninja_verified_scores(run_id,user_id,ruleset,score,duration,decisions,submitted_at) VALUES(?,?,?,?,?,?,?)').run(id,userId,OPEN_RULESET,run.score,run.duration,run.decisions,stamp);
-      db.prepare('UPDATE ninja_runs SET published=1 WHERE id=?').run(id);
-      return {...getState(userId),run:{...run,published:true},leaderboard:leaderboard(userId,{ruleset:OPEN_RULESET,limit:25})};
+      (yield db.prepare('INSERT OR IGNORE INTO ninja_verified_scores(run_id,user_id,ruleset,score,duration,decisions,submitted_at) VALUES(?,?,?,?,?,?,?)').run(id,userId,OPEN_RULESET,run.score,run.duration,run.decisions,stamp));
+      (yield db.prepare('UPDATE ninja_runs SET published=1 WHERE id=?').run(id));
+      return {...(yield* getState(userId)),run:{...run,published:true},leaderboard:(yield* leaderboard(userId,{ruleset:OPEN_RULESET,limit:25}))};
     });
   }
-  function leaderboard(userId=null,{ruleset=OPEN_RULESET,limit=25}={}){
+  function* leaderboard(userId=null,{ruleset=OPEN_RULESET,limit=25}={}){
     if(ruleset!==OPEN_RULESET)throw bad('Diese Ranglistenregeln sind nicht verfügbar.');
     const requested=typeof limit==='string'&&/^\d{1,3}$/.test(limit)?Number(limit):limit;
     if(!Number.isInteger(requested)||requested<1||requested>100)throw bad('Wähle eine gültige Ranglistenlänge.');
-    const rows=db.prepare(`WITH best AS (
+    const rows=(yield db.prepare(`WITH best AS (
       SELECT s.*,u.username,ROW_NUMBER() OVER(PARTITION BY s.user_id ORDER BY s.score DESC,s.duration DESC,s.submitted_at ASC,s.run_id ASC) AS personal
       FROM ninja_verified_scores s JOIN users u ON u.id=s.user_id WHERE s.ruleset=?
     ), ranked AS (
       SELECT *,ROW_NUMBER() OVER(ORDER BY score DESC,duration DESC,submitted_at ASC,run_id ASC) AS rank FROM best WHERE personal=1
-    ) SELECT user_id,username,rank,score,duration,decisions,submitted_at FROM ranked ORDER BY rank`).all(ruleset);
+    ) SELECT user_id,username,rank,score,duration,decisions,submitted_at FROM ranked ORDER BY rank`).all(ruleset));
     const publicRow=row=>({rank:row.rank,username:row.username,score:row.score,duration:row.duration,decisions:row.decisions,submittedAt:row.submitted_at,mine:row.user_id===userId});
     return {ruleset,verified:true,entries:rows.slice(0,requested).map(publicRow),total:rows.length,own:rows.find(row=>row.user_id===userId)?publicRow(rows.find(row=>row.user_id===userId)):null};
   }
-  return {getState,action,startRun,finishRun,publishRun,leaderboard};
+  return Object.fromEntries(Object.entries({getState,action,startRun,finishRun,publishRun,leaderboard}).map(([name,callback])=>[name,operation(callback)]));
 }

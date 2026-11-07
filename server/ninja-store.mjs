@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {DatabaseSync} from 'node:sqlite';
+import {execute} from './ninja-operations.mjs';
 
 const MAX=Number.MAX_SAFE_INTEGER;
 const object=value=>value!==null&&typeof value==='object'&&!Array.isArray(value);
@@ -21,7 +22,7 @@ export function createNinjaStore({databasePath=':memory:',now=()=>Date.now()}={}
     inTransaction=true;
     try{
       db.exec('BEGIN IMMEDIATE');
-      const result=callback();
+      const result=execute(callback());
       if(result&&typeof result.then==='function'){
         // A programming error must not commit writes performed before the promise.
         Promise.resolve(result).catch(()=>{});
@@ -73,7 +74,12 @@ export function createNinjaStore({databasePath=':memory:',now=()=>Date.now()}={}
         const actual=new Set(db.prepare(`PRAGMA table_info(${table})`).all().map(column=>column.name));
         if(columns.some(column=>!actual.has(column)))throw new Error(`Existing ${table} schema is incompatible; its data has not been replaced.`);
       }
+      const userColumns=new Set(db.prepare('PRAGMA table_info(users)').all().map(column=>column.name));
+      if(!userColumns.has('email'))db.exec('ALTER TABLE users ADD COLUMN email TEXT;');
+      if(!userColumns.has('privacy_at'))db.exec('ALTER TABLE users ADD COLUMN privacy_at INTEGER;');
+      db.exec('CREATE UNIQUE INDEX IF NOT EXISTS ninja_users_email ON users(email) WHERE email IS NOT NULL;');
       db.prepare('INSERT OR IGNORE INTO ninja_auth_migrations(version,applied_at) VALUES(?,?)').run(1,timestamp());
+      db.prepare('INSERT OR IGNORE INTO ninja_auth_migrations(version,applied_at) VALUES(?,?)').run(2,timestamp());
     });
   }catch(error){db.close();throw error;}
 
@@ -111,5 +117,5 @@ export function createNinjaStore({databasePath=':memory:',now=()=>Date.now()}={}
     return getProfile(userId);
   }
   function close(){if(closed)return;if(inTransaction)throw new Error('Cannot close the database during a transaction.');db.close();closed=true;}
-  return {db,transaction,close,getUser,getProfile,putProfile,schemaVersion:1};
+  return {db,transaction,close,getUser,getProfile,putProfile,schemaVersion:2};
 }

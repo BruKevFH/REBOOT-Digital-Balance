@@ -19,7 +19,7 @@ async function fixture(t,options={}){
     const response=await fetch(`${endpoint}/api/v3${route}`,{method,headers:{...(origin?{Origin:origin}:{}),...(token?{Authorization:`Bearer ${token}`} :{}),...(body!==undefined?{'Content-Type':'application/json'}:{}),...headers},...(body!==undefined?{body:JSON.stringify(body)}:{}),...rest});
     return {status:response.status,headers:response.headers,body:response.status===204?null:await response.json()};
   }
-  const register=async(username='Ninja Mira')=>{const result=await api('/auth/register',{method:'POST',body:{username,password}});assert.equal(result.status,201);return result.body;};
+  const register=async(username='Ninja Mira')=>{const result=await api('/auth/register',{method:'POST',body:{username,password,email:username.toLowerCase().replaceAll(' ','')+'@example.test',passwordConfirmation:password,privacyAccepted:true}});assert.equal(result.status,201);return result.body;};
   return {server,endpoint,api,register,close,tick:ms=>stamp+=ms};
 }
 const rawRequest=(endpoint,{method='GET',route='/api/v3/health',headers={},body,chunks}={})=>new Promise((resolve,reject)=>{
@@ -40,7 +40,7 @@ test('v3 health/config and static client are served without disclosing storage p
 });
 
 test('HTTP registration/login/me use bearer-only sessions, ignore cookies and reject missing or forged tokens',async t=>{
-  const {api}=await fixture(t),account=await (async()=>{const result=await api('/auth/register',{method:'POST',body:{username:'Ninja Mira',password}});assert.equal(result.status,201);assert.equal(result.headers.get('set-cookie'),null);return result.body;})();
+  const {api}=await fixture(t),account=await (async()=>{const result=await api('/auth/register',{method:'POST',body:{username:'Ninja Mira',password,email:'mira@example.test',passwordConfirmation:password,privacyAccepted:true}});assert.equal(result.status,201);assert.equal(result.headers.get('set-cookie'),null);return result.body;})();
   const me=await api('/me',{token:account.token});assert.equal(me.status,200);assert.equal(me.body.user.username,'Ninja Mira');assert.equal(me.body.profile.coins,0);
   for(const headers of [{},{Cookie:`session=${account.token}`},{Authorization:'Bearer forged'},{Authorization:'Basic anything'}]){
     const response=await api('/me',{headers});assert.equal(response.status,401);assert.equal(response.body.code,'UNAUTHENTICATED');
@@ -232,4 +232,15 @@ test('deployment validation refuses unsafe origins, volatile production storage,
   assert.throws(()=>createNinjaServer({requireHTTPS:true,trustProxy:true,databasePath:'/tmp/ninja-not-durable.sqlite'}),/durable DATA_DIR/);
   for(const rateLimits of [null,{unknown:{limit:1,window:1}},{api:{limit:0}},{api:{window:NaN}}])assert.throws(()=>createNinjaServer({rateLimits}),/rate.limit|Rate limit/i);
   for(const maxRateBuckets of [0,-1,1.5,NaN,1000001])assert.throws(()=>createNinjaServer({maxRateBuckets}),/bucket capacity/);
+});
+
+test('new HTTP signups require email, matching password confirmation and explicit privacy consent',async t=>{
+  const {api}=await fixture(t);
+  const valid={username:'Privacy Ninja',email:'privacy@example.test',password,passwordConfirmation:password,privacyAccepted:true};
+  for(const [patch,code]of [[{email:undefined},'INVALID_EMAIL'],[{email:'bad-address'},'INVALID_EMAIL'],[{passwordConfirmation:'different-password'},'PASSWORD_MISMATCH'],[{privacyAccepted:false},'PRIVACY_REQUIRED'],[{privacyAccepted:'true'},'PRIVACY_REQUIRED']]){
+    const rejected=await api('/auth/register',{method:'POST',body:{...valid,...patch}});assert.equal(rejected.status,400);assert.equal(rejected.body.code,code);
+  }
+  const created=await api('/auth/register',{method:'POST',body:valid});assert.equal(created.status,201);
+  const login=await api('/auth/login',{method:'POST',body:{username:'PRIVACY@example.test',password}});assert.equal(login.status,200);assert.equal(login.body.user.id,created.body.user.id);
+  assert.equal(JSON.stringify(created.body).includes(valid.email),false,'email is private, never returned in public identity/profile');
 });

@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+<title id="title">Cyber Ninja Dojo</title>
+<desc id="desc">Original blue and violet Japanese cyber temple, with luminous paper lanterns, a quiet city garden and an open training floor.</desc>
+<defs>
+ <linearGradient id="night" x2="0" y2="1"><stop stop-color="#090e30"/><stop offset=".55" stop-color="#35366f"/><stop offset="1" stop-color="#84639c"/></linearGradient>
+ <linearGradient id="wall" x2="0" y2="1"><stop stop-color="#25284e"/><stop offset="1" stop-color="#131d41"/></linearGradient>
+ <linearGradient id="floor" x2="0" y2="1"><stop stop-color="#424274"/><stop offset=".5" stop-color="#262b53"/><stop offset="1" stop-color="#111d3e"/></linearGradient>
+ <linearGradient id="pillar"><stop stop-color="#171d3a"/><stop offset=".3" stop-color="#575384"/><stop offset=".65" stop-color="#282b54"/><stop offset="1" stop-color="#11182f"/></linearGradient>
+ <linearGradient id="cyan" x2="0" y2="1"><stop stop-color="#b8fdff"/><stop offset=".5" stop-color="#72d6f0"/><stop offset="1" stop-color="#4065b1"/></linearGradient>
+ <linearGradient id="violet" x2="0" y2="1"><stop stop-color="#f3c9ff"/><stop offset=".5" stop-color="#c193ec"/><stop offset="1" stop-color="#7859ab"/></linearGradient>
+ <linearGradient id="glass" x2="0" y2="1"><stop stop-color="#3f6192"/><stop offset="1" stop-color="#142744"/></linearGradient>
+ <radialGradient id="moon"><stop stop-color="#e2e4ff"/><stop offset=".72" stop-color="#bbbeef"/><stop offset="1" stop-color="#9890cf"/></radialGradient>
+ <radialGradient id="light"><stop stop-color="#8de6f4" stop-opacity=".24"/><stop offset="1" stop-color="#8de6f4" stop-opacity="0"/></radialGradient>
+ <radialGradient id="lightPurple"><stop stop-color="#cc9aea" stop-opacity=".25"/><stop offset="1" stop-color="#cc9aea" stop-opacity="0"/></radialGradient>
+ <pattern id="woven" width="12" height="5" patternUnits="userSpaceOnUse"><path d="M0 1h12" stroke="#d9ccfa" opacity=".035"/></pattern>
+ <pattern id="screen" width="42" height="60" patternUnits="userSpaceOnUse"><path d="M0 0h42v60H0Z" fill="none" stroke="#88a9d3" stroke-width="2" opacity=".35"/></pattern>
+ <symbol id="lantern" viewBox="0 0 120 220">
+  <path d="M60 0v47" stroke="#8796bd" stroke-width="5"/><path d="M19 54q41-20 82 0l7 100q-48 23-96 0Z" fill="url(#cyan)" stroke="#19233e" stroke-width="6"/>
+  <path d="M19 54q41 11 82 0M14 83q46 16 92 0M14 113q46 16 92 0M13 143q47 18 94 0" fill="none" stroke="#d4faff" stroke-width="2" opacity=".65"/>
+  <path d="M34 51v106m26-110v119m26-116v107" stroke="#41608c" stroke-width="3" opacity=".5"/><path d="M23 167h74M35 175h50M60 177v25m-8 0h16" stroke="#bbb4e4" stroke-width="5"/>
+ </symbol>
+ <symbol id="stone" viewBox="0 0 100 70"><path d="M4 58 15 26 43 9 74 14 96 42 92 61Z" fill="#373e66" stroke="#101c36" stroke-width="4"/><path d="m15 26 33-5 26-7-9 23-33 9Z" fill="#555684"/></symbol>
+</defs>
+<!-- Every shape is authored for Notification Ninja; no linked artwork or fonts. -->
+<path fill="url(#night)" d="M0 0h1600v900H0z"/>
+<g fill="#dddcff" opacity=".7"><circle cx="164" cy="170" r="2"/><circle cx="344" cy="245" r="2"/><circle cx="1242" cy="174" r="2"/><circle cx="1378" cy="239" r="3"/><circle cx="1482" cy="149" r="2"/><circle cx="1210" cy="312" r="2"/><circle cx="286" cy="355" r="2"/></g>
+<circle cx="1300" cy="221" r="98" fill="url(#moon)" opacity=".92"/>
+<path d="M1215 202q92-33 181 3m-161 45q74-24 144-5" fill="none" stroke="#dfd7f8" stroke-width="8" opacity=".22"/>
+<!-- A city garden, softened so the arena remains readable. -->
+<g fill="#1f2e57"><path d="M0 433 62 356 108 404 166 303 242 425 290 370 373 460v100H0Z"/><path d="m1132 460 99-101 51 61 60-115 53 84 75-54 130 123v118h-468Z"/></g>
+<g fill="#111e3d"><path d="M51 433h110v103H51zM211 395h67v140h-67zM1230 424h111v115h-111zM1446 380h86v152h-86z"/><path d="m1190 421 86-25 101 25-14 9h-161Z"/><path d="m1216 398 59-21 75 21-9 8h-114Z"/><path d="m1241 373 34-17 41 17-5 7h-64Z"/></g>
+<g stroke="#7ac9de" stroke-width="4" opacity=".5"><path d="M70 453h17m17 0h17m-51 25h17m17 0h17M229 415h12m8 0h12m-32 21h12m8 0h12M1464 404h16m16 0h16m-48 24h16m16 0h16"/></g>
+<!-- Deep violet temple architecture and open shoji balconies. -->
+<path fill="url(#wall)" stroke="#10162e" stroke-width="10" d="M400 90h800v455H400Z"/>
+<path d="M466 141h668v335H466Z" fill="#202b54" stroke="#61618f" stroke-width="5"/>
+<path d="M491 166h618v287H491Z" fill="url(#glass)" stroke="#101b35" stroke-width="10"/>
+<path d="M491 166h618v287H491Z" fill="url(#screen)"/>
+<path d="M800 164v292M491 311h618" stroke="#6979a7" stroke-width="10"/>
+<path d="M522 212h107v89H522zm449 0h107v89H971Z" fill="#7898ba" opacity=".17"/>
+<!-- Central shrine: a controller crest, rather than a screen filled with text. -->
+<path d="M695 121h210v317H695Z" fill="#1d2348" stroke="#9891c7" stroke-width="5"/>
+<path d="M718 141h164v269H718Z" fill="#353665" stroke="#a1e5f2" stroke-width="2"/>
+<circle cx="800" cy="262" r="66" fill="#5569a0" stroke="#b1e8f0" stroke-width="2"/>
+<path d="m757 242 15-10h56l15 10 13 43q0 13-12 13-10 0-21-20h-46q-11 20-21 20-12 0-12-13Z" fill="#b9b7e3" stroke="#1c2445" stroke-width="6"/>
+<path d="M769 246v24m-12-12h24" stroke="#3b467b" stroke-width="7" stroke-linecap="round"/><circle cx="827" cy="250" r="5" fill="#73d9e2"/><circle cx="839" cy="263" r="5" fill="#ab8fce"/>
+<path d="M743 349h114m-97 18h80" stroke="#8be0ec" stroke-width="3" opacity=".6"/>
+<!-- A broad low stage, keeping a quiet open playing area in the foreground. -->
+<path d="m415 470 770 0 95 65H320Z" fill="#53517d" stroke="#151c37" stroke-width="7"/>
+<path d="M320 535h960v25H320Z" fill="#252d50" stroke="#151c37" stroke-width="5"/>
+<path d="M320 538h960" stroke="#8bcbdc" stroke-width="3"/>
+<path d="m0 548 320-13h960l320 13v352H0Z" fill="url(#floor)"/>
+<path d="m0 548 320-13h960l320 13v352H0Z" fill="url(#woven)"/>
+<g fill="none" stroke="#101d39" stroke-width="4" opacity=".65"><path d="M-160 900 438 541M195 900 580 541M578 900 726 541M1022 900 874 541M1405 900 1020 541M1760 900 1162 541M0 602h1600M0 697h1600M0 820h1600"/></g>
+<g fill="none" stroke="#6973a3" stroke-width="2" opacity=".35"><path d="M0 607h1600M0 703h1600M0 827h1600"/></g>
+<ellipse cx="415" cy="566" rx="370" ry="123" fill="url(#light)"/><ellipse cx="1190" cy="568" rx="370" ry="123" fill="url(#lightPurple)"/>
+<!-- Tall timber columns with restrained luminous inlays. -->
+<path d="M342 60h83v512h-83ZM1175 60h83v512h-83ZM37 20h82v574H37ZM1481 20h82v574h-82Z" fill="url(#pillar)" stroke="#11182f" stroke-width="7"/>
+<path d="M357 108v406M1224 108v406M96 105v405M1505 105v405" stroke="#83ccdf" stroke-width="3" opacity=".7"/>
+<path d="M0 18h1600v74H0Z" fill="#171c37" stroke="#0d152c" stroke-width="8"/>
+<path d="M0 69h1600M113 14l229 93m114-93 234 77m-138-77 248 77m94-77 235 77m91-77 242 90" stroke="#505783" stroke-width="8"/>
+<path d="M0 92h1600" stroke="#a2b7d1" stroke-width="3" opacity=".6"/>
+<path d="M113 116h218v35H113Zm1156 0h214v35h-214Z" fill="#151f3d" stroke="#6379a5" stroke-width="4"/>
+<path d="M122 151h202v232H122Zm1154 0h201v232h-201Z" fill="url(#screen)" opacity=".3"/>
+<!-- Paper lanterns glow without a filter or animation, including reduced-motion mode. -->
+<ellipse cx="292" cy="188" rx="187" ry="201" fill="url(#light)"/><ellipse cx="1308" cy="188" rx="187" ry="201" fill="url(#lightPurple)"/>
+<use href="#lantern" x="235" y="72" width="113" height="207"/><use href="#lantern" x="1252" y="72" width="113" height="207"/>
+<path d="m1272 132 1 93q35 18 72 0l-1-93Z" fill="url(#violet)" opacity=".42"/>
+<!-- Two low planters and paper bonsai frame the safe central training floor. -->
+<g stroke="#18203c" stroke-width="6" stroke-linejoin="round"><path d="m111 495 98 0-17 58h-66Z" fill="#53527c"/><path d="M158 495v-72l-33-35m33 63 41-44m-41 10 9-42" fill="none" stroke="#6e6893" stroke-width="13"/>
+<path d="m89 384 34-25 38 13 7 26-42 14Z" fill="#547d90"/><path d="m141 356 30-21 36 17-6 30-49 7Z" fill="#7386a8"/><path d="m177 404 40-21 28 20-4 27-51 2Z" fill="#527c90"/>
+<path d="m1391 495 98 0-17 58h-66Z" fill="#53527c"/><path d="M1441 495v-72l33-35m-33 63-41-44m41 10-9-42" fill="none" stroke="#6e6893" stroke-width="13"/>
+<path d="m1510 384-34-25-38 13-7 26 42 14Z" fill="#547d90"/><path d="m1458 356-30-21-36 17 6 30 49 7Z" fill="#7386a8"/><path d="m1422 404-40-21-28 20 4 27 51 2Z" fill="#527c90"/></g>
+<use href="#stone" x="4" y="539" width="105" height="73"/><use href="#stone" x="1488" y="539" width="105" height="73"/>
+<path d="M0 859q122-22 250 0m1100 0q122-22 250 0" fill="none" stroke="#7ab5c9" stroke-width="4" opacity=".3"/>
+</svg>

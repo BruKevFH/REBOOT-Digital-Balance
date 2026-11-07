@@ -1,3 +1,4 @@
+import {EN_PORTAL,PORTAL_PATTERNS} from './locales/en-portal.js';
 import {getPreferences,updatePreferences,onPreferencesChange} from './preferences.js';
 import {EN_UI,UI_PATTERNS} from './locales/en-ui.js';
 import {EN_GAME,GAME_PATTERNS} from './locales/en-game.js';
@@ -8,8 +9,8 @@ import {EN_SETTINGS,SETTINGS_PATTERNS} from './locales/en-settings.js';
 import {EN_CAMPAIGN,CAMPAIGN_PATTERNS} from './locales/en-campaign.js';
 
 const normalize=text=>String(text).replace(/&amp;/g,'&').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/\s+/gu,' ').trim();
-const dictionary=new Map(Object.entries({...EN_GAME,...EN_UI,...EN_HOME,...EN_PDF,...EN_ACCOUNTS,...EN_SETTINGS,...EN_CAMPAIGN}).map(([de,en])=>[normalize(de),en]));
-const patterns=[...CAMPAIGN_PATTERNS,...ACCOUNT_PATTERNS,...SETTINGS_PATTERNS,...PDF_PATTERNS,...UI_PATTERNS,...GAME_PATTERNS,...HOME_PATTERNS];
+const dictionary=new Map(Object.entries({...EN_GAME,...EN_UI,...EN_PORTAL,...EN_HOME,...EN_PDF,...EN_ACCOUNTS,...EN_SETTINGS,...EN_CAMPAIGN}).map(([de,en])=>[normalize(de),en]));
+const patterns=[...PORTAL_PATTERNS,...CAMPAIGN_PATTERNS,...ACCOUNT_PATTERNS,...SETTINGS_PATTERNS,...PDF_PATTERNS,...UI_PATTERNS,...GAME_PATTERNS,...HOME_PATTERNS];
 const missing=new Set(),cache=new Map(),roots=new Set(),subscribers=new Set();
 const textSources=new WeakMap(),attributeSources=new WeakMap();
 const ignored='script,style,noscript,code,pre,textarea,[data-user-text],[translate="no"],.profile-name,#player-name-label,#landing-player-name,.rank-player';

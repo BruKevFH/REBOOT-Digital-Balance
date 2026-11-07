@@ -1,3 +1,4 @@
+import {operation} from './ninja-operations.mjs';
 import {createHash,randomBytes,randomUUID,scrypt,timingSafeEqual} from 'node:crypto';
 import {promisify} from 'node:util';
 import {NinjaGame} from '../notification-ninja/src/game.js';
@@ -43,7 +44,14 @@ async function verifyPassword(password,serialized){
   const actual=await scryptAsync(candidatePassword(password),parsed.salt,AUTH_CONFIG.keyLength,{N:AUTH_CONFIG.scryptN,r:AUTH_CONFIG.scryptR,p:AUTH_CONFIG.scryptP,maxmem:64*1024*1024});
   return Boolean(readPasswordHash(serialized))&&timingSafeEqual(actual,parsed.key);
 }
-const isDuplicateName=exception=>/UNIQUE constraint failed: users\.username_key/.test(exception?.message||'');
+const isDuplicateName=exception=>/UNIQUE constraint failed: users\.username_key/.test(exception?.message||'')||exception?.code==='23505'&&exception.constraint==='users_username_key_key';
+const isDuplicateEmail=exception=>/UNIQUE constraint failed: users\.email/.test(exception?.message||'')||exception?.code==='23505'&&exception.constraint==='users_email_key';
+export function validateRegistration({email,password,passwordConfirmation,privacyAccepted}={}){
+  if(typeof email!=='string'||email.length>254||!email.isWellFormed()||!/^([A-Za-z0-9.!#$%&'*+\/=?^_`{|}~-]{1,64})@(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+[A-Za-z]{2,63}$/.test(email.trim()))throw error(400,'INVALID_EMAIL','Bitte gib eine gültige E-Mail-Adresse an.');
+  if(passwordConfirmation!==password)throw error(400,'PASSWORD_MISMATCH','Die Passwörter stimmen nicht überein.');
+  if(privacyAccepted!==true)throw error(400,'PRIVACY_REQUIRED','Bitte bestätige die Datenschutzhinweise.');
+  return email.trim().normalize('NFKC').toLowerCase();
+}
 
 /** Passwords and recovery keys are never stored or returned in plain text after creation. */
 export function createNinjaAuth(store,{now=()=>Date.now(),sessionTTL=AUTH_CONFIG.sessionTTL,maxSessions=AUTH_CONFIG.maxSessions}={}){
@@ -55,77 +63,81 @@ export function createNinjaAuth(store,{now=()=>Date.now(),sessionTTL=AUTH_CONFIG
   const byId=db.prepare('SELECT * FROM users WHERE id=?');
   const sessionQuery=db.prepare('SELECT s.token_hash,s.expires_at,u.id,u.username,u.created_at FROM sessions s JOIN users u ON u.id=s.user_id WHERE s.token_hash=?');
   const clock=()=>{const value=now();if(!Number.isSafeInteger(value)||value<0||value>Number.MAX_SAFE_INTEGER-sessionTTL)throw new TypeError('The auth clock must return a valid timestamp.');return value;};
-  function issueSession(userId,stamp){
+  function* issueSession(userId,stamp){
+    if(store.lockUser)yield store.lockUser(userId);
     const token=randomBytes(32).toString('base64url'),expiresAt=stamp+sessionTTL;
-    db.prepare('DELETE FROM sessions WHERE expires_at<=?').run(stamp);
-    db.prepare('INSERT INTO sessions(token_hash,user_id,created_at,expires_at) VALUES(?,?,?,?)').run(digest(token),userId,stamp,expiresAt);
+    (yield db.prepare('DELETE FROM sessions WHERE expires_at<=?').run(stamp));
+    (yield db.prepare('INSERT INTO sessions(token_hash,user_id,created_at,expires_at) VALUES(?,?,?,?)').run(digest(token),userId,stamp,expiresAt));
     // Millisecond timestamps can tie during parallel logins. Keep the newly
     // inserted session instead of choosing randomly by its opaque token hash.
-    db.prepare('DELETE FROM sessions WHERE user_id=? AND token_hash NOT IN (SELECT token_hash FROM sessions WHERE user_id=? ORDER BY created_at DESC,rowid DESC LIMIT ?)').run(userId,userId,maxSessions);
+    (yield db.prepare('DELETE FROM sessions WHERE user_id=? AND token_hash NOT IN (SELECT token_hash FROM sessions WHERE user_id=? ORDER BY created_at DESC,rowid DESC LIMIT ?)').run(userId,userId,maxSessions));
     return {token,expiresAt};
   }
-  function response(userId,session,extra={}){const user=store.getUser(userId),state=store.getProfile(userId);return {user:{id:user.id,username:user.username},...session,profile:state.profile,revision:state.revision,...extra};}
-  async function register({username,password}={}){
+  function* response(userId,session,extra={}){const user=(yield store.getUser(userId)),state=(yield store.getProfile(userId));return {user:{id:user.id,username:user.username},...session,profile:state.profile,revision:state.revision,...extra};}
+  async function register(input={}){
+    const {username,password}=input;
+    const email=input.email===undefined?null:validateRegistration(input);
     const name=normalizedName(username);requirePassword(password);
     const passwordHash=await hashPassword(password),recoveryKey=`NNR-${randomBytes(32).toString('base64url')}`,stamp=clock(),id=randomUUID();
-    try{return store.transaction(()=>{
+    try{return await store.transaction(function*(){
       const model=new NinjaGame({storage:null,now:()=>stamp});
       const profile=clone(model.profile);profile.accountCalendar='utc';normalizeJourney(profile,stamp);normalizeAdventure(profile,stamp);profile.player={...profile.player,username:name.username,createdAt:stamp};delete profile.player.guest;
-      db.prepare('INSERT INTO users(id,username,username_key,password_hash,recovery_hash,created_at) VALUES(?,?,?,?,?,?)').run(id,name.username,name.key,passwordHash,digest(recoveryKey),stamp);
-      db.prepare('INSERT INTO profiles(user_id,data,revision,run_sequence) VALUES(?,?,0,0)').run(id,JSON.stringify(profile));
-      db.prepare('INSERT INTO wallets(user_id,balance) VALUES(?,0)').run(id);
-      return response(id,issueSession(id,stamp),{recoveryKey});
-    });}catch(exception){if(isDuplicateName(exception))throw duplicateName();throw exception;}
+      (yield db.prepare('INSERT INTO users(id,username,username_key,password_hash,recovery_hash,created_at,email,privacy_at) VALUES(?,?,?,?,?,?,?,?)').run(id,name.username,name.key,passwordHash,digest(recoveryKey),stamp,email,email?stamp:null));
+      (yield db.prepare('INSERT INTO profiles(user_id,data,revision,run_sequence) VALUES(?,?,0,0)').run(id,JSON.stringify(profile)));
+      (yield db.prepare('INSERT INTO wallets(user_id,balance) VALUES(?,0)').run(id));
+      return (yield* response(id,(yield* issueSession(id,stamp)),{recoveryKey}));
+    });}catch(exception){if(isDuplicateName(exception))throw duplicateName();if(isDuplicateEmail(exception))throw error(409,'EMAIL_UNAVAILABLE','Diese E-Mail-Adresse ist nicht verfügbar.');throw exception;}
   }
   async function login({username,password}={}){
     let name;try{name=normalizedName(username);}catch{}
-    const user=name?byName.get(name.key):undefined,serialized=user?.password_hash||await getDummyHash();
+    const email=typeof username==='string'&&username.includes('@')?username.trim().normalize('NFKC').toLowerCase():null;
+    const user=email?await db.prepare('SELECT * FROM users WHERE email=?').get(email):name?await byName.get(name.key):undefined,serialized=user?.password_hash||await getDummyHash();
     const verified=await verifyPassword(password,serialized);
     if(!verified||!user)throw credentialError();
-    return store.transaction(()=>{
-      const current=byId.get(user.id);
+    return store.transaction(function*(){
+      const current=(yield byId.get(user.id));
       if(!current||current.password_hash!==user.password_hash)throw credentialError();
-      return response(current.id,issueSession(current.id,clock()));
+      return (yield* response(current.id,(yield* issueSession(current.id,clock()))));
     });
   }
-  function authenticate(token){
+  function* authenticate(token){
     const valid=typeof token==='string'&&tokenPattern.test(token),supplied=digest(valid?token:'invalid-session-token');
-    const row=valid?sessionQuery.get(supplied):undefined;
+    const row=valid?(yield sessionQuery.get(supplied)):undefined;
     if(!sameHash(supplied,row?.token_hash||'0'.repeat(64))||!row||row.expires_at<=clock())throw authError();
     return {id:row.id,username:row.username,createdAt:row.created_at};
   }
-  function logout(token){if(typeof token==='string'&&tokenPattern.test(token))db.prepare('DELETE FROM sessions WHERE token_hash=?').run(digest(token));return {ok:true};}
+  function* logout(token){if(typeof token==='string'&&tokenPattern.test(token))(yield db.prepare('DELETE FROM sessions WHERE token_hash=?').run(digest(token)));return {ok:true};}
   async function resetPassword({username,recoveryKey,password,newPassword}={}){
     const replacement=password===undefined?newPassword:password;requirePassword(replacement);
     let name;try{name=normalizedName(username);}catch{}
     const secret=typeof recoveryKey==='string'?recoveryKey.trim():'';
-    const user=name?byName.get(name.key):undefined,supplied=digest(recoveryPattern.test(secret)?secret:'invalid-recovery-key');
+    const user=name?await byName.get(name.key):undefined,supplied=digest(recoveryPattern.test(secret)?secret:'invalid-recovery-key');
     if(!sameHash(supplied,user?.recovery_hash||'0'.repeat(64))||!user)throw recoveryError();
     const passwordHash=await hashPassword(replacement),nextRecovery=`NNR-${randomBytes(32).toString('base64url')}`;
-    return store.transaction(()=>{
-      const current=byId.get(user.id);
+    return store.transaction(function*(){
+      const current=(yield byId.get(user.id));
       if(!current||!sameHash(current.recovery_hash,supplied))throw recoveryError();
-      db.prepare('UPDATE users SET password_hash=?,recovery_hash=? WHERE id=?').run(passwordHash,digest(nextRecovery),current.id);
-      db.prepare('DELETE FROM sessions WHERE user_id=?').run(current.id);
-      return response(current.id,issueSession(current.id,clock()),{recoveryKey:nextRecovery});
+      (yield db.prepare('UPDATE users SET password_hash=?,recovery_hash=? WHERE id=?').run(passwordHash,digest(nextRecovery),current.id));
+      (yield db.prepare('DELETE FROM sessions WHERE user_id=?').run(current.id));
+      return (yield* response(current.id,(yield* issueSession(current.id,clock())),{recoveryKey:nextRecovery}));
     });
   }
   async function deleteAccount(userId,{password}={}){
-    const user=byId.get(userId),verified=await verifyPassword(password,user?.password_hash||await getDummyHash());
+    const user=await byId.get(userId),verified=await verifyPassword(password,user?.password_hash||await getDummyHash());
     if(!verified||!user)throw error(403,'PASSWORD_CONFIRMATION_FAILED','Das Passwort konnte nicht bestätigt werden.');
-    return store.transaction(()=>{
-      const current=byId.get(userId);
+    return store.transaction(function*(){
+      const current=(yield byId.get(userId));
       if(!current||current.password_hash!==user.password_hash)throw error(403,'PASSWORD_CONFIRMATION_FAILED','Das Passwort konnte nicht bestätigt werden.');
-      db.prepare('DELETE FROM users WHERE id=?').run(userId);return {ok:true,deleted:true};
+      (yield db.prepare('DELETE FROM users WHERE id=?').run(userId));return {ok:true,deleted:true};
     });
   }
-  function rename(userId,username){
+  function* rename(userId,username){
     const name=normalizedName(username);
-    try{return store.transaction(()=>{
-      const current=store.getUser(userId);
-      if(current.username!==name.username){db.prepare('UPDATE users SET username=?,username_key=? WHERE id=?').run(name.username,name.key,userId);store.putProfile(userId,store.getProfile(userId).profile);}
-      const state=store.getProfile(userId);return {user:{id:userId,username:name.username},profile:state.profile,revision:state.revision};
-    });}catch(exception){if(isDuplicateName(exception))throw duplicateName();throw exception;}
+    try{return yield store.transaction(function*(){
+      const current=(yield store.getUser(userId));
+      if(current.username!==name.username){(yield db.prepare('UPDATE users SET username=?,username_key=? WHERE id=?').run(name.username,name.key,userId));(yield store.putProfile(userId,(yield store.getProfile(userId)).profile));}
+      const state=(yield store.getProfile(userId));return {user:{id:userId,username:name.username},profile:state.profile,revision:state.revision};
+    });}catch(exception){if(isDuplicateName(exception))throw duplicateName();if(isDuplicateEmail(exception))throw error(409,'EMAIL_UNAVAILABLE','Diese E-Mail-Adresse ist nicht verfügbar.');throw exception;}
   }
-  return {register,login,authenticate,logout,resetPassword,deleteAccount,rename};
+  return {register,login,authenticate:operation(authenticate),logout:operation(logout),resetPassword,deleteAccount,rename:operation(rename)};
 }

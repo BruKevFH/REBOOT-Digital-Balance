@@ -1,6 +1,6 @@
 {
   "name": "Notification Ninja",
-  "version": "3.0.1",
+  "version": "3.1.0",
   "engine": "Canvas 2D / Web Audio",
   "style": "Illustrated paper dojo",
   "illustratedRoomArt": true,
@@ -52,7 +52,14 @@
   "accountAPI": 3,
   "accountSync": true,
   "publicAccountsConfigured": false,
-  "backendRequiresPersistentHost": true,
+  "backendRequiresPersistentDatabase": true,
+  "databaseAdapters": [
+    "postgresql",
+    "sqlite"
+  ],
+  "bossRush": true,
+  "dailyRun": true,
+  "registrationEmailAndConsent": true,
   "accessiblePractice": true,
   "autoplayBosses": 3,
   "weeklyChallenges": 3,

@@ -29,7 +29,7 @@ test('every boss can be won with genuine contextual cuts and useful passes on a 
   for(const boss of BOSS_DEFINITIONS){
     const {game,store}=create(boss.id),events=until(game,()=>game.state.ended),s=game.state;
     assert.equal(s.mode,'boss');assert.equal(s.maxLives,3);assert.equal(s.lives,3);assert.equal(s.duration,0);assert.equal(s.remaining,0);assert.equal(s.openRuleset,null);
-    assert.equal(s.boss.health,0);assert.equal(s.boss.defeated,true);assert.equal(s.result,'complete');assert.equal(s.metrics.correctDecisions,boss.maxHealth);assert.ok(s.metrics.cuts>0&&s.metrics.usefulPassed>0);
+    assert.equal(s.boss.health,0);assert.equal(s.boss.defeated,true);assert.equal(s.result,'complete');assert.ok(s.metrics.correctDecisions>=boss.maxHealth);assert.ok(events.some(event=>event.type==='boss-vulnerable'));assert.ok(s.metrics.cuts>0&&s.metrics.usefulPassed>0);
     assert.deepEqual(s.metrics.contextsPlayed,['study','gaming','sleep']);assert.deepEqual(events.filter(event=>event.type==='boss-phase').map(event=>event.phase),[1,2]);
     assert.equal(events.filter(event=>event.type==='boss-hit').length,boss.maxHealth);assert.equal(events.filter(event=>event.type==='boss-defeated').length,1);assert.equal(events.filter(event=>event.type==='ended').length,1);
     assert.equal(s.metrics.lifeLost,0);assert.ok(s.elapsed>25&&s.elapsed<300);assert.equal(game.requestStop().ok,false);assert.equal(game.profile.totalRuns,1);
@@ -101,4 +101,38 @@ test('boss hearts and damage rules do not change when a veteran owns every paid 
   assert.equal(game.state.difficulty,'normal');assert.equal(game.state.maxLives,3);assert.deepEqual(game.state.skillIds,[]);assert.equal(game.state.selectedSuper,null);assert.equal(game.state.effects.shield,0);
   game.nextLevel();assert.equal(game.activateSuper().ok,false);assert.equal(game.requestStop().ok,false);
   assert.equal(game.state.boss.health,20);assert.equal(game.state.metrics.correctDecisions,0);assert.equal(game.state.runCoins,0);
+});
+
+
+test('distinct boss defenses require their announced focus, pattern and calm signals',()=>{
+  for(const id of ['scout','guardian','overlord']){
+    const {game}=create(id),b=game.state.boss;
+    const hit=(contentId,kind)=>{game.state.objects=[];const obj=game._spawnContent(contentId);const events=[];if(kind==='keep')game._pass(obj,events);else events.push(...game.swipe([{x:obj.x,y:obj.y-15},{x:obj.x,y:obj.y+15}]));return events;};
+    const health=b.health;
+    const blocked=hit('autoplay','slice');assert.equal(b.health,health);assert.ok(blocked.some(e=>e.type==='boss-blocked'));
+    if(id==='guardian'){
+      hit('glitch-pattern','slice');assert.equal(b.health,health);assert.equal(b.mirrorsRemaining,1);
+      const events=hit('glitch-pattern','slice');assert.equal(b.mirrorsRemaining,0);assert.ok(events.some(e=>e.type==='boss-vulnerable'));
+    }else{
+      const key=id==='scout'?'focus-sigil':'calm-sigil';
+      const events=hit(key,'keep');assert.ok(events.some(e=>e.type==='boss-vulnerable'));
+    }
+    assert.equal(b.health,health-1);
+    hit('autoplay','slice');assert.equal(b.health,health-2);
+    game.state.objects=[];game.state.spawnTimer=100;
+    for(let i=0;i<210;i++)game.update(.05);
+    assert.equal(b.vulnerabilityRemaining,0);
+    hit('autoplay','slice');assert.equal(b.health,health-2);
+    if(id==='guardian')assert.equal(b.mirrorsRemaining,2);
+  }
+});
+
+test('legacy boss saves retain the old exact correct-decision damage and can still finish',()=>{
+  const {game,store}=create('scout');
+  const legacy=clone(game.state.boss);for(const key of ['mechanicVersion','vulnerabilityRemaining','patternProgress','mirrorsRemaining'])delete legacy[key];
+  game.state.boss=legacy;game.save();
+  const restored=new NinjaGame({storage:store,width:322,height:754});
+  assert.equal(restored.state.boss.mechanicVersion,1);
+  until(restored,()=>restored.state.ended);
+  assert.equal(restored.state.result,'complete');assert.equal(restored.state.metrics.correctDecisions,20);
 });

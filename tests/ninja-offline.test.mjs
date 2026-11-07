@@ -24,7 +24,7 @@ function worker({fetch=async()=>{throw Error('offline');}}={}){
 test('worker precaches every locally bundled dependency including both disabled static configs',async()=>{
   const w=worker();let pending;w.handlers.get('install')({waitUntil:p=>pending=p});await pending;
   for(const file of w.assets)assert(existsSync(root+(file==='./'?'index.html':file.slice(2))),file);
-  for(const file of ['./dist/ninja.js','./dist/home.js','./accounts-config.json','./assets/dojo-study.png','./branding/Notification-Ninja-Logo.png'])assert(w.assets.includes(file));
+  for(const file of ['./dist/ninja.js','./dist/home.js','./accounts-config.json','./assets/dojo-study.png','./assets/dojo-gaming.svg','./branding/Notification-Ninja-Logo.png'])assert(w.assets.includes(file));
   assert.equal(JSON.parse(readFileSync(root+'accounts-config.json','utf8')).enabled,false);
   assert(!w.assets.some(file=>file.startsWith('./src/')));
 });
@@ -44,4 +44,12 @@ test('configuration is fetched fresh online while bundled game assets remain ava
   assert.equal(await w.request('accounts-config.json'),online);assert.equal(w.puts.length,1);
   assert.equal((await w.request('dist/ninja.js')).cachedUrl,w.scope+'dist/ninja.js');
   assert.equal(calls.length,1);
+});
+
+
+test('the cyber dojo is an original self-contained vector without external content',()=>{
+  const svg=readFileSync(new URL('../notification-ninja/assets/dojo-gaming.svg',import.meta.url),'utf8');
+  assert.match(svg,/<svg[^>]+viewBox="0 0 1600 900"/);assert.match(svg,/<title[^>]*>Cyber Ninja Dojo<\/title>/);
+  assert.doesNotMatch(svg,/<script|<foreignObject|https?:\/\/(?!www\.w3\.org\/2000\/svg)/i);
+  assert.doesNotMatch(svg,/(?:href|src)="[^#]/);
 });

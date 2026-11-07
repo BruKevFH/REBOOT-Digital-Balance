@@ -8,7 +8,7 @@ const THEMES={study:{wall:'#fff0d2',bottom:'#f7d59e'},gaming:{wall:'#eadff6',bot
 const SKINS={default:'#69bba0',classic:'#69bba0',mint:'#78b7c5',neon:'#b88bd1',solar:'#ecad43',gold:'#ecad43',dawn:'#eaaa65',shadow:'#72b9b0',grandmaster:'#e4bc61',lotus:'#b278ae',ember:'#ef8b5d',tide:'#6ca9bc'};
 const PLAYER_PALETTES={default:{body:'#699c89',hood:'#52816e',dark:'#436a5d',arm:'#7eb2a0',scarf:'#ee7567',light:'#b5d6b4'},solar:{body:'#d29a4b',hood:'#a86842',dark:'#876449',arm:'#e3b065',scarf:'#e87544',light:'#ffe0a0'},mint:{body:'#82b5ca',hood:'#5f91ad',dark:'#4b6e8e',arm:'#b1dce4',scarf:'#b0d8ec',light:'#e3f9fc'},neon:{body:'#a786c2',hood:'#7d639e',dark:'#5f4c7c',arm:'#c7a6df',scarf:'#e798bd',light:'#e8d2ef'},dawn:{body:'#d59976',hood:'#b66f61',dark:'#986057',arm:'#e8b58b',scarf:'#efb65e',light:'#ffe3b1'},shadow:{body:'#626b8b',hood:'#434d72',dark:'#343e5a',arm:'#7d90a9',scarf:'#7dc3b8',light:'#c3e1d7'},grandmaster:{body:'#eee3c6',hood:'#e1cc9c',dark:'#9a7659',arm:'#fff0cf',scarf:'#c56859',light:'#fff7e2'},lotus:{body:'#a5bba1',hood:'#698d7a',dark:'#507268',arm:'#c4d4b2',scarf:'#d88ba3',light:'#f4e4c4'},ember:{body:'#c7815b',hood:'#975c48',dark:'#784938',arm:'#e5a573',scarf:'#efc06c',light:'#ffe2a6'},tide:{body:'#79a6aa',hood:'#4e7c8a',dark:'#3f6673',arm:'#a4ccd0',scarf:'#f1d8a6',light:'#ddede4'}};
 const THROW_STYLES={default:'ribbon',solar:'flame',mint:'crystal',neon:'comic-stars',dawn:'sunrise-fan',shadow:'shadow-feathers',grandmaster:'golden-lotus',lotus:'lotus-petals',ember:'ember-koi',tide:'tidal-curls'};
-const ROOM_ART_FILES={classroom:'dojo-study.png','game-room':'dojo-gaming.png',bedroom:'dojo-sleep.png'};
+const ROOM_ART_FILES={classroom:'dojo-study.png','game-room':'dojo-gaming.svg',bedroom:'dojo-sleep.png'};
 const roomArtPools=new Map();
 function roomArtPool(document){
   // Resolve from the actual game document so the hosted game and extracted ZIP
@@ -311,7 +311,7 @@ export function createRenderer(canvas){
     return {x:width*.5,y:Math.max(86,Math.min(height*.17,130)),scale,width:300*scale,height:160*scale};
   }
   function drawBoss(state){
-    const b=state.mode==='boss'&&state.scene==='playing'&&!state.isHome?state.boss:null;
+    const b=['boss','boss-rush'].includes(state.mode)&&state.scene==='playing'&&!state.isHome?state.boss:null;
     bossVisual=null;if(!b||typeof b!=='object')return;
     const layout=bossLayout(),phase=clamp(Math.trunc(finite(b.phase)),0,2),t=reducedMotion?0:finite(state.elapsed),cue=finite(b.cueRemaining)>0,burst=finite(b.burstRemaining)>0;
     const newest=kind=>bossBursts.filter(effect=>effect.type===kind).at(-1),hit=newest('boss-hit'),transform=newest('boss-phase'),defeat=newest('boss-defeated');
@@ -319,6 +319,14 @@ export function createRenderer(canvas){
     const colors=b.id==='overlord'?{paper:'#c3b5cc',fold:'#8d789e',mask:'#574960',accent:'#e7be78'}:b.id==='guardian'?{paper:'#c2d4bd',fold:'#81a895',mask:'#4b766b',accent:'#efbc79'}:{paper:'#f0c3a3',fold:'#d38c70',mask:'#965c55',accent:'#f3cc88'};
     const bob=reducedMotion?0:Math.sin(t*1.4)*3,flap=reducedMotion?0:Math.sin(t*(burst?5.5:2.1))*(phase?7:3),recoil=reducedMotion?0:hitAmount*7;
     ctx.save();ctx.translate(layout.x,layout.y+bob-recoil*layout.scale);ctx.scale(layout.scale,layout.scale);ctx.lineJoin='round';ctx.lineCap='round';ctx.lineWidth=3;
+    // Each permanent encounter has a distinct silhouette and a visible defense state.
+    if(b.id==='guardian'&&b.mechanicVersion===2){
+      for(let mirror=0;mirror<Math.min(2,finite(b.mirrorsRemaining));mirror++){
+        const side=mirror===0?-1:1;ctx.save();ctx.globalAlpha=.35;ctx.translate(side*111,(reducedMotion?0:Math.sin(t*2+mirror)*5));
+        rect(ctx,-25,-30,50,65,'#afa6ee','#6175b5',8);polygon(ctx,[[-35,-26],[0,-51],[35,-26]],'#88d9ed','#6175b5');
+        line(ctx,[[-14,-4],[-5,-4]],'#e3fcff',4);line(ctx,[[5,-4],[14,-4]],'#e3fcff',4);ctx.restore();
+      }
+    }
     // The autoplay creature is made from folded notification paper, not a swipe target.
     // Its compact upper-center silhouette stays behind all real flying objects.
     if(cue||phaseAmount){ctx.save();ctx.globalAlpha=cue?.22:.16*phaseAmount;oval(ctx,0,14,126+phaseAmount*13,65,colors.accent);ctx.restore();}
@@ -346,6 +354,22 @@ export function createRenderer(canvas){
     rect(ctx,-16,43,32,5,colors.accent,null,3);oval(ctx,0,-34,3,2,colors.accent);
     if(phase>=1){for(const side of[-1,1])polygon(ctx,[[side*28,18],[side*46,9],[side*42,26],[side*27,31]],colors.accent,INK);}
     if(phase===2){polygon(ctx,[[-24,-42],[-29,-58],[-11,-50],[0,-66],[11,-50],[29,-58],[24,-42]],colors.accent,INK);oval(ctx,0,-49,4,5,colors.paper);}
+    if(b.id==='scout'){
+      polygon(ctx,[[-56,-34],[0,-72],[56,-34]],'#edd494',INK);line(ctx,[[-52,-34],[52,-34]],'#a77c52',5);
+      for(let i=0;i<3;i++)line(ctx,[[-18+i*18,-44],[-15+i*15,-57]],'#b6925e',2);
+    }else if(b.id==='guardian'){
+      polygon(ctx,[[-36,-32],[-44,-62],[-19,-47],[0,-67],[19,-47],[44,-62],[36,-32]],'#7e8fce',INK);
+      line(ctx,[[-24,-30],[24,-30]],'#9decff',4);
+    }else if(b.id==='overlord'){
+      for(const side of[-1,1])polygon(ctx,[[side*23,-30],[side*39,-75],[side*43,-38]],'#c8b6ec',INK);
+      for(const side of[-1,1])polygon(ctx,[[side*8,22],[side*18,9],[side*19,26]],'#fbecdc',INK);
+    }
+    if(b.mechanicVersion===2&&!b.defeated){
+      const exposed=finite(b.vulnerabilityRemaining)>0;
+      ctx.beginPath();ctx.ellipse(0,8,53,68,0,0,TAU);ctx.strokeStyle=exposed?'#b5f4c9':'#b8b6df';ctx.lineWidth=exposed?3:6;ctx.globalAlpha=exposed?.5:.8;ctx.stroke();ctx.globalAlpha=1;
+      ctx.font='900 20px system-ui,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle=exposed?'#cff9d3':colors.accent;
+      ctx.fillText(exposed?'✦':b.id==='scout'?'◎':b.id==='guardian'?'⌁':'☾',0,85);
+    }
     if(cue){
       const pulse=reducedMotion?1:.7+.3*Math.sin(t*8);ctx.globalAlpha=.6+pulse*.4;
       for(const side of[-1,1]){line(ctx,[[side*48,-24],[side*59,-33]],colors.mask,4);line(ctx,[[side*53,-9],[side*67,-10]],colors.mask,4);}
@@ -354,7 +378,7 @@ export function createRenderer(canvas){
     if(burst){for(const side of[-1,1]){polygon(ctx,[[side*45,8],[side*62,1],[side*57,18]],colors.paper,INK);}}
     if(defeat){ctx.save();ctx.globalAlpha=clamp(defeat.life/.3,0,1);for(let i=0;i<6;i++){const a=i*TAU/6+(reducedMotion?0:(1-defeat.life/defeat.total)*.5);star(ctx,Math.cos(a)*95,Math.sin(a)*64,7,colors.accent,4,a);}ctx.restore();}
     ctx.restore();
-    bossVisual={visible:true,id:String(b.id||'scout'),phase,health:finite(b.health),maxHealth:finite(b.maxHealth),cue,burst,hitFlash:hitAmount>0,transforming:phaseAmount>0,x:layout.x,y:layout.y,width:layout.width,height:layout.height,design:['folded-mask','scroll-wyvern','paper-dragon'][phase]};
+    bossVisual={visible:true,id:String(b.id||'scout'),encounter:b.id==='scout'?'chaos-sensei':b.id==='guardian'?'glitch-shogun':'nightmare-oni',defenseOpen:finite(b.vulnerabilityRemaining)>0,mirrors:finite(b.mirrorsRemaining),phase,health:finite(b.health),maxHealth:finite(b.maxHealth),cue,burst,hitFlash:hitAmount>0,transforming:phaseAmount>0,x:layout.x,y:layout.y,width:layout.width,height:layout.height,design:['folded-mask','scroll-wyvern','paper-dragon'][phase]};
   }
   function bossEffect(e){
     if(!['boss-hit','boss-phase','boss-cue','boss-telegraph','boss-wave','boss-defeated'].includes(e.type))return false;

@@ -261,3 +261,13 @@ test('wallet and lifetime earned counters saturate instead of overflowing',()=>{
   assert.equal(p.coins,Number.MAX_SAFE_INTEGER);
   assert.equal(p.stats.coinsEarned,Number.MAX_SAFE_INTEGER);
 });
+
+
+test('a saved run cannot fill the following local day or server UTC day after midnight',()=>{
+  for(const accountCalendar of [undefined,'utc']){
+    const p=profile({accountCalendar}),now=Date.UTC(2026,9,17,12),yesterday=now-86400000;
+    const {events}=finish(p,{startedAt:yesterday,finishedAt:now},now);
+    assert.deepEqual(events,[]);assert.ok(getDailyChallenges(p,now).every(task=>task.current===0));
+    assert.equal(p.journey.lastRunOrdinal,1);
+  }
+});

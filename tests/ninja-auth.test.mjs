@@ -145,7 +145,7 @@ test('accounts, wallet, profile, session and recovery survive a SQLite close and
   firstStore.transaction(()=>{firstStore.db.prepare('UPDATE wallets SET balance=? WHERE user_id=?').run(45,registered.user.id);const profile=firstStore.getProfile(registered.user.id).profile;profile.highScore=1234;firstStore.putProfile(registered.user.id,profile);});
   firstStore.close();const secondStore=createNinjaStore({databasePath,now});t.after(()=>secondStore.close());const secondAuth=createNinjaAuth(secondStore,{now});
   assert.equal(secondAuth.authenticate(registered.token).id,registered.user.id);assert.equal(secondStore.getProfile(registered.user.id).profile.highScore,1234);assert.equal(secondStore.getProfile(registered.user.id).profile.coins,45);assert.equal(secondStore.getProfile(registered.user.id).revision,1);
-  assert.equal(secondStore.db.prepare('SELECT count(*) AS n FROM ninja_auth_migrations').get().n,1);
+  assert.equal(secondStore.db.prepare('SELECT count(*) AS n FROM ninja_auth_migrations').get().n,2);
   assert.ok(await secondAuth.resetPassword({username:'Ninja Mira',recoveryKey:registered.recoveryKey,password:nextPassword}));
   const bytes=Buffer.concat([fs.readFileSync(databasePath),...(fs.existsSync(`${databasePath}-wal`)?[fs.readFileSync(`${databasePath}-wal`)]:[])]);
   for(const secret of [password,registered.token,registered.recoveryKey])assert.equal(bytes.includes(Buffer.from(secret)),false);

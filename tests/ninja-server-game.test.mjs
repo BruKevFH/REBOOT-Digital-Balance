@@ -291,3 +291,23 @@ test('configured safeguards are bounded and invalid service configuration is rej
   for(const config of [{maxCommands:0},{maxLogBytes:1},{runTTL:-1},{wallClockTolerance:999999}])assert.throws(()=>createNinjaGameService(f.store,config),TypeError);
   assert.throws(()=>f.service.leaderboard(null,{ruleset:'old'}),code('INVALID_REQUEST'));assert.throws(()=>f.service.leaderboard(null,{limit:101}),code('INVALID_REQUEST'));
 });
+
+test('daily and Boss Rush starts are server owned; UTC rollover changes the daily challenge',async t=>{
+  const f=await fixture(t);f.clock.now=Date.parse('2026-11-07T23:59:59Z');
+  const daily=start(f,{kind:'normal',mode:'daily'});
+  assert.equal(daily.initial.state.dailyChallenge.day,'2026-11-07');assert.equal(daily.initial.state.dailyChallenge.practice,false);
+  const second=start(f,{kind:'normal',mode:'daily'});
+  assert.equal(second.seed,daily.seed);assert.equal(second.initial.state.rng,daily.initial.state.rng);
+  assert.throws(()=>start(f,{kind:'normal',mode:'daily',challengeDay:'2000-01-01'}),code('INVALID_REQUEST'));
+  f.clock.now+=1000;const next=start(f,{kind:'normal',mode:'daily'});
+  assert.equal(next.initial.state.dailyChallenge.day,'2026-11-08');assert.notEqual(next.seed,daily.seed);
+  const boss=start(f,{kind:'normal',mode:'boss-rush'});
+  assert.equal(boss.initial.state.mode,'boss-rush');assert.deepEqual(boss.initial.state.bossRush,{index:0,completed:[]});
+});
+
+test('daily runs use the same replay validator and never enter the Open Run leaderboard',async t=>{
+  const f=await fixture(t),issued=start(f,{kind:'normal',mode:'daily'}),played=trace(f,issued,{stopAt:12});
+  const finished=f.service.finishRun(f.userId,issued.runId,{commands:played.commands});
+  assert.equal(finished.run.verified,true);assert.equal(finished.run.mode,'daily');assert.equal(finished.run.score,played.game.state.score);
+  assert.throws(()=>f.service.publishRun(f.userId,issued.runId),code('RUN_NOT_RANKED'));
+});

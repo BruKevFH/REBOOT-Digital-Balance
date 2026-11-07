@@ -4,7 +4,7 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {isIP} from 'node:net';
 import {createNinjaStore} from './ninja-store.mjs';
-import {createNinjaAuth} from './ninja-auth.mjs';
+import {createNinjaAuth,validateRegistration} from './ninja-auth.mjs';
 import {createNinjaGameService} from './ninja-game-service.mjs';
 
 const HERE=path.dirname(fileURLToPath(import.meta.url));
@@ -43,10 +43,10 @@ function readJSON(req,limit){
 }
 
 /** One local application: static client, password accounts and replay-validated runs. */
-export function createNinjaServer({databasePath=':memory:',allowedOrigins=[],now=()=>Date.now(),requireHTTPS=false,trustProxy=false,durableStorage=databasePath!==':memory:',webRoot=WEB_ROOT,rateLimits={},maxRateBuckets=10000,logError=()=>{}}={}){
+export function createNinjaServer({databasePath=':memory:',store:providedStore,allowedOrigins=[],now=()=>Date.now(),requireHTTPS=false,trustProxy=false,durableStorage=databasePath!==':memory:',webRoot=WEB_ROOT,rateLimits={},maxRateBuckets=10000,logError=()=>{}}={}){
   const origins=validateNinjaOrigins(allowedOrigins);
   if(requireHTTPS&&!trustProxy)throw new TypeError('REQUIRE_HTTPS requires a controlled TLS proxy and TRUST_PROXY=1.');
-  if(requireHTTPS&&(!durableStorage||databasePath===':memory:'||path.resolve(databasePath).startsWith('/tmp/')))throw new TypeError('Production accounts require durable DATA_DIR outside /tmp.');
+  if(requireHTTPS&&providedStore?.dialect!=='postgres'&&(!durableStorage||databasePath===':memory:'||path.resolve(databasePath).startsWith('/tmp/')))throw new TypeError('Production accounts require durable DATA_DIR outside /tmp.');
   const defaults={auth:{limit:30,window:15*60*1000},reset:{limit:10,window:15*60*1000},api:{limit:240,window:60*1000},finish:{limit:12,window:60*1000}},limits={};
   if(!rateLimits||typeof rateLimits!=='object'||Array.isArray(rateLimits)||Object.keys(rateLimits).some(key=>!Object.hasOwn(defaults,key)))throw new TypeError('Unknown rate-limit configuration.');
   for(const [name,config]of Object.entries(defaults)){
@@ -54,7 +54,8 @@ export function createNinjaServer({databasePath=':memory:',allowedOrigins=[],now
     if(!Number.isSafeInteger(limits[name].limit)||limits[name].limit<1||!Number.isSafeInteger(limits[name].window)||limits[name].window<1)throw new TypeError('Rate limits require positive integer limits and windows.');
   }
   if(!Number.isSafeInteger(maxRateBuckets)||maxRateBuckets<1||maxRateBuckets>1000000)throw new TypeError('Rate-limit bucket capacity must be an integer from 1 to 1000000.');
-  const store=createNinjaStore({databasePath,now});
+  const store=providedStore||createNinjaStore({databasePath,now});
+  const persistent=store.dialect==='postgres'||Boolean(durableStorage&&databasePath!==':memory:');
   const auth=createNinjaAuth(store,{now});
   const game=createNinjaGameService(store,{now});
   const buckets=new Map();
@@ -109,22 +110,24 @@ export function createNinjaServer({databasePath=':memory:',allowedOrigins=[],now
       }
       if(url.pathname===PREFIX+'/health'){
         if(req.method!=='GET')throw fail(405,'METHOD_NOT_ALLOWED','Diese Methode ist nicht erlaubt.');
-        return send(res,200,{ok:true,service:'notification-ninja',apiVersion:3,ruleset:'open-v2',durableStorage:Boolean(durableStorage&&databasePath!==':memory:')});
+        if(store.dialect==='postgres')await store.db.prepare('SELECT 1 AS ready').get();
+        return send(res,200,{ok:true,service:'notification-ninja',apiVersion:3,ruleset:'open-v2',durableStorage:persistent,...(store.dialect==='postgres'?{storage:'postgresql'}:{})});
       }
       if(url.pathname.startsWith(PREFIX+'/')){
         rate(req,'api');
         const route=url.pathname.slice(PREFIX.length),method=req.method;
         if(method==='POST'&&['/auth/register','/auth/login','/auth/reset'].includes(route)){
           rate(req,route==='/auth/reset'?'reset':'auth');const body=await readJSON(req,32768);
+          if(route==='/auth/register')validateRegistration(body);
           const result=route==='/auth/register'?await auth.register(body):route==='/auth/login'?await auth.login(body):await auth.resetPassword(body);
           return send(res,route==='/auth/register'?201:200,result);
         }
         if(route==='/leaderboard'&&method==='GET'){
-          const supplied=token(req),user=supplied?auth.authenticate(supplied):null;
+          const supplied=token(req),user=supplied?await auth.authenticate(supplied):null;
           return send(res,200,await game.leaderboard(user?.id??null,Object.fromEntries(url.searchParams)));
         }
-        const supplied=token(req),user=auth.authenticate(supplied);
-        if(route==='/auth/logout'&&method==='POST')return send(res,200,auth.logout(supplied));
+        const supplied=token(req),user=await auth.authenticate(supplied);
+        if(route==='/auth/logout'&&method==='POST')return send(res,200,await auth.logout(supplied));
         if(route==='/me'&&method==='GET')return send(res,200,{user:{id:user.id,username:user.username},...await game.getState(user.id)});
         if(route==='/profile'&&method==='PATCH'){const body=await readJSON(req,32768);return send(res,200,await auth.rename(user.id,body.username));}
         if(route==='/account'&&method==='DELETE'){const body=await readJSON(req,32768);return send(res,200,await auth.deleteAccount(user.id,body));}
@@ -141,7 +144,7 @@ export function createNinjaServer({databasePath=':memory:',allowedOrigins=[],now
       if(!['GET','HEAD'].includes(req.method))throw fail(405,'METHOD_NOT_ALLOWED','Diese Methode ist nicht erlaubt.');
       if(url.pathname==='/'||url.pathname==='/notification-ninja'){res.writeHead(302,{Location:'/notification-ninja/home.html','Cache-Control':'no-store'});return res.end();}
       if(!url.pathname.startsWith('/notification-ninja/'))throw fail(404,'NOT_FOUND','Diese Seite wurde nicht gefunden.');
-      if(url.pathname==='/notification-ninja/accounts-config.json')return send(res,200,{enabled:true,endpoint:ownOrigin+PREFIX,apiVersion:3,durableStorage:Boolean(durableStorage&&databasePath!==':memory:')});
+      if(url.pathname==='/notification-ninja/accounts-config.json')return send(res,200,{enabled:true,endpoint:ownOrigin+PREFIX,apiVersion:3,durableStorage:persistent});
       let relative;try{relative=decodeURIComponent(url.pathname.slice('/notification-ninja/'.length));}catch{throw fail(400,'INVALID_PATH','Ungültiger Pfad.');}
       if(!relative)relative='index.html';
       const filename=path.resolve(root,relative);
@@ -159,9 +162,17 @@ export function createNinjaServer({databasePath=':memory:',allowedOrigins=[],now
     }
   });
   server.requestTimeout=30000;server.headersTimeout=10000;server.maxHeadersCount=40;server.keepAliveTimeout=5000;
-  server.on('close',()=>store.close());
+  server.on('close',()=>{server.ninja.storageClosed=Promise.resolve(store.close());});
   server.ninja={store,auth,game};
   return server;
+}
+
+/** PostgreSQL initialization finishes before a listening socket is exposed. */
+export async function createPostgresNinjaServer({databaseURL,...options}={}){
+  const {createPostgresNinjaStore}=await import('./ninja-postgres-store.mjs');
+  const store=await createPostgresNinjaStore({databaseURL,now:options.now});
+  try{return createNinjaServer({...options,store,durableStorage:true});}
+  catch(error){await store.close();throw error;}
 }
 
 if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url)){
@@ -169,11 +180,12 @@ if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.ur
   const production=process.env.NODE_ENV==='production';
   const durable=process.env.DURABLE_STORAGE==='1';
   if(!Number.isInteger(port)||port<1||port>65535)throw new Error('PORT must be 1..65535.');
-  if(production&&(!durable||!process.env.DATA_DIR))throw new Error('Production requires DATA_DIR on a persistent mount and DURABLE_STORAGE=1.');
+  if(production&&!process.env.DATABASE_URL&&(!durable||!process.env.DATA_DIR))throw new Error('Production requires DATA_DIR on a persistent mount and DURABLE_STORAGE=1.');
   const configuredOrigins=(process.env.ALLOWED_ORIGINS||'').split(',').map(item=>item.trim()).filter(Boolean);
   if(!loopback(host)&&!configuredOrigins.length)throw new Error('Public binding requires explicit ALLOWED_ORIGINS.');
   const dataDir=path.resolve(process.env.DATA_DIR||path.join(HERE,'data'));
-  const server=createNinjaServer({databasePath:path.join(dataDir,'ninja.sqlite'),allowedOrigins:configuredOrigins,requireHTTPS:production||process.env.REQUIRE_HTTPS==='1',trustProxy:process.env.TRUST_PROXY==='1',durableStorage:production?durable:true,logError:event=>process.stderr.write(JSON.stringify(event)+'\n')});
+  const factory=process.env.DATABASE_URL?createPostgresNinjaServer:createNinjaServer;
+  const server=await factory({databaseURL:process.env.DATABASE_URL,databasePath:path.join(dataDir,'ninja.sqlite'),allowedOrigins:configuredOrigins,requireHTTPS:production||process.env.REQUIRE_HTTPS==='1',trustProxy:process.env.TRUST_PROXY==='1',durableStorage:production?durable:true,logError:event=>process.stderr.write(JSON.stringify(event)+'\n')});
   server.listen(port,host,()=>process.stdout.write(`Notification Ninja: http://${host}:${port}/notification-ninja/home.html\n`));
-  for(const signal of ['SIGTERM','SIGINT'])process.on(signal,()=>server.close(()=>process.exit(0)));
+  for(const signal of ['SIGTERM','SIGINT'])process.on(signal,()=>server.close(async()=>{await server.ninja.storageClosed;process.exit(0);}));
 }

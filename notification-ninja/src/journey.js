@@ -29,7 +29,7 @@ const TASK_COLUMNS=Object.freeze([
 ]);
 export const DAILY_CHALLENGES=Object.freeze(TASK_COLUMNS.flat());
 const MAX=Number.MAX_SAFE_INTEGER;
-const MODES=new Set(['campaign','study','gaming','sleep','master','open','boss']);
+const MODES=new Set(['campaign','study','gaming','sleep','master','open','boss','boss-rush','daily']);
 const RESULTS=new Set(['complete','healthy-stop','locked','lives']);
 const object=value=>value!==null&&typeof value==='object'&&!Array.isArray(value);
 const count=value=>typeof value==='number'&&Number.isFinite(value)?Math.max(0,Math.min(MAX,Math.trunc(value))):0;
@@ -47,7 +47,7 @@ function tasksFor(now,profile) {
   return TASK_COLUMNS.map((column,index)=>column[(ordinal+index)%column.length]);
 }
 function validRunId(value) {
-  return typeof value==='string'&&/^\d{1,16}:\d{1,16}:(?:campaign|study|gaming|sleep|master|open|boss)$/.test(value)?value:'';
+  return typeof value==='string'&&/^\d{1,16}:\d{1,16}:(?:campaign|study|gaming|sleep|master|open|boss|boss-rush|daily)$/.test(value)?value:'';
 }
 function studyDecisions(state,stats,correct) {
   if(state.mode==='open'||state.mode==='study')return correct;
@@ -102,6 +102,8 @@ export function recordDailyRun(profile,state,now=Date.now()) {
   if(!ordinal||!serial||ordinal<=journey.lastRunOrdinal||runId===journey.lastRunId)return [];
   // Remember poor credited attempts too, so midnight cannot replay them.
   journey.lastRunOrdinal=ordinal;journey.lastRunId=runId;
+  // A saved run started yesterday must not refill today's tasks after midnight.
+  if(calendar(startedAt,profile?.accountCalendar==='utc').day!==journey.day)return [];
   const stats=object(state.metrics)?state.metrics:{};
   const correct=count(stats.correctDecisions),elapsed=typeof state.elapsed==='number'&&Number.isFinite(state.elapsed)?Math.max(0,state.elapsed):0;
   if(correct<8||elapsed<(state.result==='healthy-stop'?8:15))return [];

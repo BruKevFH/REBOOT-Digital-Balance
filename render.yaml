@@ -23,3 +23,32 @@ services:
         value: "0"
       - key: TRUST_PROXY
         value: "0"
+
+  # Separate v3 account service: keep the historical ranking service and data.
+  # DATABASE_URL must point to an existing Neon FREE PostgreSQL project.
+  # Never substitute an ephemeral Render filesystem for the account database.
+  - type: web
+    name: notification-ninja-accounts
+    runtime: docker
+    plan: free
+    region: frankfurt
+    branch: main
+    dockerfilePath: ./server/Dockerfile.ninja-app
+    dockerContext: .
+    healthCheckPath: /api/v3/health
+    autoDeployTrigger: "off"
+    envVars:
+      - key: HOST
+        value: 0.0.0.0
+      - key: PORT
+        value: "8083"
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: ALLOWED_ORIGINS
+        value: https://brukevfh.github.io
+      - key: REQUIRE_HTTPS
+        value: "1"
+      - key: TRUST_PROXY
+        value: "1"

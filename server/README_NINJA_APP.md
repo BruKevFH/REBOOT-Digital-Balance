@@ -1,87 +1,79 @@
-# Notification Ninja: integrierter Dienst v3
+# Notification Ninja: Account-Dienst v3
 
-Dieser Dienst ergänzt die bestehende App, ohne die historische `ninja-leaderboard.mjs`-Demo oder deren Daten zu ersetzen. Er ist lokal vollständig startbar; ein dauerhaftes öffentliches Account-Hosting wurde noch nicht eingerichtet.
+Der Dienst unterstützt **PostgreSQL für öffentliches Hosting** und weiterhin **SQLite lokal**. Der historische Ranglistenserver und vorhandene Gastspielstände bleiben erhalten. Gastguthaben wird nicht als verifiziertes Kontoguthaben importiert.
 
-## Lokal
+**Live-Status vom 07.11.2026:** Die öffentliche Account-Konfiguration bleibt deaktiviert. In dieser Umgebung fehlen `RENDER_API_KEY` und `NEON_API_KEY`; die Netzwerkpolicy verweigerte Render, Neon und die Homepage mit CONNECT 403. Das beweist keinen Ausfall des entfernten Servers. Es wurden keine kostenpflichtigen Ressourcen bestellt. Lokale Tests ersetzen keine öffentliche Abnahme.
 
-Node 24 benötigt keine zusätzlichen Serverpakete:
+## Lokal mit SQLite
 
-```bash
+Node.js >=24 und Python 3:
+
+```sh
 npm ci
 npm run build:ninja
-npm run serve:ninja
+npm test
+DATA_DIR=./server/data npm run serve:ninja
 ```
 
-Frontend: http://127.0.0.1:8083/notification-ninja/home.html
-API: http://127.0.0.1:8083/api/v3/health
-DB: `server/data/ninja.sqlite` wird automatisch erstellt. Dieselbe `DATA_DIR` nach Neustart weiterverwenden. Tests nutzen eigene temporäre Datenbanken und greifen nicht auf echte Nutzerkonten zu.
+Frontend: `http://127.0.0.1:8083/notification-ninja/home.html`, Health: `/api/v3/health`. Dieselbe Datenbank nach Neustart weiterverwenden. Schemaänderungen erhalten vorhandene Konten. Produktion mit SQLite verlangt weiterhin einen tatsächlich dauerhaften Datenordner und `DURABLE_STORAGE=1`.
 
-Account-Anmeldung: Pseudonym, Passwort (10–128 Zeichen), einmaliger Wiederherstellungscode; kein SMTP und keine E-Mail. Der Code wird nur bei Erstellung/Ersetzung angezeigt und auf dem Server gehasht. Sessiondauer standardmäßig zwölf Stunden, maximal fünf Sitzungen. Reset widerruft frühere Sitzungen und rotiert den Wiederherstellungscode. Logout widerruft das aktuelle Token; Löschen braucht Passwortbestätigung und kaskadiert zu Profil, Wallet, Logs und Rangliste.
+## PostgreSQL / Neon
 
-## Öffentlicher Betrieb: exakt fehlende Einrichtung
+`DATABASE_URL` ausschließlich als geheime Laufzeitvariable injizieren und danach `npm run serve:ninja` starten. Niemals die Verbindungsadresse ins Repository, öffentliche Frontend oder Logs schreiben. Ist die Variable gesetzt, nutzt der Dienst PostgreSQL; sonst SQLite.
 
-GitHub Pages führt keine Node-Prozesse aus. Die bestehende Render-Free-Demo hat flüchtigen Speicher und erfüllt die dauerhafte Kontenspeicherung nicht. Es wurde kein kostenpflichtiger Datenträger aktiviert. Für den neuen Dienst fehlen:
+Entfernte PostgreSQL-Verbindungen prüfen TLS-Zertifikat und Hostname; URL-Parameter dürfen diese Prüfung nicht abschalten. Nur für lokale Loopback-Testdatenbanken ist unverschlüsselter Betrieb vorgesehen. Migrationen laufen atomar unter einer PostgreSQL-Advisory-Sperre. SERIALIZABLE-Transaktionen mit begrenzten Wiederholungen, Profil-/Wallet-Sperren, Constraints und Idempotenzschlüssel schützen Käufe und Belohnungen. Spielmodell und Replay-Prüfung sind für beide Datenbanken identisch.
 
-1. Ein tatsächlich verfügbarer Node24-/Docker-Host mit einem **dauerhaften Mount**, dessen Datei auch Neustart und Deployment überlebt. Nicht `/tmp`, nicht das flüchtige Containerdateisystem. Lokale Tests beweisen nur lokale Persistenz, keine Eigenschaften eines noch nicht bereitgestellten Hosts.
-2. Eine eigene HTTPS-Adresse und ein kontrollierter TLS-Reverse-Proxy. Der Backendport ist ausschließlich für diesen Proxy zugänglich. Der Proxy überschreibt `X-Forwarded-Proto` mit `https` und setzt/ergänzt `X-Forwarded-For` mit der tatsächlichen Client-IP. Der Dienst verwendet bei explizitem TRUST_PROXY ausschließlich die letzte validierte Adresse. Niemals ungeprüfte Client-Header unverändert durchreichen; direkter Backendzugriff bleibt gesperrt.
-3. Dienst mit `DATA_DIR=/data`, `NODE_ENV=production`, `DURABLE_STORAGE=1`, `TRUST_PROXY=1`, `HOST=0.0.0.0`, `PORT=8083` und `ALLOWED_ORIGINS=https://brukevfh.github.io` starten. `DURABLE_STORAGE=1` ist die Betreiberbestätigung des vorhandenen Mounts, keine automatische Bereitstellung. Produktion verweigert Start ohne DATA_DIR/Bestätigung und bei `/tmp`.
-4. `GET https://ECHTER-HOST/api/v3/health` prüfen. Danach in `notification-ninja/accounts-config.json` `enabled:true`, `apiVersion:3`, `endpoint:"https://ECHTER-HOST/api/v3"` eintragen und veröffentlichen. `ECHTER-HOST` ist nur erklärender Platzhalter und darf nicht unverändert gespeichert werden.
-5. Auf der tatsächlichen HTTPS-Seite zwei Testkonten registrieren, jeweils echte Open-Runs ausdrücklich veröffentlichen, gemeinsame Plätze prüfen, Dienst neu starten und Persistenz bestätigen. Ohne diesen Nachweis bleibt Onlinebetrieb ungeprüft.
+Es gibt **keinen automatischen Import fremder oder historischer SQLite-Dateien nach Neon**. Für Bestandskonten wäre zuerst ein konsistentes Backup und ein separat geprüfter Import nötig. Lokale SQLite-Daten werden nicht gelöscht.
 
-Der integrierte Dienst selbst liefert `/notification-ninja/accounts-config.json` dynamisch mit aktiviertem gleichursprünglichem Endpunkt. Der statische Gastdownload und GitHub Pages bleiben standardmäßig deaktiviert. Geheimnisse gehören nie in diese Konfigurationsdatei.
+## Render Free + Neon Free
 
-### Docker
+`render.yaml` behält `notification-ninja-ranking` und ergänzt einen **separaten** `notification-ninja-accounts` mit `plan: free`. Automatische Account-Deployments sind ausgeschaltet; es wird kein kostenpflichtiger Datenträger angefordert.
 
-Nach dem lokalen Build aus dem Repository-Root:
+1. Ein Neon-Projekt im **Free-Plan** auswählen/erstellen; vor Bestätigung den Plan prüfen. Keine automatische Bezahlumstellung aktivieren. Region möglichst nahe Render Frankfurt.
+2. Die PostgreSQL-Verbindungsadresse sicher als Render-Variable `DATABASE_URL` setzen. Verwaltungs-API-Schlüssel gehören nicht in die Spielanwendung.
+3. Den separaten Free-Dienst aus `server/Dockerfile.ninja-app` bereitstellen: `NODE_ENV=production`, `HOST=0.0.0.0`, `PORT=8083`, `TRUST_PROXY=1`, `REQUIRE_HTTPS=1`, `ALLOWED_ORIGINS=https://brukevfh.github.io`. Bei PostgreSQL sind weder SQLite-Mount noch `DURABLE_STORAGE=1` erforderlich.
+4. Der kontrollierte TLS-Proxy muss `X-Forwarded-Proto` selbst setzen und die tatsächliche Client-IP an `X-Forwarded-For` anhängen/überschreiben. Direkter Backendzugriff bleibt gesperrt.
+5. Über echtes HTTPS zwei getrennte Testkonten prüfen: Registrierung, Login, Profile, erspielte Belohnungen, Inventar/Käufe, ausdrücklich veröffentlichte Open Runs und exaktes CORS. Render-Dienst neu starten; Daten aus Neon erneut prüfen. Danach beide Testkonten löschen und verschwundene Ranglisteneinträge nachweisen.
+6. **Erst danach** `notification-ninja/accounts-config.json` mit tatsächlich geprüfter HTTPS-Adresse und `enabled:true` veröffentlichen. Weder Platzhalter noch alten Ranglistenendpunkt als Account-Backend einsetzen.
 
-```bash
-docker build -f server/Dockerfile.ninja-app -t notification-ninja-app .
-docker run --name notification-ninja-app --restart unless-stopped \
-  -p 127.0.0.1:8083:8083 \
-  --mount type=volume,source=notification-ninja-data,target=/data \
-  -e DURABLE_STORAGE=1 -e TRUST_PROXY=1 \
-  -e ALLOWED_ORIGINS=https://brukevfh.github.io \
-  notification-ninja-app
-```
+Free-Server können schlafen und Kaltstarts benötigen; Kontingente sind begrenzt. Ob der Anbieter-Account kostenlose Ressourcen erlaubt, muss mit echten Zugangsdaten geprüft werden. Ohne diese wird keine erfolgreiche Bereitstellung behauptet.
 
-Der native Dienst kann ohne Docker mit denselben Variablen betrieben werden. Das hier beschriebene Image wurde nur dann als gebaut/geprüft gemeldet, wenn der Prüfbericht das ausdrücklich nennt. Bei Bind-Mounts muss der `node`-Benutzer Schreibrechte besitzen. Datenbank-Datei und WAL/SHM nicht in Git oder im öffentlich ausgelieferten Ordner ablegen.
+## Konten und Datenschutz
 
-Beispiel Caddy hinter eigenem Hostnamen:
+Neue öffentliche Registrierungen verlangen Ninja-Name, E-Mail, Passwort, Passwortbestätigung und ausdrückliche Datenschutz-Zustimmung. Bestehende Konten bleiben per Namen anmeldbar. Neue Konten erlauben zusätzlich E-Mail-Login. Gesalzenes scrypt schützt Passwörter; zufällige Bearer-Tokens werden nur gehasht gespeichert. E-Mail und Zustimmung erscheinen nicht in Ranglisten.
 
-```caddyfile
-ninja.example.org {
-    reverse_proxy 127.0.0.1:8083 {
-        header_up X-Forwarded-Proto https
-    }
-}
-```
+**Kein E-Mail-Versand, keine Prüfung der E-Mail-Inhaberschaft und kein E-Mail-Passwortreset sind eingerichtet.** Wiederherstellung nutzt den einmaligen Code; dieser wird nur bei Erstellung/Rotation angezeigt und gehasht gespeichert. Reset widerruft Sitzungen. Kontolöschung verlangt das Passwort und entfernt Profil, Wallet, Logs, Runs, Sitzungen und Ranglisteneinträge kaskadierend. Ein öffentlicher Betreiber muss tatsächliche Verantwortliche und Datenschutzinformationen vor Aktivierung hinterlegen.
 
-`ninja.example.org` ist ein Platzhalter. Die Vorlage bestellt keinen Domainnamen oder Hostingtarif.
+## API und Sicherheit
 
-## API
+Alle Routen unter `/api/v3`:
 
-Alle Kontomutationen verwenden `Authorization: Bearer <opaqueToken>`. Keine Tokens in URLs, keine impliziten Auth-Cookies. `Content-Type: application/json` für JSON-Bodies. Auth-/Action-Bodies höchstens 32 KiB, Replaylogs höchstens 2 MiB. Exakte Origin-Freigaben, Ratenlimits, Parameterprüfung und neutrale Fehler ergänzen den Zugriffsschutz.
-
-| Methode | `/api/v3`-Pfad | Funktion |
+| Methode | Pfad | Funktion |
 |---|---|---|
-| GET | `/health` | Bereitschaft und Speicher-Konfiguration |
-| POST | `/auth/register`, `/auth/login`, `/auth/reset` | Konto/Sitzung/Wiederherstellung |
+| GET | `/health` | Bereitschaft |
+| POST | `/auth/register`, `/auth/login`, `/auth/reset` | Konto, Sitzung, Wiederherstellung |
 | POST | `/auth/logout` | Sitzung widerrufen |
-| GET | `/me` | Eigenes autoritatives Profil |
-| PATCH | `/profile` | Eigenen Pseudonym ändern |
-| DELETE | `/account` | Eigenes Konto mit Passwortbestätigung löschen |
-| POST | `/actions` | Wallet-/Ausrüstungs-/Belohnungsaktionen mit Idempotenzschlüssel |
-| POST | `/runs/start` | Konto- und seedgebundenen Run starten |
-| POST | `/runs/:id/finish` | Begrenztes Eingabeprotokoll serverseitig erneut simulieren |
-| POST | `/runs/:id/publish` | Zulässigen Run ausdrücklich veröffentlichen |
-| GET | `/leaderboard` | Beste geprüfte veröffentlichte Open-Runs |
+| GET | `/me` | Autoritatives Profil |
+| PATCH | `/profile` | Eigenen Namen ändern |
+| DELETE | `/account` | Bestätigte Kontolöschung |
+| POST | `/actions` | Idempotente Käufe, Ausrüstung, Claims, Einstellungen |
+| POST | `/runs/start` | Servergebundenen Run starten |
+| POST | `/runs/:id/finish` | Eingaben nachspielen und gutschreiben |
+| POST | `/runs/:id/publish` | Open Run ausdrücklich veröffentlichen |
+| GET | `/leaderboard` | Bestes veröffentlichtes Ergebnis je Konto |
 
-Server startet selbst seedgebundene Modelle. Empfangene Punktzahlen oder lokale Walletstände werden nicht als Wahrheit übernommen. Zeit, Koordinaten, Methoden, Ownership und Umfang von Replaylogs werden begrenzt; derselbe Abschluss wird einmal gutgeschrieben. Ein Replay ist kein vollständiger Schutz gegen Bots. Offline-Gastruns werden nicht rückwirkend als verifiziert markiert. Ein während einer Accountpause getätigter Kauf wird beim Abschluss nicht von einem älteren Snapshot überschrieben.
+Keine Tokens in URLs, kein Auth-Cookie als implizite Berechtigung. JSON-, Größen-, Raten-, Origin- und Replay-Grenzen bleiben aktiv. Der Server bestimmt Preise, Startprofil, Seed und Belohnungen. Client-Scores und lokale Walletstände werden nicht übernommen. Replay-Prüfung ist kein vollständiger Schutz gegen Bots.
 
-## Persistenz, Sicherung und Migration
+## Reproduzierbare Abnahme
 
-SQLite aktiviert Foreign Keys, WAL, FULL-Synchronisierung und Busy-Timeout. Zu Runs bleiben Startsnapshot, Metadaten, Hash des zur Prüfung übertragenen Protokolls und das geprüfte Ergebnis gespeichert; die rohe Koordinatenfolge wird serverseitig nur zur Replay-Prüfung verarbeitet. Auth- und Gameplay-Migrationstabellen versionieren Schemaänderungen. Wallet-Constraint verhindert negatives Guthaben, Fremdschlüssel sorgen für Kontolöschung. Konfigurationen bleiben im zentralen Spielkatalog statt Kopien widersprüchlicher Preise.
+```sh
+npm test
+# TEST_DATABASE_URL nur auf eine eigene isolierte Testdatenbank setzen.
+node --test tests/ninja-postgres*.test.mjs tests/ninja-http-persistence.test.mjs
+npm run build:ninja
+npm run test:ninja:browser
+```
 
-Vor einem Produktivupdate ein konsistentes SQLite-Backup erstellen (SQLite-Backup-API/`.backup` oder Dienst stoppen und vollständige Datei sichern); eine einzelne offene WAL-Datenbankdatei blind zu kopieren kann unvollständig sein. Backup und DB nicht öffentlich ablegen. Bestehende inkompatible Tabellen werden nicht gelöscht. Die bisherige v2-Demo wird nicht als v3-Accountdatenbank importiert. Lokale Gastmünzen und Freischaltungen bleiben separat unverified; nur sichere Einführungsdaten können einmalig übernommen werden.
+Ohne `TEST_DATABASE_URL` werden PostgreSQL-Integrationstests ausdrücklich übersprungen. Die Tests erstellen und entfernen eigene zufällige Schemata. `tests/ninja-http-persistence.test.mjs` registriert zwei Konten über HTTP, spielt echte Open Runs nach, prüft Idempotenz/Veröffentlichung, startet den Anwendungsserver mit derselben DB neu und löscht beide Konten. Das beweist lokale Anwendungsneustarts, keinen nicht ausgeführten Render-Neustart.
 
-Tests: `node --test tests/ninja-auth.test.mjs tests/ninja-service.test.mjs tests/ninja-server-game.test.mjs`. Details und echte Ergebnisse stehen in [TEST_REPORT](../notification-ninja/TEST_REPORT.md).
+Vor Produktivmigrationen ein konsistentes Backup bzw. geeigneten Neon-Wiederherstellungspunkt anlegen. Geheimnisse und personenbezogene Daten gehören nicht in Testberichte.
