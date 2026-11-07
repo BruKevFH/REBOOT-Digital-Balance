@@ -9,6 +9,8 @@ on:
       - 'notification-ninja/home.html'
       - 'notification-ninja/focus-ui.css'
       - 'notification-ninja/focus-home.css'
+      - 'notification-ninja/legend-ui.css'
+      - 'notification-ninja/legend-home.css'
       - 'notification-ninja/sw.js'
       - 'scripts/build_ninja.mjs'
       - 'scripts/package_ninja.py'
