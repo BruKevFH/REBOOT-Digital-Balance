@@ -113,7 +113,14 @@ function navigateRoute(route,{replace=false}={}){
   if(['login','register','recovery'].includes(target)){accountUI[target]();return;}
   if(!localLoggedIn){showLanding();return;}
   if(target==='home'){showHome();if(route==='worlds')history.replaceState(history.state,'','#worlds');}
-  else if(target==='modes')modesMenu();else if(target==='practice')startAccessiblePractice();else restoreView({kind:target});
+  else if(target==='modes')modesMenu();
+  else if(target==='dojos')dojosMenu();
+  else if(target==='career')careerMenu();
+  else if(target==='shop')shop(shopTab);
+  else if(target==='leaderboard')leaderboardMenu();
+  else if(target==='settings')settingsMenu();
+  else if(target==='practice')startAccessiblePractice();
+  else restoreView({kind:target});
   if(replace)history.replaceState(history.state,'',`#${route}`);
 }
 function modesMenu(){
