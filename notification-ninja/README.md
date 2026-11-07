@@ -1,6 +1,6 @@
 # Notification Ninja
 
-**Entwicklungsstand 3.1.0:** PostgreSQL neben lokalem SQLite, neues Kontoportal und Hub, Boss Rush und serverseitige UTC-Tages-Challenge. Die öffentliche Kontenanbindung bleibt deaktiviert, bis Render/Neon tatsächlich geprüft sind. Siehe [Abnahmestand und Blocker](ULTIMATE_STATUS.md).
+**Entwicklungsstand 3.1.0:** PostgreSQL neben lokalem SQLite, neues Kontoportal und Hub, Boss Rush und serverseitige UTC-Tages-Challenge. Die öffentliche Kontenanbindung über Render und Neon PostgreSQL wurde am 07.11.2026 nach erfolgreichem read-only Live-Preflight sowie vom Betreiber bestätigtem Neustart-/Persistenztest aktiviert. Siehe [historische Abnahme vor der Freischaltung](ULTIMATE_STATUS.md) und [Cloud-Einrichtung](../server/NINJA_ULTIMATE_CLOUD_SETUP.md).
 
 Ein eigenständiges Browser-Wischspiel auf **Deutsch und Englisch** für Jugendliche ab etwa 13 Jahren. Ablenkungen schneiden, hilfreiche Inhalte durchlassen: Das aktuelle Ziel entscheidet. Lernen, Gaming und Schlafen haben eigene illustrierte Dojos und unterschiedliche Regeln. Die finale Wortmarke hat keinen zusätzlichen Slogan.
 
@@ -76,7 +76,7 @@ Die **neue API v3** startet einen konto- und seedgebundenen Lauf und simuliert d
 
 Replay-Prüfung erschwert einfache Scorefälschung, ist aber kein Schutz gegen jedes automatisierte Spiel. Das Prüfprotokoll ist technisch auf 40.000 Befehle und 2 MiB begrenzt; ein darüber hinausgehender Run bleibt spielbar, wird aber als ungewertete Übung geführt. Eine Rangliste ohne Einträge bleibt leer. Gast-/Übungsruns und kontrollierte Abbrüche werden nicht als geprüft veröffentlicht.
 
-**Öffentliches dauerhaftes Account-Hosting ist noch nicht verbunden.** Die bisherige Render-Free-Rangliste ist eine getrennte historische v2-Demo ohne dauerhaften Datenträger und ohne diese vollständige Laufprüfung. Sie wird nicht zu verifizierten Kontodaten erklärt. Für v3 fehlen extern ein eigener HTTPS-Dienst mit dauerhaft eingebundenem Datenordner und anschließend dessen echte Adresse in `accounts-config.json`. Es wurden weder Bezahlprodukte gebucht noch Zugangsdaten erfunden. [Genaue Einrichtung](../server/README_NINJA_APP.md).
+**Öffentliche v3-Konten sind konfiguriert:** GitHub Pages verwendet `https://notification-ninja-accounts.onrender.com/api/v3`; die API meldete im GitHub-Actions-Live-Preflight am 07.11.2026 PostgreSQL und dauerhafte Speicherung. Der Betreiber bestätigte einen erfolgreichen Neustart-/Persistenztest. Die frühere Render-v2-Demorangliste bleibt ein **separater, historischer Dienst**; deren Daten wurden nicht automatisch zu v3 migriert. Keine Zugangsdaten befinden sich in `accounts-config.json`. Vor öffentlicher Nutzung Datenschutz- und Betreiberinformationen prüfen. [Cloud-Betrieb und Tests](../server/NINJA_ULTIMATE_CLOUD_SETUP.md).
 
 ## Konfiguration
 
