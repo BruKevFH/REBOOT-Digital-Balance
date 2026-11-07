@@ -16,7 +16,8 @@
     "package": "python3 scripts/package_download.py",
     "serve": "python3 -m http.server 8000 --bind 127.0.0.1",
     "serve:ninja": "node --env-file-if-exists=.env server/ninja-service.mjs",
-    "test:ninja:browser": "node scripts/check_ninja_browser.cjs"
+    "test:ninja:browser": "node scripts/check_ninja_browser.cjs",
+    "verify:ninja:deployment": "node scripts/verify_ninja_deployment.mjs"
   },
   "dependencies": {
     "pg": "8.16.3",
