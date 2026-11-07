@@ -1,8 +1,8 @@
 {
   "name": "Notification Ninja",
-  "version": "3.2.0",
+  "version": "3.3.0",
   "engine": "Canvas 2D / Web Audio",
-  "style": "Focus-first illustrated dojo",
+  "style": "Relaxed / Dark / Noir arcade adventure with pixel-inspired portals",
   "illustratedRoomArt": true,
   "villageMap": true,
   "logo": "branding/Notification-Ninja-Logo.png",
@@ -77,5 +77,10 @@
   "menuMusic": true,
   "openRuleset": "open-v2",
   "openHearts": 3,
-  "leaderboard": "server-replay-explicit-publication"
+  "leaderboard": "server-replay-explicit-publication",
+  "uiThemes": [
+    "relaxed",
+    "dark",
+    "noir"
+  ]
 }
