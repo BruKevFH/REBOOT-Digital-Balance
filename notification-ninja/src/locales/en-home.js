@@ -1,5 +1,8 @@
 /** Homepage copy stays authored in German; the shared language preference chooses this catalogue. */
 export const EN_HOME=Object.freeze({
+  "Neu hier? Kostenloses Konto erstellen →": "New here? Create a free account →",
+  "Kostenlos und ohne Anmeldung ausprobieren.": "Try it for free without signing up.",
+  "Ein Konto speichert deinen Fortschritt geräteübergreifend und ermöglicht geprüfte Online-Ranglisten.": "An account saves your progress across devices and unlocks verified online leaderboards.",
   'Wähle deine Spielwelt':'Choose your game world',
   'Deine Runde im Überblick':'Your round at a glance',
   'Richtig':'Correct',
