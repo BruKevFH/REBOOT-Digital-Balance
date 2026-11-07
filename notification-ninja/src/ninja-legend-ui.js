@@ -31,6 +31,7 @@ export function legendaryModes({account=false}={}){
    <h3>Wähle dein nächstes <em>Abenteuer.</em></h3>
    <p>Ein klarer Start: Die zwei großen Wege sind deine Hauptmodi. Weitere Herausforderungen findest du darunter.</p>
    <div class="arcade-world-signs" aria-hidden="true"><span>☀ Lernen</span><span>✦ Gaming</span><span>☾ Schlaf</span></div>
+   <div class="arcade-theme-strip"><span>DESIGN</span><div class="ninja-theme-picker" role="group" aria-label="Design auswählen"><button type="button" data-ninja-theme="relaxed" aria-pressed="false">☀ Relaxed</button><button type="button" data-ninja-theme="dark" aria-pressed="false">◐ Dark</button><button type="button" data-ninja-theme="noir" aria-pressed="false">◆ Noir</button></div></div>
   </header>
   <div class="arcade-mode-section-head"><div><span class="arcade-section-index">01 / HAUPTWEGE</span><h4>Dein Abenteuer beginnt hier</h4></div><span class="arcade-section-hint">WÄHLE EIN PORTAL <span aria-hidden="true">↘</span></span></div>
   <div class="legend-mode-featured arcade-mode-portals">${feature.map((x,i)=>`<button type="button" class="legend-mode-feature legend-mode-${x.kind} arcade-mode-portal" ${attr(x)} aria-label="${esc(x.title)}: ${esc(x.action)}">
