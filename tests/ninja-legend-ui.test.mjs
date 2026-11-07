@@ -46,7 +46,7 @@ test('locked mission may be inspected but cannot be started or claimed',()=>{
 test('dojo scenes, progress, and free short rounds preserve chapter identity',()=>{
  const html=legendaryDojos({missions:fixture,worlds:['study']});
  for(const context of ['study','gaming','sleep']){
-   assert(html.includes('assets/dojo-'+context+'.png'));
+   assert(html.includes('assets/dojo-'+context+(context==='gaming'?'.svg':'.png')));
    assert(html.includes('data-quick-context="'+context+'"'));
  }
  assert.equal((html.match(/class="legend-dojo legend-dojo-/g)||[]).length,3);
