@@ -64,7 +64,7 @@ async function acknowledge(p){for(let n=0;n<20&&(await read(p)).mentor.open;n++)
      await page.locator('.dojo-tabs [data-game-route="modes"]').click();
      assert.equal((await read(page)).ui,'modes');
      await page.locator('[data-action="home"]').last().click();
-     assert.equal(await page.locator('.dojo-tabs [data-game-route]').count(),5,'Five clear navigation choices');
+     assert.equal(await page.locator('.dojo-tabs [data-game-route]').count(),6,'Six clear navigation choices');
      assert.equal(await page.locator('#hub-paths .hub-path-card').count(),3,'Three direct activity choices');
      assert.equal(await page.locator('#hub-paths').isVisible(),true,'Quick choices are visible without expanding options');
      assert.equal(await page.locator('#adventure-details').evaluate(el=>el.open),false,'Advanced controls start closed');
@@ -74,7 +74,7 @@ async function acknowledge(p){for(let n=0;n<20&&(await read(p)).mentor.open;n++)
      await page.locator('[data-account="guest"]').click();await acknowledge(page);
      assert.equal((await read(page)).ui,'home');
      assert.equal(await page.locator('#ninja-hub h1').isVisible(),true,'hub shows the player name');
-     assert.equal(await page.locator('.dojo-tabs [data-game-route]').count(),5,'Five clear navigation choices');
+     assert.equal(await page.locator('.dojo-tabs [data-game-route]').count(),6,'Six clear navigation choices');
      assert.equal(await page.locator('#hub-paths .hub-path-card').count(),3,'Three direct activity choices');
      assert.equal(await page.locator('#hub-paths').isVisible(),true,'Quick choices are visible without expanding options');
      assert.equal(await page.locator('#adventure-details').evaluate(el=>el.open),false,'Advanced controls start closed');
@@ -87,7 +87,21 @@ async function acknowledge(p){for(let n=0;n<20&&(await read(p)).mentor.open;n++)
       assert.notEqual((await read(page)).ui,'home','Open Run shortcut really starts game');
       await page.locator('[data-action="home"]').first().click();
      }
-     await page.locator('.dojo-tabs [data-game-route="bazaar"]').click();await acknowledge(page);
+     if(width===768){
+      await page.locator('.dojo-tabs [data-game-route="dojos"]').click();await acknowledge(page);
+      assert.equal((await read(page)).ui,'dojos','Dojo navigation opens illustrated worlds');
+      assert.equal(await page.locator('.legend-dojo').count(),3,'Three real themed worlds');
+      assert.equal(await page.locator('.legend-dojo [data-quick-context]').count(),3);
+      await page.locator('.legend-dojo [data-game-route="campaign"]').first().click();await acknowledge(page);
+      assert.equal((await read(page)).ui,'career','Dojo route opens campaign');
+      assert.equal(await page.locator('.legend-map-node').count(),18);
+      assert.equal(await page.locator('.legend-boss-node').count(),3);
+      await page.locator('[data-mission-inspect="study-02"]').click();await acknowledge(page);
+      assert.equal(await page.locator('.legend-mission-inspector h3').innerText(),'Genau statt hektisch');
+      await page.locator('.panel-home').click();await acknowledge(page);
+      assert.equal((await read(page)).ui,'home');
+     }
+     await page.locator('.home-access-tools [data-game-route="bazaar"]').click();await acknowledge(page);
      await page.locator('[data-shop-filter="owned"]').click();
      assert.equal(await page.locator('.shop-card.is-locked:visible').count(),0);
      await page.locator('[data-shop-filter="new"]').click();
@@ -96,7 +110,7 @@ async function acknowledge(p){for(let n=0;n<20&&(await read(p)).mentor.open;n++)
      const before=(await read(page)).profile;
      await page.locator('.dojo-tabs [data-game-route="modes"]').click();
      assert.equal((await read(page)).ui,'modes');
-     await page.locator('.mode-menu-grid [data-game-route="practice"]').click();assert.equal((await read(page)).ui,'practice');
+     await page.locator('.legend-mode-small[data-game-route="practice"]').click();assert.equal((await read(page)).ui,'practice');
      assert.deepEqual((await read(page)).profile,before,'practice does not alter guest progression');
      await page.keyboard.press('Escape');await acknowledge(page);
     }

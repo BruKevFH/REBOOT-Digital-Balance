@@ -1,0 +1,107 @@
+/* Legendary Notification Ninja homepage – same visual language as the game */
+:root{--legend-ink:#f6eed8;--legend-dark:#101a2d;--legend-gold:#ffd58f;--legend-jade:#61d8ad}
+body{
+ color:#f5efdb;
+ background:
+ radial-gradient(circle at 88% 8%,#23665a55,transparent 36%),
+ radial-gradient(circle at 6% 14%,#8c594b30,transparent 26%),
+ linear-gradient(170deg,#10192b 0%,#192c40 47%,#132033 100%);
+}
+body::before{content:"";position:absolute;top:0;left:0;right:0;height:620px;z-index:-1;pointer-events:none;background:repeating-linear-gradient(118deg,transparent 0 95px,#c9dcc408 96px 98px)}
+.top-nav{border-bottom:1px solid #6ea48f47}
+.top-nav .nav-links{color:#d6e8da}
+.top-nav .nav-links a:hover{color:#ffd392}
+.language-picker{background:#233d4c!important;border-color:#547e79!important}
+.language-picker button{color:#cce0d5}
+.language-picker button[aria-pressed="true"]{background:#237668;color:#fff}
+.hero{padding-top:47px;padding-bottom:77px;min-height:610px}
+.hero .eyebrow{color:#7ee7c0;font-size:11px;font-weight:900;letter-spacing:.2em}
+.hero h1{color:#fff1d5;text-shadow:0 7px 26px #0005}
+.hero h1>span,.hero h1>span:last-child{-webkit-text-stroke:0!important;text-shadow:0 2px 13px #0004!important;color:#7fe4bb}
+.hero h1>span:last-child{color:#ffcc87}
+.hero-copy{color:#b9d8ce;font-size:clamp(16px,1.8vw,19px)}
+.hero .hero-note{color:#b0d1c7;font-size:12px}
+.hero .hero-note strong{color:#f9dfa0}
+.hero-actions .button{border-radius:15px;background:linear-gradient(130deg,#f4d896,#e4af61);color:#1f3140;border:1px solid #fce7b4;box-shadow:0 5px 0 #997643}
+.hero-actions .button:hover{background:linear-gradient(130deg,#ffe6aa,#efc16c);box-shadow:0 10px 25px #0005}
+.hero-actions .button.secondary{background:#234655;color:#edfff6;border:1px solid #70af9b;box-shadow:none}
+.hero-actions .guest-home-link{color:#acf2d9;font-weight:800}
+.hero-art{isolation:isolate}
+.hero-art::before{background:linear-gradient(130deg,#2a715e 0%,#172e4d 52%,#a38766 100%);border:2px solid #90b2a47a;box-shadow:0 30px 60px #0007;border-radius:41% 42% 28% 26%;transform:rotate(1.2deg)}
+.hero-art::after{content:"";position:absolute;z-index:-1;inset:9%;border:1px solid #f6dc9a3b;border-radius:50%;box-shadow:0 0 0 28px #8bccb80f}
+.art-tag{background:#163d48;color:#e8f4d8;border:1px solid #84ca9e;transform:none;border-radius:12px}
+#welten{
+ background:linear-gradient(150deg,#f7f1e2,#eff1e6);
+ color:#273b45;border:1px solid #d7e5d8;
+ border-radius:30px;padding:37px clamp(18px,3.5vw,48px) 38px;
+ box-shadow:0 17px 35px #0004;margin-top:0
+}
+#welten .eyebrow{color:#438b6d}
+#welten .section-heading p{color:#5e706c}
+#welten .situation-grid{gap:15px}
+.situation-card,.situation-card:nth-child(2),.situation-card:nth-child(3){
+ position:relative;isolation:isolate;overflow:hidden;
+ border:1px solid #98b1a3!important;background:#142c3d!important;
+ border-radius:22px;box-shadow:0 12px 26px #12273b3d;
+ min-height:330px;padding:22px 20px 18px;transition:transform .25s,box-shadow .25s,border-color .25s
+}
+.situation-card::before{
+ content:"";position:absolute;z-index:-2;inset:0;
+ background:center / cover no-repeat url("./assets/dojo-study.png");
+ filter:saturate(.88);transition:transform .33s
+}
+.situation-card:nth-child(2)::before{background-image:url("./assets/dojo-gaming.png")}
+.situation-card:nth-child(3)::before{background-image:url("./assets/dojo-sleep.png")}
+.situation-card::after{content:"";position:absolute;z-index:-1;inset:0;background:linear-gradient(0deg,#0d1e30ef 0%,#16304cc7 53%,#11253b3d 100%)}
+.situation-card:hover,.situation-card:nth-child(2):hover,.situation-card:nth-child(3):hover{transform:translateY(-5px);box-shadow:0 18px 28px #1429375a;border-color:#dbd6a5!important}
+.situation-card:hover::before{transform:scale(1.04)}
+.situation-card .situation-head{margin-top:auto}
+.situation-card h3{color:#ffe6a5;font-size:25px}
+.situation-card .situation-art{color:#e7ffdb;filter:drop-shadow(0 2px 4px #0c223a99)}
+.situation-card p{color:#d7e6e1;font-size:13px;min-height:85px}
+.situation-card .context-cta{border-top:1px solid #c2d2ca55;color:#ffe6a3;min-height:49px}
+.situation-card .context-cta>span:last-child{background:#ffffff22;color:#fff8df}
+#welten .small-note{color:#5f6f6b}
+.village-preview{border:2px solid #b6cbb6;border-radius:23px;background:#e5eedc;box-shadow:0 8px 23px #113e3d1f}
+.village-sign{background:#1f4d54!important;color:#fbe8c5!important;border:1px solid #c8dbaa!important}
+#spielprinzip{
+ color:#273847;background:#f5efe0;border:1px solid #e0ddc8;border-radius:28px;
+ margin:25px 0;padding:35px clamp(18px,3.6vw,42px)
+}
+#spielprinzip .eyebrow{color:#40745c}
+#spielprinzip .section-lead,#spielprinzip .step p{color:#576b70}
+#spielprinzip .step-number{background:#1f655e;color:#ffebaf;border:1px solid #82bdaa;box-shadow:0 4px 0 #b5d4c4}
+#spielprinzip .balance-note{border-color:#bad3c5;background:#e4f0e4}
+.access-strip{color:#afc7c5;border-color:#47666a}
+.access-strip b{color:#75e3c0}
+.adventure{background:#263a4b;border:1px solid #5c8584;box-shadow:0 10px 21px #0004;color:#fbefd6}
+.adventure summary strong{color:#ffe5ad}.adventure summary small{color:#b5c9c4}
+.adventure summary>span:last-child{background:#386769;border:1px solid #75b6a7;color:#fff}
+.adventure-body{border-top-color:#5e8581}
+.adventure-grid p{color:#c1d4ce}
+.adventure-body .button{background:#f0d18b!important;border:1px solid #ffedbb!important;color:#283b3f!important}
+.callout{background:linear-gradient(125deg,#1e5a56,#233b55);border:1px solid #64aba1;box-shadow:0 13px 28px #0005;color:#f9edd0}
+.callout .eyebrow{color:#adebd1}
+.callout h2{color:#ffe1a6}
+.callout p{color:#c9e1d6}
+.callout .button{background:#ffda90;color:#253342;border:1px solid #ffebbc;box-shadow:0 5px 0 #996e3b}
+.project-info{color:#ecedde;background:#1b3044;border:1px solid #51757b}
+.project-info>details{color:#d6e4dc}
+footer{color:#b6cbc4;border-color:#47666b}
+.footer-links a{color:#d4e2d2}
+@media(max-width:760px){
+ .hero{padding:32px 0 46px;min-height:0}
+ .hero h1{font-size:clamp(60px,13vw,85px)}
+ #welten,#spielprinzip{border-radius:22px;padding:23px 17px}
+ .situation-card,.situation-card:nth-child(2),.situation-card:nth-child(3){min-height:250px}
+ .situation-card p{min-height:0;margin-left:0}
+ .situation-card .context-cta{margin-left:0}
+ .situation-card .situation-head{margin-top:auto}
+ .situation-card .situation-art{width:51px;height:51px;flex-basis:51px}
+ .callout{padding:25px}
+}
+@media(max-width:370px){
+ .hero h1{font-size:57px}
+ .situation-card,.situation-card:nth-child(2),.situation-card:nth-child(3){min-height:280px}
+}
+@media(prefers-reduced-motion:reduce){.situation-card::before,.situation-card{transition:none!important}}
