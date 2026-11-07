@@ -1,5 +1,8 @@
 # Notification Ninja: Account-Dienst v3
 
+
+**Neu:** [Sichere Render/Neon-Einrichtung und Live-Verifizierung](NINJA_ULTIMATE_CLOUD_SETUP.md). Vor dem Umschalten von `accounts-config.json` den reinen Lese-Check `npm run verify:ninja:deployment -- https://DEIN-RENDER-ACCOUNTDIENST.onrender.com` ausführen und anschließend die dort beschriebenen echten Zwei-Konten-/Neustart-Tests durchführen.
+
 Der Dienst unterstützt **PostgreSQL für öffentliches Hosting** und weiterhin **SQLite lokal**. Der historische Ranglistenserver und vorhandene Gastspielstände bleiben erhalten. Gastguthaben wird nicht als verifiziertes Kontoguthaben importiert.
 
 **Live-Status vom 07.11.2026:** Die öffentliche Account-Konfiguration bleibt deaktiviert. In dieser Umgebung fehlen `RENDER_API_KEY` und `NEON_API_KEY`; die Netzwerkpolicy verweigerte Render, Neon und die Homepage mit CONNECT 403. Das beweist keinen Ausfall des entfernten Servers. Es wurden keine kostenpflichtigen Ressourcen bestellt. Lokale Tests ersetzen keine öffentliche Abnahme.
