@@ -1053,3 +1053,23 @@ html[data-ninja-theme=relaxed] .legend-career-hero .legend-kicker{color:#287a60!
 .calm-view .arcade-scene-cloud,.calm-view .arcade-scene-stars,.calm-view .arcade-scene-gate>span,
 .calm-view .legend-dojo-scene img,.calm-view .legend-map-node.is-available .legend-node-orb,
 .calm-view .legend-map-path-front{animation:none!important}
+
+
+.arcade-map-traveler{
+ position:absolute;z-index:6;left:var(--traveler-x);top:var(--traveler-y);
+ width:95px;display:flex;flex-direction:column;align-items:center;gap:2px;
+ transform:translateX(-50%);pointer-events:none;
+ filter:drop-shadow(0 4px 4px #13272e8c);
+}
+.arcade-map-traveler>span{
+ display:grid;place-items:center;width:42px;height:42px;border-radius:12px 12px 17px 17px;
+ background:linear-gradient(150deg,#2a8971,#185a62);
+ border:3px solid #fbe7a6;box-shadow:0 4px 0 #183a4a;
+ color:#fff7e4;font:900 23px/1 Georgia,serif;
+ animation:arcade-traveler 2.3s ease-in-out infinite;
+}
+.arcade-map-traveler>small{font-size:9px;font-weight:950;letter-spacing:.14em;
+ padding:3px 7px;background:#152f3ddc;color:#ffeba7;border:1px solid #f1d8a18c;border-radius:6px}
+@keyframes arcade-traveler{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@media(prefers-reduced-motion:reduce){.arcade-map-traveler>span{animation:none!important}}
+.calm-view .arcade-map-traveler>span{animation:none!important}
