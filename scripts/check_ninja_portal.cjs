@@ -102,6 +102,28 @@ async function acknowledge(p){for(let n=0;n<20&&(await read(p)).mentor.open;n++)
       await page.locator('[data-action="home"]').first().click();
      }
      if(width===768){
+      await page.locator('.dojo-tabs [data-game-route="modes"]').click();await acknowledge(page);
+      assert.equal((await read(page)).ui,'modes');
+      assert.equal(await page.locator('.arcade-mode-portal').count(),2,'two illustrated portals');
+      assert.equal(await page.locator('.arcade-mode-quest').count(),4,'four secondary adventures');
+      assert.equal(await page.locator('.arcade-theme-strip [data-ninja-theme]').count(),3);
+      const relaxedColor=await page.locator('.legend-modes-panel').evaluate(el=>getComputedStyle(el).backgroundColor);
+      for(const theme of ['dark','noir']){
+       await page.locator('.arcade-theme-strip [data-ninja-theme="'+theme+'"]').click();
+       assert.equal(await page.evaluate(()=>document.documentElement.dataset.ninjaTheme),theme);
+       assert.equal(await page.evaluate(()=>localStorage.getItem('notification-ninja:ui-theme:v1')),theme);
+      }
+      const noirColor=await page.locator('.legend-modes-panel').evaluate(el=>getComputedStyle(el).backgroundColor);
+      assert.notEqual(relaxedColor,noirColor,'Noir has its own palette');
+      await page.locator('.arcade-theme-strip [data-ninja-theme="relaxed"]').click();
+      const before=await page.locator('.arcade-sticky-header').evaluate(el=>el.getBoundingClientRect().top);
+      await page.locator('.legend-modes-panel').evaluate(el=>el.scrollTop=340);
+      const after=await page.locator('.arcade-sticky-header').evaluate(el=>el.getBoundingClientRect().top);
+      assert(Math.abs(before-after)<5,'Back and Overview remain at top when scrolling');
+      await page.locator('.panel-home').click();await acknowledge(page);
+      assert.equal((await read(page)).ui,'home','Overview returns to home hub');
+     }
+     if(width===768){
       await page.locator('.dojo-tabs [data-game-route="dojos"]').click();await acknowledge(page);
       assert.equal((await read(page)).ui,'dojos','Dojo navigation opens illustrated worlds');
       assert.equal(await page.locator('.legend-dojo').count(),3,'Three real themed worlds');
