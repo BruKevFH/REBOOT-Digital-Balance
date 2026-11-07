@@ -8,32 +8,49 @@ const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;
 const num=value=>Number.isFinite(Number(value))?Number(value).toLocaleString('de-DE'):'0';
 const chapters={
   study:{name:'Lern-Dojo',subtitle:'Tal der Konzentration',art:'./assets/dojo-study.png',label:'FOKUS',symbol:'文',text:'Schütze deine Gedanken und erkenne echte Prioritäten.',hint:'Jede Entscheidung beginnt mit einem klaren Ziel.'},
-  gaming:{name:'Gaming-Dojo',subtitle:'Neonviertel der Balance',art:'./assets/dojo-gaming.png',label:'BALANCE',symbol:'遊',text:'Meistere dein Team und setze deinem Abenteuer Grenzen.',hint:'Spiele bewusst. Nicht der Autoplay-Loop entscheidet.'},
+  gaming:{name:'Gaming-Dojo',subtitle:'Neonviertel der Balance',art:'./assets/dojo-gaming.svg',label:'BALANCE',symbol:'遊',text:'Meistere dein Team und setze deinem Abenteuer Grenzen.',hint:'Spiele bewusst. Nicht der Autoplay-Loop entscheidet.'},
   sleep:{name:'Schlaf-Dojo',subtitle:'Tempel des Mondes',art:'./assets/dojo-sleep.png',label:'RUHE',symbol:'月',text:'Bewahre die Ruhe und finde den richtigen Moment zum Aufhören.',hint:'Ein gutes Ende ist deine stärkste Technik.'}
 };
 const icon=(kind)=>kind==='swords'?'<svg viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M11 9 36 36m1-27L12 34M7 6l5 3 28 29-6 4L7 13V6Zm34 0-6 4L9 36l5 5 27-28V6Z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/></svg>':kind==='scroll'?'<svg viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M13 9h25v30H11a5 5 0 0 1 0-10h22M14 9v22M20 17h11m-11 7h8" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>':kind==='infinity'?'<svg viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M24 24C17 12 5 14 5 24s12 12 19 0c7-12 19-10 19 0s-12 12-19 0Z" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/></svg>':kind==='moon'?'<svg viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M31 6A19 19 0 1 0 42 33 19 19 0 0 1 31 6Zm-17 3 1.8 4 4.2 1.7-4.2 1.7-1.8 4-1.8-4L8 14.7l4.2-1.7L14 9Z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/></svg>':kind==='spark'?'<svg viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="m24 3 4.5 15.5L44 24l-15.5 5.5L24 45l-5.5-15.5L4 24l14.5-5.5L24 3Z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/></svg>':'<svg viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M24 5v38M5 24h38m-31-12 24 24m0-24L12 36" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>';
 
 export function legendaryModes({account=false}={}){
  const feature=[
-  {kind:'career',title:'Die Ninja-Karriere',kicker:'DEIN ABENTEUER',desc:'Drei große Dojos, 18 Missionen, geheime Pfade und echte Bossbegegnungen.',meta:['18 Hauptmissionen','3 Dojos'],route:'campaign',action:'Karrierekarte öffnen',icon:'scroll'},
-  {kind:'open',title:'Open Run',kicker:'ENDLOSER MODUS',desc:'Drei Herzen. Ein fairer Start. Jede Welle wird schneller – wie lange hältst du durch?',meta:['3 Herzen','Online-Rekorde'],mode:'open',action:'Open Run starten',icon:'infinity'}
+  {kind:'career',title:'Ninja-Karriere',kicker:'01 · DEIN ABENTEUER',desc:'Drei Dojo-Welten, 18 Missionen und eigene Bosskämpfe auf einer echten Abenteuerkarte.',meta:['18 Missionen','3 Welten','Story & Bosse'],route:'campaign',action:'Karrierekarte entdecken',icon:'scroll',scene:'./assets/focus-village.png',emblem:'道'},
+  {kind:'open',title:'Open Run',kicker:'02 · DER ENDLOSE PFAD',desc:'Drei Herzen, kein Zeitlimit. Die Wellen werden schneller – wie lange bleibst du im Flow?',meta:['3 Herzen','Highscore','Kein Zeitlimit'],mode:'open',action:'Open Run starten',icon:'infinity',scene:'./assets/dojo-gaming.svg',emblem:'∞'}
  ];
  const others=[
-  {kind:'boss',title:'Boss Rush',desc:'Stelle dich drei verschiedenen Bossmechaniken.',mode:'boss-rush',tag:'Drei Bossduelle',icon:'swords'},
-  {kind:'day',title:'Ein ganzer Tag',desc:'Erlebe Lernen, Gaming und Schlaf in einem Run.',mode:'campaign',tag:'Story-Run',icon:'moon'},
-  {kind:'daily',title:'Tages-Challenge',desc:account?'Gemeinsame Herausforderung nach Serverzeit.':'Lokale Tagesübung; für geprüfte Ergebnisse anmelden.',mode:'daily',tag:'Täglich neu',icon:'spark'},
-  {kind:'practice',title:'Zen-Training',desc:'Entscheidungen ohne Zeitdruck üben.',route:'practice',tag:'Ohne Ranglistenwertung',icon:'scroll'}
+  {kind:'boss',title:'Boss Rush',desc:'Drei besondere Bosse. Drei unterschiedliche Taktiken.',mode:'boss-rush',tag:'3 Bossgegner',icon:'swords',sign:'鬼',level:'HERAUSFORDERUNG'},
+  {kind:'day',title:'Ein ganzer Tag',desc:'Von der Lernzeit über Gaming bis zur Abendruhe.',mode:'campaign',tag:'Story-Run',icon:'moon',sign:'日',level:'ABENTEUER'},
+  {kind:'daily',title:'Tages-Challenge',desc:account?'Gemeinsame Herausforderung nach Serverzeit.':'Lokale Tagesübung; für geprüfte Ergebnisse anmelden.',mode:'daily',tag:'Täglich neu',icon:'spark',sign:'星',level:'TÄGLICH'},
+  {kind:'practice',title:'Zen-Training',desc:'Wischen und Entscheidungen ohne Zeitdruck üben.',route:'practice',tag:'Ohne Ranglistenwertung',icon:'scroll',sign:'禅',level:'ENTSPANNT'}
  ];
  const attr=x=>x.route?`data-game-route="${x.route}"`:`data-mode-start="${x.mode}"`;
- return `<div class="legend-modes">
-  <header class="legend-screen-intro"><span class="legend-kicker">WÄHLE DEINEN PFAD</span><p class="legend-stroke">道</p><h3>Welcher Ninja bist du heute?</h3><p>Eine Entscheidung genügt. Wähle ein Abenteuer – alles Weitere zeigt dir NIM im Spiel.</p></header>
-  <div class="legend-mode-featured">${feature.map(x=>`<button type="button" class="legend-mode-feature legend-mode-${x.kind}" ${attr(x)}>
-    <span class="legend-mode-top"><span>${x.kicker}</span><span class="legend-mode-mark">${icon(x.icon)}</span></span>
-    <strong>${x.title}</strong><p>${x.desc}</p><span class="legend-mode-meta">${x.meta.map(k=>`<em>${k}</em>`).join('')}</span><span class="legend-mode-cta">${x.action} <b aria-hidden="true">↗</b></span>
-  </button>`).join('')}</div>
-  <h4 class="legend-mode-subheading">Oder entdecke einen anderen Weg</h4>
-  <div class="legend-mode-secondary">${others.map(x=>`<button type="button" class="legend-mode-small legend-mode-${x.kind}" ${attr(x)}><span class="legend-mode-symbol">${icon(x.icon)}</span><span class="legend-mode-info"><strong>${x.title}</strong><small>${x.desc}</small><em>${x.tag}</em></span><span class="legend-mode-arrow" aria-hidden="true">↗</span></button>`).join('')}</div>
-  <p class="legend-fair-note">Open Run ist für alle gleich. Andere Modi kannst du entspannt in deinem eigenen Tempo spielen.</p>
+ return `<div class="legend-modes arcade-mode-board">
+  <header class="arcade-mode-banner">
+   <div class="arcade-banner-label"><span class="arcade-level-dot" aria-hidden="true">✦</span> NINJA-AUSWAHL · WELCHER PFAD PASST HEUTE?</div>
+   <h3>Wähle dein nächstes <em>Abenteuer.</em></h3>
+   <p>Ein klarer Start: Die zwei großen Wege sind deine Hauptmodi. Weitere Herausforderungen findest du darunter.</p>
+   <div class="arcade-world-signs" aria-hidden="true"><span>☀ Lernen</span><span>✦ Gaming</span><span>☾ Schlaf</span></div>
+   <div class="arcade-theme-strip"><span>DESIGN</span><div class="ninja-theme-picker" role="group" aria-label="Design auswählen"><button type="button" data-ninja-theme="relaxed" aria-pressed="false">☀ Relaxed</button><button type="button" data-ninja-theme="dark" aria-pressed="false">◐ Dark</button><button type="button" data-ninja-theme="noir" aria-pressed="false">◆ Noir</button></div></div>
+  </header>
+  <div class="arcade-mode-section-head"><div><span class="arcade-section-index">01 / HAUPTWEGE</span><h4>Dein Abenteuer beginnt hier</h4></div><span class="arcade-section-hint">WÄHLE EIN PORTAL <span aria-hidden="true">↘</span></span></div>
+  <div class="legend-mode-featured arcade-mode-portals">${feature.map((x,i)=>`<button type="button" class="legend-mode-feature legend-mode-${x.kind} arcade-mode-portal" ${attr(x)} aria-label="${esc(x.title)}: ${esc(x.action)}">
+     <span class="arcade-scene" aria-hidden="true"><img src="${x.scene}" alt="" loading="lazy"><span class="arcade-scene-cloud cloud-a"></span><span class="arcade-scene-cloud cloud-b"></span><span class="arcade-scene-stars">✦ <i>✦</i> ✧</span><span class="arcade-scene-gate"><span>${x.emblem}</span></span><span class="arcade-scene-floor"></span></span>
+     <span class="arcade-portal-content">
+      <span class="arcade-portal-index"><span>${x.kicker}</span><span>${String(i+1).padStart(2,'0')} / 02</span></span>
+      <span class="arcade-portal-title"><strong>${x.title}</strong><span class="arcade-portal-icon">${icon(x.icon)}</span></span>
+      <span class="arcade-portal-description">${x.desc}</span>
+      <span class="legend-mode-meta">${x.meta.map(k=>`<em>${k}</em>`).join('')}</span>
+      <span class="arcade-portal-cta"><span>${x.action}</span><span class="arcade-cta-arrow" aria-hidden="true">➜</span></span>
+     </span>
+   </button>`).join('')}</div>
+  <div class="arcade-mode-section-head arcade-secondary-header"><div><span class="arcade-section-index">02 / NEBENWEGE</span><h4>Mehr Herausforderungen</h4></div><span class="arcade-section-hint">DEIN TEMPO. DEINE WAHL.</span></div>
+  <div class="legend-mode-secondary arcade-mode-quests">${others.map((x,i)=>`<button type="button" class="legend-mode-small legend-mode-${x.kind} arcade-mode-quest" ${attr(x)}>
+     <span class="arcade-quest-symbol" aria-hidden="true"><span class="arcade-quest-symbol-bg">${x.sign}</span>${icon(x.icon)}</span>
+     <span class="legend-mode-info"><span class="arcade-quest-level">${x.level} · ${String(i+1).padStart(2,'0')}</span><strong>${x.title}</strong><small>${x.desc}</small><em>✦ ${x.tag}</em></span>
+     <span class="arcade-quest-arrow" aria-hidden="true">➜</span>
+   </button>`).join('')}</div>
+  <footer class="arcade-mode-footer"><span class="arcade-mode-footer-icon" aria-hidden="true">忍</span><p>Du möchtest zuerst deine Spielwelt sehen? <strong>Besuche die Dojo-Welten</strong> und entdecke Lernen, Gaming und Schlaf.</p><button type="button" class="legend-button legend-button-primary" data-game-route="dojos">Spielwelten erkunden <span aria-hidden="true">→</span></button></footer>
  </div>`;
 }
 
@@ -75,7 +92,7 @@ function chapterMap(missions,id,index,selectedId){
  }).join('');
  return `<section class="legend-map-chapter legend-chapter-${id}" aria-labelledby="legend-chapter-title-${id}">
   <div class="legend-chapter-cover"><img src="${c.art}" alt="" loading="lazy"><span class="legend-chapter-crest" aria-hidden="true">${c.symbol}</span><div><small>KAPITEL ${String(index+1).padStart(2,'0')} · ${c.subtitle}</small><h3 id="legend-chapter-title-${id}">${c.name}</h3><p>${esc(c.hint)}</p></div><span class="legend-chapter-counter">${completed}<small>/ ${group.length}</small></span></div>
-  <div class="legend-trail-track">${trail()}${nodes}<span class="legend-map-bottom" aria-hidden="true">◆ ZIEL ERREICHEN ◆</span></div>
+  <div class="legend-trail-track">${trail()}${nodes}<span class="arcade-map-traveler" style="--traveler-x:${xs[Math.min(completed,5)]}%;--traveler-y:${ys[Math.min(completed,5)]-36}px" aria-hidden="true"><span>忍</span><small>HIER</small></span><span class="legend-map-bottom" aria-hidden="true">◆ ZIEL ERREICHEN ◆</span></div>
  </section>`;
 }
 function missionDetails(selected,missions){

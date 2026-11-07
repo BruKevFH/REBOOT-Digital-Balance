@@ -26,7 +26,7 @@ test('hub offers one primary mission and three unambiguous secondary choices',()
  assert.equal((index.match(/class="hub-path-card"/g)||[]).length,3);
  assert.match(index,/data-game-route="campaign" aria-label="Karrierekarte öffnen"/);
  assert.match(index,/data-hub-shortcut="open" aria-label="Open Run starten"/);
- assert.match(index,/data-game-route="dojos" aria-label="Dojos entdecken"/);
+ assert.match(index,/data-game-route="dojos" aria-label="Spielwelten entdecken"/);
  assert.match(index,/<details id="adventure-details"/);
  assert.doesNotMatch(index,/<details id="adventure-details"[^>]*open/);
 });

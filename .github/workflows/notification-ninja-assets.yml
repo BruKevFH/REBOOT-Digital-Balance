@@ -46,7 +46,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add notification-ninja/dist/ninja.js notification-ninja/dist/home.js notification-ninja/dist/build.json
-          git add notification-ninja/downloads/Notification-Ninja-3.2.0.zip notification-ninja/downloads/Notification-Ninja-3.2.0.zip.sha256
+          git add notification-ninja/downloads/Notification-Ninja-3.3.0.zip notification-ninja/downloads/Notification-Ninja-3.3.0.zip.sha256
           if git diff --cached --quiet; then
             echo "Generated files are already up to date."
           else

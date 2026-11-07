@@ -652,3 +652,433 @@
  .reflection-quest-note{padding:12px 15px 18px}
 }
 @media(prefers-reduced-motion:reduce){.reflection-quest-option{transition:none!important}}
+
+
+/* ARCADE PORTALS / 3 THEMES – designed as one continuous Ninja game UI.
+   Runtime data and game rules untouched; all animation is optional. */
+html[data-ninja-theme=relaxed]{
+ --ar-page:#eff3e6;--ar-page-glow:#e5e1ca;--ar-panel:#fffaf0;--ar-ink:#263d47;
+ --ar-muted:#61736d;--ar-border:#afcfc0;--ar-surface:#f0f5e9;--ar-surface2:#faead3;
+ --ar-nav:#e7f0df;--ar-nav-ink:#31534e;--ar-header:#eff5e9;
+ --ar-shadow:rgba(58,84,73,.22);--ar-overlay:rgba(37,57,62,.46);
+ --ar-accent:#198a75;--ar-accent-soft:#c8edda;--ar-gold:#f4c56d;
+ --ar-mode-banner:#eff6e7;--ar-mode-banner2:#e9f0dc;--ar-quest:#fffcf3;
+ --ar-quest-ink:#283c45;--ar-quest-muted:#61726e
+}
+html[data-ninja-theme=dark]{
+ --ar-page:#122436;--ar-page-glow:#122b38;--ar-panel:#1a2d3b;--ar-ink:#f0f5e9;
+ --ar-muted:#c0d3ca;--ar-border:#47776e;--ar-surface:#233b4a;--ar-surface2:#354456;
+ --ar-nav:#223a49;--ar-nav-ink:#e9f5e5;--ar-header:#1d3543;
+ --ar-shadow:rgba(0,6,17,.65);--ar-overlay:rgba(2,8,18,.82);
+ --ar-accent:#72e3b8;--ar-accent-soft:#183e45;--ar-gold:#f5d48f;
+ --ar-mode-banner:#1d4050;--ar-mode-banner2:#2a3f51;--ar-quest:#223e4a;
+ --ar-quest-ink:#f2f8e7;--ar-quest-muted:#c3d7cf
+}
+html[data-ninja-theme=noir]{
+ --ar-page:#0b0d12;--ar-page-glow:#1b1d27;--ar-panel:#15161d;--ar-ink:#f5f4ef;
+ --ar-muted:#c2c0b9;--ar-border:#686667;--ar-surface:#22232d;--ar-surface2:#302e33;
+ --ar-nav:#1e1e25;--ar-nav-ink:#f7f3e7;--ar-header:#222229;
+ --ar-shadow:rgba(0,0,0,.82);--ar-overlay:rgba(0,0,0,.9);
+ --ar-accent:#f2d593;--ar-accent-soft:#302d23;--ar-gold:#ffdf9a;
+ --ar-mode-banner:#25232b;--ar-mode-banner2:#111217;--ar-quest:#23232b;
+ --ar-quest-ink:#f5f4ee;--ar-quest-muted:#d5d0c6
+}
+html[data-ninja-theme] body{color:var(--ar-ink)}
+html[data-ninja-theme] .home{
+ color:var(--ar-ink)!important;
+ background:radial-gradient(ellipse 76% 56% at 83% 8%,var(--ar-page-glow),transparent 82%),
+  linear-gradient(175deg,var(--ar-page),var(--ar-page))!important;
+}
+html[data-ninja-theme=relaxed] .home::before{opacity:.5!important}
+html[data-ninja-theme] .home-header .logo-brand{border-color:var(--ar-border);box-shadow:0 5px 17px var(--ar-shadow)}
+html[data-ninja-theme] .home-profile-tools .player-chip,
+html[data-ninja-theme] .home-profile-tools .notifications-button,
+html[data-ninja-theme] .home-access-tools .access-settings,
+html[data-ninja-theme] .home-access-tools .access-account,
+html[data-ninja-theme] .home-access-tools .language-switch,
+html[data-ninja-theme] .home-access-tools .access-bazaar{
+ background:var(--ar-surface)!important;border-color:var(--ar-border)!important;
+ color:var(--ar-ink)!important;box-shadow:0 4px 14px var(--ar-shadow)!important
+}
+html[data-ninja-theme] .home-profile-tools .player-chip-copy strong,
+html[data-ninja-theme] .home-profile-tools .player-chip-copy small,
+html[data-ninja-theme] .home-access-tools button{color:var(--ar-ink)!important}
+html[data-ninja-theme] .home .dojo-tabs{
+ background:var(--ar-nav)!important;border:1px solid var(--ar-border)!important;
+ box-shadow:0 8px 22px var(--ar-shadow)!important
+}
+html[data-ninja-theme] .dojo-tabs>a{color:var(--ar-nav-ink)!important}
+html[data-ninja-theme] .dojo-tabs>a:hover{background:var(--ar-accent-soft)!important;color:var(--ar-nav-ink)!important}
+html[data-ninja-theme] .dojo-tabs>a[aria-current=page]{
+ background:var(--ar-accent-soft)!important;color:var(--ar-nav-ink)!important;
+ box-shadow:inset 0 -3px var(--ar-accent)!important;border-color:var(--ar-accent)!important
+}
+html[data-ninja-theme] .ninja-hub{
+ background:radial-gradient(circle at 82% 16%,#ffd9a52c,transparent 44%),
+  linear-gradient(123deg,var(--ar-mode-banner),var(--ar-mode-banner2))!important;
+ border-color:var(--ar-border)!important;color:var(--ar-ink)!important;
+ box-shadow:0 14px 40px var(--ar-shadow)!important;
+}
+html[data-ninja-theme] .hub-identity h1,
+html[data-ninja-theme] .hub-paths-heading h2,
+html[data-ninja-theme] .home .quick-heading h2{color:var(--ar-ink)!important;text-shadow:none!important}
+html[data-ninja-theme] .hub-identity>.eyebrow,
+html[data-ninja-theme] .hub-save-kind,
+html[data-ninja-theme] .hub-identity .xp-caption,
+html[data-ninja-theme] .hub-paths-heading p,
+html[data-ninja-theme] .home .daily-heading small,
+html[data-ninja-theme] .home .home-footer,
+html[data-ninja-theme] .home .quick-fair-note,
+html[data-ninja-theme] .home .home-account-entry span{color:var(--ar-muted)!important}
+html[data-ninja-theme] .hub-stats>span,
+html[data-ninja-theme] .hub-mission{
+ background:var(--ar-surface)!important;color:var(--ar-ink)!important;border-color:var(--ar-border)!important
+}
+html[data-ninja-theme] .hub-stats strong,
+html[data-ninja-theme] .hub-mission>strong,
+html[data-ninja-theme] .home .daily-heading h3{color:var(--ar-ink)!important}
+html[data-ninja-theme] .hub-mission>small{color:var(--ar-muted)!important}
+html[data-ninja-theme] .home .dojo-rooms,
+html[data-ninja-theme] .home .adventure-details,
+html[data-ninja-theme] .home .daily-grid .daily-card,
+html[data-ninja-theme] .home .journey-overview .journey-card{
+ background:var(--ar-surface)!important;border-color:var(--ar-border)!important;
+ color:var(--ar-ink)!important;box-shadow:0 5px 13px var(--ar-shadow)!important
+}
+html[data-ninja-theme] .home .dojo-rooms>summary,
+html[data-ninja-theme] .home .adventure-details>summary,
+html[data-ninja-theme] .home .daily-grid .daily-card h4,
+html[data-ninja-theme] .home .journey-overview .journey-card h3{color:var(--ar-ink)!important}
+html[data-ninja-theme] .home .dojo-rooms>summary>span,
+html[data-ninja-theme] .home .adventure-details>summary small,
+html[data-ninja-theme] .home .daily-grid .daily-card p,
+html[data-ninja-theme] .home .journey-overview .journey-card p{color:var(--ar-muted)!important}
+html[data-ninja-theme] .modal-shade{
+ background:var(--ar-overlay)!important;backdrop-filter:blur(7px)!important;
+}
+html[data-ninja-theme] .panel{
+ background:var(--ar-panel)!important;border:1px solid var(--ar-border)!important;
+ box-shadow:0 20px 66px var(--ar-shadow)!important;color:var(--ar-ink)!important;
+ scrollbar-color:var(--ar-border) transparent;
+}
+html[data-ninja-theme] .panel>h2,
+html[data-ninja-theme] .panel>.eyebrow,
+html[data-ninja-theme] .panel .legend-mode-subheading{color:var(--ar-ink)!important}
+html[data-ninja-theme] .panel>h2{font-size:clamp(22px,2.8vw,32px)!important;margin:20px 0 20px}
+html[data-ninja-theme] .panel>.eyebrow{color:var(--ar-accent)!important;letter-spacing:.12em}
+html[data-ninja-theme] .panel .muted{color:var(--ar-muted)}
+html[data-ninja-theme] .panel-header.arcade-sticky-header{
+ position:sticky!important;z-index:80!important;top:-1px!important;
+ display:grid!important;grid-template-columns:minmax(97px,1fr) minmax(0,1.3fr) minmax(160px,1fr);
+ align-items:center;gap:9px;
+ margin:-30px -30px 19px!important;padding:13px 20px!important;min-height:73px;
+ background:var(--ar-header)!important;border:0!important;border-bottom:1px solid var(--ar-border)!important;
+ border-radius:22px 22px 0 0!important;box-shadow:0 5px 12px var(--ar-shadow)!important;
+ color:var(--ar-ink)!important;
+}
+html[data-ninja-theme] .panel-header-title{color:var(--ar-ink)!important;font-size:10px;font-weight:950;letter-spacing:.09em}
+html[data-ninja-theme] .panel .panel-back,
+html[data-ninja-theme] .panel .panel-home,
+html[data-ninja-theme] .arcade-theme-cycle{
+ min-height:43px!important;border:1px solid var(--ar-border)!important;
+ border-radius:11px!important;box-shadow:0 3px 0 var(--ar-shadow)!important;
+ color:var(--ar-nav-ink)!important;background:var(--ar-surface)!important;font-size:11px!important;
+ cursor:pointer;white-space:nowrap;
+}
+html[data-ninja-theme] .panel .panel-back{justify-self:start}
+html[data-ninja-theme] .panel .panel-home{margin:0!important}
+html[data-ninja-theme] .panel .panel-back:hover,
+html[data-ninja-theme] .panel .panel-home:hover,
+html[data-ninja-theme] .arcade-theme-cycle:hover{filter:brightness(1.08)}
+.arcade-header-tools{display:flex;justify-content:flex-end;align-items:center;gap:7px;min-width:0}
+.arcade-theme-cycle{display:flex;align-items:center;justify-content:center;gap:4px;padding:7px 10px;min-width:65px}
+.arcade-theme-cycle>span{font-size:16px}
+.arcade-theme-cycle>small{font-size:10px;font-weight:900}
+html[data-ninja-theme] .ninja-theme-picker{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+html[data-ninja-theme] .ninja-theme-picker button{
+ min-height:42px;padding:9px 12px;border:1px solid var(--ar-border);border-radius:10px;
+ font:850 11px/1.2 system-ui,-apple-system,Segoe UI,sans-serif;
+ background:var(--ar-surface);color:var(--ar-ink);cursor:pointer;transition:transform .16s,background .16s;
+}
+html[data-ninja-theme] .ninja-theme-picker button:hover{transform:translateY(-1px)}
+html[data-ninja-theme] .ninja-theme-picker button[aria-pressed="true"]{
+ background:var(--ar-accent-soft);border-color:var(--ar-accent);color:var(--ar-ink);
+ box-shadow:inset 0 -3px var(--ar-accent);
+}
+html[data-ninja-theme] .settings-panel .theme-settings{background:var(--ar-surface);border:1px solid var(--ar-border);border-radius:15px;padding:17px}
+html[data-ninja-theme] .settings-panel .theme-settings h3{color:var(--ar-ink)}
+html[data-ninja-theme] .settings-panel .theme-settings p{color:var(--ar-muted)}
+/* Game-like modal: scenery, bridges and exploratory portal tiles. */
+html[data-ninja-theme] .legend-modes-panel{width:min(1060px,100%)!important}
+.legend-modes-panel .overlay-actions{display:none!important}
+.arcade-mode-board{max-width:1050px;margin:0 auto}
+.arcade-mode-banner{
+ position:relative;isolation:isolate;overflow:hidden;border-radius:22px;
+ background:radial-gradient(circle at 83% 28%,#ffdaa34b,transparent 21%),
+  linear-gradient(117deg,var(--ar-mode-banner),var(--ar-mode-banner2));
+ border:1px solid var(--ar-border);
+ padding:24px clamp(18px,3vw,34px);
+ min-height:180px;box-shadow:inset 0 1px #ffffff33;
+}
+.arcade-mode-banner:before{content:"";position:absolute;right:-20px;bottom:-36px;
+ width:300px;height:160px;pointer-events:none;opacity:.28;
+ background:repeating-linear-gradient(90deg,transparent 0 30px,var(--ar-accent) 30px 33px),
+  linear-gradient(160deg,transparent 30%,var(--ar-accent-soft) 31% 44%,transparent 45%);
+ clip-path:polygon(0% 100%,0% 65%,15% 65%,15% 37%,35% 37%,35% 12%,53% 12%,53% 43%,70% 43%,70% 19%,86% 19%,86% 61%,100% 61%,100% 100%);
+}
+.arcade-banner-label{display:flex;gap:8px;align-items:center;font-size:10px;letter-spacing:.13em;color:var(--ar-accent);font-weight:950}
+.arcade-level-dot{display:grid;place-items:center;width:27px;height:27px;background:var(--ar-accent-soft);border:1px solid var(--ar-border);border-radius:8px}
+.arcade-mode-banner h3{margin:11px 0 7px!important;color:var(--ar-ink)!important;
+ font-size:clamp(25px,3.5vw,39px)!important;line-height:1.17!important;font-weight:950}
+.arcade-mode-banner h3 em{font-style:normal;color:var(--ar-accent)}
+.arcade-mode-banner>p{max-width:600px;margin:0 0 13px!important;font-size:13px!important;line-height:1.55;color:var(--ar-muted)}
+.arcade-world-signs{display:flex;flex-wrap:wrap;gap:7px}
+.arcade-world-signs span{padding:5px 10px;border:1px solid var(--ar-border);border-radius:8px;
+ font-size:10px;font-weight:800;background:var(--ar-surface);color:var(--ar-ink)}
+.arcade-theme-strip{display:flex;align-items:center;flex-wrap:wrap;gap:12px;padding-top:17px;margin-top:16px;border-top:1px dashed var(--ar-border)}
+.arcade-theme-strip>span{font-size:10px;font-weight:950;letter-spacing:.12em;color:var(--ar-muted)}
+.arcade-mode-section-head{display:flex;align-items:end;justify-content:space-between;gap:13px;margin:25px 1px 13px}
+.arcade-mode-section-head>div{min-width:0}
+.arcade-mode-section-head h4{margin:5px 0 0!important;color:var(--ar-ink)!important;
+ font-size:clamp(19px,2.4vw,24px);line-height:1.2}
+.arcade-section-index{font-size:10px;font-weight:950;letter-spacing:.13em;color:var(--ar-accent)}
+.arcade-section-hint{font-size:10px;font-weight:850;color:var(--ar-muted);letter-spacing:.04em;text-align:right}
+.arcade-mode-portals{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+html[data-ninja-theme] .arcade-mode-portal{
+ position:relative!important;isolation:isolate;display:flex;align-items:stretch;overflow:hidden;
+ height:386px;min-height:0!important;padding:0!important;margin:0;
+ color:#fff9e7;background:#1b3345!important;border:2px solid #548b83!important;
+ border-radius:20px!important;box-shadow:0 7px 0 #133d47,0 20px 31px var(--ar-shadow)!important;
+ text-align:left;transition:transform .2s,box-shadow .2s,border-color .2s;
+}
+html[data-ninja-theme] .arcade-mode-portal::before{content:none!important}
+html[data-ninja-theme] .arcade-mode-portal:hover{
+ transform:translateY(-5px)!important;border-color:var(--ar-gold)!important;
+ box-shadow:0 10px 0 #775c31,0 24px 40px var(--ar-shadow)!important;
+}
+html[data-ninja-theme] .arcade-mode-portal:focus-visible{outline:4px solid var(--ar-gold)!important;outline-offset:4px}
+.arcade-scene{position:absolute;inset:0;overflow:hidden;z-index:0;pointer-events:none}
+.arcade-scene img{width:100%;height:100%;display:block;object-fit:cover;object-position:center 24%;
+ filter:saturate(1.1) contrast(1.03);transform:scale(1.02);transition:transform .55s ease}
+.arcade-mode-portal:hover .arcade-scene img{transform:scale(1.095) translateY(-4px)}
+.arcade-scene::after{content:"";position:absolute;inset:0;
+ background:linear-gradient(180deg,#07253712 0%,#0c2a3c4d 38%,#071925ee 72%,#071925fc 100%);
+}
+.legend-mode-open .arcade-scene::after{background:linear-gradient(180deg,#19183822 0%,#23143c6a 42%,#10172af0 74%,#10172afc)}
+.arcade-scene-cloud{position:absolute;top:21px;width:53px;height:14px;border-radius:0;background:#fff9d688;filter:drop-shadow(14px 7px 0 #fff9d655);opacity:.8;animation:arcade-drift 12s ease-in-out infinite alternate;z-index:1}
+.arcade-scene-cloud.cloud-a{left:14%}
+.arcade-scene-cloud.cloud-b{left:68%;top:57px;animation-duration:17s;animation-delay:-7s}
+.arcade-scene-stars{position:absolute;right:12%;top:21%;font-size:27px;letter-spacing:25px;z-index:1;color:#ffdb8d;animation:arcade-stars 3.8s ease-in-out infinite}
+.arcade-scene-stars i{font-style:normal;font-size:13px}
+.arcade-scene-gate{position:absolute;top:10%;left:50%;width:78px;height:88px;display:grid;place-items:center;z-index:1;
+ background:#1e4e58bb;border:3px solid #f0d598aa;border-bottom-width:8px;
+ clip-path:polygon(14% 0,86% 0,100% 15%,100% 100%,0 100%,0 15%);
+ transform:translateX(-50%);box-shadow:inset 0 0 0 4px #102c38}
+.arcade-scene-gate>span{width:46px;height:46px;display:grid;place-items:center;border-radius:50%;
+ background:#f7e1ac;color:#244553;font-size:28px;animation:arcade-breath 3.5s ease-in-out infinite}
+.arcade-scene-floor{position:absolute;bottom:24%;height:12px;width:100%;z-index:1;opacity:.42;
+ background:repeating-linear-gradient(90deg,#e0cb9c 0 10px,#a4a48d 10px 16px,transparent 16px 28px)}
+.arcade-portal-content{position:relative;z-index:2;display:flex;flex-direction:column;
+ align-self:stretch;width:100%;padding:19px 22px 21px}
+.arcade-portal-index{display:flex;justify-content:space-between;gap:7px;
+ color:#ffebb8;font-size:10px;font-weight:950;letter-spacing:.13em}
+.arcade-portal-title{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:auto}
+html[data-ninja-theme] .arcade-portal-title strong{font-size:clamp(27px,3.4vw,38px)!important;
+ font-weight:950;letter-spacing:-.055em;line-height:1.12;color:#fff0c7!important;text-shadow:0 3px 13px #061322}
+.arcade-portal-icon{flex:0 0 50px;width:50px;height:50px;display:grid;place-items:center;
+ border:1px solid #fbe8be77;border-radius:12px;background:#142b3ba8;color:#ffe8a2}
+.arcade-portal-icon svg{width:36px;height:36px}
+.arcade-portal-description{max-width:350px;min-height:42px;margin:8px 0!important;
+ color:#e0e7dc!important;font-size:12px!important;line-height:1.55!important}
+.arcade-mode-portal .legend-mode-meta{margin:2px 0 0}
+.arcade-mode-portal .legend-mode-meta em{font-size:10px!important;padding:5px 8px!important;
+ border:1px solid #d8e4c24d;background:#0b2c3ca8;color:#faf0d3}
+.arcade-portal-cta{display:flex;align-items:center;justify-content:space-between;width:100%;
+ padding:10px 11px;margin-top:13px;font-size:12px;font-weight:950;color:#1f3f43;
+ background:#f7d993;border:1px solid #ffe4ae;border-radius:10px;box-shadow:0 4px 0 #9e753d}
+.arcade-cta-arrow{font-size:19px;transition:transform .18s}
+.arcade-mode-portal:hover .arcade-cta-arrow{transform:translateX(5px)}
+.arcade-mode-quests{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px!important}
+html[data-ninja-theme] .arcade-mode-quest{
+ --q:#d1e8cf;
+ position:relative;display:grid!important;grid-template-columns:69px minmax(0,1fr) 19px;
+ align-items:center;gap:13px;min-height:144px!important;padding:15px 17px!important;
+ background:linear-gradient(112deg,var(--ar-quest),var(--ar-surface2))!important;
+ border:1px solid var(--ar-border)!important;border-radius:16px!important;
+ color:var(--ar-quest-ink)!important;box-shadow:0 5px 0 var(--ar-shadow)!important;
+ transition:transform .18s,box-shadow .18s,border-color .18s;
+}
+html[data-ninja-theme] .arcade-mode-quest:hover{
+ transform:translateY(-4px)!important;box-shadow:0 10px 0 var(--ar-shadow)!important;
+ border-color:var(--ar-accent)!important
+}
+.arcade-mode-quest::after{content:"";position:absolute;left:0;top:0;width:41px;height:7px;
+ background:var(--ar-accent);clip-path:polygon(0 0,100% 0,84% 100%,0 100%);opacity:.8}
+.arcade-mode-quest .arcade-quest-symbol{position:relative;display:grid;place-items:center;
+ width:69px;height:73px;color:var(--ar-ink);border:2px solid var(--ar-border);
+ border-radius:13px;background:var(--ar-accent-soft);box-shadow:inset 0 -5px #00000014,0 4px 0 var(--ar-shadow)}
+.arcade-quest-symbol-bg{font:900 40px/1 Georgia,serif;opacity:.2;position:absolute}
+.arcade-quest-symbol svg{position:relative;width:34px;height:34px;color:var(--ar-accent)}
+.arcade-quest-level{font-size:9px;letter-spacing:.1em;font-weight:950;color:var(--ar-accent)}
+html[data-ninja-theme] .arcade-mode-quest .legend-mode-info{display:flex;flex-direction:column;gap:3px}
+html[data-ninja-theme] .arcade-mode-quest .legend-mode-info strong{font-size:18px!important;color:var(--ar-quest-ink)!important}
+html[data-ninja-theme] .arcade-mode-quest .legend-mode-info small{
+ min-height:37px;font-size:11px!important;line-height:1.5;color:var(--ar-quest-muted)!important}
+html[data-ninja-theme] .arcade-mode-quest .legend-mode-info em{font-size:10px;color:var(--ar-accent)!important}
+.arcade-quest-arrow{font-size:18px;color:var(--ar-accent);transition:transform .17s}
+.arcade-mode-quest:hover .arcade-quest-arrow{transform:translateX(5px)}
+.arcade-mode-footer{display:flex;align-items:center;gap:15px;margin:23px 0 5px;padding:16px 20px;
+ background:var(--ar-surface);border:1px solid var(--ar-border);border-radius:15px}
+.arcade-mode-footer-icon{flex:0 0 44px;display:grid;place-items:center;width:44px;height:44px;
+ border:1px solid var(--ar-border);background:var(--ar-accent-soft);border-radius:50%;color:var(--ar-ink);font-size:21px}
+.arcade-mode-footer p{flex:1;min-width:0;margin:0!important;color:var(--ar-muted)!important;font-size:11px!important}
+.arcade-mode-footer p strong{color:var(--ar-ink)}
+.arcade-mode-footer .legend-button{flex-shrink:0}
+html[data-ninja-theme=dark] .legend-modes-panel .legend-button-primary{color:#062b29;background:#98eac6;border-color:#a6ffe6}
+html[data-ninja-theme=noir] .arcade-mode-banner:before{filter:grayscale(1)}
+html[data-ninja-theme=noir] .arcade-scene img{filter:grayscale(1) contrast(1.14)}
+html[data-ninja-theme=noir] .arcade-mode-portal{border-color:#e7e0d1!important;box-shadow:0 6px 0 #5b564f,0 16px 34px #000a!important}
+html[data-ninja-theme=noir] .arcade-portal-cta{background:#f9edcf;color:#191921;border-color:#fff}
+html[data-ninja-theme=noir] .arcade-mode-quest{border-color:#818080!important}
+html[data-ninja-theme=noir] .arcade-quest-level{color:#edd39b}
+/* Campaign feels like traversable islands rather than a spreadsheet. */
+html[data-ninja-theme] .legend-career-hero{border-color:var(--ar-border);box-shadow:0 5px 18px var(--ar-shadow)}
+.legend-trail-track{overflow:hidden!important;isolation:isolate}
+.legend-chapter-study .legend-trail-track{
+ background:radial-gradient(circle at 15% 30%,#dff5a566,transparent 34%),
+ url('./assets/dojo-study.png') center/cover no-repeat;
+}
+.legend-chapter-gaming .legend-trail-track{
+ background:radial-gradient(circle at 66% 40%,#ecabfb66,transparent 32%),
+ url('./assets/dojo-gaming.svg') center/cover no-repeat;
+}
+.legend-chapter-sleep .legend-trail-track{
+ background:radial-gradient(circle at 66% 17%,#ffe7ae77,transparent 35%),
+ url('./assets/dojo-sleep.png') center/cover no-repeat;
+}
+.legend-trail-track::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+ background:linear-gradient(180deg,#0a24384b,#102c3f44 45%,#0c263366)}
+.legend-map-path-front{stroke-dasharray:7 9;animation:arcade-trail 15s linear infinite}
+.legend-map-node.is-available .legend-node-orb{animation:arcade-node 2.7s ease-in-out infinite}
+.legend-map-node.is-complete .legend-node-orb{box-shadow:0 0 0 5px #b5eed1a1,0 6px 14px #173a4180}
+.legend-dojo-scene:after{background:linear-gradient(100deg,#052d4440,transparent 37%,#ffd99213 78%,#06182688)!important}
+.legend-dojo-scene img{animation:arcade-world 13s ease-in-out infinite alternate;object-fit:cover}
+.legend-dojo-gaming .legend-dojo-scene img{animation-duration:16s}
+.legend-dojo-sleep .legend-dojo-scene img{animation-duration:21s}
+.legend-dojo-scene::before{content:"✦";position:absolute;left:20%;top:18%;z-index:2;color:#fff0b9;
+ text-shadow:0 0 13px #fff0b9;animation:arcade-stars 3.5s ease-in-out infinite;pointer-events:none}
+html[data-ninja-theme=relaxed] .legend-dojos-panel .legend-screen-intro,
+html[data-ninja-theme=relaxed] .legend-career-hero{background:linear-gradient(125deg,#dceadd,#f4e6c7)!important;color:#253d43!important}
+html[data-ninja-theme=relaxed] .legend-dojos-panel .legend-screen-intro h3,
+html[data-ninja-theme=relaxed] .legend-career-hero h3{color:#1c3e3a!important}
+html[data-ninja-theme=relaxed] .legend-dojos-panel .legend-screen-intro p,
+html[data-ninja-theme=relaxed] .legend-career-hero p{color:#536961!important}
+html[data-ninja-theme=relaxed] .legend-dojos-panel .legend-screen-intro .legend-kicker,
+html[data-ninja-theme=relaxed] .legend-career-hero .legend-kicker{color:#287a60!important}
+@keyframes arcade-drift{from{transform:translateX(-11px)}to{transform:translateX(32px)}}
+@keyframes arcade-stars{0%,100%{opacity:.45;transform:scale(.94)}50%{opacity:1;transform:scale(1.08)}}
+@keyframes arcade-breath{0%,100%{box-shadow:0 0 0 2px #eccc8955}50%{box-shadow:0 0 0 10px #eccc8955,0 0 28px #f9db94a8}}
+@keyframes arcade-world{from{transform:scale(1.01) translateY(0)}to{transform:scale(1.09) translateY(-5px)}}
+@keyframes arcade-node{0%,100%{filter:drop-shadow(0 0 3px #a6f6c1)}50%{filter:drop-shadow(0 0 15px #ffe5aa)}}
+@keyframes arcade-trail{to{stroke-dashoffset:-160}}
+/* Mobile layout remains readable and both primary routes stay prominent. */
+@media(max-width:950px){
+ html[data-ninja-theme] .panel-header.arcade-sticky-header{
+  grid-template-columns:auto minmax(0,1fr) auto;padding:10px 14px!important
+ }
+ .arcade-header-tools{gap:5px}
+ .arcade-mode-portal{height:348px!important}
+ .arcade-portal-content{padding:16px 17px 18px}
+ .arcade-portal-description{font-size:11px!important}
+}
+@media(max-width:760px){
+ html[data-ninja-theme] .panel-header.arcade-sticky-header{
+  margin:-16px -16px 18px!important;min-height:65px;
+  border-radius:21px 21px 0 0!important;top:-1px!important
+ }
+ .arcade-theme-cycle{min-width:43px;padding:6px 9px}
+ .arcade-theme-cycle small{display:none}
+ html[data-ninja-theme] .home{padding-bottom:calc(116px + env(safe-area-inset-bottom))!important}
+ html[data-ninja-theme] .home .dojo-tabs{grid-template-columns:repeat(5,minmax(0,1fr))}
+ .arcade-mode-banner{min-height:165px}
+ .arcade-mode-portals{gap:11px}
+ .arcade-mode-portal{height:327px!important}
+ html[data-ninja-theme] .arcade-portal-title strong{font-size:clamp(23px,3.7vw,29px)!important}
+ .arcade-portal-icon{width:39px;height:39px;flex-basis:39px}
+ .arcade-portal-icon svg{width:26px;height:26px}
+ .arcade-mode-quests{gap:10px!important}
+ html[data-ninja-theme] .arcade-mode-quest{grid-template-columns:48px minmax(0,1fr) 15px;gap:10px;padding:13px!important}
+ .arcade-mode-quest .arcade-quest-symbol{width:48px;height:57px}
+ .arcade-quest-symbol svg{width:27px;height:27px}
+ html[data-ninja-theme] .arcade-mode-quest .legend-mode-info strong{font-size:15px!important}
+ .arcade-mode-footer{flex-wrap:wrap;gap:10px}
+ .arcade-mode-footer .legend-button{width:100%}
+}
+@media(max-width:520px){
+ .arcade-mode-section-head{margin-top:20px}
+ .arcade-mode-section-head h4{font-size:19px}
+ .arcade-section-hint{font-size:9px}
+ .arcade-mode-banner{padding:17px}
+ .arcade-mode-banner h3{font-size:27px!important}
+ .arcade-world-signs span{font-size:9px}
+ .arcade-mode-portals{grid-template-columns:1fr!important;gap:15px}
+ .arcade-mode-portal{height:326px!important}
+ .arcade-portal-title strong{font-size:30px!important}
+ .arcade-mode-quests{grid-template-columns:1fr!important}
+ html[data-ninja-theme] .arcade-mode-quest{min-height:112px!important;grid-template-columns:56px minmax(0,1fr) 20px}
+ .arcade-mode-quest .arcade-quest-symbol{width:56px;height:60px}
+ .arcade-mode-quest .legend-mode-info small{min-height:0!important}
+ .arcade-portal-description{min-height:0!important}
+ .arcade-theme-strip{gap:6px}
+ .arcade-theme-strip .ninja-theme-picker button{min-height:38px;padding:8px}
+ .arcade-header-tools .panel-home{padding:8px!important;font-size:10px!important}
+ .panel-header-title{font-size:9px!important;letter-spacing:0!important}
+}
+@media(max-width:370px){
+ .arcade-header-tools{gap:3px}
+ html[data-ninja-theme] .panel .panel-back,
+ html[data-ninja-theme] .panel .panel-home{padding-inline:8px!important}
+ .arcade-theme-cycle{padding-inline:7px!important}
+ .arcade-mode-section-head{align-items:start}
+ .arcade-section-hint{display:none}
+}
+@media(prefers-reduced-motion:reduce){
+ .arcade-scene-cloud,.arcade-scene-stars,.arcade-scene-gate>span,.legend-dojo-scene img,
+ .legend-dojo-scene::before,.legend-map-node.is-available .legend-node-orb,
+ .legend-map-path-front{animation:none!important}
+ html[data-ninja-theme] .arcade-mode-portal:hover,
+ html[data-ninja-theme] .arcade-mode-quest:hover{transform:none!important}
+ .arcade-scene img,.arcade-mode-portal,.arcade-mode-quest,.arcade-cta-arrow{transition:none!important}
+}
+.calm-view .arcade-scene-cloud,.calm-view .arcade-scene-stars,.calm-view .arcade-scene-gate>span,
+.calm-view .legend-dojo-scene img,.calm-view .legend-map-node.is-available .legend-node-orb,
+.calm-view .legend-map-path-front{animation:none!important}
+
+
+.arcade-map-traveler{
+ position:absolute;z-index:6;left:var(--traveler-x);top:var(--traveler-y);
+ width:95px;display:flex;flex-direction:column;align-items:center;gap:2px;
+ transform:translateX(-50%);pointer-events:none;
+ filter:drop-shadow(0 4px 4px #13272e8c);
+}
+.arcade-map-traveler>span{
+ display:grid;place-items:center;width:42px;height:42px;border-radius:12px 12px 17px 17px;
+ background:linear-gradient(150deg,#2a8971,#185a62);
+ border:3px solid #fbe7a6;box-shadow:0 4px 0 #183a4a;
+ color:#fff7e4;font:900 23px/1 Georgia,serif;
+ animation:arcade-traveler 2.3s ease-in-out infinite;
+}
+.arcade-map-traveler>small{font-size:9px;font-weight:950;letter-spacing:.14em;
+ padding:3px 7px;background:#152f3ddc;color:#ffeba7;border:1px solid #f1d8a18c;border-radius:6px}
+@keyframes arcade-traveler{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@media(prefers-reduced-motion:reduce){.arcade-map-traveler>span{animation:none!important}}
+.calm-view .arcade-map-traveler>span{animation:none!important}
+
+/* Minimum 44px touch targets on every palette and sticky header control. */
+html[data-ninja-theme] .panel .panel-back,
+html[data-ninja-theme] .panel .panel-home,
+html[data-ninja-theme] .arcade-theme-cycle,
+html[data-ninja-theme] .ninja-theme-picker button{min-height:46px!important}
+
+/* Small viewport: icon-only theme button keeps a 46x46px hit area. */
+html[data-ninja-theme] .arcade-theme-cycle{min-width:46px!important}
