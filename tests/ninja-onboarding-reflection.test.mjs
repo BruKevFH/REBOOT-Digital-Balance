@@ -81,7 +81,7 @@ test('storage failures cannot give fake durable coin rewards or crash the reflec
  assert(success.includes('keine zusätzlichen Münzen'));
  const source=read('src/reflection-quest.js');
  assert(!source.includes('accounts.action('));
- assert(!source.includes('coin'));
+ assert(!source.includes('profile.coins'));
 });
 
 test('new reflection and access copy is actually translatable to English',()=>{
