@@ -1,4 +1,5 @@
 import {createAccounts,createAccountStorage} from './accounts.js';
+import {legendaryModes,legendaryDojos,legendaryCareer,legendaryLeaderboard} from './ninja-legend-ui.js';
 import {createVerifiedRun,gameFromServerSnapshot,readVerifiedTrace,restoreVerifiedGame,traceKey} from './verified-run.js';
 import {createAccountUI,installModalAccessibility} from './account-ui.js';
 import {createSettingsUI} from './settings-ui.js';
@@ -114,7 +115,14 @@ function navigateRoute(route,{replace=false}={}){
 }
 function modesMenu(){
   if(!openMenu('modes'))return;
-  dialog('Dein Spielmodus',`<p class="muted">Wähle ein Ziel. Dein Fortschritt bleibt in deinem Dojo.</p><div class="mode-menu-grid"><button class="mode-menu-card" data-mode-start="open"><span aria-hidden="true">∞</span><strong>Open Run</strong><small>Drei Herzen. Kein Zeitlimit. Langsamer Einstieg, steigende Wellen.</small></button><button class="mode-menu-card" data-game-route="campaign"><span aria-hidden="true">⌁</span><strong>Karriere</strong><small>18 Hauptmissionen, acht Herausforderungen und drei Bosse.</small></button><button class="mode-menu-card" data-mode-start="campaign"><span aria-hidden="true">☀</span><strong>Ein ganzer Tag</strong><small>Lernen, Gaming und Schlaf in einem Abenteuer.</small></button><button class="mode-menu-card" data-mode-start="boss-rush"><span aria-hidden="true">⚔</span><strong>Boss Rush</strong><small>Drei Bosse nacheinander. Jede Verteidigung braucht ihre eigene Strategie.</small></button><button class="mode-menu-card" data-mode-start="daily"><span aria-hidden="true">☀</span><strong>Tagesherausforderung</strong><small>${accountActive()?'Ein gemeinsames Tagesziel nach Serverzeit (UTC).':'Lokale Tagesübung. Für servergeprüfte Ergebnisse melde dich an.'}</small></button><button class="mode-menu-card" data-game-route="practice"><span aria-hidden="true">✦</span><strong>Trainingsmodus</strong><small>Ohne Zeitdruck üben. Keine Münzen, kein Ranglistenstress.</small></button></div><h3>Eine kurze Alltagssituation</h3><div class="mode-quick-options">${['study','gaming','sleep'].map(context=>`<button class="btn ghost" data-quick-context="${context}">${escape(modes[context])}</button>`).join('')}</div>`,button('Zurück zum Dojo','home','ghost'),{label:'DEIN TEMPO · DEINE ENTSCHEIDUNG',classes:'modes-panel'});
+  dialog('Wähle deinen Spielmodus',legendaryModes({account:accountActive()}),'',{label:'NINJA-ABENTEUER · DEIN WEG',classes:'legend-modes-panel'});
+}
+function dojosMenu(){
+  if(ui!=='dojos'&&!openMenu('dojos'))return;
+  dialog('Die Ninja-Dojos',legendaryDojos({
+    missions:getCareerMissions(game.profile),
+    worlds:game.profile.unlockedWorlds||['study']
+  }),'',{label:'DREI DOJOS · DREI KAPITEL',classes:'legend-dojos-panel'});
 }
 function accountRouteChanged(kind){const route={login:'login',register:'register',recovery:'recovery',profile:'account'}[kind];if(!route||restoringView||location.hash===`#${route}`)return;history.pushState(history.state,'',`#${route}`);}
 function startAccessiblePractice(context='study'){
@@ -137,7 +145,7 @@ const pendingGuides=new Set();
 let hubToken='';
 let selectedMissionId='study-01',weeklyMenuWeek='',reflectionChoice=null;
 let requestedQuickContext=(()=>{const value=new URLSearchParams(location.search).get('quick');return ['study','gaming','sleep'].includes(value)?value:null;})();
-const menuKinds=['modes','settings','career','weekly','help','skins','highscores','abilities','achievements','shop','profile','notifications','leaderboard','delete-profile'];
+const menuKinds=['modes','dojos','settings','career','weekly','help','skins','highscores','abilities','achievements','shop','profile','notifications','leaderboard','delete-profile'];
 const money=()=>game.profile?.coins??0;
 const good=r=>r?.ok===true;
 const why=r=>r?.reason||'Diese Aktion ist gerade nicht möglich.';
@@ -155,7 +163,7 @@ function restoreView(view){
   if(!localLoggedIn){showLanding();return;}
   restoringView=true;
   try{shopTab=view.shopTab||shopTab;selectedSkill=view.selectedSkill||selectedSkill;selectedMissionId=view.selectedMissionId||selectedMissionId;
-    const routes={modes:modesMenu,home:showHome,settings:settingsMenu,rest:showRest,career:careerMenu,weekly:weeklyMenu,profile:playerMenu,abilities,achievements:achievementMenu,notifications,shop:()=>shop(shopTab),skins,highscores,help,leaderboard:leaderboardMenu,'delete-profile':deleteProfileMenu,paused:pauseDialog,'sleep-choice':sleepChoice,playing:resume};
+    const routes={modes:modesMenu,dojos:dojosMenu,home:showHome,settings:settingsMenu,rest:showRest,career:careerMenu,weekly:weeklyMenu,profile:playerMenu,abilities,achievements:achievementMenu,notifications,shop:()=>shop(shopTab),skins,highscores,help,leaderboard:leaderboardMenu,'delete-profile':deleteProfileMenu,paused:pauseDialog,'sleep-choice':sleepChoice,playing:resume};
     if(routes[view.kind])routes[view.kind]();else if(view.kind==='briefing'&&game.state.scene==='briefing')briefing();else if(view.kind==='results'&&game.state.ended)results();else showHome();
   }finally{restoringView=false;}
   requestAnimationFrame(()=>{const panel=$('overlay-root').querySelector('.panel');if(panel)panel.scrollTop=view.scroll||0;else window.scrollTo(0,view.scroll||0);});
@@ -206,19 +214,16 @@ function renderAdventureOverview(){
   $('career-button').classList.toggle('has-reward',pending>0);$('weekly-button').classList.toggle('has-reward',weeklyReady>0||reward.ready&&!reward.claimed);
 }
 function careerRewardCard(mission){return `<article class="adventure-reward" data-career-reward="${mission.id}"><span>${missionArt(mission)}</span><div><small>MISSION GESCHAFFT</small><strong>${escape(mission.title)}</strong></div><button class="btn primary" data-career-claim="${mission.id}">+${mission.reward} Münzen abholen</button></article>`;}
-const careerMapX=x=>8+Number(x)*.84,careerMapY=y=>13+Number(y)*.74;
 function careerMenu(){
   if(ui!=='career'&&!openMenu('career'))return;
-  const missions=getCareerMissions(game.profile),main=missions.filter(m=>m.section==='main'),legacy=missions.filter(m=>m.section!=='main'),selected=missions.find(m=>m.id===selectedMissionId)||main[0],pending=missions.filter(m=>m.completed&&!m.claimed);
+  const missions=getCareerMissions(game.profile),selected=missions.find(m=>m.id===selectedMissionId)||missions.find(m=>m.section==='main'&&m.available&&!m.completed)||missions.find(m=>m.section==='main');
+  if(!selected)return;
   selectedMissionId=selected.id;
-  const missionCard=mission=>{
-    const missing=(mission.missingRequirements||[]).map(id=>missions.find(value=>value.id===id)?.title||id),reason=mission.worldLocked?'Dieser Abschnitt öffnet sich mit deinem Kampagnenfortschritt. Du kannst den Spielort auch im Basar früher freischalten.':missing.length?`Meistere zuerst: ${missing.join(' · ')}.`:'';
-    const best=mission.best?`<p class="campaign-best">Dein Bestwert: ${Number(mission.best.score||0).toLocaleString(getLocale())} Punkte · ${mission.best.correct||0} richtig · ${mission.best.accuracy||0}%</p>`:'';
-    return `<article class="campaign-mission ${mission.completed?'is-complete':mission.available?'is-available':'is-locked'} ${selected.id===mission.id?'is-selected':''}" data-mission-card="${mission.id}"><div class="campaign-mission-art">${missionArt(mission)}</div><div class="campaign-mission-meta"><small>${mission.chapter?`${String(mission.order).padStart(2,'0')} · ${mission.duration} Sekunden`:mission.bossId?'AUTOPLAY-BOSS':'EXTRA-HERAUSFORDERUNG'}</small><span>${mission.completed?mission.claimed?'✓ Belohnung abgeholt':'🎁 Münzen bereit':mission.available?'Spielbar':'Noch gesperrt'}</span></div><h3>${escape(mission.title)}</h3><p>${escape(mission.description)}</p>${progressMarkup(mission.current,mission.target,mission.title)}<small>${mission.current} / ${mission.target} · +${mission.reward} Münzen</small>${best}${reason?`<p class="career-requirement">${escape(reason)}</p>`:''}<div class="campaign-card-actions"><button class="btn ${mission.completed?'ghost':'primary'}" data-mission-start="${mission.id}" ${mission.available||mission.completed?'':'disabled'}>${mission.completed?'Erneut spielen':'Mission starten →'}</button>${mission.completed&&!mission.claimed?`<button class="btn primary" data-career-claim="${mission.id}">+${mission.reward} Münzen abholen</button>`:''}</div></article>`;
-  };
-  const chapters=['study','gaming','sleep'].map((context,index)=>{const group=main.filter(m=>m.chapter===context),complete=group.filter(m=>m.completed).length;return `<section class="campaign-chapter"><header class="campaign-chapter-heading"><span>${adventureArt(context)}</span><div><small>KAPITEL ${index+1}</small><h3>${escape(contexts[context].name)}</h3><p>${complete} / 6 Missionen gemeistert</p></div></header><div class="campaign-missions">${group.map(missionCard).join('')}</div></section>`;}).join('');
-  dialog('Deine Kampagne',`<div class="adventure-heading"><p>18 kurze Missionen in drei Alltagssituationen. Jedes Kapitel übt andere Entscheidungen. Geschaffte Abschlussmissionen öffnen die nächste Welt.</p><span class="adventure-count">${main.filter(m=>m.completed).length} / 18<small>GEMEISTERT</small></span></div>${pending.length?`<section class="adventure-pending"><h3>🎁 Deine erspielten Münzen</h3>${pending.map(careerRewardCard).join('')}</section>`:''}${chapters}<details class="owned-collection legacy-challenges"><summary>Zusätzliche Herausforderungen & Autoplay-Bosse <span class="collection-count">${legacy.filter(m=>m.completed).length} / ${legacy.length}</span></summary><p>Deine bisherigen Missionen und ihre Belohnungen bleiben hier erhalten.</p><div class="campaign-missions">${legacy.map(missionCard).join('')}</div></details>`,button('Wochenmissionen ansehen','weekly','ghost'),{label:'KAMPAGNE · DREI WELTEN',classes:'career-panel campaign-panel'});
-  renderHUD();guideOnce('career',{title:'Dein Weg zum Fokustempel!',text:'Starte mit der ersten Mission im Lernzimmer. Jede Mission hat ein eigenes Ziel. Eine geschaffte Abschlussmission öffnet die nächste Welt. Münzbelohnungen holst du einmal selbst ab. Zusätzliche Herausforderungen und Bosse bleiben unten erhalten.',animation:'unlock'});
+  dialog('Deine Karriere',legendaryCareer({missions,selectedId:selectedMissionId}),
+    button('Wochenmissionen','weekly','ghost'),
+    {label:'KARRIERE · 18 MISSIONEN · 3 BOSSE',classes:'legend-career-panel'});
+  renderHUD();
+  guideOnce('career',{title:'Dein Weg zum Fokustempel!',text:'Tippe einen Knoten an, um die echte Mission und ihre Freischaltbedingungen zu sehen. Leuchtende Knoten kannst du spielen, abgeschlossene erneut versuchen. Auf dem Schattenpfad warten zusätzliche Bosse.',animation:'unlock'});
 }
 function weeklyTaskArt(task){const image={correct:'correct-250',cuts:'first-cut',useful:'careful-stage',streak:'combo-25',precise:'careful-stage',flow:'flow-five',runs:'runs-10'}[task.metric];return image?upgradeArt('achievement',image):adventureArt(task.metric==='openSeconds'?'open':task.metric==='study'?'study':'weekly');}
 function weeklyMenu(){
@@ -314,14 +319,23 @@ async function confirmDelete(event){
     }else toast(removed.sessionOnly?'Dein Profil dieser Sitzung wurde gelöscht.':'Dein lokales Ninja-Profil wurde gelöscht.');
   }catch(error){if($('delete-profile-error'))$('delete-profile-error').textContent=error.message;button.disabled=false;button.textContent='Profil endgültig löschen';}finally{deletionBusy=false;}
 }
-function leaderboardShell(message,entries=[],own=null){
-  const rows=entries.map((entry,index)=>`<li class="leaderboard-row ${entry.mine?'is-mine':''}"><strong class="rank-place">${Number(entry.rank)||index+1}</strong><span class="rank-player" data-user-text>${escape(entry.username||'Ninja')}</span><strong class="rank-score">${Number(entry.score||0).toLocaleString(getLocale())}</strong></li>`).join('');
+let leaderboardFilter='all';
+let leaderboardCache={message:'Noch keine Rangliste geladen.',entries:[],own:null};
+function drawLeaderboard(){
   const canPublish=accountActive()&&lastVerified?.verified&&lastVerified.mode==='open'&&lastVerified.result==='lives'&&lastVerified.ruleset==='open-v2'&&!lastVerified.published;
-  dialog('Die Ninja-Rangliste',`<div class="leaderboard-mode-banner"><strong>OPEN RUN · GEPRÜFT</strong><span>Ein Modus · drei Herzen · steigendes Tempo.</span></div><p id="leaderboard-status" class="leaderboard-status" role="status">${escape(message)}</p>${rows?`<ol class="leaderboard-list">${rows}</ol>`:''}${own?`<p class="own-rank">Dein Platz: ${own.rank} · ${Number(own.score).toLocaleString(getLocale())} Punkte</p>`:''}<div class="leaderboard-share"><h3>Du entscheidest, was öffentlich wird</h3><p class="muted">Nur geprüfte Open Runs, die nach drei verlorenen Herzen enden, können veröffentlicht werden. Dein Ninja-Name und Ergebnis erscheinen erst nach deinem Klick. Gekaufte Fähigkeiten und Supers gelten hier nicht.</p>${accountActive()?`<div class="leaderboard-actions">${button('Aktualisieren','refresh-leaderboard','ghost')}<button class="btn primary" data-action="submit-score" ${canPublish&&!leaderboardBusy?'':'disabled'}>${lastVerified?.published?'Veröffentlicht ✓':'Run veröffentlichen'}</button></div>`:`<p>Mit einem Konto kannst du einen geprüften Run teilen. Dein Gastspiel bleibt ohne Ranglisteneintrag.</p><button class="btn primary" data-account-view="login">Anmelden</button>`}</div><p class="muted">${button('Meine Rekorde','highscores','ghost')}</p>`, '',{label:'GEMEINSAM SPIELEN · GEPRÜFTE RUNS',classes:'leaderboard-panel'});
+  dialog('Die Ninja-Rangliste',legendaryLeaderboard({
+    ...leaderboardCache,filter:leaderboardFilter,canPublish,account:accountActive(),
+    published:Boolean(lastVerified?.published),busy:leaderboardBusy,
+    localScore:Number(game.profile?.highScores?.open||0)
+  }),'',{label:'HALLE DER LEGENDEN · SERVERGEPRÜFT',classes:'legend-leaderboard-panel'});
+}
+function leaderboardShell(message,entries=[],own=null){
+  leaderboardCache={message,entries:Array.isArray(entries)?entries:[],own:own||null};
+  drawLeaderboard();
 }
 async function leaderboardMenu(){
   if(ui!=='leaderboard'&&!openMenu('leaderboard'))return;const request=++leaderboardRequest;leaderboardBusy=true;leaderboardShell('Rangliste wird geladen …');
-  try{const result=await accounts.leaderboard();if(request!==leaderboardRequest||ui!=='leaderboard')return;leaderboardBusy=false;leaderboardShell(result.entries?.length?'Die besten geprüften Open Runs.':'Hier ist noch kein geprüfter Run veröffentlicht.',result.entries||[],result.own);}
+  try{const result=await accounts.leaderboard({limit:100});if(request!==leaderboardRequest||ui!=='leaderboard')return;leaderboardBusy=false;leaderboardShell(result.entries?.length?'Die besten geprüften Open Runs.':'Hier ist noch kein geprüfter Run veröffentlicht.',result.entries||[],result.own);}
   catch(error){if(request===leaderboardRequest&&ui==='leaderboard'){leaderboardBusy=false;leaderboardShell(error.message);}}finally{if(request===leaderboardRequest)leaderboardBusy=false;}
 }
 async function submitScore(){
@@ -516,6 +530,7 @@ function wire(){
   document.addEventListener('click',event=>{if(!['home','landing','onboarding'].includes(ui)||event.target.closest('a[href="./home.html"],[data-language],[data-open-settings],#settings-button'))return;if(!event.target.closest('#fullscreen-button,#landing-fullscreen'))void fullscreen.enter();void unlockMusic();},{once:true,capture:true});
   $('ninja-hub')?.addEventListener('click',event=>{const play=event.target.closest('[data-hub-mission]');if(play)launchMission(play.dataset.hubMission);});
   $('hub-paths')?.addEventListener('click',event=>{const shortcut=event.target.closest('[data-hub-shortcut]');if(shortcut?.dataset.hubShortcut==='open'){$('mode-select').value='open';launch();}});
+  $('legend-extras')?.addEventListener('click',event=>{const action=event.target.closest('[data-legend-action]')?.dataset.legendAction;if(action==='achievements')achievementMenu();else if(action==='daily'){const details=$('adventure-details');details.open=true;$('daily-challenges').scrollIntoView({block:'start',behavior:getPreferences().calmEffects?'auto':'smooth'});}else if(action==='weekly')weeklyMenu();});
   $('daily-challenges')?.addEventListener('click',event=>{const b=event.target.closest('[data-daily-claim]');if(b&&!b.disabled)claimDaily(b.dataset.dailyClaim);});
   $('career-button').onclick=careerMenu;$('weekly-button').onclick=weeklyMenu;$('profile-button').onclick=playerMenu;$('landing-start').onclick=enterDojo;$('landing-name').onclick=showOnboarding;$('settings-button').onclick=settingsMenu;$('leaderboard-button').onclick=leaderboardMenu;$('open-run-button').onclick=()=>{$('mode-select').value='open';launch();};if($('notifications-button'))$('notifications-button').onclick=notifications;
   $('player-overview')?.addEventListener('click',e=>{const action=e.target.closest('[data-overview-action]')?.dataset.overviewAction;if(action==='achievements')achievementMenu();else if(action==='abilities')abilities()});
@@ -526,7 +541,7 @@ function wire(){
   $('world').addEventListener('pointerdown',e=>{if(!running()||swipePointer!==null||e.button!==0)return;e.preventDefault();swipePointer=e.pointerId;lastPoint=localPoint(e);trail=[lastPoint];$('world').setPointerCapture(e.pointerId);renderer.setTrail(trail)});
   $('world').addEventListener('pointermove',e=>{if(e.pointerId!==swipePointer)return;e.preventDefault();const samples=e.getCoalescedEvents?.();for(const p of samples?.length?samples:[e])movePointer(p)});
   $('world').addEventListener('pointerup',e=>{movePointer(e);if(e.pointerId===swipePointer){swipePointer=null;lastPoint=null}});$('world').addEventListener('pointercancel',()=>{swipePointer=null;lastPoint=null});
-  $('overlay-root').addEventListener('click',e=>{const b=e.target.closest('button');if(!b||b.disabled)return;const action=b.dataset.action;if(b.dataset.modeStart){$('mode-select').value=b.dataset.modeStart;launch();return;}if(b.dataset.profileSkin){const result=game.selectSkin(b.dataset.profileSkin);if(!good(result))toast(why(result));else{overviewToken='';playerMenu();renderHUD();save();toast('Ninja-Look ausgewählt. In deiner nächsten neuen Runde wirft er für dich!');}return;}if(b.dataset.skillInspect){selectedSkill=b.dataset.skillInspect;abilities();$('overlay-root').querySelector('.skill-detail')?.scrollIntoView({block:'nearest',behavior:'smooth'});return;}if(b.dataset.treeBranch){const skill=SKILLS.find(s=>s.branch===b.dataset.treeBranch&&!game.profile.unlockedSkills.includes(s.id))||SKILLS.find(s=>s.branch===b.dataset.treeBranch);selectedSkill=skill.id;abilities();const node=$('overlay-root').querySelector(`[data-skill-inspect="${skill.id}"]`);node?.scrollIntoView({block:'nearest',inline:'center',behavior:'smooth'});return;}if(b.dataset.unlockView){if(b.dataset.notificationId){const seen=game.markNotificationRead(b.dataset.notificationId);if(!good(seen)){toast(why(seen));return;}}const type=b.dataset.unlockView;if(type==='skill'){selectedSkill=b.dataset.unlockRef;abilities();$('overlay-root').querySelector('.skill-detail')?.scrollIntoView({block:'nearest'});}else if(type==='achievement'){achievementMenu();$('overlay-root').querySelector(`[data-achievement="${b.dataset.unlockRef}"]`)?.scrollIntoView({block:'nearest'});}else if(type==='level')playerMenu();else shop(type==='world'?'worlds':type==='skin'?'skins':'backgrounds');return;}if(b.dataset.skin){const id=b.dataset.skin,owned=game.profile.unlockedSkins.includes(id);const r=owned?game.selectSkin(id):game.buySkin(id);if(!good(r))toast(why(r));else if(!owned)game.selectSkin(id);skins();renderHUD();save();return;}
+  $('overlay-root').addEventListener('click',e=>{const b=e.target.closest('button');if(!b||b.disabled)return;const action=b.dataset.action;if(b.dataset.modeStart){$('mode-select').value=b.dataset.modeStart;launch();return;}if(b.dataset.leaderboardFilter){leaderboardFilter=b.dataset.leaderboardFilter;drawLeaderboard();return;}if(b.dataset.profileSkin){const result=game.selectSkin(b.dataset.profileSkin);if(!good(result))toast(why(result));else{overviewToken='';playerMenu();renderHUD();save();toast('Ninja-Look ausgewählt. In deiner nächsten neuen Runde wirft er für dich!');}return;}if(b.dataset.skillInspect){selectedSkill=b.dataset.skillInspect;abilities();$('overlay-root').querySelector('.skill-detail')?.scrollIntoView({block:'nearest',behavior:'smooth'});return;}if(b.dataset.treeBranch){const skill=SKILLS.find(s=>s.branch===b.dataset.treeBranch&&!game.profile.unlockedSkills.includes(s.id))||SKILLS.find(s=>s.branch===b.dataset.treeBranch);selectedSkill=skill.id;abilities();const node=$('overlay-root').querySelector(`[data-skill-inspect="${skill.id}"]`);node?.scrollIntoView({block:'nearest',inline:'center',behavior:'smooth'});return;}if(b.dataset.unlockView){if(b.dataset.notificationId){const seen=game.markNotificationRead(b.dataset.notificationId);if(!good(seen)){toast(why(seen));return;}}const type=b.dataset.unlockView;if(type==='skill'){selectedSkill=b.dataset.unlockRef;abilities();$('overlay-root').querySelector('.skill-detail')?.scrollIntoView({block:'nearest'});}else if(type==='achievement'){achievementMenu();$('overlay-root').querySelector(`[data-achievement="${b.dataset.unlockRef}"]`)?.scrollIntoView({block:'nearest'});}else if(type==='level')playerMenu();else shop(type==='world'?'worlds':type==='skin'?'skins':'backgrounds');return;}if(b.dataset.skin){const id=b.dataset.skin,owned=game.profile.unlockedSkins.includes(id);const r=owned?game.selectSkin(id):game.buySkin(id);if(!good(r))toast(why(r));else if(!owned)game.selectSkin(id);skins();renderHUD();save();return;}
     if(b.dataset.reflectionChoice){chooseReflection(b.dataset.reflectionChoice);return;}
     if(b.dataset.missionInspect){selectedMissionId=b.dataset.missionInspect;careerMenu();$('overlay-root').querySelector('.career-detail')?.scrollIntoView({block:'nearest',behavior:'smooth'});return;}
     if(b.dataset.missionStart){launchMission(b.dataset.missionStart);return;}
