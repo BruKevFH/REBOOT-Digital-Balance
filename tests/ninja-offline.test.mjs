@@ -21,11 +21,14 @@ function worker({fetch=async()=>{throw Error('offline');}}={}){
   return {handlers,scope,assets,puts,request};
 }
 
-test('worker precaches every locally bundled dependency including both disabled static configs',async()=>{
+test('worker precaches every locally bundled dependency including the public account config',async()=>{
   const w=worker();let pending;w.handlers.get('install')({waitUntil:p=>pending=p});await pending;
   for(const file of w.assets)assert(existsSync(root+(file==='./'?'index.html':file.slice(2))),file);
   for(const file of ['./dist/ninja.js','./dist/home.js','./accounts-config.json','./assets/dojo-study.png','./assets/dojo-gaming.svg','./branding/Notification-Ninja-Logo.png'])assert(w.assets.includes(file));
-  assert.equal(JSON.parse(readFileSync(root+'accounts-config.json','utf8')).enabled,false);
+  const accountConfig=JSON.parse(readFileSync(root+'accounts-config.json','utf8'));
+  assert.equal(accountConfig.enabled,true);
+  assert.equal(accountConfig.apiVersion,3);
+  assert.equal(accountConfig.endpoint,'https://notification-ninja-accounts.onrender.com/api/v3');
   assert(!w.assets.some(file=>file.startsWith('./src/')));
 });
 
