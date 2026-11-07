@@ -216,3 +216,6 @@ html[data-ninja-theme=noir] .project-info{background:#191920;border-color:#76716
 
 /* Give the hero access choices room on tablets without wrapping the top navigation. */
 @media(max-width:1100px){.top-nav .nav-links{display:none!important}.top-nav .nav-actions{margin-left:auto}}
+
+/* Same comfortably sized touch target on the public homepage. */
+.home-theme-switch{min-height:46px!important}
