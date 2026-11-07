@@ -4,9 +4,9 @@ from zipfile import ZipFile, ZipInfo, ZIP_DEFLATED
 from hashlib import sha256
 
 ROOT=Path(__file__).resolve().parents[1]/'notification-ninja'
-NAME='Notification-Ninja-3.1.0'
+NAME='Notification-Ninja-3.2.0'
 FILES=['index.html','home.html','styles.css','focus-ui.css','focus-home.css','legend-ui.css','legend-home.css','sw.js','manifest.webmanifest','favicon.svg','dist/ninja.js','dist/home.js','dist/build.json','leaderboard-config.json','accounts-config.json','assets/dojo-study.png','assets/dojo-gaming.svg','assets/dojo-sleep.png','assets/focus-village.png','branding/Notification-Ninja-Logo.png']
-INSTRUCTIONS='''NOTIFICATION NINJA — 3.1.0
+INSTRUCTIONS='''NOTIFICATION NINJA — 3.2.0
 DEUTSCH / ENGLISH
 
 DEUTSCH
