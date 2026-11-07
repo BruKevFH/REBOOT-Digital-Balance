@@ -120,6 +120,11 @@ async function acknowledge(p){for(let n=0;n<20&&(await read(p)).mentor.open;n++)
       await page.locator('.legend-modes-panel').evaluate(el=>el.scrollTop=340);
       const after=await page.locator('.arcade-sticky-header').evaluate(el=>el.getBoundingClientRect().top);
       assert(Math.abs(before-after)<5,'Back and Overview remain at top when scrolling');
+      await page.locator('.arcade-mode-footer [data-game-route="dojos"]').click();await acknowledge(page);
+      assert.equal((await read(page)).ui,'dojos','Worlds portal opens real illustrated worlds');
+      await page.locator('.panel-back').click();
+      await page.waitForFunction(()=>window.__NOTIFICATION_NINJA__.getSnapshot().ui==='modes');await acknowledge(page);
+      assert.equal((await read(page)).ui,'modes','Back returns to previously opened modes');
       await page.locator('.panel-home').click();await acknowledge(page);
       assert.equal((await read(page)).ui,'home','Overview returns to home hub');
      }
