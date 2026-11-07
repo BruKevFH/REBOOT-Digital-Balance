@@ -1,0 +1,53 @@
+name: Notification Ninja build and publish generated assets
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'notification-ninja/src/**'
+      - 'notification-ninja/index.html'
+      - 'notification-ninja/home.html'
+      - 'notification-ninja/focus-ui.css'
+      - 'notification-ninja/focus-home.css'
+      - 'notification-ninja/sw.js'
+      - 'scripts/build_ninja.mjs'
+      - 'scripts/package_ninja.py'
+      - '.github/workflows/notification-ninja-assets.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ninja-build-assets-main
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npm run test:ninja
+      - run: npm run build:ninja
+      - run: npm run package:ninja
+      - name: Commit production bundles and reproducible download
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add notification-ninja/dist/ninja.js notification-ninja/dist/home.js notification-ninja/dist/build.json
+          git add notification-ninja/downloads/Notification-Ninja-3.1.0.zip notification-ninja/downloads/Notification-Ninja-3.1.0.zip.sha256
+          if git diff --cached --quiet; then
+            echo "Generated files are already up to date."
+          else
+            git commit -m "build(ninja): publish tested focus-first browser bundles [skip ci]"
+            git push origin HEAD:main
+          fi

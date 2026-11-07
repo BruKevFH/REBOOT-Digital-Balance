@@ -64,12 +64,29 @@ async function acknowledge(p){for(let n=0;n<20&&(await read(p)).mentor.open;n++)
      await page.locator('.dojo-tabs [data-game-route="modes"]').click();
      assert.equal((await read(page)).ui,'modes');
      await page.locator('[data-action="home"]').last().click();
+     assert.equal(await page.locator('.dojo-tabs [data-game-route]').count(),5,'Five clear navigation choices');
+     assert.equal(await page.locator('#hub-paths .hub-path-card').count(),3,'Three direct activity choices');
+     assert.equal(await page.locator('#hub-paths').isVisible(),true,'Quick choices are visible without expanding options');
+     assert.equal(await page.locator('#adventure-details').evaluate(el=>el.open),false,'Advanced controls start closed');
+     assert.equal(await page.locator('#dojo-rooms').evaluate(el=>el.open),false,'Optional dojo selector starts closed');
      await page.screenshot({path:path.join(output,'hub-'+width+'.png')});
     }else{
      await page.locator('[data-account="guest"]').click();await acknowledge(page);
      assert.equal((await read(page)).ui,'home');
      assert.equal(await page.locator('#ninja-hub h1').isVisible(),true,'hub shows the player name');
+     assert.equal(await page.locator('.dojo-tabs [data-game-route]').count(),5,'Five clear navigation choices');
+     assert.equal(await page.locator('#hub-paths .hub-path-card').count(),3,'Three direct activity choices');
+     assert.equal(await page.locator('#hub-paths').isVisible(),true,'Quick choices are visible without expanding options');
+     assert.equal(await page.locator('#adventure-details').evaluate(el=>el.open),false,'Advanced controls start closed');
+     assert.equal(await page.locator('#dojo-rooms').evaluate(el=>el.open),false,'Optional dojo selector starts closed');
      await page.screenshot({path:path.join(output,'hub-'+width+'.png')});
+     if(width===768){
+      await page.locator('[data-hub-shortcut="open"]').click();
+      await page.waitForFunction(()=>window.__NOTIFICATION_NINJA__.getSnapshot().state.mode==='open');
+      await acknowledge(page);
+      assert.notEqual((await read(page)).ui,'home','Open Run shortcut really starts game');
+      await page.locator('[data-action="home"]').first().click();
+     }
      await page.locator('.dojo-tabs [data-game-route="bazaar"]').click();await acknowledge(page);
      await page.locator('[data-shop-filter="owned"]').click();
      assert.equal(await page.locator('.shop-card.is-locked:visible').count(),0);
@@ -79,7 +96,7 @@ async function acknowledge(p){for(let n=0;n<20&&(await read(p)).mentor.open;n++)
      const before=(await read(page)).profile;
      await page.locator('.dojo-tabs [data-game-route="modes"]').click();
      assert.equal((await read(page)).ui,'modes');
-     await page.locator('[data-game-route="practice"]').click();assert.equal((await read(page)).ui,'practice');
+     await page.locator('.mode-menu-grid [data-game-route="practice"]').click();assert.equal((await read(page)).ui,'practice');
      assert.deepEqual((await read(page)).profile,before,'practice does not alter guest progression');
      await page.keyboard.press('Escape');await acknowledge(page);
     }
@@ -88,7 +105,7 @@ async function acknowledge(p){for(let n=0;n<20&&(await read(p)).mentor.open;n++)
     assert(geometry.scroll<=geometry.width+1,'no horizontal page overflow');
     await page.locator('[data-language="en"]').filter({visible:true}).first().click();
     assert.equal((await read(page)).language,'en');
-    if(!created){await page.locator('.dojo-tabs [data-account-view="profile"]').click();await page.locator('[data-account="register"]').click();assert.match(await page.locator('[data-account-form="register"]').innerText(),/Email address/);assert.deepEqual((await read(page)).translation.missing,[]);await page.screenshot({path:path.join(output,'registration-en-'+width+'.png')});}
+    if(!created){await page.locator('.home-access-tools [data-account-view="profile"]').click();await page.locator('[data-account="register"]').click();assert.match(await page.locator('[data-account-form="register"]').innerText(),/Email address/);assert.deepEqual((await read(page)).translation.missing,[]);await page.screenshot({path:path.join(output,'registration-en-'+width+'.png')});}
     assert.deepEqual(errors,[]);
     console.log('PORTAL PASS',width);
    }finally{
