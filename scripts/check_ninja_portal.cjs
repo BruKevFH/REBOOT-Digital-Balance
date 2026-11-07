@@ -105,7 +105,7 @@ async function acknowledge(p){for(let n=0;n<20&&(await read(p)).mentor.open;n++)
     assert(geometry.scroll<=geometry.width+1,'no horizontal page overflow');
     await page.locator('[data-language="en"]').filter({visible:true}).first().click();
     assert.equal((await read(page)).language,'en');
-    if(!created){await page.locator('.dojo-tabs [data-account-view="profile"]').click();await page.locator('[data-account="register"]').click();assert.match(await page.locator('[data-account-form="register"]').innerText(),/Email address/);assert.deepEqual((await read(page)).translation.missing,[]);await page.screenshot({path:path.join(output,'registration-en-'+width+'.png')});}
+    if(!created){await page.locator('.home-access-tools [data-account-view="profile"]').click();await page.locator('[data-account="register"]').click();assert.match(await page.locator('[data-account-form="register"]').innerText(),/Email address/);assert.deepEqual((await read(page)).translation.missing,[]);await page.screenshot({path:path.join(output,'registration-en-'+width+'.png')});}
     assert.deepEqual(errors,[]);
     console.log('PORTAL PASS',width);
    }finally{
