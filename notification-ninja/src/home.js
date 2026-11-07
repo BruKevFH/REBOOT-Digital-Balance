@@ -1,5 +1,6 @@
 import {tr,getLanguage,setLanguage,observeTranslations,localizeDOM,onLanguageChange} from './i18n.js';
 import {getPreferences} from './preferences.js';
+import {applyTheme,cycleTheme} from './display-theme.js';
 
 const DESCRIPTION='Notification Ninja: kurze Spielrunden über Lernen, Gaming und Schlaf. Erkenne Ablenkungen, entscheide bewusst und finde deinen Fokus. Kostenlos auf Deutsch und Englisch.';
 const TITLE='Notification Ninja';
@@ -11,10 +12,12 @@ function refreshLanguage(){
   document.querySelector('meta[name="description"]')?.setAttribute('content',tr(DESCRIPTION));
   for(const button of document.querySelectorAll('[data-language]'))button.setAttribute('aria-pressed',String(button.dataset.language===language));
   document.body.dataset.calm=String(getPreferences().calmEffects===true);
+  applyTheme();
   localizeDOM(document.body);
 }
 
 observeTranslations(document.body);
+document.addEventListener('click',event=>{if(event.target.closest('[data-theme-cycle]'))cycleTheme();});
 for(const button of document.querySelectorAll('[data-language]'))button.addEventListener('click',()=>setLanguage(button.dataset.language));
 onLanguageChange(refreshLanguage);
 refreshLanguage();
