@@ -34,7 +34,21 @@ async function acknowledge(p){for(let n=0;n<20&&(await read(p)).mentor.open;n++)
    const errors=[];page.on('pageerror',e=>errors.push(e.message));
    let created=null;
    try{
-    await page.goto(base+'#register');await ready(page);
+    if(width===768){
+       const introPage=await context.newPage();
+       await introPage.goto(base+'home.html');
+       assert.equal(await introPage.locator('article.situation-card').count(),3,'info-only world previews');
+       assert.equal(await introPage.locator('a[href*="?quick="]').count(),0,'no direct quick launch');
+       assert.equal(await introPage.locator('.access-choices a').count(),3,'three explicit access routes');
+       await introPage.locator('.access-choices a[href$="#guest"]').click();
+       await ready(introPage);await acknowledge(introPage);
+       const guestSnapshot=await read(introPage);
+       assert.equal(guestSnapshot.ui,'home','guest enters dojo first');
+       assert.equal(guestSnapshot.state.started,false,'guest link does not auto-start a run');
+       assert.equal(guestSnapshot.session.kind,'guest');
+       await introPage.close();
+      }
+      await page.goto(base+'#register');await ready(page);
     assert.equal(await page.locator('[data-account-form="register"]').count(),1);
     await page.locator('[name="username"]').fill('qa'+Date.now().toString(36)+width);
     await page.locator('[name="email"]').fill('qa-'+crypto.randomUUID()+'@example.invalid');
@@ -102,7 +116,9 @@ async function acknowledge(p){for(let n=0;n<20&&(await read(p)).mentor.open;n++)
       assert.equal((await read(page)).ui,'home');
      }
      await page.locator('.home-access-tools [data-game-route="bazaar"]').click();await acknowledge(page);
-     await page.locator('[data-shop-filter="owned"]').click();
+     assert.equal(await page.locator('[data-shop-tab]').count(),2,'only worlds and skins in shop');
+      assert.equal(await page.locator('[data-shop-tab="backgrounds"]').count(),0,'no mismatched scenes offered');
+      await page.locator('[data-shop-filter="owned"]').click();
      assert.equal(await page.locator('.shop-card.is-locked:visible').count(),0);
      await page.locator('[data-shop-filter="new"]').click();
      assert.equal(await page.locator('.shop-card.is-owned:visible').count(),0);
