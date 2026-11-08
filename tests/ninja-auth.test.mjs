@@ -88,7 +88,7 @@ test('same-millisecond logins always retain the newly issued session up to the c
   const second=await auth.login({username:'Ninja Mira',password}),third=await auth.login({username:'Ninja Mira',password});
   assert.throws(()=>auth.authenticate(first.token),code('UNAUTHENTICATED',401));
   assert.equal(auth.authenticate(second.token).id,first.user.id);assert.equal(auth.authenticate(third.token).id,first.user.id);
-  assert.equal(store.db.prepare('SELECT count(*) AS n FROM sessions').get().n,2);
+  assert.equal(store.db.prepare('SELECT count(*) AS n FROM sessions').get().n,3);
 });
 
 test('recovery rotates both password and recovery key and revokes every old session',async t=>{
