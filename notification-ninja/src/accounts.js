@@ -23,12 +23,12 @@ export function createAccountStorage(storage,userId){
 }
 export function createAccounts({fetchImpl=globalThis.fetch,sessionStorage,configURL='./accounts-config.json',baseURL=globalThis.location?.href||'http://localhost/',timeout=10000,now=()=>Date.now()}={}){
   if(sessionStorage===undefined)try{sessionStorage=globalThis.sessionStorage;}catch{}
-  let config=null,session=null,initPromise=null,generation=0,authGeneration=0,status={configured:false,online:false,message:'Kontoverbindung wird geprüft.'};
+  let config=null,session=null,pendingMfa=null,initPromise=null,generation=0,authGeneration=0,status={configured:false,online:false,message:'Kontoverbindung wird geprüft.'};
   const listeners=new Set(),pendingActions=new Map(),emit=()=>{for(const fn of listeners)fn(getStatus());};
   const getStatus=()=>({...status,signedIn:Boolean(session),username:session?.user?.username||null});
   try{const saved=JSON.parse(sessionStorage?.getItem(ACCOUNT_SESSION_KEY)||'null');if(saved&&/^[A-Za-z0-9_-]{43}$/.test(saved.token)&&typeof saved.user?.id==='string'&&saved.expiresAt>now())session=saved;else sessionStorage?.removeItem(ACCOUNT_SESSION_KEY);}catch{}
   function retain(result,{newSession=false}={}){if(newSession)generation++;session={user:copy(result.user),token:result.token||session?.token,expiresAt:result.expiresAt||session?.expiresAt,profile:copy(result.profile),revision:result.revision,endpoint:config?.endpoint};try{sessionStorage?.setItem(ACCOUNT_SESSION_KEY,JSON.stringify(session));}catch{}emit();return result;}
-  function forget(){generation++;authGeneration++;pendingActions.clear();const oldId=session?.user?.id;session=null;try{sessionStorage?.removeItem(ACCOUNT_SESSION_KEY);if(oldId)createAccountStorage(sessionStorage,oldId).clear();}catch{}emit();}
+  function forget(){generation++;authGeneration++;pendingMfa=null;pendingActions.clear();const oldId=session?.user?.id;session=null;try{sessionStorage?.removeItem(ACCOUNT_SESSION_KEY);if(oldId)createAccountStorage(sessionStorage,oldId).clear();}catch{}emit();}
   async function request(url,{method='GET',body,authenticated=true}={}){
     const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),timeout);
     try{
@@ -46,7 +46,15 @@ export function createAccounts({fetchImpl=globalThis.fetch,sessionStorage,config
   const identity=()=>({generation,userId:session?.user?.id,token:session?.token});
   const isCurrent=origin=>origin.generation===generation&&origin.userId===session?.user?.id&&origin.token===session?.token;
   function fresh(origin){if(!isCurrent(origin))throw new AccountError('Diese Antwort gehört zu einer früheren Anmeldung.',{code:'STALE_SESSION',status:409});}
-  async function authenticate(path,input){const authAttempt=++authGeneration;const result=await api('/auth/'+path,{method:'POST',body:input,authenticated:false});if(!result.user?.id||!result.token||!result.profile)throw new AccountError('Die Konto-Antwort ist unvollständig.',{code:'INVALID_RESPONSE'});if(authAttempt!==authGeneration)throw new AccountError('Diese Anmeldung wurde inzwischen ersetzt.',{code:'STALE_SESSION',status:409});return retain(result,{newSession:true});}
+  async function authenticate(path,input){const authAttempt=++authGeneration;const result=await api('/auth/'+path,{method:'POST',body:input,authenticated:false});if(result.mfaRequired&&result.challenge){pendingMfa={challenge:result.challenge,expiresAt:result.expiresAt,authAttempt};return {mfaRequired:true};}if(!result.user?.id||!result.token||!result.profile)throw new AccountError('Die Konto-Antwort ist unvollständig.',{code:'INVALID_RESPONSE'});if(authAttempt!==authGeneration)throw new AccountError('Diese Anmeldung wurde inzwischen ersetzt.',{code:'STALE_SESSION',status:409});pendingMfa=null;return retain(result,{newSession:true});}
+  async function verifyMfa(code){
+   const pending=pendingMfa;
+   if(!pending||pending.expiresAt<=now())throw new AccountError('MFA-Abfrage abgelaufen. Bitte melde dich erneut an.',{code:'MFA_EXPIRED'});
+   const result=await api('/auth/mfa/verify',{method:'POST',body:{challenge:pending.challenge,code},authenticated:false});
+   if(pendingMfa!==pending||pending.authAttempt!==authGeneration)throw new AccountError('Diese Anmeldung wurde ersetzt.',{code:'STALE_SESSION'});
+   if(!result.user?.id||!result.token||!result.profile)throw new AccountError('MFA-Antwort ist unvollständig.',{code:'INVALID_RESPONSE'});
+   pendingMfa=null;return retain(result,{newSession:true});
+  }
   async function restore(){await init();if(!session)return null;if(session.expiresAt<=now()){forget();return null;}const origin=identity();try{const result=await api('/me');fresh(origin);if(Number.isFinite(session.revision)&&Number.isFinite(result.revision)&&result.revision<session.revision)return {user:copy(session.user),profile:copy(session.profile),revision:session.revision};retain({...result,user:result.user||session.user});return {...result,user:result.user||session.user};}catch(error){if((error.status===401||error.status===404)&&isCurrent(origin))forget();throw error;}}
   function applyState(result,origin){fresh(origin);if(session&&result.profile&&(!Number.isFinite(session.revision)||!Number.isFinite(result.revision)||result.revision>=session.revision)){session.profile=copy(result.profile);session.revision=result.revision;retain({...session,...result});}return result;}
   return {init,getStatus,getSession:()=>copy(session),subscribe(fn){listeners.add(fn);return ()=>listeners.delete(fn);},register:input=>authenticate('register',input),login:input=>authenticate('login',input),reset:input=>authenticate('reset',input),resetPassword:input=>authenticate('reset',input),restore,
@@ -58,6 +66,6 @@ export function createAccounts({fetchImpl=globalThis.fetch,sessionStorage,config
     async finish(id,commands){const origin=identity();return applyState(await api(`/runs/${encodeURIComponent(id)}/finish`,{method:'POST',body:{commands}}),origin);},
     publish:id=>api(`/runs/${encodeURIComponent(id)}/publish`,{method:'POST',body:{}}),
     async leaderboard({limit=25}={}){await init();if(!config)throw new AccountError(status.message,{code:'NOT_CONFIGURED',retryable:true});return request(config.endpoint+`/leaderboard?ruleset=open-v2&limit=${Math.max(1,Math.min(100,limit))}`,{authenticated:true});},
-    forget,storage:sessionStorage
+    verifyMfa,mfaStatus:()=>api('/auth/mfa/status'),mfaSetup:password=>api('/auth/mfa/setup',{method:'POST',body:{password}}),mfaConfirm:code=>api('/auth/mfa/confirm',{method:'POST',body:{code}}),mfaDisable:(password,code)=>api('/auth/mfa/disable',{method:'POST',body:{password,code}}),forget,storage:sessionStorage
   };
 }
