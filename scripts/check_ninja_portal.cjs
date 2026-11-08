@@ -9,7 +9,7 @@ if(!['localhost','127.0.0.1','[::1]'].includes(new URL(base).hostname))throw Err
 const output=path.resolve(process.env.NINJA_TEST_OUTPUT||'test-results/ninja-portal');
 const version=JSON.parse(fs.readFileSync(path.join(__dirname,'../notification-ninja/dist/build.json'))).version;
 const read=p=>p.evaluate(()=>window.__NOTIFICATION_NINJA__.getSnapshot());
-async function ready(p){await p.waitForFunction(v=>window.__NOTIFICATION_NINJA__?.getSnapshot().version===v,version);}
+async function ready(p){try{await p.waitForFunction(v=>window.__NOTIFICATION_NINJA__?.getSnapshot().version===v,version,{timeout:15000});}catch(error){const diagnosis=await p.evaluate(()=>({url:location.href,loading:document.readyState,error:document.querySelector('#loading-status')?.textContent,snapshot:Boolean(window.__NOTIFICATION_NINJA__),scripts:[...document.scripts].map(s=>s.src)}));console.error('NINJA_BOOT_DIAGNOSTIC',JSON.stringify(diagnosis));throw error;}}
 async function checkNewModes(p,practice,width){
  await p.locator('.dojo-tabs [data-game-route="modes"]').click();
  await p.locator('[data-mode-start="daily"]').click();
