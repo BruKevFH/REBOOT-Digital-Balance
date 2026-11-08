@@ -132,9 +132,15 @@ async function acknowledge(p){for(let n=0;n<20&&(await read(p)).mentor.open;n++)
       await page.locator('.dojo-tabs [data-game-route="dojos"]').click();await acknowledge(page);
       assert.equal((await read(page)).ui,'dojos','Dojo navigation opens illustrated worlds');
       assert.equal(await page.locator('.legend-dojo').count(),3,'Three real themed worlds');
-      assert.equal(await page.locator('.legend-dojo [data-quick-context]').count(),3);
-      await page.locator('.legend-dojo [data-game-route="campaign"]').first().click();await acknowledge(page);
-      assert.equal((await read(page)).ui,'career','Dojo route opens campaign');
+      assert.equal(await page.locator('.legend-dojo [data-world-enter]').count(),3);
+      assert.equal(await page.locator('.legend-dojo [data-game-route="campaign"]').count(),0,'Dojo worlds must not navigate into campaign');
+      await page.locator('.legend-dojo [data-world-enter="sleep"]').click();await acknowledge(page);
+      assert.equal((await read(page)).ui,'world','World detail is not a campaign mission');
+      assert.equal(await page.locator('.world-inside-sleep [data-quick-context="sleep"]').count(),1);
+      await page.locator('.panel-back').click();
+      await page.waitForFunction(()=>window.__NOTIFICATION_NINJA__.getSnapshot().ui==='dojos');await acknowledge(page);
+      await page.locator('.dojo-tabs [data-game-route="campaign"]').click();await acknowledge(page);
+      assert.equal((await read(page)).ui,'career','Campaign is distinct from worlds');
       assert.equal(await page.locator('.legend-map-node').count(),18);
       assert.equal(await page.locator('.legend-boss-node').count(),3);
       await page.locator('[data-mission-inspect="study-02"]').click();await acknowledge(page);
