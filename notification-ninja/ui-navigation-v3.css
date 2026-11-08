@@ -187,8 +187,11 @@ html[data-ninja-theme] .legend-career-panel{width:min(1320px,100%)!important}
 .nn-career-chapter-label small{font-weight:750;font-size:12px}
 .nn-career-chapter-gaming .nn-career-chapter-cover:after{background:linear-gradient(90deg,#28204be0,#43345b90 60%,#43345b00)}
 .nn-career-chapter-sleep .nn-career-chapter-cover:after{background:linear-gradient(90deg,#12294be0,#10275b95 60%,transparent)}
-.nn-career-chapter-trail{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;
+.nn-career-chapter-trail{position:relative;isolation:isolate;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;
   padding:20px;background:var(--ar-surface)}
+.nn-career-trail-path{position:absolute;z-index:0;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+.nn-career-trail-path path{fill:none;stroke:#4f988f;stroke-width:9;stroke-linecap:round;stroke-dasharray:2 18;opacity:.32}
+.nn-career-node{position:relative;z-index:1}
 .nn-career-node{display:flex;align-items:center;gap:11px;text-align:left;min-width:0;min-height:87px;
   padding:12px;border:2px solid var(--ar-border);border-radius:16px;background:var(--ar-panel);
   color:var(--ar-ink);font:inherit;cursor:pointer;box-shadow:0 3px 0 var(--ar-shadow);
