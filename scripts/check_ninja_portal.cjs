@@ -131,10 +131,17 @@ async function acknowledge(p){for(let n=0;n<20&&(await read(p)).mentor.open;n++)
      if(width===768){
       await page.locator('.dojo-tabs [data-game-route="dojos"]').click();await acknowledge(page);
       assert.equal((await read(page)).ui,'dojos','Dojo navigation opens illustrated worlds');
-      assert.equal(await page.locator('.legend-dojo').count(),3,'Three real themed worlds');
-      assert.equal(await page.locator('.legend-dojo [data-quick-context]').count(),3);
-      await page.locator('.legend-dojo [data-game-route="campaign"]').first().click();await acknowledge(page);
-      assert.equal((await read(page)).ui,'career','Dojo route opens campaign');
+      assert.equal(await page.locator('.ninja-village-world').count(),3,'Three themed worlds');
+      assert.equal(await page.locator('.ninja-village-world [data-quick-context]').count(),3);
+      assert.equal(await page.locator('.ninja-village-world [data-game-route="campaign"]').count(),0,'No career shortcut inside the worlds');
+      await page.locator('.ninja-village-enter[data-dojo-enter="sleep"]').click();await acknowledge(page);
+      assert.equal(await page.locator('.ninja-world-room.ninja-room-sleep').count(),1,'Dedicated sleep temple opens');
+      assert.equal(await page.locator('.ninja-room-fact').count(),3);
+      await page.locator('[data-dojo-back]').click();await acknowledge(page);
+      assert.equal(await page.locator('.ninja-village-world').count(),3);
+      await page.locator('.panel-home').click();await acknowledge(page);
+      await page.locator('.dojo-tabs [data-game-route="campaign"]').click();await acknowledge(page);
+      assert.equal((await read(page)).ui,'career','Career opens independently');
       assert.equal(await page.locator('.legend-map-node').count(),18);
       assert.equal(await page.locator('.legend-boss-node').count(),3);
       await page.locator('[data-mission-inspect="study-02"]').click();await acknowledge(page);
