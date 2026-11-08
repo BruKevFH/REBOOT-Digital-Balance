@@ -70,6 +70,19 @@ CREATE TABLE IF NOT EXISTS ninja_verified_scores(
  decisions BIGINT NOT NULL CHECK(decisions>0 AND decisions<=9007199254740991),submitted_at BIGINT NOT NULL
 );
 CREATE INDEX IF NOT EXISTS ninja_verified_score_order ON ninja_verified_scores(ruleset,score DESC,duration DESC,submitted_at);
+CREATE TABLE IF NOT EXISTS ninja_mfa(
+ user_id TEXT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+ encrypted_secret TEXT NOT NULL DEFAULT '',pending_secret TEXT NOT NULL DEFAULT '',
+ enabled INTEGER NOT NULL DEFAULT 0 CHECK(enabled IN(0,1)),
+ last_counter BIGINT NOT NULL DEFAULT -1,recovery_codes TEXT NOT NULL DEFAULT '[]',
+ updated_at BIGINT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS ninja_mfa_challenges(
+ challenge_hash TEXT PRIMARY KEY,user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+ created_at BIGINT NOT NULL,expires_at BIGINT NOT NULL,
+ attempts INTEGER NOT NULL DEFAULT 0 CHECK(attempts>=0 AND attempts<=5)
+);
+CREATE INDEX IF NOT EXISTS ninja_mfa_challenges_expiry ON ninja_mfa_challenges(expires_at);
 `;
 
 /** Async durable store; same business operations as SQLite, with isolated transactions. */
@@ -110,7 +123,7 @@ export async function createPostgresNinjaStore({databaseURL,now=()=>Date.now(),p
       await client.query('CREATE TABLE IF NOT EXISTS ninja_auth_migrations(version INTEGER PRIMARY KEY,applied_at BIGINT NOT NULL)');
       await client.query('CREATE TABLE IF NOT EXISTS ninja_game_migrations(version INTEGER PRIMARY KEY,applied_at BIGINT NOT NULL)');
       const versions=(await client.query('SELECT version FROM ninja_auth_migrations')).rows.map(row=>row.version);
-      if(versions.some(version=>version>2))throw new Error('Database schema is newer than this service.');
+      if(versions.some(version=>version>3))throw new Error('Database schema is newer than this service.');
       await client.query(migration);
       if(!versions.includes(2))await client.query(`
         ALTER TABLE users ADD COLUMN IF NOT EXISTS email TEXT;
@@ -124,7 +137,7 @@ export async function createPostgresNinjaStore({databaseURL,now=()=>Date.now(),p
         const actual=new Set((await client.query('SELECT column_name FROM information_schema.columns WHERE table_schema=current_schema() AND table_name=$1',[table])).rows.map(row=>row.column_name));
         if(columns.some(column=>!actual.has(column)))throw new Error('Existing database schema is incompatible; no data was replaced.');
       }
-      await client.query('INSERT INTO ninja_auth_migrations(version,applied_at) VALUES(1,$1),(2,$1) ON CONFLICT DO NOTHING',[timestamp()]);
+      await client.query('INSERT INTO ninja_auth_migrations(version,applied_at) VALUES(1,$1),(2,$1),(3,$1) ON CONFLICT DO NOTHING',[timestamp()]);
       await client.query('INSERT INTO ninja_game_migrations(version,applied_at) VALUES(1,$1) ON CONFLICT DO NOTHING',[timestamp()]);
       await client.query('COMMIT');
     }catch(error){await client.query('ROLLBACK');throw error;}finally{client.release();}
@@ -156,5 +169,5 @@ export async function createPostgresNinjaStore({databaseURL,now=()=>Date.now(),p
     return getProfile(userId);
   }
   async function close(){if(closed)return;closed=true;if(!providedPool)await pool.end();}
-  return {db,transaction,close,getUser,getProfile,putProfile,lockUser,dialect:'postgres',schemaVersion:2};
+  return {db,transaction,close,getUser,getProfile,putProfile,lockUser,dialect:'postgres',schemaVersion:3};
 }
