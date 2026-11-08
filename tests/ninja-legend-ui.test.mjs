@@ -49,9 +49,16 @@ test('dojo scenes, progress, and free short rounds preserve chapter identity',()
    assert(html.includes('assets/dojo-'+context+(context==='gaming'?'.svg':'.png')));
    assert(html.includes('data-quick-context="'+context+'"'));
  }
- assert.equal((html.match(/class="legend-dojo legend-dojo-/g)||[]).length,3);
- assert(html.includes('data-game-route="campaign"'));
- assert(html.includes('Karriere-Kapitel noch gesperrt'));
+ assert.equal((html.match(/class="ninja-village-world ninja-village-/g)||[]).length,3);
+ assert(!html.includes('data-game-route="campaign"'));
+ assert(html.includes('data-dojo-enter="study"'));
+ assert(html.includes('data-dojo-enter="gaming"'));
+ assert(html.includes('data-dojo-enter="sleep"'));
+ assert(html.includes('unabhängig von der Karrierekarte'));
+ const entered=legendaryDojos({active:'sleep'});
+ assert(entered.includes('data-dojo-back="1"'));
+ assert(entered.includes('data-quick-context="sleep"'));
+ assert(!entered.includes('data-game-route="campaign"'));
 });
 
 test('mode cards only request known game routes and existing modes',()=>{
