@@ -47,9 +47,9 @@ html,body{scroll-behavior:smooth}
 .account-panel>.panel-header .panel-back,.account-panel>.panel-header .panel-home{
   color:#234d47!important;background:#f1f6e7!important;border-color:#b7d4c3!important;
   box-shadow:0 2px 0 #91b5a4!important;min-height:45px}
-.account-panel>.eyebrow{display:block!important;color:#207d6d!important;margin:0 0 17px!important;clear:both}
-.account-panel>h2{margin:0 0 20px!important;color:#1c3549!important;line-height:1.15!important}
-.account-panel>p{color:#5f6670!important;line-height:1.65}
+.account-panel>.eyebrow{display:block!important;color:var(--ar-accent,#207d6d)!important;margin:0 0 17px!important;clear:both}
+.account-panel>h2{margin:0 0 20px!important;color:var(--ar-ink,#1c3549)!important;line-height:1.15!important}
+.account-panel>p{color:var(--ar-muted,#5f6670)!important;line-height:1.65}
 .account-panel .account-field>input,.account-panel .account-field>textarea,
 .account-panel .password-control{background:#fffefa!important;color:#1e3241!important}
 .account-panel .account-field>input:focus-visible{outline:3px solid #258a83;outline-offset:2px}
@@ -142,6 +142,9 @@ html[data-ninja-theme] .legend-dojos-panel{width:min(1320px,100%)!important}
 .world-inside-story{gap:0;padding:clamp(24px,3.3vw,44px)!important}
 .world-inside-story h3{font-size:clamp(28px,3.2vw,42px)!important}
 .world-inside-study .world-inside-story{background:#f4f5e7}
+.world-inside-study .world-inside-story h3{color:#1f3a4a!important}
+.world-inside-study .world-inside-story>p{color:#526875!important}
+.world-inside-study .world-inside-story .legend-kicker{color:#20766e!important}
 .world-inside-gaming .world-inside-story{background:#29254b}
 .world-inside-sleep .world-inside-story{background:#142f4a}
 .world-inside-gaming .world-inside-story h3,.world-inside-sleep .world-inside-story h3{color:#fff0c9!important}
