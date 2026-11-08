@@ -1,5 +1,6 @@
 /** English copy for the existing Ninja interface. Stable data IDs and player names are never translated. */
 export const EN_UI = Object.freeze({
+  "Dein Fortschritt": "Your progress",
   "NIM ZEIGT DIR DEN WEG": "NIM SHOWS YOU THE WAY",
   "Ein Dojo. Ein klarer Weg.": "One dojo. One clear path.",
   "Oben findest du Spielwelten, Karriere, Spielmodi, Basar und Rangliste. Deine Ausrüstung, Erfolge, Einstellungen und dein Konto gehören zu deinem Ninja-Profil.": "Use the menu above to find Game Worlds, Career, Game Modes, Bazaar and Leaderboard. Your gear, achievements, settings and account all belong in your Ninja Profile.",
