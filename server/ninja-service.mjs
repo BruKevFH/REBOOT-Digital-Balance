@@ -135,7 +135,7 @@ export function createNinjaServer({databasePath=':memory:',store:providedStore,a
         if(route==='/mfa/status'&&method==='GET')return send(res,200,await auth.mfa.status(user.id));
         if(['/mfa/setup','/mfa/confirm','/mfa/disable'].includes(route)&&method==='POST'){
           rate(req,'auth',user.id);const body=await readJSON(req,4096);
-          const result=route==='/mfa/setup'?await auth.mfa.setup(user.id,body):route==='/mfa/confirm'?await auth.mfa.confirm(user.id,body):await auth.mfa.disable(user.id,body);
+          const result=route==='/mfa/setup'?await auth.mfa.setup(user.id,body):route==='/mfa/confirm'?await auth.mfa.confirm(user.id,body,supplied):await auth.mfa.disable(user.id,body,supplied);
           return send(res,200,result);
         }
 
