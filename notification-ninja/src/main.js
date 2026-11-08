@@ -1,5 +1,5 @@
 import {createAccounts,createAccountStorage} from './accounts.js';
-import {legendaryModes,legendaryDojos,legendaryCareer,legendaryLeaderboard} from './ninja-legend-ui.js';
+import {legendaryModes,legendaryDojos,legendaryWorldDetail,legendaryCareer,legendaryLeaderboard} from './ninja-legend-ui.js';
 import {applyTheme,setTheme,cycleTheme,getTheme} from './display-theme.js';
 import {reflectionQuest,renderReflectionQuest,readReflectionSeals,awardReflectionSeal,clearReflectionSeals} from './reflection-quest.js';
 import {createVerifiedRun,gameFromServerSnapshot,readVerifiedTrace,restoreVerifiedGame,traceKey} from './verified-run.js';
@@ -42,6 +42,7 @@ async function acceptAccount(result){
   if(trace&&trace.run.expiresAt<=Date.now()){try{accounts.storage?.removeItem(traceKey(session.user.id));}catch{}toast('Dein gespeicherter Run ist abgelaufen. Er bleibt ungewertet; du kannst eine neue Runde starten.');}
   if(trace&&trace.run.expiresAt>Date.now())try{game=restoreVerifiedGame(trace,{storage:accountStorage});game.profile=clone(result.profile);attachVerified(trace.run,trace.commands);if(!game.state.ended)game.pause();else void validateRun();}catch{try{accounts.storage?.removeItem(traceKey(session.user.id));}catch{}}
   if(result.profile.settings){updatePreferences(result.profile.settings);setLanguage(result.profile.settings.language||getLanguage());applyDisplayPreferences();}localLoggedIn=true;mentorResume=false;mentor?.clear();pendingGuides.clear();knownUnlocks=currentUnlocks();knownLevel=getPlayerProgress(game.profile).level;mapToken='';overviewToken='';journeyToken='';showHome();resetNavigation();
+  toast(result.recoveryKey?'Konto erstellt – Willkommen im Dojo!':'✓ Erfolgreich angemeldet. Willkommen zurück im Dojo!');
   if(requestedQuickContext)launchQuick(requestedQuickContext,{requestFullscreen:false});
   guideOnce('welcome',{title:'Dein Fokus-Abenteuer beginnt!',text:'Ich bin NIM. Wähle Lernen, Gaming oder Schlafen. Die erste Runde braucht keinen Namen. Im Training üben wir das Wischen und bewusste Durchlassen zusammen.',animation:'wave'});
 }
@@ -110,7 +111,7 @@ function navigateRoute(route,{replace=false}={}){
   if(route==='guest'){if(accountActive()||localLoggedIn)showHome();else enterDojo();if(replace)history.replaceState(history.state,'','#worlds');return;}
   if(route==='account'){accountActive()?accountUI.profile(game.profile):accountUI.login();return;}
   const aliases={worlds:'home',campaign:'career',bazaar:'shop',dojo:'home'},target=aliases[route]||route;
-  if(['login','register','recovery'].includes(target)){accountUI[target]();return;}
+  if(['login','register','recovery'].includes(target)){if(accountActive()){showHome();toast('Du bist bereits angemeldet.');}else accountUI[target]();return;}
   if(!localLoggedIn){showLanding();return;}
   if(target==='home'){showHome();if(route==='worlds')history.replaceState(history.state,'','#worlds');}
   else if(target==='modes')modesMenu();
@@ -127,12 +128,17 @@ function modesMenu(){
   if(!openMenu('modes'))return;
   dialog('Wähle deinen Spielmodus',legendaryModes({account:accountActive()}),'',{label:'NINJA-ABENTEUER · DEIN WEG',classes:'legend-modes-panel'});
 }
+let currentWorld='study';
 function dojosMenu(){
   if(ui!=='dojos'&&!openMenu('dojos'))return;
-  dialog('Die Ninja-Dojos',legendaryDojos({
-    missions:getCareerMissions(game.profile),
-    worlds:game.profile.unlockedWorlds||['study']
-  }),'',{label:'DREI DOJOS · DREI KAPITEL',classes:'legend-dojos-panel'});
+  dialog('Die drei Spielwelten',legendaryDojos(),'',{label:'LERNE · SPIELE · RUHE DICH AUS',classes:'legend-dojos-panel'});
+}
+function worldDetailsMenu(context='study'){
+  if(!['study','gaming','sleep'].includes(context))return;
+  currentWorld=context;
+  if(ui!=='world'&&!openMenu('world'))return;
+  const names={study:'Lern-Dojo',gaming:'Gaming-Dojo',sleep:'Schlaf-Dojo'};
+  dialog(names[context],legendaryWorldDetail(context),'',{label:'DEINE SPIELWELT · FREI ERKUNDEN',classes:'world-detail-panel'});
 }
 function accountRouteChanged(kind){const route={login:'login',register:'register',recovery:'recovery',profile:'account'}[kind];if(!route||restoringView||location.hash===`#${route}`)return;history.pushState(history.state,'',`#${route}`);}
 function startAccessiblePractice(context='study'){
@@ -155,7 +161,7 @@ const pendingGuides=new Set();
 let hubToken='';
 let selectedMissionId='study-01',weeklyMenuWeek='',reflectionChoice=null,reflectionReason=null,reflectionStep='choice',reflectionReward=null;
 let requestedQuickContext=(()=>{const value=new URLSearchParams(location.search).get('quick');return ['study','gaming','sleep'].includes(value)?value:null;})();
-const menuKinds=['modes','dojos','settings','career','weekly','help','skins','highscores','abilities','achievements','shop','profile','notifications','leaderboard','delete-profile'];
+const menuKinds=['modes','dojos','world','settings','career','weekly','help','skins','highscores','abilities','achievements','shop','profile','notifications','leaderboard','delete-profile'];
 const money=()=>game.profile?.coins??0;
 const good=r=>r?.ok===true;
 const why=r=>r?.reason||'Diese Aktion ist gerade nicht möglich.';
@@ -173,7 +179,7 @@ function restoreView(view){
   if(!localLoggedIn){showLanding();return;}
   restoringView=true;
   try{shopTab=view.shopTab||shopTab;selectedSkill=view.selectedSkill||selectedSkill;selectedMissionId=view.selectedMissionId||selectedMissionId;
-    const routes={modes:modesMenu,dojos:dojosMenu,home:showHome,settings:settingsMenu,rest:showRest,career:careerMenu,weekly:weeklyMenu,profile:playerMenu,abilities,achievements:achievementMenu,notifications,shop:()=>shop(shopTab),skins,highscores,help,leaderboard:leaderboardMenu,'delete-profile':deleteProfileMenu,paused:pauseDialog,'sleep-choice':sleepChoice,playing:resume};
+    const routes={modes:modesMenu,dojos:dojosMenu,world:()=>worldDetailsMenu(currentWorld),home:showHome,settings:settingsMenu,rest:showRest,career:careerMenu,weekly:weeklyMenu,profile:playerMenu,abilities,achievements:achievementMenu,notifications,shop:()=>shop(shopTab),skins,highscores,help,leaderboard:leaderboardMenu,'delete-profile':deleteProfileMenu,paused:pauseDialog,'sleep-choice':sleepChoice,playing:resume};
     if(routes[view.kind])routes[view.kind]();else if(view.kind==='briefing'&&game.state.scene==='briefing')briefing();else if(view.kind==='results'&&game.state.ended)results();else showHome();
   }finally{restoringView=false;}
   requestAnimationFrame(()=>{const panel=$('overlay-root').querySelector('.panel');if(panel)panel.scrollTop=view.scroll||0;else window.scrollTo(0,view.scroll||0);});
@@ -235,7 +241,7 @@ function careerMenu(){
     button('Wochenmissionen','weekly','ghost'),
     {label:'KARRIERE · 18 MISSIONEN · 3 BOSSE',classes:'legend-career-panel'});
   renderHUD();
-  guideOnce('career',{title:'Dein Weg zum Fokustempel!',text:'Tippe einen Knoten an, um die echte Mission und ihre Freischaltbedingungen zu sehen. Leuchtende Knoten kannst du spielen, abgeschlossene erneut versuchen. Auf dem Schattenpfad warten zusätzliche Bosse.',animation:'unlock'});
+  // Mission hints are now embedded in the small NIM guide, not a blocking dialog.
 }
 function weeklyTaskArt(task){const image={correct:'correct-250',cuts:'first-cut',useful:'careful-stage',streak:'combo-25',precise:'careful-stage',flow:'flow-five',runs:'runs-10'}[task.metric];return image?upgradeArt('achievement',image):adventureArt(task.metric==='openSeconds'?'open':task.metric==='study'?'study':'weekly');}
 function weeklyMenu(){
@@ -332,6 +338,16 @@ function enterDojo(){
   const entered=game.enterGuest();if(!good(entered)){toast(why(entered));return;}localLoggedIn=true;setSignedIn(game.storage,true);showHome();resetNavigation();
   if(requestedQuickContext){launchQuick(requestedQuickContext);return;}guideOnce('welcome',{title:'Dein Fokus-Abenteuer beginnt!',text:'Ich bin NIM. Wähle Lernen, Gaming oder Schlafen. Die erste Runde braucht keinen Namen. Im Training üben wir das Wischen und bewusste Durchlassen zusammen.',animation:'wave'});
 }
+function exitGame(){
+  const playingNow=['playing','paused','briefing','limit-choice','sleep-choice'].includes(ui)&&Boolean(game?.state?.started)&&!game?.state?.ended;
+  if(document.getElementById('exit-confirm'))return;
+  if(!playingNow){game?.pause();save();location.assign('./home.html');return;}
+  game.pause();save();
+  const overlay=document.createElement('div');overlay.id='exit-confirm';overlay.className='exit-confirm-backdrop';
+  overlay.innerHTML=`<section class="exit-confirm-card" role="dialog" aria-modal="true" aria-labelledby="exit-title"><span aria-hidden="true">忍</span><h2 id="exit-title">Spiel wirklich verlassen?</h2><p>Deine laufende Runde wird nicht als abgeschlossen gewertet. Der bisher gesicherte Stand bleibt erhalten, soweit dein Spielmodus dies unterstützt.</p><div><button type="button" class="btn ghost" data-exit-choice="stay" autofocus>Im Spiel bleiben</button><button type="button" class="btn primary" data-exit-choice="leave">Zur Homepage</button></div></section>`;
+  overlay.addEventListener('click',event=>{const choice=event.target.closest('[data-exit-choice]')?.dataset.exitChoice;if(!choice)return;overlay.remove();if(choice==='leave'){save();location.assign('./home.html');}else if(ui==='playing'&&!document.hidden){game.resume();}});
+  document.body.append(overlay);overlay.querySelector('[autofocus]')?.focus();
+}
 function logout(){if(accountActive()){void leaveAccount();return;}game.pause();save();localLoggedIn=false;const result=setSignedIn(game.storage,false);showLanding();resetNavigation();toast(result.ok?'Abgemeldet. Dein Fortschritt bleibt auf diesem Gerät.':'Für diese Sitzung abgemeldet. Der Browser konnte die Abmeldung nicht dauerhaft speichern.');}
 function deleteProfileMenu(){
   if(accountActive()){accountUI.profile(game.profile);return;}
@@ -424,7 +440,7 @@ function sleepChoice(){if(game.state.context!=='sleep'||!game.state.stopAvailabl
 function stop(){if(ui==='sleep-choice')game.resume();const r=game.requestStop();if(!good(r)){game.pause();toast(why(r));return;}handle(r.events||[]);ui='briefing';lastCoreToken='';sync()}
 function extend(){const r=game.continueAfterLimit();if(!good(r)){toast(why(r));return;}handle(r.events||[]);ui='briefing';lastCoreToken='';sync();toast('15 Sekunden zusätzlich. Dein Overload ist gestiegen.')}
 function sleepBonus(){game.resume();const r=game.continueSleep();if(!good(r)){game.pause();toast(why(r));return;}handle(r.events||[]);enterPlaying();lastCoreToken=`${game.state.scene}:${game.state.stageIndex}:${game.state.isTutorial}`;toast('+200 Arcade-Punkte · +15 Overload. Aufhören bleibt möglich.')}
-function pauseDialog(){pushNavigation('paused');game.pause();scene('paused');dialog('Deine Pause. Kein Countdown.',`<p class="muted">Objekte, Rundenzeit und Power-ups stehen still. Du kannst weiterspielen oder deine Runde jetzt bewusst beenden.</p><div class="pause-primary-actions">${button('Weiterspielen','resume')+button('Runde bewusst beenden','finish-round','ghost')}</div><div class="pause-access-row">${languageButtons()}${button('Einstellungen','settings','ghost')}</div>`,button('Startmenü','home','ghost'),{label:'PAUSE · DU ENTSCHEIDEST'});updateLanguageControls();save()}
+function pauseDialog(){pushNavigation('paused');game.pause();scene('paused');dialog('Deine Pause. Kein Countdown.',`<p class="muted">Objekte, Rundenzeit und Power-ups stehen still. Du kannst weiterspielen oder deine Runde jetzt bewusst beenden.</p><div class="pause-primary-actions">${button('Weiterspielen','resume')+button('Runde bewusst beenden','finish-round','ghost')}</div><div class="pause-access-row">${languageButtons()}${button('Einstellungen','settings','ghost')}</div>`,button('Spiel verlassen','exit-game','ghost'),{label:'PAUSE · DU ENTSCHEIDEST'});updateLanguageControls();save()}
 function pause(){if(ui==='paused'){resume();return;}if(running())pauseDialog()}
 function resume(){void unlockMusic();if(game.state.scene==='playing')enterPlaying();else{ui='briefing';lastCoreToken='';sync()}}
 function openMenu(kind){if(!requirePlayer())return false;if(ui!==kind)pushNavigation(kind);if(!menuKinds.includes(ui))previousUI=ui;game.pause();scene(kind);return true;}
@@ -586,7 +602,7 @@ function wire(){
   $('world').addEventListener('pointerdown',e=>{if(!running()||swipePointer!==null||e.button!==0)return;e.preventDefault();swipePointer=e.pointerId;lastPoint=localPoint(e);trail=[lastPoint];$('world').setPointerCapture(e.pointerId);renderer.setTrail(trail)});
   $('world').addEventListener('pointermove',e=>{if(e.pointerId!==swipePointer)return;e.preventDefault();const samples=e.getCoalescedEvents?.();for(const p of samples?.length?samples:[e])movePointer(p)});
   $('world').addEventListener('pointerup',e=>{movePointer(e);if(e.pointerId===swipePointer){swipePointer=null;lastPoint=null}});$('world').addEventListener('pointercancel',()=>{swipePointer=null;lastPoint=null});
-  $('overlay-root').addEventListener('click',e=>{const b=e.target.closest('button');if(!b||b.disabled)return;const action=b.dataset.action;if(b.dataset.modeStart){$('mode-select').value=b.dataset.modeStart;launch();return;}if(b.dataset.leaderboardFilter){leaderboardFilter=b.dataset.leaderboardFilter;drawLeaderboard();return;}if(b.dataset.profileSkin){const result=game.selectSkin(b.dataset.profileSkin);if(!good(result))toast(why(result));else{overviewToken='';playerMenu();renderHUD();save();toast('Ninja-Look ausgewählt. In deiner nächsten neuen Runde wirft er für dich!');}return;}if(b.dataset.skillInspect){selectedSkill=b.dataset.skillInspect;abilities();$('overlay-root').querySelector('.skill-detail')?.scrollIntoView({block:'nearest',behavior:'smooth'});return;}if(b.dataset.treeBranch){const skill=SKILLS.find(s=>s.branch===b.dataset.treeBranch&&!game.profile.unlockedSkills.includes(s.id))||SKILLS.find(s=>s.branch===b.dataset.treeBranch);selectedSkill=skill.id;abilities();const node=$('overlay-root').querySelector(`[data-skill-inspect="${skill.id}"]`);node?.scrollIntoView({block:'nearest',inline:'center',behavior:'smooth'});return;}if(b.dataset.unlockView){if(b.dataset.notificationId){const seen=game.markNotificationRead(b.dataset.notificationId);if(!good(seen)){toast(why(seen));return;}}const type=b.dataset.unlockView;if(type==='skill'){selectedSkill=b.dataset.unlockRef;abilities();$('overlay-root').querySelector('.skill-detail')?.scrollIntoView({block:'nearest'});}else if(type==='achievement'){achievementMenu();$('overlay-root').querySelector(`[data-achievement="${b.dataset.unlockRef}"]`)?.scrollIntoView({block:'nearest'});}else if(type==='level')playerMenu();else shop(type==='world'?'worlds':type==='skin'?'skins':'backgrounds');return;}if(b.dataset.skin){const id=b.dataset.skin,owned=game.profile.unlockedSkins.includes(id);const r=owned?game.selectSkin(id):game.buySkin(id);if(!good(r))toast(why(r));else if(!owned)game.selectSkin(id);skins();renderHUD();save();return;}
+  $('overlay-root').addEventListener('click',e=>{const b=e.target.closest('button');if(!b||b.disabled)return;const action=b.dataset.action;if(b.dataset.worldEnter){worldDetailsMenu(b.dataset.worldEnter);return;}if(b.dataset.worldPractice){startAccessiblePractice(b.dataset.worldPractice);return;}if(b.dataset.modeStart){$('mode-select').value=b.dataset.modeStart;launch();return;}if(b.dataset.leaderboardFilter){leaderboardFilter=b.dataset.leaderboardFilter;drawLeaderboard();return;}if(b.dataset.profileSkin){const result=game.selectSkin(b.dataset.profileSkin);if(!good(result))toast(why(result));else{overviewToken='';playerMenu();renderHUD();save();toast('Ninja-Look ausgewählt. In deiner nächsten neuen Runde wirft er für dich!');}return;}if(b.dataset.skillInspect){selectedSkill=b.dataset.skillInspect;abilities();$('overlay-root').querySelector('.skill-detail')?.scrollIntoView({block:'nearest',behavior:'smooth'});return;}if(b.dataset.treeBranch){const skill=SKILLS.find(s=>s.branch===b.dataset.treeBranch&&!game.profile.unlockedSkills.includes(s.id))||SKILLS.find(s=>s.branch===b.dataset.treeBranch);selectedSkill=skill.id;abilities();const node=$('overlay-root').querySelector(`[data-skill-inspect="${skill.id}"]`);node?.scrollIntoView({block:'nearest',inline:'center',behavior:'smooth'});return;}if(b.dataset.unlockView){if(b.dataset.notificationId){const seen=game.markNotificationRead(b.dataset.notificationId);if(!good(seen)){toast(why(seen));return;}}const type=b.dataset.unlockView;if(type==='skill'){selectedSkill=b.dataset.unlockRef;abilities();$('overlay-root').querySelector('.skill-detail')?.scrollIntoView({block:'nearest'});}else if(type==='achievement'){achievementMenu();$('overlay-root').querySelector(`[data-achievement="${b.dataset.unlockRef}"]`)?.scrollIntoView({block:'nearest'});}else if(type==='level')playerMenu();else shop(type==='world'?'worlds':type==='skin'?'skins':'backgrounds');return;}if(b.dataset.skin){const id=b.dataset.skin,owned=game.profile.unlockedSkins.includes(id);const r=owned?game.selectSkin(id):game.buySkin(id);if(!good(r))toast(why(r));else if(!owned)game.selectSkin(id);skins();renderHUD();save();return;}
     if(b.dataset.reflectionChoice){chooseReflection(b.dataset.reflectionChoice);return;}if(b.dataset.reflectionReason){chooseReflectionReason(b.dataset.reflectionReason);return;}if(action==='reflection-retry'){retryReflection();return;}
     if(b.dataset.missionInspect){selectedMissionId=b.dataset.missionInspect;careerMenu();$('overlay-root').querySelector('.career-detail')?.scrollIntoView({block:'nearest',behavior:'smooth'});return;}
     if(b.dataset.missionStart){launchMission(b.dataset.missionStart);return;}
@@ -601,7 +617,7 @@ function wire(){
     if(b.dataset.skillBuy){const result=game.buySkill(b.dataset.skillBuy);if(!good(result))toast(why(result));else{handle(result.events||[]);audio.play({type:'skill-unlocked'});toast('Fähigkeit freigeschaltet. Aktiv ab deiner nächsten neuen Runde.')}abilities();save();return;}
     if(b.dataset.superEquip){const result=game.selectSuper(b.dataset.superEquip);if(!good(result))toast(why(result));else toast('Super ausgerüstet. Aktiv ab deiner nächsten neuen Runde.');abilities();save();return;}
     if(b.dataset.achievementClaim){const result=game.claimAchievement(b.dataset.achievementClaim);if(!good(result))toast(why(result));else{handle(result.events||[]);audio.play({type:'coin-earned'});toast(`+${result.reward||0} Münzen abgeholt!`);guideOnce('first-reward',{title:'Belohnung gesichert!',text:'Diese Münzen sind jetzt in deinem Dojo. Jede Erfolgsbelohnung lässt sich einmal abholen. Schau im Wurzelbaum oder Basar, was als Nächstes zu dir passt.',animation:'coins'})}achievementMenu();save();return;}
-    if(action==='toggle-audio'){void toggleSound().then(()=>settingsMenu());}else if(action==='settings')settingsMenu();else if(action==='finish-round')finishRound();else if(action==='rest')showRest();else if(action==='choose-name')showOnboarding();else if(action==='next')next();else if(action==='skip-tutorial'){const r=game.skipTutorial();if(good(r)){ui='briefing';lastCoreToken='';sync()}else toast(why(r));}else if(action==='resume')resume();else if(action==='home'){showHome();resetNavigation();}else if(action==='close-menu'||action==='nav-back')navigateBack();else if(action==='stop')stop();else if(action==='extend')extend();else if(action==='sleep-bonus')sleepBonus();else if(action==='again'){if(game.state.missionId)launchMission(game.state.missionId);else if(game.state.quickRound)launchQuick(game.state.context);else launch();}else if(action==='career')careerMenu();else if(action==='weekly')weeklyMenu();else if(action==='claim-weekly-skin')claimAdventure('skin');else if(action==='training')launchTraining();else if(action==='skins')skins();else if(action==='shop')shop();else if(action==='abilities')abilities();else if(action==='achievements')achievementMenu();else if(action==='export')exportData();else if(action==='profile')playerMenu();else if(action==='logout')logout();else if(action==='delete-profile')deleteProfileMenu();else if(action==='leaderboard')leaderboardMenu();else if(action==='refresh-leaderboard')leaderboardMenu();else if(action==='submit-score')void submitScore();else if(action==='highscores')highscores();else if(action==='notifications')notifications();else if(action==='read-notifications'){game.markNotificationsRead();notifications();save();}
+    if(action==='toggle-audio'){void toggleSound().then(()=>settingsMenu());}else if(action==='settings')settingsMenu();else if(action==='finish-round')finishRound();else if(action==='rest')showRest();else if(action==='choose-name')showOnboarding();else if(action==='next')next();else if(action==='skip-tutorial'){const r=game.skipTutorial();if(good(r)){ui='briefing';lastCoreToken='';sync()}else toast(why(r));}else if(action==='resume')resume();else if(action==='home'){showHome();resetNavigation();}else if(action==='exit-game'){exitGame();}else if(action==='close-menu'||action==='nav-back')navigateBack();else if(action==='stop')stop();else if(action==='extend')extend();else if(action==='sleep-bonus')sleepBonus();else if(action==='again'){if(game.state.missionId)launchMission(game.state.missionId);else if(game.state.quickRound)launchQuick(game.state.context);else launch();}else if(action==='career')careerMenu();else if(action==='weekly')weeklyMenu();else if(action==='claim-weekly-skin')claimAdventure('skin');else if(action==='training')launchTraining();else if(action==='skins')skins();else if(action==='shop')shop();else if(action==='abilities')abilities();else if(action==='achievements')achievementMenu();else if(action==='export')exportData();else if(action==='profile')playerMenu();else if(action==='logout')logout();else if(action==='delete-profile')deleteProfileMenu();else if(action==='leaderboard')leaderboardMenu();else if(action==='refresh-leaderboard')leaderboardMenu();else if(action==='submit-score')void submitScore();else if(action==='highscores')highscores();else if(action==='notifications')notifications();else if(action==='read-notifications'){game.markNotificationsRead();notifications();save();}
   });
   $('overlay-root').addEventListener('change',e=>{if(e.target.id==='calm-effects'){updatePreferences({calmEffects:e.target.checked});applyDisplayPreferences();return;}if(e.target.id==='leaderboard-mode'){leaderboardMode=e.target.value;leaderboardMenu();}if(e.target.id==='leaderboard-difficulty'){leaderboardDifficulty=e.target.value;leaderboardMenu();}});
   window.addEventListener('popstate',event=>{const targetRoute=location.hash.slice(1),authRoute=['login','register','recovery','account'].includes(targetRoute);restoringView=true;try{accountUI.close();if(authRoute){navigateRoute(targetRoute);return;}}finally{restoringView=false;}if(event.state?.ninjaNavigation===navSession){navDepth=event.state.depth||0;restoreView(event.state.view||{kind:'home'});}else{if(localLoggedIn)showHome();else showLanding();resetNavigation();}});
