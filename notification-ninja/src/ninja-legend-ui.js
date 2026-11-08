@@ -108,9 +108,9 @@ function chapterMap(missions,id,index,selectedId){
     ${m.completed&&!m.claimed?'<span class="legend-node-reward">● Belohnung</span>':''}
    </button>`;
  }).join('');
- return `<section class="legend-map-chapter legend-chapter-${id}" aria-labelledby="legend-chapter-title-${id}">
+ return `<section class="legend-map-chapter legend-chapter-${id}" data-map-world="${id}" aria-labelledby="legend-chapter-title-${id}">
   <div class="legend-chapter-cover"><img src="${c.art}" alt="" loading="lazy"><span class="legend-chapter-crest" aria-hidden="true">${c.symbol}</span><div><small>KAPITEL ${String(index+1).padStart(2,'0')} · ${c.subtitle}</small><h3 id="legend-chapter-title-${id}">${c.name}</h3><p>${esc(c.hint)}</p></div><span class="legend-chapter-counter">${completed}<small>/ ${group.length}</small></span></div>
-  <div class="legend-trail-track">${trail()}${nodes}<span class="arcade-map-traveler" style="--traveler-x:${xs[Math.min(completed,5)]}%;--traveler-y:${ys[Math.min(completed,5)]-36}px" aria-hidden="true"><span>忍</span><small>HIER</small></span><span class="legend-map-bottom" aria-hidden="true">◆ ZIEL ERREICHEN ◆</span></div>
+  <div class="legend-trail-track" role="group" aria-label="${c.name}: sechs Missionen">${trail()}${nodes}<span class="arcade-map-traveler" data-traveler-world="${id}" data-traveler-progress="${completed}" style="--traveler-x:${xs[Math.min(completed,5)]}%;--traveler-y:${ys[Math.min(completed,5)]-36}px" aria-hidden="true"><span>忍</span><small>HIER</small></span><span class="legend-map-bottom" aria-hidden="true">◆ ZIEL ERREICHEN ◆</span></div>
  </section>`;
 }
 function missionDetails(selected,missions){
@@ -129,7 +129,7 @@ function missionDetails(selected,missions){
   <div class="legend-inspector-actions"><button class="legend-button legend-button-primary" data-mission-start="${esc(selected.id)}" ${selected.available||selected.completed?'':'disabled'}>${selected.completed?'Erneut spielen':'Mission starten'} <span aria-hidden="true">→</span></button>
   ${selected.completed&&!selected.claimed?`<button class="legend-button legend-button-gold" data-career-claim="${esc(selected.id)}">+${num(selected.reward)} Münzen abholen</button>`:''}
   </div>
-  <p class="legend-inspector-tip">Tipp: Wähle einen leuchtenden Knoten auf der Karte. Der ausgewählte Weg erscheint hier.</p>
+  <div class="ninja-map-small-tip"><span aria-hidden="true">忍</span><p><strong>NIM:</strong> Leuchtende Etappen sind spielbar. Jede abgeschlossene Etappe öffnet ein weiteres Stück des Pfads.</p></div>
  </aside>`;
 }
 export function legendaryCareer({missions=[],selectedId=null}={}){
@@ -137,8 +137,8 @@ export function legendaryCareer({missions=[],selectedId=null}={}){
  done=main.filter(m=>m.completed).length,bosses=missions.filter(m=>m.bossId),extras=missions.filter(m=>m.section!=='main'&&!m.bossId),ready=missions.filter(m=>m.completed&&!m.claimed);
  return `<div class="legend-career">
  <header class="legend-career-hero"><div><span class="legend-kicker">DER WEG DES NINJA · 3 DOJOS</span><h3>Deine Karrierekarte</h3><p>Von den ersten Fokus-Schritten bis zur Prüfung im Mondtempel. Jede Etappe führt dich weiter.</p></div><div class="legend-career-count"><strong>${done}<small>/ 18</small></strong><span>Missionen geschafft</span></div></header>
- <div class="legend-career-body"><div class="legend-career-route">
-   <p class="legend-career-help">Wähle einen Knoten auf dem Pfad – leuchtende Knoten sind spielbar. <span>✓ Geschafft</span> <span>✦ Bereit</span> <span>◌ Gesperrt</span></p>
+ <div class="legend-career-body"><div class="legend-career-route ninja-campaign-landscape">
+   <div class="legend-career-help ninja-map-guide"><span class="ninja-map-guide-icon" aria-hidden="true">忍</span><div><strong>NIM zeigt dir den Weg</strong><p>Finde den nächsten leuchtenden Missionsknoten und entdecke, wohin der Pfad führt.</p><span>✓ Geschafft</span> <span>✦ Bereit</span> <span>◌ Gesperrt</span></div></div>
    ${['study','gaming','sleep'].map((id,i)=>chapterMap(missions,id,i,selected?.id)).join('')}
    <section class="legend-boss-route"><div class="legend-boss-banner"><span>鬼</span><div><small>GEHEIMER NEBENPFAD</small><h3>Die Schattenbosse</h3><p>Drei besondere Kämpfe mit eigenen Mechaniken. Ihre Freischaltung hängt von Zusatzaufgaben ab.</p></div></div>
    <div class="legend-boss-trail">${bosses.map((boss,i)=>`<button class="legend-boss-node ${boss.completed?'is-complete':boss.available?'is-available':'is-locked'} ${selected?.id===boss.id?'is-selected':''}" data-mission-inspect="${esc(boss.id)}" aria-pressed="${boss.id===selected?.id}"><span class="legend-boss-icon" aria-hidden="true">${['鬼','将','龍'][i]||'鬼'}</span><strong>${esc(boss.title)}</strong><small>${boss.completed?'Boss besiegt':boss.available?'Kampf verfügbar':'Noch gesperrt'}</small></button>`).join('')}</div></section>
