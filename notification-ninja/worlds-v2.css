@@ -145,3 +145,39 @@ html[data-ninja-theme] .legend-career-panel{width:min(1350px,calc(100vw - 24px))
  .worlds-hub-entry:hover,.worlds-hub-entry:hover .worlds-hub-art img{transform:none!important}
 }
 .calm-view .worlds-world-glimmer,.calm-view .world-inside-scene img,.calm-view .world-inside-particles,.calm-view .campaign-map-clouds{animation:none!important}
+
+
+/* Panoramic world selector: one bridge connects the three campaign chapters. */
+.campaign-overworld{position:relative;overflow:hidden;border:3px solid #7aab9f;border-radius:25px;background:linear-gradient(170deg,#b3e4ed,#faf0cf 65%,#aed9a6);box-shadow:0 11px 28px #173a4a33;margin:0 0 18px;padding:17px}
+.campaign-overworld-head{text-align:center;display:flex;align-items:center;flex-direction:column;gap:6px;color:#26495c;position:relative;z-index:2}
+.campaign-overworld-head .legend-kicker{color:#287c67}
+.campaign-overworld-head strong{font-size:clamp(22px,3.5vw,36px);line-height:1.15;letter-spacing:-.04em}
+.campaign-overworld-head small{font-size:12px;color:#486e6b}
+.campaign-overworld-vistas{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;align-items:center;min-height:330px;padding:28px 9px 35px}
+.campaign-overworld-road{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1;filter:drop-shadow(0 3px 1px #fff7db)}
+.campaign-overworld-landmark{position:relative;z-index:2;display:flex;flex-direction:column;align-items:stretch;min-width:0;height:246px;padding:0;border:3px solid #477a77;border-radius:24px;box-shadow:0 8px 0 #276c67,0 12px 18px #253c5255;overflow:hidden;background:#f6efce;cursor:pointer;transition:transform .2s,box-shadow .2s}
+.campaign-overworld-landmark:hover{transform:translateY(-7px);box-shadow:0 13px 0 #276c67,0 18px 23px #253c5266}
+.campaign-overworld-landmark:focus-visible{outline:4px solid #ffdd85;outline-offset:3px}
+.campaign-overworld-landmark>img{height:185px;width:100%;object-fit:cover}
+.campaign-landmark-title{display:flex;flex-direction:column;justify-content:center;gap:4px;background:#fef6dc;padding:10px 13px;min-height:61px;color:#263b53}
+.campaign-landmark-title strong{font-size:clamp(14px,1.65vw,19px)}
+.campaign-landmark-title small{font-size:11px;color:#507068}
+.campaign-landmark-pin{position:absolute;top:11px;right:11px;display:grid;place-items:center;width:38px;height:38px;border:2px solid #ffe5a9;border-radius:13px;background:#234b56dd;color:#fff1c4;font-size:23px}
+.campaign-overworld-gaming{border-color:#8873bd;box-shadow:0 8px 0 #655695,0 12px 18px #253c5255}
+.campaign-overworld-sleep{border-color:#7f93c4;box-shadow:0 8px 0 #5a719d,0 12px 18px #253c5255}
+.campaign-overworld-guide{position:relative;z-index:2;display:flex;gap:12px;align-items:center;padding:13px 17px;background:#fff9e7;border:1px solid #b2d0b7;border-radius:13px;color:#3d5459}
+.campaign-overworld-guide>span{display:grid;place-items:center;width:42px;height:42px;flex:0 0 42px;border-radius:14px;background:#237c70;color:#ffe5a4;font-size:24px}
+.campaign-overworld-guide p{font-size:12px;line-height:1.6;margin:0}
+.campaign-region{scroll-margin-top:86px}
+html[data-ninja-theme=dark] .campaign-overworld,html[data-ninja-theme=noir] .campaign-overworld{background:linear-gradient(160deg,#25384f,#31495a 58%,#333952)}
+html[data-ninja-theme=dark] .campaign-overworld-head,html[data-ninja-theme=noir] .campaign-overworld-head{color:#f8e9c1}
+html[data-ninja-theme=dark] .campaign-overworld-head small,html[data-ninja-theme=noir] .campaign-overworld-head small{color:#d9e4d6}
+html[data-ninja-theme=noir] .campaign-overworld-landmark>img{filter:grayscale(.9)}
+@media(max-width:680px){
+ .campaign-overworld-vistas{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;min-height:260px;padding:25px 8px 20px}
+ .campaign-overworld-landmark{flex:0 0 min(78vw,275px);height:225px;scroll-snap-align:center}
+ .campaign-overworld-landmark>img{height:160px}
+ .campaign-overworld-road{display:none}
+ .campaign-overworld-head strong{font-size:23px}
+ .campaign-overworld-guide p{font-size:11px}
+}
