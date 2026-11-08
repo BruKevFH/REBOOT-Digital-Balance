@@ -1,6 +1,7 @@
 import {tr,getLanguage,setLanguage,observeTranslations,localizeDOM,onLanguageChange} from './i18n.js';
 import {getPreferences} from './preferences.js';
 import {applyTheme,cycleTheme} from './display-theme.js';
+import {createAccounts} from './accounts.js';
 
 const DESCRIPTION='Notification Ninja: kurze Spielrunden über Lernen, Gaming und Schlaf. Erkenne Ablenkungen, entscheide bewusst und finde deinen Fokus. Kostenlos auf Deutsch und Englisch.';
 const TITLE='Notification Ninja';
@@ -33,3 +34,38 @@ if(location.protocol.startsWith('http')&&'serviceWorker' in navigator)navigator.
 // A privacy link from registration opens the actual policy, including on reload.
 function openPrivacy(){if(location.hash==='#projekt'){const details=document.getElementById('privacy-details');if(details)details.open=true;}}
 openPrivacy();window.addEventListener('hashchange',openPrivacy);
+
+
+/* The informational page never trusts sessionStorage alone. Only a validated
+   /me response changes the guest/login controls to an authenticated overview. */
+async function revealSignedInLanding(){
+  let storage;try{storage=window.sessionStorage;}catch{return;}
+  if(!storage)return;
+  const client=createAccounts({sessionStorage:storage,baseURL:location.href});
+  try{
+    await client.init();
+    const session=client.getSession();
+    if(!session?.token)return;
+    const state=await client.restore();
+    if(!state?.user?.id)return;
+    const access=document.querySelector('.access-choices');
+    if(!access)return;
+    const entry=document.createElement('a');
+    entry.href='./index.html#worlds';entry.className='button large';entry.textContent='Zum persönlichen Dojo →';
+    const logout=document.createElement('button');
+    logout.type='button';logout.className='button secondary';logout.textContent='Abmelden';
+    const note=document.createElement('p');note.className='home-auth-state';note.setAttribute('role','status');
+    note.textContent='✓ Du bist bereits angemeldet. Willkommen zurück!';
+    access.replaceChildren(entry,logout,note);
+    for(const link of document.querySelectorAll('a[href="./index.html#login"],a[href="./index.html#register"],a[href="./index.html#guest"]')){
+      if(access.contains(link))continue;
+      link.href='./index.html#worlds';link.textContent='Zum persönlichen Dojo';
+    }
+    logout.addEventListener('click',async()=>{
+      logout.disabled=true;
+      try{await client.logout();note.textContent='✓ Abgemeldet.';setTimeout(()=>location.reload(),700);}
+      catch{logout.disabled=false;note.textContent='Abmeldung fehlgeschlagen. Bitte versuche es erneut.';}
+    });
+  }catch{/* No verified session: leave normal login/register/guest controls. */}
+}
+void revealSignedInLanding();
