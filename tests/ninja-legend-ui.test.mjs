@@ -46,12 +46,12 @@ test('locked mission may be inspected but cannot be started or claimed',()=>{
 test('dojo scenes, progress, and free short rounds preserve chapter identity',()=>{
  const html=legendaryDojos({missions:fixture,worlds:['study']});
  for(const context of ['study','gaming','sleep']){
-   assert(html.includes('assets/dojo-'+context+(context==='gaming'?'.svg':'.png')));
-   assert(html.includes('data-quick-context="'+context+'"'));
+   assert(html.includes('assets/dojo-'+context+'-v2.svg'));
+   assert(html.includes('data-world-enter="'+context+'"'));
  }
  assert.equal((html.match(/class="legend-dojo legend-dojo-/g)||[]).length,3);
- assert(html.includes('data-game-route="campaign"'));
- assert(html.includes('Karriere-Kapitel noch gesperrt'));
+ assert(!html.includes('data-game-route="campaign"'),'Worlds must not be campaign duplicates');
+ assert(html.includes('Die Themenrunden sind eigenständig'));
 });
 
 test('mode cards only request known game routes and existing modes',()=>{
