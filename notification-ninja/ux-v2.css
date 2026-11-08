@@ -88,3 +88,26 @@ html[data-ninja-theme=dark] .exit-confirm-card p,html[data-ninja-theme=noir] .ex
 }
 @media(prefers-reduced-motion:reduce){#toast-root.visible{animation:none!important}}
 .calm-view #toast-root.visible{animation:none!important}
+
+
+/* Account security: local QR render, high-contrast code display and visible status. */
+.account-mfa-security{padding:19px;margin:20px 0;border:2px solid #a1cbbb;border-radius:17px;background:#eaf4e9}
+.account-mfa-security h3{font-size:19px;margin:0 0 10px;color:#24564d}
+.account-mfa-security #account-mfa-status{display:grid;gap:8px;color:#3f665d;font-size:12px}
+.account-mfa-security strong{font-size:15px;color:#286451}
+.account-mfa-security .btn{min-height:46px;justify-self:start}
+.mfa-qr-wrap{display:flex;justify-content:center;margin:22px 0;background:#fff;max-width:310px;padding:14px;border-radius:18px;border:2px solid #5f9384}
+.mfa-qr{width:100%;max-width:275px;aspect-ratio:1;display:block}
+#account-mfa-code{font-size:18px;font-weight:800;letter-spacing:.13em}
+#mfa-setup-secret{font:750 13px/1.4 ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.09em}
+#mfa-recovery-codes{font:700 13px/1.75 ui-monospace,Consolas,monospace;background:#f8f5e8;color:#203b46;border:2px solid #9abeb0;border-radius:12px;padding:12px;max-width:100%;width:100%;box-sizing:border-box;resize:vertical}
+html[data-ninja-theme=dark] .account-mfa-security{background:#253b48;border-color:#547d70}
+html[data-ninja-theme=dark] .account-mfa-security strong,
+html[data-ninja-theme=dark] .account-mfa-security h3{color:#d9f3e0}
+html[data-ninja-theme=dark] .account-mfa-security #account-mfa-status{color:#c4dfd3}
+html[data-ninja-theme=noir] .account-mfa-security{background:#27262c;border-color:#a69a80}
+html[data-ninja-theme=noir] .account-mfa-security strong,
+html[data-ninja-theme=noir] .account-mfa-security h3{color:#f6dcab}
+html[data-ninja-theme=noir] .account-mfa-security #account-mfa-status{color:#e3dacb}
+.home-auth-state{grid-column:1/-1;color:#277c63;font-size:13px;font-weight:850;padding:8px 12px;border-radius:10px;background:#dff4e8}
+html[data-ninja-theme=dark] .home-auth-state,html[data-ninja-theme=noir] .home-auth-state{color:#e9d5a7;background:#263d42}
