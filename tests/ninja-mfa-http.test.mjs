@@ -41,7 +41,7 @@ test('HTTP MFA requires real second factor before any server session token exist
 });
 test('MFA enrollment fails safely without Render key, while regular accounts remain usable',async t=>{
  const {api}=await fixture(t,{key:null});
- const registered=await api('/auth/register',{method:'POST',body:{username:'No Key Ninja',password}});
+ const registered=await api('/auth/register',{method:'POST',body:{username:'No Key Ninja',email:'nokey@example.test',password,passwordConfirmation:password,privacyAccepted:true}});
  assert.equal(registered.status,201);
  const status=await api('/mfa/status',{token:registered.data.token});
  assert.equal(status.status,200);assert.equal(status.data.available,false);
