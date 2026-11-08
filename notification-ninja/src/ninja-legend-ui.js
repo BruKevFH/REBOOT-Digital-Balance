@@ -106,7 +106,7 @@ function chapterMap(missions,id,index,selectedId){
   <span class="legend-node-orb"><span class="legend-node-glyph" aria-hidden="true">${m.completed?'✓':i===5?'✦':String(m.order).padStart(2,'0')}</span></span>
   <span class="legend-node-name">${esc(m.title)}</span>${m.completed&&!m.claimed?'<span class="legend-node-reward">● Belohnung</span>':''}
  </button>`}).join('');
- return `<section class="legend-map-chapter legend-chapter-${id} campaign-region" aria-labelledby="legend-chapter-title-${id}">
+ return `<section id="campaign-region-${id}" class="legend-map-chapter legend-chapter-${id} campaign-region" aria-labelledby="legend-chapter-title-${id}">
   <div class="legend-chapter-cover"><img src="${c.art}" alt="" loading="lazy"><span class="legend-chapter-crest" aria-hidden="true">${c.symbol}</span><div><small>WELT ${index+1} · ${c.subtitle}</small><h3 id="legend-chapter-title-${id}">${c.title}</h3><p>Sechs Etappen auf deinem Weg zum Fokus-Ninja.</p></div><span class="legend-chapter-counter">${completed}<small>/ ${group.length}</small></span></div>
   <div class="legend-trail-track"><img class="campaign-region-art" src="${c.art}" alt="" loading="lazy">
   <div class="campaign-map-clouds" aria-hidden="true">☁ ✦ ☁</div>${trail()}${nodes}
@@ -133,12 +133,27 @@ function missionDetails(selected,missions){
   <p class="legend-inspector-tip">Tipp: Wähle einen leuchtenden Knoten auf der Karte. Der ausgewählte Weg erscheint hier.</p>
  </aside>`;
 }
+
+function campaignOverworld(missions){
+ const worlds=['study','gaming','sleep'];
+ return `<section class="campaign-overworld" aria-label="Die drei Abenteuerregionen">
+ <div class="campaign-overworld-head"><span class="legend-kicker">DIE GROSSE NINJA-REISE</span><strong>Vom Morgenlicht bis zum Mondtempel</strong><small>Wähle eine Welt, um zu ihren Missionsknoten zu springen.</small></div>
+ <div class="campaign-overworld-vistas">
+   <svg class="campaign-overworld-road" viewBox="0 0 1000 270" preserveAspectRatio="none" aria-hidden="true"><path d="M 105 180 C 230 260, 310 88, 490 168 S 775 250, 890 120" fill="none" stroke="#263d5a" stroke-width="16" stroke-dasharray="19 17" stroke-linecap="round"/><path d="M 105 180 C 230 260, 310 88, 490 168 S 775 250, 890 120" fill="none" stroke="#ffe6a4" stroke-width="5" stroke-dasharray="20 17" stroke-linecap="round"/></svg>
+   ${worlds.map((id,i)=>{const c=WORLD_DETAILS[id],group=missions.filter(m=>m.section==='main'&&m.chapter===id),done=group.filter(m=>m.completed).length;
+   return `<button type="button" class="campaign-overworld-landmark campaign-overworld-${id}" data-campaign-jump="${id}" aria-label="${c.title}, ${done} von ${group.length} Missionen geschafft">
+     <img src="${c.art}" alt="" loading="lazy"><span class="campaign-landmark-title"><strong>${String(i+1)} · ${c.title}</strong><small>${done}/${group.length} Missionen</small></span><span class="campaign-landmark-pin" aria-hidden="true">${c.symbol}</span>
+   </button>`}).join('')}
+  </div><div class="campaign-overworld-guide"><span aria-hidden="true">忍</span><p><strong>NIM:</strong> „Jede Welt hat sechs Missionen. Folge den leuchtenden Knoten und entscheide, wann du den nächsten Weg betrittst.“</p></div>
+ </section>`;
+}
 export function legendaryCareer({missions=[],selectedId=null}={}){
  const main=missions.filter(m=>m.section==='main'),selected=missions.find(m=>m.id===selectedId)||main.find(m=>m.available&&!m.completed)||main[0],
  done=main.filter(m=>m.completed).length,bosses=missions.filter(m=>m.bossId),extras=missions.filter(m=>m.section!=='main'&&!m.bossId),ready=missions.filter(m=>m.completed&&!m.claimed);
  return `<div class="legend-career">
  <header class="legend-career-hero"><div><span class="legend-kicker">DER WEG DES NINJA · 3 DOJOS</span><h3>Deine Karrierekarte</h3><p>Von den ersten Fokus-Schritten bis zur Prüfung im Mondtempel. Jede Etappe führt dich weiter.</p></div><div class="legend-career-count"><strong>${done}<small>/ 18</small></strong><span>Missionen geschafft</span></div></header>
  <div class="legend-career-body"><div class="legend-career-route">
+   ${campaignOverworld(missions)}
    <p class="legend-career-help">Wähle einen Knoten auf dem Pfad – leuchtende Knoten sind spielbar. <span>✓ Geschafft</span> <span>✦ Bereit</span> <span>◌ Gesperrt</span></p>
    ${['study','gaming','sleep'].map((id,i)=>chapterMap(missions,id,i,selected?.id)).join('')}
    <section class="legend-boss-route"><div class="legend-boss-banner"><span>鬼</span><div><small>GEHEIMER NEBENPFAD</small><h3>Die Schattenbosse</h3><p>Drei besondere Kämpfe mit eigenen Mechaniken. Ihre Freischaltung hängt von Zusatzaufgaben ab.</p></div></div>
