@@ -122,12 +122,33 @@ export function createNinjaServer({databasePath=':memory:',store:providedStore,a
           const result=route==='/auth/register'?await auth.register(body):route==='/auth/login'?await auth.login(body):await auth.resetPassword(body);
           return send(res,route==='/auth/register'?201:200,result);
         }
+        if(route==='/auth/mfa/verify'&&method==='POST'){
+          rate(req,'auth');
+          const body=await readJSON(req,2048);
+          return send(res,200,await auth.mfa.verifyLogin(body.challenge,body.code));
+        }
         if(route==='/leaderboard'&&method==='GET'){
           const supplied=token(req),user=supplied?await auth.authenticate(supplied):null;
           return send(res,200,await game.leaderboard(user?.id??null,Object.fromEntries(url.searchParams)));
         }
         const supplied=token(req),user=await auth.authenticate(supplied);
         if(route==='/auth/logout'&&method==='POST')return send(res,200,await auth.logout(supplied));
+        if(route==='/auth/mfa/status'&&method==='GET')return send(res,200,await auth.mfa.status(user.id));
+        if(route==='/auth/mfa/setup'&&method==='POST'){
+          rate(req,'auth',user.id);
+          const body=await readJSON(req,2048);
+          return send(res,200,await auth.mfa.begin(user.id,body.password));
+        }
+        if(route==='/auth/mfa/confirm'&&method==='POST'){
+          rate(req,'auth',user.id);
+          const body=await readJSON(req,2048);
+          return send(res,200,await auth.mfa.confirm(user.id,body.code));
+        }
+        if(route==='/auth/mfa/disable'&&method==='POST'){
+          rate(req,'auth',user.id);
+          const body=await readJSON(req,2048);
+          return send(res,200,await auth.mfa.disable(user.id,body.password,body.code));
+        }
         if(route==='/me'&&method==='GET')return send(res,200,{user:{id:user.id,username:user.username},...await game.getState(user.id)});
         if(route==='/profile'&&method==='PATCH'){const body=await readJSON(req,32768);return send(res,200,await auth.rename(user.id,body.username));}
         if(route==='/account'&&method==='DELETE'){const body=await readJSON(req,32768);return send(res,200,await auth.deleteAccount(user.id,body));}
