@@ -1,4 +1,5 @@
 import {operation} from './ninja-operations.mjs';
+import {createNinjaMfa} from './ninja-mfa.mjs';
 import {createHash,randomBytes,randomUUID,scrypt,timingSafeEqual} from 'node:crypto';
 import {promisify} from 'node:util';
 import {NinjaGame} from '../notification-ninja/src/game.js';
@@ -74,6 +75,7 @@ export function createNinjaAuth(store,{now=()=>Date.now(),sessionTTL=AUTH_CONFIG
     return {token,expiresAt};
   }
   function* response(userId,session,extra={}){const user=(yield store.getUser(userId)),state=(yield store.getProfile(userId));return {user:{id:user.id,username:user.username},...session,profile:state.profile,revision:state.revision,...extra};}
+  const mfa=createNinjaMfa(store,{now,verifyPassword,issueSession,response});
   async function register(input={}){
     const {username,password}=input;
     const email=input.email===undefined?null:validateRegistration(input);
@@ -97,6 +99,8 @@ export function createNinjaAuth(store,{now=()=>Date.now(),sessionTTL=AUTH_CONFIG
     return store.transaction(function*(){
       const current=(yield byId.get(user.id));
       if(!current||current.password_hash!==user.password_hash)throw credentialError();
+      const challenge=yield* mfa.challengeIfRequired(current.id,clock());
+      if(challenge)return challenge;
       return (yield* response(current.id,(yield* issueSession(current.id,clock()))));
     });
   }
@@ -107,7 +111,7 @@ export function createNinjaAuth(store,{now=()=>Date.now(),sessionTTL=AUTH_CONFIG
     return {id:row.id,username:row.username,createdAt:row.created_at};
   }
   function* logout(token){if(typeof token==='string'&&tokenPattern.test(token))(yield db.prepare('DELETE FROM sessions WHERE token_hash=?').run(digest(token)));return {ok:true};}
-  async function resetPassword({username,recoveryKey,password,newPassword}={}){
+  async function resetPassword({username,recoveryKey,password,newPassword,mfaCode}={}){
     const replacement=password===undefined?newPassword:password;requirePassword(replacement);
     let name;try{name=normalizedName(username);}catch{}
     const secret=typeof recoveryKey==='string'?recoveryKey.trim():'';
@@ -117,6 +121,7 @@ export function createNinjaAuth(store,{now=()=>Date.now(),sessionTTL=AUTH_CONFIG
     return store.transaction(function*(){
       const current=(yield byId.get(user.id));
       if(!current||!sameHash(current.recovery_hash,supplied))throw recoveryError();
+      yield* mfa.verifyForRecovery(current.id,mfaCode,clock());
       (yield db.prepare('UPDATE users SET password_hash=?,recovery_hash=? WHERE id=?').run(passwordHash,digest(nextRecovery),current.id));
       (yield db.prepare('DELETE FROM sessions WHERE user_id=?').run(current.id));
       return (yield* response(current.id,(yield* issueSession(current.id,clock())),{recoveryKey:nextRecovery}));
@@ -139,5 +144,5 @@ export function createNinjaAuth(store,{now=()=>Date.now(),sessionTTL=AUTH_CONFIG
       const state=(yield store.getProfile(userId));return {user:{id:userId,username:name.username},profile:state.profile,revision:state.revision};
     });}catch(exception){if(isDuplicateName(exception))throw duplicateName();if(isDuplicateEmail(exception))throw error(409,'EMAIL_UNAVAILABLE','Diese E-Mail-Adresse ist nicht verfügbar.');throw exception;}
   }
-  return {register,login,authenticate:operation(authenticate),logout:operation(logout),resetPassword,deleteAccount,rename:operation(rename)};
+  return {register,login,authenticate:operation(authenticate),logout:operation(logout),resetPassword,deleteAccount,rename:operation(rename),mfa};
 }
