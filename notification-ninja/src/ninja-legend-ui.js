@@ -169,7 +169,9 @@ export function legendaryCareer({missions=[],selectedId=null}={}){
       <div class="nn-career-chapter-cover"><img src="${c.art}" alt="" loading="lazy">
         <div class="nn-career-chapter-label"><span>WELT ${String(i+1).padStart(2,'0')} · ${esc(c.subtitle)}</span><h4 id="nn-chapter-${id}">${esc(c.title)}</h4><small>${done} von ${group.length} Missionen geschafft</small></div>
       </div>
-      <div class="nn-career-chapter-trail" aria-label="Missionspfad ${esc(c.title)}">${group.map(steps).join('')}</div>
+      <div class="nn-career-chapter-trail" aria-label="Missionspfad ${esc(c.title)}">
+        <svg class="nn-career-trail-path" viewBox="0 0 600 350" preserveAspectRatio="none" aria-hidden="true"><path d="M135 55 Q300 40 465 55 C535 70 535 140 465 165 Q300 180 135 165 C60 180 65 245 135 275 Q300 300 465 275"/></svg>
+        ${group.map(steps).join('')}</div>
     </section>`;
   }).join('');
   const missing=(selected?.missingRequirements||[]).map(id=>missions.find(m=>m.id===id)?.title||id);
