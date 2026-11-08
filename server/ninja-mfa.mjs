@@ -132,20 +132,21 @@ export function createNinjaMfa(store,{key=process.env.NINJA_MFA_ENCRYPTION_KEY,n
    return {secret,uri:'otpauth://totp/'+label+'?secret='+secret+'&issuer=Notification%20Ninja&algorithm=SHA1&digits=6&period=30'};
   });
  }
- async function confirm(userId,code){
+ async function confirm(userId,code,sessionToken){
   supported();
   return store.transaction(function*(){
    if(store.lockUser)yield store.lockUser(userId);
    const row=yield userQuery.get(userId);
-   if(!row?.pending_secret||row.enabled)throw fail(409,'MFA_SETUP_MISSING','Bitte starte die MFA-Einrichtung erneut.');
+   if(!row?.pending_secret||row.enabled||clock()-row.updated_at>10*60*1000)throw fail(409,'MFA_SETUP_MISSING','Bitte starte die MFA-Einrichtung erneut.');
    const secret=crypto.decrypt(row.pending_secret),tick=checkTotp(secret,normalizeCode(code),clock());
    if(tick===null)throw fail(400,'INVALID_MFA','Dieser Authenticator-Code ist ungültig.');
    const recovery=backups(),stamp=clock();
    yield db.prepare('UPDATE ninja_mfa SET encrypted_secret=?,pending_secret=?,enabled=1,last_counter=?,recovery_codes=?,updated_at=? WHERE user_id=?').run(row.pending_secret,'',tick,JSON.stringify(recovery.hashes),stamp,userId);
+   yield db.prepare('DELETE FROM sessions WHERE user_id=? AND token_hash<>?').run(userId,sha(sessionToken));
    return {enabled:true,recoveryCodes:recovery.codes};
   });
  }
- async function disable(userId,password,code){
+ async function disable(userId,password,code,sessionToken){
   supported();
   const user=await db.prepare('SELECT password_hash FROM users WHERE id=?').get(userId);
   if(!user||!await verifyPassword(password,user.password_hash))throw fail(403,'PASSWORD_CONFIRMATION_FAILED','Passwort falsch.');
@@ -156,6 +157,7 @@ export function createNinjaMfa(store,{key=process.env.NINJA_MFA_ENCRYPTION_KEY,n
    if(!(yield* verifyFactor(row,code,clock())))return false;
    yield db.prepare('DELETE FROM ninja_mfa WHERE user_id=?').run(userId);
    yield db.prepare('DELETE FROM ninja_mfa_challenges WHERE user_id=?').run(userId);
+   yield db.prepare('DELETE FROM sessions WHERE user_id=? AND token_hash<>?').run(userId,sha(sessionToken));
    return true;
   });
   if(!done)throw fail(403,'INVALID_MFA','Der MFA-Code ist ungültig.');
