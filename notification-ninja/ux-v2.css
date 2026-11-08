@@ -1,0 +1,113 @@
+/* V2 final UX layer: accessible selections, responsive topbar, mentor + exit. */
+html[data-ninja-theme] .modal-shade:not(.account-shade){
+ display:flex!important;align-items:stretch!important;justify-content:center!important;
+ padding:0!important;overflow:hidden!important;
+}
+html[data-ninja-theme] .modal-shade:not(.account-shade)>.panel{
+ box-sizing:border-box!important;position:relative!important;top:0!important;
+ max-height:100dvh!important;height:100dvh!important;min-height:0!important;
+ overflow-y:auto!important;overscroll-behavior:contain;scrollbar-gutter:stable;
+ margin:0 auto!important;padding:0 clamp(15px,3vw,27px) 44px!important;
+ border-radius:0!important;border-top:none!important;box-shadow:0 0 32px var(--ar-shadow)!important;
+}
+html[data-ninja-theme] .panel-header.arcade-sticky-header{
+ top:0!important;position:sticky!important;z-index:90!important;
+ box-sizing:border-box!important;min-height:69px!important;
+ margin:0 calc(-1 * clamp(15px,3vw,27px)) 20px!important;
+ border-radius:0!important;background:var(--ar-header)!important;
+ backdrop-filter:blur(10px);box-shadow:0 3px 10px var(--ar-shadow)!important;
+}
+html[data-ninja-theme] .modal-shade:not(.account-shade)>.panel>h2{margin-top:15px!important}
+html[data-ninja-theme] .panel .overlay-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+html[data-ninja-theme] .settings-panel [data-settings-language],
+html[data-ninja-theme] .ninja-theme-picker button{
+ position:relative;min-height:49px!important;
+ border:2px solid var(--ar-border)!important;
+ box-shadow:0 3px 0 var(--ar-shadow)!important;
+ color:var(--ar-ink)!important;
+ transition:transform .18s,box-shadow .18s;
+}
+html[data-ninja-theme] .settings-panel [data-settings-language][aria-pressed=true],
+html[data-ninja-theme] .ninja-theme-picker button[aria-pressed=true]{
+ background:var(--ar-accent)!important;color:var(--ar-panel)!important;
+ border-color:var(--ar-gold)!important;
+ box-shadow:inset 0 0 0 2px var(--ar-accent-soft),0 4px 0 var(--ar-shadow)!important;
+ padding-right:32px!important;
+}
+html[data-ninja-theme] .settings-panel [data-settings-language][aria-pressed=true]::after,
+html[data-ninja-theme] .ninja-theme-picker button[aria-pressed=true]::after{
+ content:"✓";position:absolute;right:8px;top:50%;transform:translateY(-50%);
+ font:950 16px/1 system-ui;color:inherit;
+}
+html[data-ninja-theme=relaxed] .settings-panel [data-settings-language][aria-pressed=true],
+html[data-ninja-theme=relaxed] .ninja-theme-picker button[aria-pressed=true]{color:#fff!important}
+html[data-ninja-theme=dark] .settings-panel [data-settings-language][aria-pressed=true],
+html[data-ninja-theme=dark] .ninja-theme-picker button[aria-pressed=true]{color:#12332e!important}
+html[data-ninja-theme=noir] .settings-panel [data-settings-language][aria-pressed=true],
+html[data-ninja-theme=noir] .ninja-theme-picker button[aria-pressed=true]{color:#16151b!important}
+html[data-ninja-theme] .settings-panel [data-settings-language]:focus-visible,
+html[data-ninja-theme] .ninja-theme-picker button:focus-visible{outline:3px solid var(--ar-gold);outline-offset:3px}
+html[data-ninja-theme] .exit-settings-button{
+ display:inline-flex;align-items:center;justify-content:center;width:100%;
+ margin:20px 0 5px;min-height:51px!important;border:2px solid var(--ar-border)!important;
+ background:var(--ar-surface)!important;color:var(--ar-ink)!important;font-weight:850;
+}
+html[data-ninja-theme] .exit-settings-button::before{content:"⌂";font-size:22px;margin-right:8px}
+.exit-confirm-backdrop{position:fixed;inset:0;display:grid;place-items:center;
+ background:#071b29dd;backdrop-filter:blur(8px);z-index:10003;padding:16px}
+.exit-confirm-card{width:min(465px,100%);padding:27px;background:#fff6e6;color:#233e4b;
+ border:3px solid #78b7a1;border-radius:23px;box-shadow:0 12px 0 #2b665e,0 35px 70px #0007;text-align:center}
+.exit-confirm-card>span{display:grid;place-items:center;width:67px;height:67px;margin:0 auto 10px;
+ border-radius:18px;background:#216d65;color:#ffe5a3;font-size:36px}
+.exit-confirm-card h2{font-size:26px;margin:5px 0 8px}
+.exit-confirm-card p{font-size:13px;line-height:1.7;color:#536965}
+.exit-confirm-card>div{display:flex;gap:9px;justify-content:center;flex-wrap:wrap;margin-top:20px}
+.exit-confirm-card button{min-width:140px;min-height:49px}
+html[data-ninja-theme=dark] .exit-confirm-card{background:#253745;color:#f4eee0}
+html[data-ninja-theme=noir] .exit-confirm-card{background:#24242c;color:#f4eee0;border-color:#e3cea0}
+html[data-ninja-theme=dark] .exit-confirm-card p,html[data-ninja-theme=noir] .exit-confirm-card p{color:#c4d4cb}
+#toast-root.visible{position:fixed;top:20px;right:20px;left:auto;bottom:auto;z-index:11000;
+ max-width:min(430px,calc(100vw - 32px));padding:17px 23px!important;
+ background:#dff7eb!important;color:#164d45!important;border:2px solid #61b395;
+ border-radius:17px;box-shadow:0 12px 26px #18374650!important;
+ font-weight:850;line-height:1.4;animation:ninja-toast-in .22s ease-out}
+#toast-root.visible::before{content:"✓";display:inline-grid;place-items:center;
+ width:23px;height:23px;margin-right:9px;background:#177761;color:#fff;border-radius:50%}
+@keyframes ninja-toast-in{from{opacity:0;transform:translateY(-9px)}to{opacity:1;transform:translateY(0)}}
+.legend-mission-inspector .legend-inspector-tip{display:flex!important;align-items:center;gap:9px;
+ padding:9px 12px!important;border:1px solid #74c1ab59;border-radius:12px;
+ background:#2e5060;color:#e5ead8!important;font-size:10px!important}
+.legend-inspector-tip:before{content:"忍";font-size:17px;color:#ffe1a2}
+.legend-career-side .legend-inspector-tip{grid-column:1/-1;grid-row:auto}
+@media(max-width:750px){
+ html[data-ninja-theme] .modal-shade:not(.account-shade)>.panel{
+  padding:0 15px 34px!important;width:100%!important
+ }
+ html[data-ninja-theme] .panel-header.arcade-sticky-header{margin:0 -15px 19px!important;top:0!important}
+ #toast-root.visible{top:12px;right:12px;left:12px;max-width:none}
+}
+@media(prefers-reduced-motion:reduce){#toast-root.visible{animation:none!important}}
+.calm-view #toast-root.visible{animation:none!important}
+
+
+/* Account security: local QR render, high-contrast code display and visible status. */
+.account-mfa-security{padding:19px;margin:20px 0;border:2px solid #a1cbbb;border-radius:17px;background:#eaf4e9}
+.account-mfa-security h3{font-size:19px;margin:0 0 10px;color:#24564d}
+.account-mfa-security #account-mfa-status{display:grid;gap:8px;color:#3f665d;font-size:12px}
+.account-mfa-security strong{font-size:15px;color:#286451}
+.account-mfa-security .btn{min-height:46px;justify-self:start}
+.mfa-qr-wrap{display:flex;justify-content:center;margin:22px 0;background:#fff;max-width:310px;padding:14px;border-radius:18px;border:2px solid #5f9384}
+.mfa-qr{width:100%;max-width:275px;aspect-ratio:1;display:block}
+#account-mfa-code{font-size:18px;font-weight:800;letter-spacing:.13em}
+#mfa-setup-secret{font:750 13px/1.4 ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.09em}
+#mfa-recovery-codes{font:700 13px/1.75 ui-monospace,Consolas,monospace;background:#f8f5e8;color:#203b46;border:2px solid #9abeb0;border-radius:12px;padding:12px;max-width:100%;width:100%;box-sizing:border-box;resize:vertical}
+html[data-ninja-theme=dark] .account-mfa-security{background:#253b48;border-color:#547d70}
+html[data-ninja-theme=dark] .account-mfa-security strong,
+html[data-ninja-theme=dark] .account-mfa-security h3{color:#d9f3e0}
+html[data-ninja-theme=dark] .account-mfa-security #account-mfa-status{color:#c4dfd3}
+html[data-ninja-theme=noir] .account-mfa-security{background:#27262c;border-color:#a69a80}
+html[data-ninja-theme=noir] .account-mfa-security strong,
+html[data-ninja-theme=noir] .account-mfa-security h3{color:#f6dcab}
+html[data-ninja-theme=noir] .account-mfa-security #account-mfa-status{color:#e3dacb}
+.home-auth-state{grid-column:1/-1;color:#277c63;font-size:13px;font-weight:850;padding:8px 12px;border-radius:10px;background:#dff4e8}
+html[data-ninja-theme=dark] .home-auth-state,html[data-ninja-theme=noir] .home-auth-state{color:#e9d5a7;background:#263d42}

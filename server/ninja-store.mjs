@@ -63,6 +63,22 @@ export function createNinjaStore({databasePath=':memory:',now=()=>Date.now()}={}
         );
         CREATE INDEX IF NOT EXISTS ninja_sessions_user ON sessions(user_id,created_at DESC);
         CREATE INDEX IF NOT EXISTS ninja_sessions_expiry ON sessions(expires_at);
+CREATE TABLE IF NOT EXISTS ninja_mfa(
+ user_id TEXT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+ secret TEXT NOT NULL,
+ enabled INTEGER NOT NULL DEFAULT 0 CHECK(enabled IN (0,1)),
+ pending_until INTEGER NOT NULL DEFAULT 0,
+ last_step INTEGER NOT NULL DEFAULT -1,
+ recovery_hashes TEXT NOT NULL DEFAULT '[]'
+);
+CREATE TABLE IF NOT EXISTS ninja_mfa_challenges(
+ challenge_hash TEXT PRIMARY KEY,
+ user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+ created_at INTEGER NOT NULL,
+ expires_at INTEGER NOT NULL,
+ attempts INTEGER NOT NULL DEFAULT 0 CHECK(attempts BETWEEN 0 AND 5)
+);
+CREATE INDEX IF NOT EXISTS ninja_mfa_challenge_user ON ninja_mfa_challenges(user_id);
       `);
       const expected={
         users:['id','username','username_key','password_hash','recovery_hash','created_at'],
@@ -80,6 +96,7 @@ export function createNinjaStore({databasePath=':memory:',now=()=>Date.now()}={}
       db.exec('CREATE UNIQUE INDEX IF NOT EXISTS ninja_users_email ON users(email) WHERE email IS NOT NULL;');
       db.prepare('INSERT OR IGNORE INTO ninja_auth_migrations(version,applied_at) VALUES(?,?)').run(1,timestamp());
       db.prepare('INSERT OR IGNORE INTO ninja_auth_migrations(version,applied_at) VALUES(?,?)').run(2,timestamp());
+      db.prepare('INSERT OR IGNORE INTO ninja_auth_migrations(version,applied_at) VALUES(?,?)').run(3,timestamp());
     });
   }catch(error){db.close();throw error;}
 

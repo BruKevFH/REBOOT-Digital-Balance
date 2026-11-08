@@ -1,0 +1,183 @@
+/* Notification Ninja Worldmap V2 — cohesive adventure UI.
+   This file comes after legend-ui.css and intentionally overrides legacy cards. */
+.legend-dojos-panel{width:min(1260px,calc(100vw - 24px))!important}
+.worlds-hub{color:var(--ar-ink);padding:2px}
+.worlds-hub-intro{padding:22px 14px 24px;text-align:center}
+.worlds-hub-intro .legend-kicker{color:var(--ar-accent)}
+.worlds-hub-intro h3{font-size:clamp(29px,4vw,43px);margin:8px 0;color:var(--ar-ink)}
+.worlds-hub-intro p{color:var(--ar-muted);max-width:640px;margin:0 auto;line-height:1.7}
+.worlds-hub-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:17px;margin:0 0 18px}
+.worlds-hub-card{display:block!important;background:transparent!important;border:0!important;border-radius:24px!important;overflow:visible!important;box-shadow:none!important}
+.worlds-hub-entry{position:relative;display:flex;flex-direction:column;overflow:hidden;width:100%;height:450px;cursor:pointer;text-align:left;padding:0;border:3px solid #79b6a0;border-radius:23px;background:#f5f4e8;box-shadow:0 8px 0 #588875,0 18px 24px #153e4933;transition:transform .22s,box-shadow .22s}
+.worlds-hub-entry:hover{transform:translateY(-7px);box-shadow:0 13px 0 #588875,0 21px 31px #153e4940}
+.worlds-hub-entry:focus-visible,.world-inside-actions button:focus-visible{outline:4px solid #eec574;outline-offset:5px}
+.worlds-hub-art{display:block;position:relative;width:100%;height:76%;overflow:hidden;flex:1;background:#c9dfd4}
+.worlds-hub-art:after{content:"";position:absolute;inset:30% 0 0;background:linear-gradient(180deg,transparent 0,#111c38a1 100%);pointer-events:none}
+.worlds-hub-art img{width:100%;height:100%;object-fit:cover;object-position:center;transition:transform .5s ease}
+.worlds-hub-entry:hover .worlds-hub-art img{transform:scale(1.075)}
+.worlds-hub-info{display:flex;flex-direction:column;gap:5px;min-height:150px;padding:15px 20px 17px;background:#ecf6e9;color:#273c49}
+.worlds-hub-card.legend-dojo-gaming .worlds-hub-info{background:#e9def5}
+.worlds-hub-card.legend-dojo-sleep .worlds-hub-info{background:#e3e8fc}
+.worlds-hub-info .legend-kicker{font-size:10px;color:#2e7e70}
+.worlds-hub-card.legend-dojo-gaming .legend-kicker{color:#7151a5}
+.worlds-hub-card.legend-dojo-sleep .legend-kicker{color:#4e61ad}
+.worlds-hub-info strong{font-size:clamp(22px,2.3vw,27px);color:#233448}
+.worlds-hub-info small{font-size:12px;color:#60717a}
+.worlds-hub-open{display:flex;justify-content:space-between;align-items:center;margin-top:auto;color:#216f64;font-weight:900;font-size:12px}
+.worlds-hub-card.legend-dojo-gaming .worlds-hub-entry{border-color:#a591dd;box-shadow:0 8px 0 #7461a5,0 18px 25px #392a6733}
+.worlds-hub-card.legend-dojo-sleep .worlds-hub-entry{border-color:#98a8de;box-shadow:0 8px 0 #6a7ca9,0 18px 25px #31396733}
+.worlds-hub-number{position:absolute;z-index:3;left:15px;top:15px;display:grid;place-items:center;width:46px;height:46px;background:#fff7df;border:3px solid #2a5965;border-radius:50%;color:#34505a;font-size:21px;font-weight:950}
+.worlds-world-glimmer{position:absolute;z-index:2;top:25%;right:12%;font-size:27px;color:#fff0ad;letter-spacing:20px;text-shadow:0 0 19px #fff4ab;animation:worlds-glimmer 5s ease-in-out infinite}
+.legend-dojo-gaming .worlds-world-glimmer{color:#ffe0ff}
+.legend-dojo-sleep .worlds-world-glimmer{color:#e4e6ff;animation-duration:8s}
+.worlds-mentor-note{display:flex;align-items:center;gap:14px;background:var(--ar-surface);border:1px solid var(--ar-border);border-radius:16px;padding:15px 19px}
+.worlds-mentor-face{display:grid;place-items:center;flex:0 0 45px;width:45px;height:45px;border:2px solid #94c4ac;border-radius:14px;background:#2b7774;color:#ffe9ae;font-size:24px}
+.worlds-mentor-note strong{color:var(--ar-ink);font-size:13px}
+.worlds-mentor-note p{margin:4px 0 0;color:var(--ar-muted);font-size:12px;line-height:1.6}
+.world-detail-panel{width:min(1140px,calc(100vw - 24px))!important}
+.world-inside{display:grid;grid-template-columns:1.2fr 1fr;gap:0;overflow:hidden;border-radius:23px;background:var(--ar-panel);border:1px solid var(--ar-border);box-shadow:0 13px 35px #12203e22}
+.world-inside-scene{position:relative;min-height:505px;overflow:hidden;background:#35506a}
+.world-inside-scene img{display:block;width:100%;height:100%;object-fit:cover;position:absolute;inset:0;animation:worlds-breathe 17s ease-in-out infinite alternate}
+.world-inside-sleep .world-inside-scene img{animation-duration:25s}
+.world-inside-gaming .world-inside-scene img{animation-duration:13s}
+.world-inside-particles{position:absolute;z-index:2;right:12%;top:9%;color:#ffeabd;font-size:40px;letter-spacing:30px;text-shadow:0 0 18px #fff3cd;animation:worlds-glimmer 6s ease-in-out infinite}
+.world-inside-name{position:absolute;left:20px;bottom:18px;display:grid;place-items:center;width:60px;height:60px;border-radius:18px;border:2px solid #f8db9d;background:#203950b8;color:#ffe9af;font-size:33px}
+.world-inside-story{padding:clamp(20px,3vw,40px);display:flex;flex-direction:column;justify-content:center}
+.world-inside-story .legend-kicker{color:var(--ar-accent)}
+.world-inside-story h3{font-size:clamp(26px,3vw,39px);line-height:1.16;letter-spacing:-.05em;color:var(--ar-ink);margin:12px 0}
+.world-inside-story>p{font-size:13px;line-height:1.8;color:var(--ar-muted);margin:0 0 22px}
+.world-inside-cues{display:grid;gap:9px;padding:13px 15px;border-radius:14px;border:1px solid var(--ar-border);background:var(--ar-surface);font-size:12px;color:var(--ar-ink)}
+.world-inside-cues strong{font-size:12px}
+.world-inside-cues span span{color:#1c9777;font-weight:950}
+.world-inside-nim{display:flex;align-items:center;gap:12px;margin:18px 0 18px;padding:12px 14px;border-left:4px solid #3f9d82;background:var(--ar-surface);border-radius:12px}
+.world-inside-nim>span{font-size:29px;color:var(--ar-accent)}
+.world-inside-nim p{font-size:12px;line-height:1.6;margin:0;color:var(--ar-ink)}
+.world-inside-nim strong{display:block;color:var(--ar-accent)}
+.world-inside-actions{display:flex;gap:10px;flex-wrap:wrap}
+.world-inside-actions>.legend-button{flex:1}
+.world-inside-sleep .world-inside-cues{background:#dce4f5;color:#283b61}
+.world-inside-gaming .world-inside-cues{background:#e6e1f2;color:#39355e}
+.world-inside-sleep .world-inside-nim{background:#dce4f5}
+.world-inside-gaming .world-inside-nim{background:#e6e1f2}
+.world-inside-sleep .world-inside-nim p,.world-inside-gaming .world-inside-nim p{color:#343c65}
+html[data-ninja-theme=dark] .world-inside-cues,html[data-ninja-theme=noir] .world-inside-cues{background:var(--ar-surface);color:var(--ar-ink)}
+html[data-ninja-theme=dark] .world-inside-nim,html[data-ninja-theme=noir] .world-inside-nim{background:var(--ar-surface)}
+html[data-ninja-theme=dark] .world-inside-nim p,html[data-ninja-theme=noir] .world-inside-nim p{color:var(--ar-ink)}
+/* A single large illustrated campaign landscape rather than competing narrow panels. */
+html[data-ninja-theme] .legend-career-panel{width:min(1350px,calc(100vw - 24px))!important}
+.legend-career-body{display:flex!important;flex-direction:column;gap:14px!important;position:relative}
+.legend-career-route{width:100%;min-width:0}
+.legend-career-route .legend-career-help{display:flex;align-items:center;margin:0 0 13px;border:1px solid var(--ar-border);background:var(--ar-surface);color:var(--ar-ink)}
+.legend-map-chapter.campaign-region{overflow:hidden;background:#ddf0df;border:3px solid #8aaea0;border-radius:25px!important;margin:0 0 6px!important;box-shadow:0 12px 32px #1b324133}
+.campaign-region .legend-chapter-cover{height:120px;min-height:120px;padding:13px 24px}
+.campaign-region .legend-chapter-cover>img{object-position:center 50%}
+.campaign-region .legend-chapter-counter{color:#ffe4a0}
+.campaign-region .legend-trail-track{height:630px;min-width:0;position:relative;background:#d9e8d0!important;overflow:hidden}
+.campaign-region-art{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 50%;z-index:0;opacity:.95;pointer-events:none}
+.campaign-region .legend-trail-track::before{z-index:1;inset:0;opacity:.65;background:linear-gradient(180deg,#091f3512,#16283c3a 56%,#1626404d)}
+.campaign-region .legend-map-lines{z-index:2;position:absolute;width:100%;height:100%;pointer-events:none;overflow:visible}
+.campaign-region .legend-map-path-back{stroke:#263f64;stroke-width:2.2;stroke-dasharray:2.8 1.3;opacity:.9;filter:drop-shadow(0 0 1px #fff)}
+.campaign-region .legend-map-path-front{stroke:#fff8cf;stroke-width:.65;stroke-dasharray:3 5;opacity:1}
+.campaign-region .legend-map-node{z-index:4!important;width:clamp(110px,14vw,150px)}
+.campaign-region .legend-node-orb{height:66px;width:66px}
+.campaign-region .legend-node-name{font-size:11px;line-height:1.2;padding:7px;background:#fff7df;border:2px solid #435973;box-shadow:0 4px 0 #536170}
+.campaign-region .legend-map-node.is-selected .legend-node-orb{outline-offset:4px}
+.campaign-region .legend-map-node.is-available .legend-node-orb{border-color:#fff0a5;background:linear-gradient(135deg,#3bbb91,#19796e)}
+.campaign-region .legend-map-bottom{z-index:2;color:#fff8cf;text-shadow:0 2px 7px #102d4b;font-size:11px;bottom:10px}
+.campaign-region .arcade-map-traveler{z-index:6}
+.campaign-map-clouds{position:absolute;top:9%;left:25%;z-index:2;font-size:27px;letter-spacing:7vw;color:#fffde2;opacity:.75;text-shadow:0 2px 15px #e4f7e7;pointer-events:none;animation:worlds-glimmer 8s ease-in-out infinite}
+.legend-career-hero{display:flex;min-height:130px!important;margin-bottom:10px!important}
+.legend-career-hero h3{font-size:clamp(27px,3.8vw,39px)!important}
+.legend-career-side{position:sticky!important;bottom:12px!important;z-index:14;order:2;width:min(100%,900px);margin:-100px auto 15px!important;filter:drop-shadow(0 7px 15px #12263e55)}
+.legend-career-side .legend-mission-inspector{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(120px,1fr);gap:7px 23px;align-items:center;padding:15px 22px;border-radius:17px;background:linear-gradient(115deg,#173e4a,#20314c);border:2px solid #83c9b7}
+.legend-career-side .legend-mission-inspector .legend-kicker{grid-column:1/-1;font-size:9px}
+.legend-career-side .legend-inspector-emblem{display:none}
+.legend-career-side .legend-mission-state{grid-column:1;justify-self:start}
+.legend-career-side .legend-mission-inspector h3{grid-column:1;grid-row:3;margin:0;font-size:23px}
+.legend-career-side .legend-mission-inspector>p:not(.legend-inspector-tip){grid-column:1;grid-row:4;margin:0;font-size:11px;line-height:1.5}
+.legend-career-side .legend-inspector-line{grid-column:2;grid-row:3;margin:0;align-self:center;gap:5px}
+.legend-career-side .legend-meter{grid-column:2;grid-row:4}
+.legend-career-side .legend-mission-requirement{grid-column:2;grid-row:5;margin:0;font-size:10px}
+.legend-career-side .legend-inspector-actions{grid-column:2;grid-row:2;align-self:center}
+.legend-career-side .legend-inspector-actions .legend-button{min-height:44px}
+.legend-career-side .legend-inspector-tip{display:none}
+.legend-career-side .legend-ready-brief{display:none}
+.legend-extra-challenges{margin-bottom:16px}
+.legend-boss-route{margin-top:20px}
+@keyframes worlds-glimmer{0%,100%{opacity:.35;transform:translateY(0)}50%{opacity:1;transform:translateY(-9px)}}
+@keyframes worlds-breathe{from{transform:scale(1)}to{transform:scale(1.065) translateY(-5px)}}
+@media(max-width:850px){
+ .worlds-hub-grid{grid-template-columns:1fr 1fr;gap:12px}
+ .worlds-hub-entry{height:390px}
+ .world-inside{grid-template-columns:1fr}
+ .world-inside-scene{min-height:350px;height:350px}
+ .world-inside-scene img{position:relative}
+ .legend-career-side{margin:-40px auto 15px!important}
+ .campaign-region .legend-trail-track{height:630px}
+}
+@media(max-width:570px){
+ .worlds-hub-grid{grid-template-columns:1fr}
+ .worlds-hub-entry{height:365px}
+ .worlds-hub-art{height:230px}
+ .worlds-hub-info{min-height:130px}
+ .world-inside-scene{min-height:260px;height:260px}
+ .world-inside-story{padding:19px}
+ .worlds-hub-intro{padding:10px 0 22px}
+ .campaign-region .legend-chapter-cover{height:115px;min-height:115px;padding:10px}
+ .campaign-region .legend-chapter-crest{display:none}
+ .campaign-region .legend-chapter-cover h3{font-size:21px}
+ .campaign-region .legend-trail-track{height:630px}
+ .campaign-region .legend-map-node{width:100px}
+ .campaign-region .legend-node-name{font-size:9px}
+ .campaign-region .legend-node-orb{width:56px;height:56px}
+ .campaign-region .legend-map-node.is-finale .legend-node-orb{width:64px;height:64px}
+ .legend-career-side{bottom:0!important;width:100%;margin:-5px auto 6px!important}
+ .legend-career-side .legend-mission-inspector{grid-template-columns:1fr 1fr;gap:5px;padding:12px 13px;border-radius:15px}
+ .legend-career-side .legend-mission-inspector h3{font-size:16px}
+ .legend-career-side .legend-mission-inspector>p:not(.legend-inspector-tip){display:none}
+ .legend-career-side .legend-inspector-line{font-size:10px}
+ .legend-career-side .legend-mission-requirement{grid-column:1/-1;grid-row:auto}
+ .legend-career-side .legend-inspector-actions .legend-button{font-size:11px}
+ .legend-career-hero{min-height:125px}
+}
+@media(prefers-reduced-motion:reduce){
+ .worlds-world-glimmer,.world-inside-scene img,.world-inside-particles,.campaign-map-clouds{animation:none!important}
+ .worlds-hub-entry:hover,.worlds-hub-entry:hover .worlds-hub-art img{transform:none!important}
+}
+.calm-view .worlds-world-glimmer,.calm-view .world-inside-scene img,.calm-view .world-inside-particles,.calm-view .campaign-map-clouds{animation:none!important}
+
+
+/* Panoramic world selector: one bridge connects the three campaign chapters. */
+.campaign-overworld{position:relative;overflow:hidden;border:3px solid #7aab9f;border-radius:25px;background:linear-gradient(170deg,#b3e4ed,#faf0cf 65%,#aed9a6);box-shadow:0 11px 28px #173a4a33;margin:0 0 18px;padding:17px}
+.campaign-overworld-head{text-align:center;display:flex;align-items:center;flex-direction:column;gap:6px;color:#26495c;position:relative;z-index:2}
+.campaign-overworld-head .legend-kicker{color:#287c67}
+.campaign-overworld-head strong{font-size:clamp(22px,3.5vw,36px);line-height:1.15;letter-spacing:-.04em}
+.campaign-overworld-head small{font-size:12px;color:#486e6b}
+.campaign-overworld-vistas{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;align-items:center;min-height:330px;padding:28px 9px 35px}
+.campaign-overworld-road{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1;filter:drop-shadow(0 3px 1px #fff7db)}
+.campaign-overworld-landmark{position:relative;z-index:2;display:flex;flex-direction:column;align-items:stretch;min-width:0;height:246px;padding:0;border:3px solid #477a77;border-radius:24px;box-shadow:0 8px 0 #276c67,0 12px 18px #253c5255;overflow:hidden;background:#f6efce;cursor:pointer;transition:transform .2s,box-shadow .2s}
+.campaign-overworld-landmark:hover{transform:translateY(-7px);box-shadow:0 13px 0 #276c67,0 18px 23px #253c5266}
+.campaign-overworld-landmark:focus-visible{outline:4px solid #ffdd85;outline-offset:3px}
+.campaign-overworld-landmark>img{height:185px;width:100%;object-fit:cover}
+.campaign-landmark-title{display:flex;flex-direction:column;justify-content:center;gap:4px;background:#fef6dc;padding:10px 13px;min-height:61px;color:#263b53}
+.campaign-landmark-title strong{font-size:clamp(14px,1.65vw,19px)}
+.campaign-landmark-title small{font-size:11px;color:#507068}
+.campaign-landmark-pin{position:absolute;top:11px;right:11px;display:grid;place-items:center;width:38px;height:38px;border:2px solid #ffe5a9;border-radius:13px;background:#234b56dd;color:#fff1c4;font-size:23px}
+.campaign-overworld-gaming{border-color:#8873bd;box-shadow:0 8px 0 #655695,0 12px 18px #253c5255}
+.campaign-overworld-sleep{border-color:#7f93c4;box-shadow:0 8px 0 #5a719d,0 12px 18px #253c5255}
+.campaign-overworld-guide{position:relative;z-index:2;display:flex;gap:12px;align-items:center;padding:13px 17px;background:#fff9e7;border:1px solid #b2d0b7;border-radius:13px;color:#3d5459}
+.campaign-overworld-guide>span{display:grid;place-items:center;width:42px;height:42px;flex:0 0 42px;border-radius:14px;background:#237c70;color:#ffe5a4;font-size:24px}
+.campaign-overworld-guide p{font-size:12px;line-height:1.6;margin:0}
+.campaign-region{scroll-margin-top:86px}
+html[data-ninja-theme=dark] .campaign-overworld,html[data-ninja-theme=noir] .campaign-overworld{background:linear-gradient(160deg,#25384f,#31495a 58%,#333952)}
+html[data-ninja-theme=dark] .campaign-overworld-head,html[data-ninja-theme=noir] .campaign-overworld-head{color:#f8e9c1}
+html[data-ninja-theme=dark] .campaign-overworld-head small,html[data-ninja-theme=noir] .campaign-overworld-head small{color:#d9e4d6}
+html[data-ninja-theme=noir] .campaign-overworld-landmark>img{filter:grayscale(.9)}
+@media(max-width:680px){
+ .campaign-overworld-vistas{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;min-height:260px;padding:25px 8px 20px}
+ .campaign-overworld-landmark{flex:0 0 min(78vw,275px);height:225px;scroll-snap-align:center}
+ .campaign-overworld-landmark>img{height:160px}
+ .campaign-overworld-road{display:none}
+ .campaign-overworld-head strong{font-size:23px}
+ .campaign-overworld-guide p{font-size:11px}
+}

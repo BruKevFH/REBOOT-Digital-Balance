@@ -1,7 +1,7 @@
 const SCOPE=new URL(self.registration.scope);
 const PREFIX=`notification-ninja:${SCOPE.pathname}:`;
-const CACHE=`${PREFIX}3.3.0`;
-const ASSETS=['./','./index.html','./home.html','./styles.css','./focus-ui.css','./focus-home.css','./legend-ui.css','./legend-home.css','./dist/ninja.js','./dist/home.js','./dist/build.json','./leaderboard-config.json','./accounts-config.json','./manifest.webmanifest','./favicon.svg','./assets/dojo-study.png','./assets/dojo-gaming.svg','./assets/dojo-sleep.png','./assets/focus-village.png','./branding/Notification-Ninja-Logo.png'];
+const CACHE=`${PREFIX}3.4.0`;
+const ASSETS=['./','./index.html','./home.html','./styles.css','./focus-ui.css','./focus-home.css','./legend-ui.css','./worlds-v2.css','./ux-v2.css','./legend-home.css','./dist/ninja.js','./dist/home.js','./dist/build.json','./leaderboard-config.json','./accounts-config.json','./manifest.webmanifest','./favicon.svg','./assets/dojo-study.png','./assets/dojo-gaming.svg','./assets/dojo-sleep.png','./assets/focus-village.png','./assets/dojo-study-v2.svg','./assets/dojo-gaming-v2.svg','./assets/dojo-sleep-v2.svg','./branding/Notification-Ninja-Logo.png'];
 const NAVIGATION=new Map([
   [SCOPE.pathname,'./index.html'],
   [new URL('./index.html',SCOPE).pathname,'./index.html'],

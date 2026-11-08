@@ -9,7 +9,7 @@ if(!['localhost','127.0.0.1','[::1]'].includes(new URL(base).hostname))throw Err
 const output=path.resolve(process.env.NINJA_TEST_OUTPUT||'test-results/ninja-portal');
 const version=JSON.parse(fs.readFileSync(path.join(__dirname,'../notification-ninja/dist/build.json'))).version;
 const read=p=>p.evaluate(()=>window.__NOTIFICATION_NINJA__.getSnapshot());
-async function ready(p){await p.waitForFunction(v=>window.__NOTIFICATION_NINJA__?.getSnapshot().version===v,version);}
+async function ready(p){try{await p.waitForFunction(v=>window.__NOTIFICATION_NINJA__?.getSnapshot().version===v,version,{timeout:15000});}catch(error){const diagnosis=await p.evaluate(()=>({url:location.href,loading:document.readyState,error:document.querySelector('#loading-status')?.textContent,snapshot:Boolean(window.__NOTIFICATION_NINJA__),scripts:[...document.scripts].map(s=>s.src)}));console.error('NINJA_BOOT_DIAGNOSTIC',JSON.stringify(diagnosis));throw error;}}
 async function checkNewModes(p,practice,width){
  await p.locator('.dojo-tabs [data-game-route="modes"]').click();
  await p.locator('[data-mode-start="daily"]').click();
@@ -132,9 +132,17 @@ async function acknowledge(p){for(let n=0;n<20&&(await read(p)).mentor.open;n++)
       await page.locator('.dojo-tabs [data-game-route="dojos"]').click();await acknowledge(page);
       assert.equal((await read(page)).ui,'dojos','Dojo navigation opens illustrated worlds');
       assert.equal(await page.locator('.legend-dojo').count(),3,'Three real themed worlds');
-      assert.equal(await page.locator('.legend-dojo [data-quick-context]').count(),3);
-      await page.locator('.legend-dojo [data-game-route="campaign"]').first().click();await acknowledge(page);
-      assert.equal((await read(page)).ui,'career','Dojo route opens campaign');
+      assert.equal(await page.locator('.legend-dojo [data-world-enter]').count(),3);
+      assert.equal(await page.locator('.legend-dojo [data-game-route="campaign"]').count(),0,'Dojo worlds must not navigate into campaign');
+      await page.locator('.legend-dojo [data-world-enter="sleep"]').click();await acknowledge(page);
+      assert.equal((await read(page)).ui,'world','World detail is not a campaign mission');
+      assert.equal(await page.locator('.world-inside-sleep [data-quick-context="sleep"]').count(),1);
+      await page.locator('.panel-back').click();
+      await page.waitForFunction(()=>window.__NOTIFICATION_NINJA__.getSnapshot().ui==='dojos');await acknowledge(page);
+      await page.locator('.panel-home').click();await acknowledge(page);
+      assert.equal((await read(page)).ui,'home');
+      await page.locator('.dojo-tabs [data-game-route="campaign"]').click();await acknowledge(page);
+      assert.equal((await read(page)).ui,'career','Campaign is a separate primary hub route');
       assert.equal(await page.locator('.legend-map-node').count(),18);
       assert.equal(await page.locator('.legend-boss-node').count(),3);
       await page.locator('[data-mission-inspect="study-02"]').click();await acknowledge(page);

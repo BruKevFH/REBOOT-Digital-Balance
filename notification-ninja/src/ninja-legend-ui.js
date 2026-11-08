@@ -54,45 +54,64 @@ export function legendaryModes({account=false}={}){
  </div>`;
 }
 
-export function legendaryDojos({missions=[],worlds=[]}={}){
- const chaptersHtml=['study','gaming','sleep'].map((id,i)=>{
-  const c=chapters[id],group=missions.filter(m=>m.section==='main'&&m.chapter===id),done=group.filter(m=>m.completed).length,open=worlds.includes(id)||id==='study';
-  const next=group.find(m=>m.available&&!m.completed);
-  return `<article class="legend-dojo legend-dojo-${id}">
-  <div class="legend-dojo-scene"><img src="${c.art}" alt="" loading="lazy"><span class="legend-dojo-seal" aria-hidden="true">${c.symbol}</span><span class="legend-dojo-order">KAPITEL ${String(i+1).padStart(2,'0')}</span></div>
-  <div class="legend-dojo-story"><span class="legend-kicker">${c.label} · ${c.subtitle}</span><h3>${c.name}</h3><p>${c.text}</p>
-    <div class="legend-dojo-progress"><span>${done} / ${group.length} Missionen geschafft</span><strong>${group.length?Math.round(100*done/group.length):0}%</strong></div>
-    <div class="legend-meter" role="progressbar" aria-label="Fortschritt ${c.name}" aria-valuemin="0" aria-valuemax="${group.length}" aria-valuenow="${done}"><span style="width:${group.length?Math.round(100*done/group.length):0}%"></span></div>
-    <small class="legend-dojo-unlock">${open?'Karriere-Kapitel erreichbar':'Karriere-Kapitel noch gesperrt'} · Kurzrunde jederzeit frei</small>
-    <div class="legend-dojo-actions"><button class="legend-button legend-button-primary" data-quick-context="${id}">Kurzrunde spielen <span aria-hidden="true">→</span></button><button class="legend-button legend-button-subtle" data-game-route="campaign">${next?'Zur Mission':'Karrierekarte'} <span aria-hidden="true">↗</span></button></div>
-  </div></article>`;
- }).join('');
- return `<div class="legend-dojos">
-  <header class="legend-screen-intro"><span class="legend-kicker">DIE DREI WEGE DES FOKUS</span><p class="legend-stroke">忍</p><h3>Betritt deine Dojos</h3><p>Jede Welt ist eine eigene Geschichte. Kurzrunden sind frei; die Karriere schaltest du Kapitel für Kapitel frei.</p></header>
-  <div class="legend-dojos-grid">${chaptersHtml}</div>
-  <aside class="legend-master-island"><span class="legend-master-icon" aria-hidden="true">龍</span><div><span class="legend-kicker">DER WEG ZUM MEISTER</span><strong>Shogun-Pfad & Bonusbosse</strong><p>Die drei besonderen Bosse sind zusätzliche Herausforderungen. Ihre echten Freischaltbedingungen findest du auf der Karrierekarte.</p></div><button class="legend-button legend-button-gold" data-game-route="campaign">Karte erkunden →</button></aside>
+export const WORLD_DETAILS=Object.freeze({
+ study:{title:'Lern-Dojo',subtitle:'Tal des Fokus',tag:'RUHIGER TAG',art:'./assets/dojo-study-v2.svg',symbol:'文',
+  story:'Zwischen Bambus und Wasser lernst du, Benachrichtigungen bewusst auszuwählen. Hier zählt dein Ziel – nicht der lauteste Hinweis.',
+  cues:['Fokus behalten','Wichtige Informationen erkennen','Bewusst Pausen einplanen'],
+  mentor:'Nicht alles ist dringend. Entscheide erst, was dir gerade wirklich wichtig ist.',
+  start:'Lernrunde starten'},
+ gaming:{title:'Gaming-Dojo',subtitle:'Die Arcade-Nacht',tag:'LEUCHTENDES VIERTEL',art:'./assets/dojo-gaming-v2.svg',symbol:'遊',
+  story:'Arcade-Lichter, Team-Einladungen und ein Abenteuer, das immer weitergeht: Im Gaming-Dojo trainierst du faire Grenzen und bewusste Pausen.',
+  cues:['Gemeinsame Zeit gestalten','Autoplay durchschauen','Eigene Grenzen setzen'],
+  mentor:'Ein gutes Match darf Spaß machen. Du entscheidest, wann der nächste Tag beginnt.',
+  start:'Gamingrunde starten'},
+ sleep:{title:'Schlaf-Dojo',subtitle:'Mondtempel der Ruhe',tag:'STILLE STERNENNACHT',art:'./assets/dojo-sleep-v2.svg',symbol:'月',
+  story:'Unter einem ruhigen Mond löst du dich vom nächsten Video und findest den passenden Moment zum Aufhören. Dieses Dojo ist bewusst langsamer und stiller.',
+  cues:['Abendrituale entwickeln','Autoplay stoppen','Ruhe und Schlaf schützen'],
+  mentor:'Die schönste Technik am Abend ist manchmal, den Bildschirm bewusst auszuschalten.',
+  start:'Schlafrunde starten'}
+});
+export function legendaryDojos(){
+ return `<div class="legend-dojos worlds-hub">
+ <header class="worlds-hub-intro"><span class="legend-kicker">DEIN EIGENER ORT · DREI STIMMUNGEN</span><h3>Entdecke deine Spielwelten.</h3><p>Jedes Dojo ist ein eigenständiger Themenraum mit einer eigenen Kurzrunde. Deine Karriere findest du separat in der Abenteuerkarte.</p></header>
+ <div class="worlds-hub-grid">${['study','gaming','sleep'].map((id,i)=>{const c=WORLD_DETAILS[id];return `<article class="legend-dojo legend-dojo-${id} worlds-hub-card">
+ <button type="button" class="worlds-hub-entry" data-world-enter="${id}" aria-label="${c.title} betreten">
+ <span class="worlds-hub-art"><img src="${c.art}" alt="" loading="lazy"><span class="worlds-world-glimmer" aria-hidden="true">✦ ✧</span><span class="worlds-hub-number">${String(i+1).padStart(2,'0')}</span></span>
+ <span class="worlds-hub-info"><span class="legend-kicker">${c.tag}</span><strong>${c.title}</strong><small>${c.subtitle}</small><span class="worlds-hub-open">Welt betreten <span aria-hidden="true">➜</span></span></span>
+ </button></article>`}).join('')}</div>
+ <aside class="worlds-mentor-note"><span class="worlds-mentor-face" aria-hidden="true">忍</span><div><strong>NIM · Wähle deine Stimmung.</strong><p>Du kannst jedes Dojo sofort erkunden. Die Themenrunden sind eigenständig; für die 18 Karriere-Missionen gibt es einen eigenen Bereich.</p></div></aside>
  </div>`;
 }
-
-const xs=[22,57,81,59,24,52],ys=[83,205,327,449,571,693];
+export function legendaryWorldDetail(id){
+ const c=WORLD_DETAILS[id];if(!c)return '';
+ return `<div class="world-inside world-inside-${id}">
+ <div class="world-inside-scene"><img src="${c.art}" alt="" loading="eager"><span class="world-inside-particles" aria-hidden="true">✧ ✦ ✧</span><span class="world-inside-name">${c.symbol}</span></div>
+ <div class="world-inside-story"><span class="legend-kicker">${c.tag} · ${c.subtitle}</span><h3>Willkommen im ${c.title}!</h3><p>${c.story}</p>
+ <div class="world-inside-cues"><strong>Hier lernst du:</strong>${c.cues.map(x=>`<span><span aria-hidden="true">✦</span> ${x}</span>`).join('')}</div>
+ <div class="world-inside-nim"><span aria-hidden="true">忍</span><p><strong>Sensei NIM</strong> „${c.mentor}“</p></div>
+ <div class="world-inside-actions"><button type="button" class="legend-button legend-button-primary" data-quick-context="${id}">${c.start} <span aria-hidden="true">➜</span></button><button type="button" class="legend-button legend-button-subtle" data-world-practice="${id}">Ohne Zeitdruck üben</button></div>
+ </div></div>`;
+}
+const xs=[15,36,66,85,66,36],ys=[70,169,268,367,466,565];
 function trail(){
  let d=`M ${xs[0]} ${ys[0]}`;
  for(let i=1;i<xs.length;i++){const mid=(ys[i-1]+ys[i])/2;d+=` C ${xs[i-1]} ${mid}, ${xs[i]} ${mid}, ${xs[i]} ${ys[i]}`;}
- return `<svg class="legend-map-lines" viewBox="0 0 100 760" preserveAspectRatio="none" aria-hidden="true"><path class="legend-map-path-back" d="${d}"/><path class="legend-map-path-front" d="${d}"/></svg>`;
+ return `<svg class="legend-map-lines" viewBox="0 0 100 630" preserveAspectRatio="none" aria-hidden="true"><path class="legend-map-path-back" d="${d}"/><path class="legend-map-path-front" d="${d}"/></svg>`;
 }
 function chapterMap(missions,id,index,selectedId){
- const c=chapters[id],group=missions.filter(m=>m.section==='main'&&m.chapter===id),completed=group.filter(m=>m.completed).length;
+ const c=WORLD_DETAILS[id],group=missions.filter(m=>m.section==='main'&&m.chapter===id),completed=group.filter(m=>m.completed).length;
  const nodes=group.map((m,i)=>{
-   const status=m.completed?'is-complete':m.available?'is-available':'is-locked';
-   return `<button type="button" class="legend-map-node ${status} ${m.id===selectedId?'is-selected':''} ${i===5?'is-finale':''}" style="--node-x:${xs[i]}%;--node-y:${ys[i]}px" data-mission-inspect="${esc(m.id)}" aria-label="Mission ${m.order}: ${esc(m.title)} – ${m.completed?'Abgeschlossen':m.available?'Spielbar':'Gesperrt'}" aria-pressed="${m.id===selectedId}">
-    <span class="legend-node-orb"><span class="legend-node-glyph" aria-hidden="true">${m.completed?'✓':i===5?'✦':String(m.order).padStart(2,'0')}</span></span>
-    <span class="legend-node-name">${esc(m.title)}</span>
-    ${m.completed&&!m.claimed?'<span class="legend-node-reward">● Belohnung</span>':''}
-   </button>`;
- }).join('');
- return `<section class="legend-map-chapter legend-chapter-${id}" aria-labelledby="legend-chapter-title-${id}">
-  <div class="legend-chapter-cover"><img src="${c.art}" alt="" loading="lazy"><span class="legend-chapter-crest" aria-hidden="true">${c.symbol}</span><div><small>KAPITEL ${String(index+1).padStart(2,'0')} · ${c.subtitle}</small><h3 id="legend-chapter-title-${id}">${c.name}</h3><p>${esc(c.hint)}</p></div><span class="legend-chapter-counter">${completed}<small>/ ${group.length}</small></span></div>
-  <div class="legend-trail-track">${trail()}${nodes}<span class="arcade-map-traveler" style="--traveler-x:${xs[Math.min(completed,5)]}%;--traveler-y:${ys[Math.min(completed,5)]-36}px" aria-hidden="true"><span>忍</span><small>HIER</small></span><span class="legend-map-bottom" aria-hidden="true">◆ ZIEL ERREICHEN ◆</span></div>
+ const status=m.completed?'is-complete':m.available?'is-available':'is-locked';
+ return `<button type="button" class="legend-map-node ${status} ${m.id===selectedId?'is-selected':''} ${i===5?'is-finale':''}" style="--node-x:${xs[i]}%;--node-y:${ys[i]}px" data-mission-inspect="${esc(m.id)}" aria-label="Mission ${m.order}: ${esc(m.title)} – ${m.completed?'Abgeschlossen':m.available?'Spielbar':'Gesperrt'}" aria-pressed="${m.id===selectedId}">
+  <span class="legend-node-orb"><span class="legend-node-glyph" aria-hidden="true">${m.completed?'✓':i===5?'✦':String(m.order).padStart(2,'0')}</span></span>
+  <span class="legend-node-name">${esc(m.title)}</span>${m.completed&&!m.claimed?'<span class="legend-node-reward">● Belohnung</span>':''}
+ </button>`}).join('');
+ return `<section id="campaign-region-${id}" class="legend-map-chapter legend-chapter-${id} campaign-region" aria-labelledby="legend-chapter-title-${id}">
+  <div class="legend-chapter-cover"><img src="${c.art}" alt="" loading="lazy"><span class="legend-chapter-crest" aria-hidden="true">${c.symbol}</span><div><small>WELT ${index+1} · ${c.subtitle}</small><h3 id="legend-chapter-title-${id}">${c.title}</h3><p>Sechs Etappen auf deinem Weg zum Fokus-Ninja.</p></div><span class="legend-chapter-counter">${completed}<small>/ ${group.length}</small></span></div>
+  <div class="legend-trail-track"><img class="campaign-region-art" src="${c.art}" alt="" loading="lazy">
+  <div class="campaign-map-clouds" aria-hidden="true">☁ ✦ ☁</div>${trail()}${nodes}
+  <span class="arcade-map-traveler" style="--traveler-x:${xs[Math.min(completed,5)]}%;--traveler-y:${ys[Math.min(completed,5)]-36}px" aria-hidden="true"><span>忍</span><small>HIER</small></span>
+  <span class="legend-map-bottom" aria-hidden="true">${index<2?'▼ DER WEG GEHT WEITER ▼':'◆ FINALE ◆'}</span></div>
  </section>`;
 }
 function missionDetails(selected,missions){
@@ -114,12 +133,27 @@ function missionDetails(selected,missions){
   <p class="legend-inspector-tip">Tipp: Wähle einen leuchtenden Knoten auf der Karte. Der ausgewählte Weg erscheint hier.</p>
  </aside>`;
 }
+
+function campaignOverworld(missions){
+ const worlds=['study','gaming','sleep'];
+ return `<section class="campaign-overworld" aria-label="Die drei Abenteuerregionen">
+ <div class="campaign-overworld-head"><span class="legend-kicker">DIE GROSSE NINJA-REISE</span><strong>Vom Morgenlicht bis zum Mondtempel</strong><small>Wähle eine Welt, um zu ihren Missionsknoten zu springen.</small></div>
+ <div class="campaign-overworld-vistas">
+   <svg class="campaign-overworld-road" viewBox="0 0 1000 270" preserveAspectRatio="none" aria-hidden="true"><path d="M 105 180 C 230 260, 310 88, 490 168 S 775 250, 890 120" fill="none" stroke="#263d5a" stroke-width="16" stroke-dasharray="19 17" stroke-linecap="round"/><path d="M 105 180 C 230 260, 310 88, 490 168 S 775 250, 890 120" fill="none" stroke="#ffe6a4" stroke-width="5" stroke-dasharray="20 17" stroke-linecap="round"/></svg>
+   ${worlds.map((id,i)=>{const c=WORLD_DETAILS[id],group=missions.filter(m=>m.section==='main'&&m.chapter===id),done=group.filter(m=>m.completed).length;
+   return `<button type="button" class="campaign-overworld-landmark campaign-overworld-${id}" data-campaign-jump="${id}" aria-label="${c.title}, ${done} von ${group.length} Missionen geschafft">
+     <img src="${c.art}" alt="" loading="lazy"><span class="campaign-landmark-title"><strong>${String(i+1)} · ${c.title}</strong><small>${done}/${group.length} Missionen</small></span><span class="campaign-landmark-pin" aria-hidden="true">${c.symbol}</span>
+   </button>`}).join('')}
+  </div><div class="campaign-overworld-guide"><span aria-hidden="true">忍</span><p><strong>NIM:</strong> „Jede Welt hat sechs Missionen. Folge den leuchtenden Knoten und entscheide, wann du den nächsten Weg betrittst.“</p></div>
+ </section>`;
+}
 export function legendaryCareer({missions=[],selectedId=null}={}){
  const main=missions.filter(m=>m.section==='main'),selected=missions.find(m=>m.id===selectedId)||main.find(m=>m.available&&!m.completed)||main[0],
  done=main.filter(m=>m.completed).length,bosses=missions.filter(m=>m.bossId),extras=missions.filter(m=>m.section!=='main'&&!m.bossId),ready=missions.filter(m=>m.completed&&!m.claimed);
  return `<div class="legend-career">
  <header class="legend-career-hero"><div><span class="legend-kicker">DER WEG DES NINJA · 3 DOJOS</span><h3>Deine Karrierekarte</h3><p>Von den ersten Fokus-Schritten bis zur Prüfung im Mondtempel. Jede Etappe führt dich weiter.</p></div><div class="legend-career-count"><strong>${done}<small>/ 18</small></strong><span>Missionen geschafft</span></div></header>
  <div class="legend-career-body"><div class="legend-career-route">
+   ${campaignOverworld(missions)}
    <p class="legend-career-help">Wähle einen Knoten auf dem Pfad – leuchtende Knoten sind spielbar. <span>✓ Geschafft</span> <span>✦ Bereit</span> <span>◌ Gesperrt</span></p>
    ${['study','gaming','sleep'].map((id,i)=>chapterMap(missions,id,i,selected?.id)).join('')}
    <section class="legend-boss-route"><div class="legend-boss-banner"><span>鬼</span><div><small>GEHEIMER NEBENPFAD</small><h3>Die Schattenbosse</h3><p>Drei besondere Kämpfe mit eigenen Mechaniken. Ihre Freischaltung hängt von Zusatzaufgaben ab.</p></div></div>
