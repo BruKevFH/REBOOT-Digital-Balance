@@ -55,7 +55,7 @@ export function validateRegistration({email,password,passwordConfirmation,privac
 }
 
 /** Passwords and recovery keys are never stored or returned in plain text after creation. */
-export function createNinjaAuth(store,{now=()=>Date.now(),sessionTTL=AUTH_CONFIG.sessionTTL,maxSessions=AUTH_CONFIG.maxSessions}={}){
+export function createNinjaAuth(store,{now=()=>Date.now(),sessionTTL=AUTH_CONFIG.sessionTTL,maxSessions=AUTH_CONFIG.maxSessions,mfaKey=process.env.NINJA_MFA_ENCRYPTION_KEY}={}){
   if(!store?.db||typeof store.transaction!=='function')throw new TypeError('A Ninja store is required.');
   if(!Number.isSafeInteger(sessionTTL)||sessionTTL<1000||sessionTTL>MAX_TTL)throw new TypeError('sessionTTL must be between one second and thirty days.');
   if(!Number.isInteger(maxSessions)||maxSessions<1||maxSessions>20)throw new TypeError('maxSessions must be between one and twenty.');
@@ -75,7 +75,7 @@ export function createNinjaAuth(store,{now=()=>Date.now(),sessionTTL=AUTH_CONFIG
     return {token,expiresAt};
   }
   function* response(userId,session,extra={}){const user=(yield store.getUser(userId)),state=(yield store.getProfile(userId));return {user:{id:user.id,username:user.username},...session,profile:state.profile,revision:state.revision,...extra};}
-  const mfa=createNinjaMfa(store,{now,verifyPassword,issueSession,response});
+  const mfa=createNinjaMfa(store,{key:mfaKey,now,verifyPassword,issueSession,response});
   async function register(input={}){
     const {username,password}=input;
     const email=input.email===undefined?null:validateRegistration(input);
