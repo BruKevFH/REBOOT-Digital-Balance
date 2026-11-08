@@ -6,6 +6,7 @@
  */
 import {createCipheriv,createDecipheriv,createHash,createHmac,randomBytes,timingSafeEqual} from 'node:crypto';
 import {operation} from './ninja-operations.mjs';
+import {qrSvgForAuthenticator} from './ninja-qr.mjs';
 
 const fail=(status,code,message)=>Object.assign(new Error(message),{status,code});
 const sha=value=>createHash('sha256').update(String(value)).digest('hex');
@@ -129,7 +130,8 @@ export function createNinjaMfa(store,{key=process.env.NINJA_MFA_ENCRYPTION_KEY,n
    else yield db.prepare('INSERT INTO ninja_mfa(user_id,encrypted_secret,pending_secret,enabled,last_counter,recovery_codes,updated_at) VALUES(?,?,?,0,-1,?,?)').run(userId,'',crypto.encrypt(secret),'[]',stamp);
    const username=yield db.prepare('SELECT username FROM users WHERE id=?').get(userId);
    const label=encodeURIComponent('Notification Ninja:'+username.username);
-   return {secret,uri:'otpauth://totp/'+label+'?secret='+secret+'&issuer=Notification%20Ninja&algorithm=SHA1&digits=6&period=30'};
+   const uri='otpauth://totp/'+label+'?secret='+secret+'&issuer=Notification%20Ninja&algorithm=SHA1&digits=6&period=30';
+   return {secret,uri,qrSvg:qrSvgForAuthenticator(uri)};
   });
  }
  async function confirm(userId,code,sessionToken){
