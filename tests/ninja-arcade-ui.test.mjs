@@ -27,7 +27,7 @@ test('two illustrated primary portals and four purposeful secondary arcade modes
  assert(html.includes('Gemeinsame Herausforderung nach Serverzeit'));
  assert(!html.includes('Eine kurze Alltagssituation'));
  assert(!html.includes('Zurück zum Dojo'));
- for(const theme of THEMES)assert(!html.includes('data-ninja-theme="'+theme+'"),'Theme is changed only in Settings');
+ for(const theme of THEMES)assert(!html.includes('data-ninja-theme="'+theme+'"'),'Theme is changed only in Settings');
  const guest=legendaryModes({account:false});
  assert(guest.includes('Lokale Tagesübung; für geprüfte Ergebnisse anmelden.'));
 });
