@@ -1419,3 +1419,5 @@ html[data-ninja-theme] .settings-panel [data-ninja-theme][aria-pressed="true"]::
  .ninja-village-illustration img{transition:none!important}
 }
 .calm-view .ninja-village-motif,.calm-view .ninja-room-art,.calm-view .ninja-room-sparkles{animation:none!important}
+
+.account-mfa-qr{max-width:230px;margin:16px auto;padding:14px;background:#fff;border:2px solid #c4d6cb;border-radius:17px;box-shadow:0 7px 22px #112c2c24}.account-mfa-qr img{display:block;width:100%;height:auto;image-rendering:pixelated}.account-mfa-qr+label{margin-top:10px}
