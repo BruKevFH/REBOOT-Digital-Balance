@@ -31,7 +31,7 @@ test('PostgreSQL migrations, transactional rollback, profile protection and cons
   const {open}=await fixture(t),{store,auth}=await open();
   const account=await auth.register({username:'Store Ninja',password,email:'Store@Example.test',passwordConfirmation:password,privacyAccepted:true});
   assert.equal((await auth.login({username:'STORE@example.test',password})).user.id,account.user.id);
-  assert.deepEqual((await store.db.prepare('SELECT version FROM ninja_auth_migrations ORDER BY version').all()).map(row=>row.version),[1,2]);
+  assert.deepEqual((await store.db.prepare('SELECT version FROM ninja_auth_migrations ORDER BY version').all()).map(row=>row.version),[1,2,3]);
   await assert.rejects(store.transaction(async()=>{await store.db.prepare('UPDATE wallets SET balance=50 WHERE user_id=?').run(account.user.id);await store.putProfile(account.user.id,account.profile);throw new Error('rollback');}),/rollback/);
   assert.equal((await store.getProfile(account.user.id)).profile.coins,0);assert.equal((await store.getProfile(account.user.id)).revision,0);
   const protectedProfile=await store.putProfile(account.user.id,{...account.profile,coins:999,player:{username:'Forged',guest:true}});
