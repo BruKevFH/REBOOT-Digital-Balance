@@ -18,14 +18,16 @@ test('two illustrated primary portals and four purposeful secondary arcade modes
  assert.equal((html.match(/class="legend-mode-feature /g)||[]).length,2);
  assert.equal((html.match(/class="legend-mode-small /g)||[]).length,4);
  for(const mode of ['open','boss-rush','campaign','daily'])assert(html.includes('data-mode-start="'+mode+'"'));
- for(const route of ['campaign','practice','dojos'])assert(html.includes('data-game-route="'+route+'"'));
+ for(const route of ['practice','weekly'])assert(html.includes('data-game-route="'+route+'"'));
+ assert(!html.includes('data-game-route="campaign"'));
+ assert(!html.includes('data-game-route="dojos"'));
  assert.equal((html.match(/class="arcade-scene"/g)||[]).length,2);
  assert(html.includes('./assets/focus-village.png'));
  assert(html.includes('./assets/dojo-gaming.svg'));
  assert(html.includes('Gemeinsame Herausforderung nach Serverzeit'));
  assert(!html.includes('Eine kurze Alltagssituation'));
  assert(!html.includes('Zurück zum Dojo'));
- for(const theme of THEMES)assert(html.includes('data-ninja-theme="'+theme+'"'));
+ for(const theme of THEMES)assert(!html.includes('data-ninja-theme="'+theme+'"),'Theme is changed only in Settings');
  const guest=legendaryModes({account:false});
  assert(guest.includes('Lokale Tagesübung; für geprüfte Ergebnisse anmelden.'));
 });
@@ -51,8 +53,8 @@ test('home and modal navigation distinguish Overview from thematic Game Worlds',
  assert(main.includes("dojos:'SPIELWELTEN'"));
  assert(main.includes("modes:'SPIELMODI'"));
  assert(main.includes('class="panel-header arcade-sticky-header"'));
- assert(main.includes('data-theme-cycle'));
- assert(main.includes('aria-label="Zur Übersicht"'));
+ assert(!main.includes('class="arcade-theme-cycle"'),'No appearance toggle in every dialog');
+ assert(main.includes('class="panel-header arcade-sticky-header"'));
  assert(!main.includes('aria-label="Zur Dojo-Übersicht"'));
  assert(main.includes("applyTheme();"));
  assert(read('legend-ui.css').includes('position:sticky!important'));
@@ -61,11 +63,11 @@ test('actual dojo assets exist and the map shows a progress-aware character',()=
  for(const file of ['assets/focus-village.png','assets/dojo-study.png','assets/dojo-gaming.svg','assets/dojo-sleep.png'])assert(existsSync('notification-ninja/'+file),file);
  const missions=['study','gaming','sleep'].flatMap((id,i)=>Array.from({length:6},(_,n)=>({id:id+'-'+String(n+1).padStart(2,'0'),chapter:id,section:'main',title:id+' '+n,order:i*6+n+1,completed:n===0,available:n===1,target:8,current:0,reward:2,claimed:true})));
  const html=legendaryCareer({missions});
- assert.equal((html.match(/class="legend-map-node /g)||[]).length,18);
- assert.equal((html.match(/class="arcade-map-traveler"/g)||[]).length,3);
- assert(html.includes('--traveler-x:'));
+ assert.equal((html.split('class="nn-career-bosses"')[0].match(/class="nn-career-node is-/g)||[]).length,18);
+ assert.equal((html.match(/class="nn-career-chapter-trail"/g)||[]).length,3);
+ assert(html.includes('nn-career-sidebar'));
  const worlds=legendaryDojos({missions,worlds:['study']});
- assert(worlds.includes('src="./assets/dojo-gaming-v2.svg"'));
+ assert(worlds.includes('src="./assets/dojo-gaming.png"'));
  assert.equal((worlds.match(/class="legend-dojo legend-dojo-/g)||[]).length,3);
 });
 test('theme and new labels have explicit English localization',()=>{
