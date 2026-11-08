@@ -81,9 +81,12 @@ test('recovery codes work exactly once and MFA required on password reset',async
  assert(login.token);
 });
 test('missing encryption key fails closed for MFA accounts',async t=>{
- const {auth,now}=fixture(t),user=await auth.register({username:'Mfa Failsafe',password});
+ const {auth,now,store}=fixture(t),user=await auth.register({username:'Mfa Failsafe',password});
  const start=await auth.mfa.setup(user.user.id,{password});
  await auth.mfa.confirm(user.user.id,{code:code(start,now)});
- const store=auth; // existing store remains open through the fixture
- assert.equal(typeof store.mfa.finishLogin,'function');
+ const noKey=createNinjaAuth(store,{now,mfaKey:null});
+ assert.equal((await noKey.mfa.status(user.user.id)).enabled,true);
+ assert.equal((await noKey.mfa.status(user.user.id)).available,false);
+ await assert.rejects(noKey.login({username:'Mfa Failsafe',password}),e=>e.code==='MFA_UNAVAILABLE');
+ await assert.rejects(noKey.mfa.setup(user.user.id,{password}),e=>e.code==='MFA_UNAVAILABLE');
 });
