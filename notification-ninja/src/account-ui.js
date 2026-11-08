@@ -63,10 +63,10 @@ export function createAccountUI({accounts,onSignedIn=()=>{},onGuest=()=>{},onNav
   function mfaSetup(){
     draw('Zwei-Faktor-Anmeldung einrichten.',`<p>Ein zusätzlicher Einmalcode schützt deinen Ninja. Bestätige zuerst dein aktuelles Passwort.</p><form data-account-form="mfa-setup"><label class="account-field" for="account-password"><span>Aktuelles Passwort</span><input id="account-password" type="password" name="password" autocomplete="current-password" required></label><button type="submit" class="btn primary">Authenticator verbinden →</button></form><p class="account-fine">Die Einrichtung erfolgt verschlüsselt auf dem Server; es werden keine Codes an externe QR-Code-Dienste gesendet.</p>`,{kind:'mfa-setup',footer:false});
   }
-  function mfaScan(result){
-    const uri=result.otpauthUri||'',secret=result.secret||'';
+  async function mfaScan(result){
+    const uri=result.otpauthUri||'',secret=result.secret||'',qr=await mfaQR(uri);
     draw('Authenticator verbinden.',`<p>Scanne den QR-Code mit deiner Authenticator-App. Alternativ kannst du den Schlüssel manuell eingeben. Der Schlüssel ist nur während dieser Einrichtung sichtbar.</p>
-    <div class="mfa-qr-wrap">${mfaQR(uri)}</div><label class="account-field" for="mfa-setup-secret"><span>Manueller Einrichtungsschlüssel</span><input id="mfa-setup-secret" type="text" readonly autocomplete="off" spellcheck="false" translate="no" value="${escape(secret)}"></label>
+    <div class="mfa-qr-wrap">${qr}</div><label class="account-field" for="mfa-setup-secret"><span>Manueller Einrichtungsschlüssel</span><input id="mfa-setup-secret" type="text" readonly autocomplete="off" spellcheck="false" translate="no" value="${escape(secret)}"></label>
     <form data-account-form="mfa-confirm"><label class="account-field" for="account-mfa-code"><span>Sechsstelliger Bestätigungscode</span><input id="account-mfa-code" name="code" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required autofocus></label><button class="btn primary account-submit" type="submit">MFA sicher aktivieren</button></form>
     <p class="account-fine">Keine Screenshots des Einrichtungsschlüssels teilen.</p>`,{kind:'mfa-confirm',footer:false});
   }
@@ -112,7 +112,7 @@ export function createAccountUI({accounts,onSignedIn=()=>{},onGuest=()=>{},onNav
         if(result.mfaRequired){mfaChallenge=result.challenge;mfaLogin();return;}
         close();await onSignedIn(result);if(result.recoveryKey)recoveryKey(result.recoveryKey);
       }else if(kind==='mfa-login'){const result=await accounts.completeMfa(mfaChallenge,values.code);mfaChallenge=null;form.reset();busy=false;close();await onSignedIn(result);toast('✓ MFA-Anmeldung bestätigt.');}
-      else if(kind==='mfa-setup'){const result=await accounts.mfaSetup(values.password);form.reset();busy=false;mfaScan(result);}
+      else if(kind==='mfa-setup'){const result=await accounts.mfaSetup(values.password);form.reset();busy=false;await mfaScan(result);}
       else if(kind==='mfa-confirm'){const result=await accounts.mfaConfirm(values.code);form.reset();busy=false;mfaRecovery(result.recoveryCodes||[]);toast('MFA wurde erfolgreich aktiviert.');}
       else if(kind==='mfa-disable'){await accounts.mfaDisable(values.password,values.code);form.reset();busy=false;profile();toast('MFA deaktiviert.');}
       else if(kind==='mfa-ack'){busy=false;profile();}else if(kind==='rename'){const result=await accounts.rename(values.username);await onRename(result);busy=false;profile(result.profile);toast('Ninja-Name gespeichert.');}
