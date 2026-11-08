@@ -158,7 +158,7 @@ async function acknowledge(p){for(let n=0;n<20&&(await read(p)).mentor.open;n++)
     await checkNewModes(page,!created,width);
     const geometry=await page.evaluate(()=>({width:innerWidth,scroll:document.documentElement.scrollWidth}));
     assert(geometry.scroll<=geometry.width+1,'no horizontal page overflow');
-    await page.goto(base+'#settings');await ready(page);await page.locator('[data-settings-language="en"]').click();await goHome(page);
+    await goHome(page);await page.locator('#profile-button').click();await acknowledge(page);await page.locator('.nn-profile-control [data-action="settings"]').click();await page.locator('[data-settings-language="en"]').click();await goHome(page);
     assert.equal((await read(page)).language,'en');
     if(!created){await page.locator('#profile-button').click();await acknowledge(page);await page.locator('.nn-profile-control [data-account-view="login"]').click();await page.locator('[data-account="register"]').click();assert.match(await page.locator('[data-account-form="register"]').innerText(),/Email address/);assert.deepEqual((await read(page)).translation.missing,[]);await page.screenshot({path:path.join(output,'registration-en-'+width+'.png')});}
     assert.deepEqual(errors,[]);
