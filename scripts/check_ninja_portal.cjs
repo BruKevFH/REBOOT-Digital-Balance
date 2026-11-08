@@ -139,8 +139,10 @@ async function acknowledge(p){for(let n=0;n<20&&(await read(p)).mentor.open;n++)
       assert.equal(await page.locator('.world-inside-sleep [data-quick-context="sleep"]').count(),1);
       await page.locator('.panel-back').click();
       await page.waitForFunction(()=>window.__NOTIFICATION_NINJA__.getSnapshot().ui==='dojos');await acknowledge(page);
+      await page.locator('.panel-home').click();await acknowledge(page);
+      assert.equal((await read(page)).ui,'home');
       await page.locator('.dojo-tabs [data-game-route="campaign"]').click();await acknowledge(page);
-      assert.equal((await read(page)).ui,'career','Campaign is distinct from worlds');
+      assert.equal((await read(page)).ui,'career','Campaign is a separate primary hub route');
       assert.equal(await page.locator('.legend-map-node').count(),18);
       assert.equal(await page.locator('.legend-boss-node').count(),3);
       await page.locator('[data-mission-inspect="study-02"]').click();await acknowledge(page);
