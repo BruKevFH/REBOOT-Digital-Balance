@@ -4,6 +4,7 @@ import {createNinjaStore} from '../server/ninja-store.mjs';
 import {createNinjaAuth} from '../server/ninja-auth.mjs';
 import {createNinjaServer} from '../server/ninja-service.mjs';
 import {base32,fromBase32,totp,checkTotp,mfaCrypto} from '../server/ninja-mfa.mjs';
+import {qrSvgForAuthenticator} from '../server/ninja-qr.mjs';
 import {once} from 'node:events';
 
 const key='a'.repeat(64);
@@ -24,6 +25,16 @@ test('TOTP matches well-known RFC 6238 SHA1 vectors with 6-digit truncation',()=
  assert.equal(checkTotp(secret,'287082',59000,-1),1);
  assert.equal(checkTotp(secret,'287082',59000,1),null,'replay of counter is forbidden');
 });
+test('TOTP QR is generated privately as crisp local SVG with usable matrix dimensions',()=>{
+ const svg=qrSvgForAuthenticator('otpauth://totp/Notification%20Ninja:Test?secret=JBSWY3DPEHPK3PXP&issuer=Notification%20Ninja&algorithm=SHA1&digits=6&period=30');
+ assert(svg?.startsWith('<svg'));
+ assert(svg.includes('viewBox="0 0 57 57"'));
+ assert(svg.includes('shape-rendering="crispEdges"'));
+ assert(svg.includes('M4 4h1v1h-1z'),'finder pattern');
+ assert(!svg.includes('http://')&&!svg.includes('https://'));
+ assert.equal(qrSvgForAuthenticator('https://thirdparty.example'),null);
+ assert.equal(qrSvgForAuthenticator('otpauth://totp/'+'x'.repeat(700)),null);
+});
 test('encrypted secrets cannot be read or modified without the configured key',()=>{
  const crypt=mfaCrypto(key),text='ALPHABASE32SECRETABCDEF';
  const encoded=crypt.encrypt(text);
@@ -37,6 +48,7 @@ test('MFA setup requires password, confirmation, produces one-time recovery code
  assert.deepEqual(await auth.mfa.status(registered.user.id),{available:true,enabled:false,pending:false});
  await assert.rejects(auth.mfa.begin(registered.user.id,'wrong'),err('PASSWORD_CONFIRMATION_FAILED'));
  const setup=await auth.mfa.begin(registered.user.id,password);
+ assert.equal(typeof setup.qrSvg,'string');
  assert(setup.uri.startsWith('otpauth://totp/Notification%20Ninja'));
  assert(!JSON.stringify(store.db.prepare('SELECT * FROM ninja_mfa').all()).includes(setup.secret));
  await assert.rejects(auth.mfa.confirm(registered.user.id,'123456'),err('INVALID_MFA'));
