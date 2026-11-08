@@ -15,12 +15,12 @@ const icon=(kind)=>kind==='swords'?'<svg viewBox="0 0 48 48" fill="none" aria-hi
 
 export function legendaryModes({account=false}={}){
  const feature=[
-  {kind:'career',title:'Ninja-Karriere',kicker:'01 · DEIN ABENTEUER',desc:'Drei Dojo-Welten, 18 Missionen und eigene Bosskämpfe auf einer echten Abenteuerkarte.',meta:['18 Missionen','3 Welten','Story & Bosse'],route:'campaign',action:'Karrierekarte entdecken',icon:'scroll',scene:'./assets/focus-village.png',emblem:'道'},
+  {kind:'day',title:'Ein ganzer Tag',kicker:'01 · DIE STORY-RUNDE',desc:'Vom Lernen über Gaming bis zur Abendruhe: drei Situationen in einer zusammenhängenden Spielrunde.',meta:['Drei Alltagsthemen','Bewusste Entscheidungen','Story-Run'],mode:'campaign',action:'Tagesabenteuer starten',icon:'scroll',scene:'./assets/focus-village.png',emblem:'日'},
   {kind:'open',title:'Open Run',kicker:'02 · DER ENDLOSE PFAD',desc:'Drei Herzen, kein Zeitlimit. Die Wellen werden schneller – wie lange bleibst du im Flow?',meta:['3 Herzen','Highscore','Kein Zeitlimit'],mode:'open',action:'Open Run starten',icon:'infinity',scene:'./assets/dojo-gaming.svg',emblem:'∞'}
  ];
  const others=[
   {kind:'boss',title:'Boss Rush',desc:'Drei besondere Bosse. Drei unterschiedliche Taktiken.',mode:'boss-rush',tag:'3 Bossgegner',icon:'swords',sign:'鬼',level:'HERAUSFORDERUNG'},
-  {kind:'day',title:'Ein ganzer Tag',desc:'Von der Lernzeit über Gaming bis zur Abendruhe.',mode:'campaign',tag:'Story-Run',icon:'moon',sign:'日',level:'ABENTEUER'},
+  
   {kind:'daily',title:'Tages-Challenge',desc:account?'Gemeinsame Herausforderung nach Serverzeit.':'Lokale Tagesübung; für geprüfte Ergebnisse anmelden.',mode:'daily',tag:'Täglich neu',icon:'spark',sign:'星',level:'TÄGLICH'},
   {kind:'practice',title:'Zen-Training',desc:'Wischen und Entscheidungen ohne Zeitdruck üben.',route:'practice',tag:'Ohne Ranglistenwertung',icon:'scroll',sign:'禅',level:'ENTSPANNT'},
    {kind:'weekly',title:'Wochenziele',desc:'Drei Aufgaben, echte Belohnungen und ein besonderes Outfit.',route:'weekly',tag:'Wöchentlich',icon:'scroll',sign:'週',level:'DEINE ZIELE'}
