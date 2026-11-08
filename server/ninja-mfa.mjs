@@ -71,7 +71,7 @@ export function createNinjaMFA(store,{now=()=>Date.now(),key=process.env.NINJA_M
    const issuer='Notification Ninja',label=encodeURIComponent(issuer+':'+user.username);
    return {enabled:false,secret,otpauthUri:'otpauth://totp/'+label+'?secret='+secret+'&issuer='+encodeURIComponent(issuer)+'&algorithm=SHA1&digits=6&period=30',expiresAt:stamp+600000};
  }
- async function confirm(userId,{code}={}){
+ async function confirm(userId,{code}={},currentToken){
    return store.transaction(function*(){
      if(store.lockUser)yield store.lockUser(userId);
      const stamp=clock(),row=yield byId.get(userId);
@@ -80,10 +80,11 @@ export function createNinjaMFA(store,{now=()=>Date.now(),key=process.env.NINJA_M
      if(step===null)throw fail(400,'MFA_INVALID','Authenticator-Code ungültig.');
      const codes=Array.from({length:10},()=>('NNM-'+randomBytes(20).toString('base64url')));
      yield db.prepare('UPDATE ninja_mfa SET enabled=1,pending_until=0,last_step=?,recovery_hashes=? WHERE user_id=?').run(step,JSON.stringify(codes.map(digest)),userId);
+     if(currentToken)yield db.prepare('DELETE FROM sessions WHERE user_id=? AND token_hash<>?').run(userId,digest(currentToken));
      return {enabled:true,recoveryCodes:codes};
    });
  }
- async function disable(userId,{password,code}={}){
+ async function disable(userId,{password,code}={},currentToken){
    const user=await db.prepare('SELECT password_hash FROM users WHERE id=?').get(userId);
    if(!user||!(await verifyPassword(password,user.password_hash)))throw fail(403,'PASSWORD_CONFIRMATION_FAILED','Passwort zur Bestätigung erforderlich.');
    const result=await store.transaction(function*(){
@@ -92,6 +93,7 @@ export function createNinjaMFA(store,{now=()=>Date.now(),key=process.env.NINJA_M
      if(!(yield* validate(row,code,clock())))return {denied:true};
      yield db.prepare('DELETE FROM ninja_mfa WHERE user_id=?').run(userId);
      yield db.prepare('DELETE FROM ninja_mfa_challenges WHERE user_id=?').run(userId);
+     if(currentToken)yield db.prepare('DELETE FROM sessions WHERE user_id=? AND token_hash<>?').run(userId,digest(currentToken));
      return {enabled:false};
    });
    if(result.denied)throw fail(403,'MFA_INVALID','MFA-Code ungültig.');
