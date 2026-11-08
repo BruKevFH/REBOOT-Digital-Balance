@@ -16,14 +16,15 @@ async function checkNewModes(p,practice,width){
  await p.waitForFunction(()=>window.__NOTIFICATION_NINJA__.getSnapshot().state.mode==='daily');await acknowledge(p);
  let snapshot=await read(p);assert.equal(snapshot.state.maxLives,3);assert.equal(snapshot.state.dailyChallenge.practice,practice);assert.match(snapshot.state.dailyChallenge.day,/^\d{4}-\d{2}-\d{2}$/);
  assert.equal(snapshot.ui,'briefing');
- await p.locator('[data-action="home"]').first().click();
+ await goHome(p);
  await p.locator('.dojo-tabs [data-game-route="modes"]').click();await p.locator('[data-mode-start="boss-rush"]').click();
  await p.waitForFunction(()=>window.__NOTIFICATION_NINJA__.getSnapshot().state.mode==='boss-rush');await acknowledge(p);
  snapshot=await read(p);assert.equal(snapshot.state.boss.id,'scout');assert.equal(snapshot.state.bossRush.index,0);assert.equal(snapshot.state.maxLives,3);
  assert.match(await p.locator('.boss-briefing-panel').innerText(),/Fokus-Symbole/);
  await p.screenshot({path:path.join(output,'boss-rush-'+width+'.png')});
- await p.locator('[data-action="home"]').first().click();
+ await goHome(p);
 }
+async function goHome(p){await p.evaluate(()=>{location.hash='#worlds';});await p.waitForFunction(()=>window.__NOTIFICATION_NINJA__?.getSnapshot().ui==='home');}
 async function acknowledge(p){for(let n=0;n<20&&(await read(p)).mentor.open;n++)await p.locator('#mentor-next').click();}
 (async()=>{
  fs.mkdirSync(output,{recursive:true});
@@ -72,60 +73,49 @@ async function acknowledge(p){for(let n=0;n<20&&(await read(p)).mentor.open;n++)
      created.password=password;
      await page.locator('[name="saved"]').check();await page.locator('.account-submit').click();await acknowledge(page);
      assert.equal((await read(page)).ui,'home');
-     assert.equal(await page.locator('#ninja-hub .hub-play').count(),1);
+     assert.equal(await page.locator('#ninja-hub .hub-play').count(),0,'No duplicate mission shortcut on hub');
      assert.equal(await page.locator('#ninja-hub h1').isVisible(),true,'hub shows the player name');
      assert.equal(await page.locator('#dojo-rooms').evaluate(el=>el.open),false);
      await page.locator('.dojo-tabs [data-game-route="modes"]').click();
      assert.equal((await read(page)).ui,'modes');
-     await page.locator('[data-action="home"]').last().click();
+     await goHome(page);
      assert.equal(await page.locator('.dojo-tabs [data-game-route]').count(),6,'Six clear navigation choices');
-     assert.equal(await page.locator('#hub-paths .hub-path-card').count(),3,'Three direct activity choices');
-     assert.equal(await page.locator('#hub-paths').isVisible(),true,'Quick choices are visible without expanding options');
-     assert.equal(await page.locator('#adventure-details').evaluate(el=>el.open),false,'Advanced controls start closed');
-     assert.equal(await page.locator('#dojo-rooms').evaluate(el=>el.open),false,'Optional dojo selector starts closed');
+     assert.equal(await page.locator('#hub-paths .hub-path-card').count(),0,'Navigation is in the main tabs');
+     assert.equal(await page.locator('.nn-home-guide').isVisible(),true,'NIM shows the single navigation path');
+     assert.equal(await page.locator('#adventure-details').isVisible(),false,'The duplicated discovery block is hidden');
+     assert.equal(await page.locator('#dojo-rooms').isVisible(),false,'The duplicated dojo selector is hidden');
      await page.screenshot({path:path.join(output,'hub-'+width+'.png')});
     }else{
      await page.locator('[data-account="guest"]').click();await acknowledge(page);
      assert.equal((await read(page)).ui,'home');
      assert.equal(await page.locator('#ninja-hub h1').isVisible(),true,'hub shows the player name');
      assert.equal(await page.locator('.dojo-tabs [data-game-route]').count(),6,'Six clear navigation choices');
-     assert.equal(await page.locator('#hub-paths .hub-path-card').count(),3,'Three direct activity choices');
-     assert.equal(await page.locator('#hub-paths').isVisible(),true,'Quick choices are visible without expanding options');
-     assert.equal(await page.locator('#adventure-details').evaluate(el=>el.open),false,'Advanced controls start closed');
-     assert.equal(await page.locator('#dojo-rooms').evaluate(el=>el.open),false,'Optional dojo selector starts closed');
+     assert.equal(await page.locator('#hub-paths .hub-path-card').count(),0,'Navigation is in the main tabs');
+     assert.equal(await page.locator('.nn-home-guide').isVisible(),true,'NIM shows the single navigation path');
+     assert.equal(await page.locator('#adventure-details').isVisible(),false,'The duplicated discovery block is hidden');
+     assert.equal(await page.locator('#dojo-rooms').isVisible(),false,'The duplicated dojo selector is hidden');
      await page.screenshot({path:path.join(output,'hub-'+width+'.png')});
      if(width===768){
-      await page.locator('[data-hub-shortcut="open"]').click();
+      await page.locator('.dojo-tabs [data-game-route="modes"]').click();await acknowledge(page);await page.locator('[data-mode-start="open"]').click();
       await page.waitForFunction(()=>window.__NOTIFICATION_NINJA__.getSnapshot().state.mode==='open');
       await acknowledge(page);
       assert.notEqual((await read(page)).ui,'home','Open Run shortcut really starts game');
-      await page.locator('[data-action="home"]').first().click();
+      await goHome(page);
      }
      if(width===768){
       await page.locator('.dojo-tabs [data-game-route="modes"]').click();await acknowledge(page);
       assert.equal((await read(page)).ui,'modes');
       assert.equal(await page.locator('.arcade-mode-portal').count(),2,'two illustrated portals');
       assert.equal(await page.locator('.arcade-mode-quest').count(),4,'four secondary adventures');
-      assert.equal(await page.locator('.arcade-theme-strip [data-ninja-theme]').count(),3);
-      const relaxedColor=await page.locator('.legend-modes-panel').evaluate(el=>getComputedStyle(el).backgroundColor);
-      for(const theme of ['dark','noir']){
-       await page.locator('.arcade-theme-strip [data-ninja-theme="'+theme+'"]').click();
-       assert.equal(await page.evaluate(()=>document.documentElement.dataset.ninjaTheme),theme);
-       assert.equal(await page.evaluate(()=>localStorage.getItem('notification-ninja:ui-theme:v1')),theme);
-      }
-      const noirColor=await page.locator('.legend-modes-panel').evaluate(el=>getComputedStyle(el).backgroundColor);
-      assert.notEqual(relaxedColor,noirColor,'Noir has its own palette');
-      await page.locator('.arcade-theme-strip [data-ninja-theme="relaxed"]').click();
+      assert.equal(await page.locator('.arcade-theme-strip [data-ninja-theme]').count(),0,'Appearance is only changed in Settings');
       const before=await page.locator('.arcade-sticky-header').evaluate(el=>el.getBoundingClientRect().top);
       await page.locator('.legend-modes-panel').evaluate(el=>el.scrollTop=340);
       const after=await page.locator('.arcade-sticky-header').evaluate(el=>el.getBoundingClientRect().top);
       assert(Math.abs(before-after)<5,'Back and Overview remain at top when scrolling');
-      await page.locator('.arcade-mode-footer [data-game-route="dojos"]').click();await acknowledge(page);
+      await goHome(page);await page.locator('.dojo-tabs [data-game-route="dojos"]').click();await acknowledge(page);
       assert.equal((await read(page)).ui,'dojos','Worlds portal opens real illustrated worlds');
-      await page.locator('.panel-back').click();
-      await page.waitForFunction(()=>window.__NOTIFICATION_NINJA__.getSnapshot().ui==='modes');await acknowledge(page);
-      assert.equal((await read(page)).ui,'modes','Back returns to previously opened modes');
-      await page.locator('.panel-home').click();await acknowledge(page);
+      await goHome(page);await page.locator('.dojo-tabs [data-game-route="modes"]').click();await acknowledge(page);assert.equal((await read(page)).ui,'modes','Modes remain available from their unique navigation tab');
+      await goHome(page);await acknowledge(page);
       assert.equal((await read(page)).ui,'home','Overview returns to home hub');
      }
      if(width===768){
@@ -139,25 +129,25 @@ async function acknowledge(p){for(let n=0;n<20&&(await read(p)).mentor.open;n++)
       assert.equal(await page.locator('.world-inside-sleep [data-quick-context="sleep"]').count(),1);
       await page.locator('.panel-back').click();
       await page.waitForFunction(()=>window.__NOTIFICATION_NINJA__.getSnapshot().ui==='dojos');await acknowledge(page);
-      await page.locator('.panel-home').click();await acknowledge(page);
+      await goHome(page);await acknowledge(page);
       assert.equal((await read(page)).ui,'home');
       await page.locator('.dojo-tabs [data-game-route="campaign"]').click();await acknowledge(page);
       assert.equal((await read(page)).ui,'career','Campaign is a separate primary hub route');
-      assert.equal(await page.locator('.legend-map-node').count(),18);
-      assert.equal(await page.locator('.legend-boss-node').count(),3);
+      assert.equal(await page.locator('.nn-career-chapter-trail .nn-career-node').count(),18);
+      assert.equal(await page.locator('.nn-career-boss').count(),3);
       await page.locator('[data-mission-inspect="study-02"]').click();await acknowledge(page);
-      assert.equal(await page.locator('.legend-mission-inspector h3').innerText(),'Genau statt hektisch');
-      await page.locator('.panel-home').click();await acknowledge(page);
+      assert.equal(await page.locator('.nn-career-detail h4').innerText(),'Genau statt hektisch');
+      await goHome(page);await acknowledge(page);
       assert.equal((await read(page)).ui,'home');
      }
-     await page.locator('.home-access-tools [data-game-route="bazaar"]').click();await acknowledge(page);
+     await page.locator('.dojo-tabs [data-game-route="bazaar"]').click();await acknowledge(page);
      assert.equal(await page.locator('[data-shop-tab]').count(),2,'only worlds and skins in shop');
       assert.equal(await page.locator('[data-shop-tab="backgrounds"]').count(),0,'no mismatched scenes offered');
       await page.locator('[data-shop-filter="owned"]').click();
      assert.equal(await page.locator('.shop-card.is-locked:visible').count(),0);
      await page.locator('[data-shop-filter="new"]').click();
      assert.equal(await page.locator('.shop-card.is-owned:visible').count(),0);
-     await page.locator('[data-action="home"]').first().click();
+     await goHome(page);
      const before=(await read(page)).profile;
      await page.locator('.dojo-tabs [data-game-route="modes"]').click();
      assert.equal((await read(page)).ui,'modes');
@@ -168,9 +158,9 @@ async function acknowledge(p){for(let n=0;n<20&&(await read(p)).mentor.open;n++)
     await checkNewModes(page,!created,width);
     const geometry=await page.evaluate(()=>({width:innerWidth,scroll:document.documentElement.scrollWidth}));
     assert(geometry.scroll<=geometry.width+1,'no horizontal page overflow');
-    await page.locator('[data-language="en"]').filter({visible:true}).first().click();
+    await page.goto(base+'#settings');await ready(page);await page.locator('[data-settings-language="en"]').click();await goHome(page);
     assert.equal((await read(page)).language,'en');
-    if(!created){await page.locator('.home-access-tools [data-account-view="profile"]').click();await page.locator('[data-account="register"]').click();assert.match(await page.locator('[data-account-form="register"]').innerText(),/Email address/);assert.deepEqual((await read(page)).translation.missing,[]);await page.screenshot({path:path.join(output,'registration-en-'+width+'.png')});}
+    if(!created){await page.locator('#profile-button').click();await acknowledge(page);await page.locator('.nn-profile-control [data-account-view="login"]').click();await page.locator('[data-account="register"]').click();assert.match(await page.locator('[data-account-form="register"]').innerText(),/Email address/);assert.deepEqual((await read(page)).translation.missing,[]);await page.screenshot({path:path.join(output,'registration-en-'+width+'.png')});}
     assert.deepEqual(errors,[]);
     console.log('PORTAL PASS',width);
    }finally{
