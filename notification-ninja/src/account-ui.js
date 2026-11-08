@@ -89,7 +89,8 @@ async function security(){
 function mfaSetup(info){
  draw('Dein Authenticator-Schlüssel.',`<p>Öffne eine Authenticator-App und füge ein zeitbasiertes Konto über den Einrichtungsschlüssel hinzu. Teile diesen Schlüssel mit niemandem.</p>
  <label class="account-field"><span>Geheimer Einrichtungsschlüssel</span><textarea readonly rows="2" id="account-mfa-secret" translate="no" spellcheck="false" data-user-text>${escape(info.secret)}</textarea></label>
- <p class="account-fine">Typ: zeitbasiert (TOTP), 6 Ziffern, 30 Sekunden. Momentan wird ein manueller Schlüssel anstelle eines QR-Codes angezeigt – genauso kompatibel mit Authenticator-Apps.</p>
+ ${info.qrSvg?`<div class="account-mfa-qr"><img src="data:image/svg+xml,${encodeURIComponent(info.qrSvg)}" width="200" height="200" alt="QR-Code zum Einrichten der Authenticator-App"></div>`:'<p class="account-fine">Wenn kein QR-Code angezeigt wird, kannst du den Einrichtungsschlüssel manuell eingeben.</p>'}
+ <p class="account-fine">Typ: zeitbasiert (TOTP), 6 Ziffern, 30 Sekunden. Scanne den Code direkt mit deiner Authenticator-App oder verwende den Schlüssel oben.</p>
  <form data-account-form="confirm-mfa"><label class="account-field"><span>Erster Authenticator-Code</span><input name="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required></label>
  <button class="btn primary account-submit" type="submit">MFA aktivieren →</button></form>`,{kind:'mfa-setup',footer:false});
 }
