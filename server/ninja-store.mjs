@@ -80,6 +80,21 @@ export function createNinjaStore({databasePath=':memory:',now=()=>Date.now()}={}
       db.exec('CREATE UNIQUE INDEX IF NOT EXISTS ninja_users_email ON users(email) WHERE email IS NOT NULL;');
       db.prepare('INSERT OR IGNORE INTO ninja_auth_migrations(version,applied_at) VALUES(?,?)').run(1,timestamp());
       db.prepare('INSERT OR IGNORE INTO ninja_auth_migrations(version,applied_at) VALUES(?,?)').run(2,timestamp());
+      db.exec(`CREATE TABLE IF NOT EXISTS ninja_mfa(
+         user_id TEXT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+         encrypted_secret TEXT NOT NULL DEFAULT '',pending_secret TEXT NOT NULL DEFAULT '',
+         enabled INTEGER NOT NULL DEFAULT 0 CHECK(enabled IN(0,1)),
+         last_counter INTEGER NOT NULL DEFAULT -1,recovery_codes TEXT NOT NULL DEFAULT '[]',
+         updated_at INTEGER NOT NULL
+       );
+       CREATE TABLE IF NOT EXISTS ninja_mfa_challenges(
+         challenge_hash TEXT PRIMARY KEY,
+         user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+         created_at INTEGER NOT NULL,expires_at INTEGER NOT NULL,
+         attempts INTEGER NOT NULL DEFAULT 0 CHECK(attempts>=0 AND attempts<=5)
+       );
+       CREATE INDEX IF NOT EXISTS ninja_mfa_challenges_expiry ON ninja_mfa_challenges(expires_at);`);
+       db.prepare('INSERT OR IGNORE INTO ninja_auth_migrations(version,applied_at) VALUES(?,?)').run(3,timestamp());
     });
   }catch(error){db.close();throw error;}
 
@@ -117,5 +132,5 @@ export function createNinjaStore({databasePath=':memory:',now=()=>Date.now()}={}
     return getProfile(userId);
   }
   function close(){if(closed)return;if(inTransaction)throw new Error('Cannot close the database during a transaction.');db.close();closed=true;}
-  return {db,transaction,close,getUser,getProfile,putProfile,schemaVersion:2};
+  return {db,transaction,close,getUser,getProfile,putProfile,schemaVersion:3};
 }
