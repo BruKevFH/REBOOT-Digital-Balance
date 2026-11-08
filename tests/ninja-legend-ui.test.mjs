@@ -17,21 +17,21 @@ const fixture=CAREER_MISSIONS.map((mission,i)=>({
 
 test('rendered campaign has all 18 genuine main missions on connected paths',()=>{
  const html=legendaryCareer({missions:fixture,selectedId:'study-01'});
- assert.equal((html.match(/class="legend-map-node /g)||[]).length,18);
- assert.equal((html.match(/class="legend-map-chapter /g)||[]).length,3);
- assert.equal((html.match(/class="legend-map-lines"/g)||[]).length,3);
+ assert.equal((html.split('class="nn-career-bosses"')[0].match(/class="nn-career-node is-/g)||[]).length,18);
+ assert.equal((html.match(/class="nn-career-chapter nn-career-chapter-/g)||[]).length,3);
+ assert.equal((html.match(/class="nn-career-chapter-trail"/g)||[]).length,3);
  assert(html.includes('data-mission-inspect="study-01"'));
  assert(html.includes('data-mission-inspect="sleep-06"'));
  assert(html.includes('data-mission-start="study-01"'));
  assert(html.includes('data-career-claim="study-01"'));
  assert(html.includes('aria-pressed="true"'));
- assert(html.includes('legend-node-reward'));
+ assert(html.includes('Münzen abholen'));
 });
 
 test('three boss nodes and all optional challenges use existing mission IDs',()=>{
  const html=legendaryCareer({missions:fixture});
- assert.equal((html.match(/class="legend-boss-node /g)||[]).length,3);
- assert.equal((html.match(/class="legend-extra-node /g)||[]).length,5);
+ assert.equal((html.match(/class="nn-career-boss is-/g)||[]).length,3);
+ assert.equal((html.split('class="nn-career-bonus-grid"')[1]?.match(/class="nn-career-node is-/g)||[]).length,5);
  for(const boss of fixture.filter(m=>m.bossId))assert(html.includes('data-mission-inspect="'+boss.id+'"'));
  for(const extra of fixture.filter(m=>m.section!=='main'&&!m.bossId))assert(html.includes('data-mission-inspect="'+extra.id+'"'));
 });
@@ -46,7 +46,7 @@ test('locked mission may be inspected but cannot be started or claimed',()=>{
 test('dojo scenes, progress, and free short rounds preserve chapter identity',()=>{
  const html=legendaryDojos({missions:fixture,worlds:['study']});
  for(const context of ['study','gaming','sleep']){
-   assert(html.includes('assets/dojo-'+context+'-v2.svg'));
+   assert(html.includes('assets/dojo-'+context+'.png'));
    assert(html.includes('data-world-enter="'+context+'"'));
  }
  assert.equal((html.match(/class="legend-dojo legend-dojo-/g)||[]).length,3);
@@ -57,7 +57,8 @@ test('dojo scenes, progress, and free short rounds preserve chapter identity',()
 test('mode cards only request known game routes and existing modes',()=>{
  const html=legendaryModes({account:true});
  for(const mode of ['open','boss-rush','campaign','daily'])assert(html.includes('data-mode-start="'+mode+'"'));
- for(const route of ['campaign','practice'])assert(html.includes('data-game-route="'+route+'"'));
+ for(const route of ['practice','weekly'])assert(html.includes('data-game-route="'+route+'"'));
+ assert(!html.includes('data-game-route="campaign"'),'Career has its own unique top navigation entry');
  assert.equal((html.match(/class="legend-mode-feature /g)||[]).length,2);
  assert.equal((html.match(/class="legend-mode-small /g)||[]).length,4);
  assert(html.includes('Gemeinsame Herausforderung nach Serverzeit'));

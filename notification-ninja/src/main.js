@@ -193,7 +193,7 @@ function scene(next){ui=next;for(const nav of document.querySelectorAll('[data-g
 function dialog(title,body,actions,{label='NOTIFICATION NINJA',classes=''}={}){
   const backLabel=ui==='onboarding'?'Startseite':ui==='paused'?'Weiterspielen':'Zurück';
   const sections={modes:'SPIELMODI',dojos:'SPIELWELTEN',career:'KARRIEREKARTE',shop:'NINJA-BASAR',leaderboard:'RANGLISTE',settings:'EINSTELLUNGEN',profile:'PROFIL',achievements:'ERFOLGE',weekly:'WOCHENZIELE',abilities:'FÄHIGKEITEN',results:'RUNDE BEENDET',onboarding:'DEIN NINJA'};
-  const header=`<header class="panel-header arcade-sticky-header"><button class="panel-back" data-action="nav-back" aria-label="${backLabel}"><span aria-hidden="true">←</span> ${backLabel}</button><span class="panel-header-title">${sections[ui]||'NOTIFICATION NINJA'}</span><span class="arcade-header-tools"><button type="button" class="arcade-theme-cycle" data-theme-cycle aria-label="Design wechseln" title="Design wechseln"><span aria-hidden="true">◐</span><small data-theme-label>Relaxed</small></button>${localLoggedIn?'<button class="panel-home" data-action="home" aria-label="Zur Übersicht">Übersicht</button>':''}</span></header>`;
+  const header=`<header class="panel-header arcade-sticky-header"><button class="panel-back" data-action="nav-back" aria-label="${backLabel}"><span aria-hidden="true">←</span> ${backLabel}</button><span class="panel-header-title">${sections[ui]||'NOTIFICATION NINJA'}</span></header>`;
   $('overlay-root').innerHTML=`<div class="modal-shade"><section class="panel ${classes}" role="dialog" aria-modal="true" aria-labelledby="dialog-title">${header}<div class="eyebrow">${label}</div><h2 id="dialog-title">${title}</h2>${body}${actions?`<div class="overlay-actions">${actions}</div>`:''}</section></div>`;
   applyTheme();
   $('overlay-root').querySelector('button:not(:disabled),input')?.focus({preventScroll:true});
@@ -225,7 +225,7 @@ function renderAdventureOverview(){
   if(ui!=='home')return;const missions=getCareerMissions(game.profile),weekly=getWeeklyChallenges(game.profile),reward=getWeeklyReward(game.profile),pending=missions.filter(m=>m.completed&&!m.claimed).length,weeklyReady=weekly.filter(m=>m.completed&&!m.claimed).length;
   const main=missions.filter(m=>m.section==='main'),next=main.find(m=>m.available&&!m.completed)||main.find(m=>m.available)||main[0],progress=getPlayerProgress(game.profile),p=game.profile;
   const token=JSON.stringify([p.player.username,p.selectedSkin,p.coins,progress.xp,next?.id,next?.completed,accountActive(),resumeAvailable()]);
-  if(token!==hubToken&&$('ninja-hub')){hubToken=token;$('ninja-hub').innerHTML=`<div class="hub-portrait">${playerPortrait(p.selectedSkin)}</div><div class="hub-identity"><span class="eyebrow">DEIN NINJA-HUB</span><h1 data-user-text translate="no">${escape(p.player.username)}</h1><span class="hub-save-kind">${accountActive()?'Online-Konto · bestätigter Fortschritt':'Gastprofil · auf diesem Gerät'}</span><div class="hub-stats"><span><strong>Level ${progress.level}</strong></span><span><strong>${progress.xp}</strong> XP</span><span><strong>${money()}</strong> Münzen</span></div>${xpMarkup(progress)}<p class="hub-mission"><small>DEINE NÄCHSTE MISSION</small><strong>${escape(next?.title||'Lernen')}</strong></p><button class="btn primary hub-play" data-hub-mission="${escape(next?.id||'study-01')}"><span aria-hidden="true">▶</span> Spielen <span aria-hidden="true">→</span></button><a class="hub-other-modes" href="#modes" data-game-route="modes">Spielmodus wählen</a></div>`;}
+  if(token!==hubToken&&$('ninja-hub')){hubToken=token;$('ninja-hub').innerHTML=`<div class="hub-portrait">${playerPortrait(p.selectedSkin)}</div><div class="hub-identity"><span class="eyebrow">WILLKOMMEN IN DEINEM DOJO</span><h1 data-user-text translate="no">${escape(p.player.username)}</h1><span class="hub-save-kind">${accountActive()?'Online-Konto · bestätigter Fortschritt':'Gastprofil · auf diesem Gerät'}</span><div class="hub-stats"><span><strong>Level ${progress.level}</strong></span><span><strong>${progress.xp}</strong> XP</span><span><strong>${money()}</strong> Münzen</span></div>${xpMarkup(progress)}<p class="hub-mission"><small>ALS NÄCHSTES IN DER KARRIERE</small><strong>${escape(next?.title||'Ein klarer Anfang')}</strong></p></div>`;}
 
   $('career-status').textContent=pending?`${pending} Münzbelohnung${pending===1?'':'en'} abholen`:`${missions.filter(m=>m.completed).length} / ${missions.length} Missionen · drei Bosse`;
   $('weekly-status').textContent=weeklyReady?`${weeklyReady} Belohnung${weeklyReady===1?'':'en'} bereit`:reward.ready&&!reward.claimed?'Dein Wochen-Outfit ist bereit':`${weekly.filter(m=>m.completed).length} / 3 Aufgaben · besonderes Outfit`;
@@ -238,7 +238,7 @@ function careerMenu(){
   if(!selected)return;
   selectedMissionId=selected.id;
   dialog('Deine Karriere',legendaryCareer({missions,selectedId:selectedMissionId}),
-    button('Wochenmissionen','weekly','ghost'),
+     '',
     {label:'KARRIERE · 18 MISSIONEN · 3 BOSSE',classes:'legend-career-panel'});
   renderHUD();
   // Mission hints are now embedded in the small NIM guide, not a blocking dialog.
@@ -271,8 +271,55 @@ function roundLesson(){
 }
 function playerMenu(){
   if(!openMenu('profile'))return;const p=game.profile,progress=getPlayerProgress(p),skin=skinList().find(item=>item.id===p.selectedSkin);
-  dialog('Dein Ninja-Profil',`<div class="profile-hero"><div id="profile-skin-preview" class="profile-avatar">${playerPortrait(p.selectedSkin)}</div><div><strong class="profile-name" data-user-text>${escape(p.player.username)}</strong>${p.player.guest?'<p class="guest-profile-note">Du spielst ohne Namen. Dein Fortschritt bleibt lokal gespeichert.</p>':''}<p class="profile-level">${escape(getRank(p).name)} · Level ${progress.level} · ${progress.xp} XP insgesamt</p>${xpMarkup(progress)}<small class="profile-equipped">Ausgerüstet: ${escape(skin?.name||'Ninja Mint')}</small></div></div><div class="profile-stats">${[['Münzen',money()],['Runden',p.totalRuns],['Richtige Entscheidungen',p.stats.correct],['Fähigkeiten',`${p.unlockedSkills.length} / ${SKILLS.length}`],['Spielorte',`${p.unlockedWorlds.length} / ${WORLDS.length}`],['Erfolge',`${p.achievements.length} / ${ACHIEVEMENTS.length}`],['Erkenntnis-Siegel',`${insightCount()} / 3`]].map(([label,value])=>`<article><strong>${value}</strong><span>${label}</span></article>`).join('')}</div><section class="profile-wardrobe"><h3>Deine Ninja-Garderobe</h3><p class="muted">Jeder Look hat eine eigene Wischspur und Wurfanimation. Dein ausgewählter Ninja ist in der nächsten neuen Runde dabei.</p><div class="profile-skins">${skinList().filter(item=>p.unlockedSkins.includes(item.id)).map(item=>`<button class="profile-skin ${p.selectedSkin===item.id?'is-equipped':''}" data-profile-skin="${item.id}" aria-pressed="${p.selectedSkin===item.id}">${playerPortrait(item.id)}<strong>${escape(item.name)}</strong><small>${p.selectedSkin===item.id?'Ausgerüstet':'Anziehen'}</small></button>`).join('')}</div>${button('Neue Looks im Basar','skins','ghost')}</section><p class="muted">5 XP pro richtiger Entscheidung, 10 XP pro Super und 25 XP pro beendeter Runde. XP werden am Rundenende gesichert. Erkenntnis-Siegel aus NIMs Reflexion sind Lernabzeichen und werden nur in diesem Browser gespeichert.</p><div class="profile-actions">${button('Fähigkeiten','abilities','ghost')+button('Erfolge','achievements','ghost')+button('Mitteilungen','notifications','ghost')+button('Rangliste','leaderboard','ghost')+button('Profil exportieren','export','ghost')}</div>${accountActive()?'<p class="account-sync-note">Dein Konto synchronisiert Münzen und Fortschritt sicher über den Server.</p>'+button('Konto verwalten','account','primary'):usernameForm(true)}<div class="profile-account-actions">${button('Spiel verlassen','exit-game','ghost')+button('Abmelden','logout','ghost')+button('Profil löschen','delete-profile','danger')}</div><p class="local-profile-note">${accountActive()?'Online-Konto · Deine bestätigten Ergebnisse bleiben auch auf anderen Geräten erhalten.':'Gastprofil auf diesem Gerät. Abmelden erhält deinen Fortschritt. Löschen entfernt ihn dauerhaft.'}</p>`, '',{label:'DEIN FORTSCHRITT · DEIN EIGENER WEG',classes:'profile-panel'});
-  guideOnce('profile',{title:'Das ist dein Ninja-Profil!',text:'Hier findest du Level, XP und Münzen. In deiner Garderobe wechselst du deine gekauften Ninja-Looks. Abmelden bringt dich zur Startseite, ohne deinen Fortschritt zu löschen.',animation:'profile'});
+
+  dialog('Dein Ninja-Profil',`
+    <div class="nn-profile-identity">
+      <div class="nn-profile-portrait">${playerPortrait(p.selectedSkin)}</div>
+      <div class="nn-profile-person">
+        <span class="nn-profile-kicker">DEIN NINJA · DEIN ZUHAUSE</span>
+        <h3 data-user-text translate="no">${escape(p.player.username||'Ninja')}</h3>
+        <p>${escape(getRank(p).name)} · Level ${progress.level}</p>
+        ${xpMarkup(progress)}
+        <small>Ausgerüstet: ${escape(skin?.name||'Ninja Mint')}</small>
+      </div>
+    </div>
+    <div class="nn-profile-facts" aria-label="Dein Fortschritt">
+      <div><strong>${progress.xp}</strong><span>XP</span></div>
+      <div><strong>${money()}</strong><span>Münzen</span></div>
+      <div><strong>${p.totalRuns}</strong><span>Runden</span></div>
+      <div><strong>${p.achievements.length} / ${ACHIEVEMENTS.length}</strong><span>Erfolge</span></div>
+    </div>
+    <section class="nn-profile-section" aria-labelledby="nn-wardrobe-title">
+      <header><div><span class="nn-profile-kicker">NINJA-LOOK</span><h3 id="nn-wardrobe-title">Deine Garderobe</h3></div><p>Hier rüstest du bereits freigeschaltete Skins aus.</p></header>
+      <div class="profile-skins">${skinList().filter(item=>p.unlockedSkins.includes(item.id)).map(item=>`<button class="profile-skin ${p.selectedSkin===item.id?'is-equipped':''}" data-profile-skin="${item.id}" aria-pressed="${p.selectedSkin===item.id}">${playerPortrait(item.id)}<strong>${escape(item.name)}</strong><small>${p.selectedSkin===item.id?'Ausgerüstet':'Anziehen'}</small></button>`).join('')}</div>
+      <p class="nn-profile-help">Neue Looks gibt es ausschließlich im Basar der Hauptnavigation.</p>
+    </section>
+    <section class="nn-profile-section nn-profile-collection" aria-labelledby="nn-collection-title">
+      <header><div><span class="nn-profile-kicker">DEIN FORTSCHRITT</span><h3 id="nn-collection-title">Erfolge &amp; Fähigkeiten</h3></div></header>
+      <div class="nn-profile-actions">
+        ${button('★ Meine Erfolge','achievements','ghost')}
+        ${button('✦ Meine Fähigkeiten','abilities','ghost')}
+      </div>
+    </section>
+    <section class="nn-profile-section nn-profile-control" aria-labelledby="nn-control-title">
+      <header><div><span class="nn-profile-kicker">ALLES AN EINEM ORT</span><h3 id="nn-control-title">Konto &amp; Einstellungen</h3></div><p>Sprache, Design und Ton werden ausschließlich in den Einstellungen geändert.</p></header>
+      <div class="nn-profile-actions">
+        ${accountActive()?button('🔒 Konto & MFA verwalten','account','primary'):'<button type="button" class="btn primary" data-account-view="login">Anmelden / Konto verbinden</button><button type="button" class="btn ghost" data-account-view="register">Konto erstellen</button>'}
+        ${button('⚙ Einstellungen','settings','ghost')}
+      </div>
+      ${accountActive()?'<p class="nn-profile-help">Dein Konto synchronisiert den bestätigten Fortschritt über den Server.</p>':usernameForm(true)}
+    </section>
+    <details class="nn-profile-manage">
+      <summary>Weitere Profilaktionen</summary>
+      <div class="nn-profile-actions">
+        ${button('Profil exportieren','export','ghost')}
+        ${button('Spiel verlassen · Homepage','exit-game','ghost')}
+        ${button('Abmelden','logout','ghost')}
+        ${button('Profil löschen','delete-profile','danger')}
+      </div>
+    </details>
+  `, '',{label:'DEIN NINJA-PROFIL',classes:'profile-panel nn-profile-panel'});
+  guideOnce('profile',{title:'Dein Ninja an einem Ort',text:'Deine Garderobe, Erfolge, Fähigkeiten, Konto und Einstellungen sind hier zusammengefasst. Neue Looks gibt es im Basar der Hauptnavigation.',animation:'profile'});
 }
 function showLanding(){
   mentorResume=false;mentor?.clear();pendingGuides.clear();game.pause();save();clear();scene('landing');document.body.classList.remove('is-flow','is-overloaded');
@@ -604,7 +651,7 @@ function wire(){
   $('world').addEventListener('pointerup',e=>{movePointer(e);if(e.pointerId===swipePointer){swipePointer=null;lastPoint=null}});$('world').addEventListener('pointercancel',()=>{swipePointer=null;lastPoint=null});
   $('overlay-root').addEventListener('click',e=>{const b=e.target.closest('button');if(!b||b.disabled)return;const action=b.dataset.action;if(b.dataset.worldEnter){worldDetailsMenu(b.dataset.worldEnter);return;}if(b.dataset.worldPractice){startAccessiblePractice(b.dataset.worldPractice);return;}if(b.dataset.modeStart){$('mode-select').value=b.dataset.modeStart;launch();return;}if(b.dataset.leaderboardFilter){leaderboardFilter=b.dataset.leaderboardFilter;drawLeaderboard();return;}if(b.dataset.profileSkin){const result=game.selectSkin(b.dataset.profileSkin);if(!good(result))toast(why(result));else{overviewToken='';playerMenu();renderHUD();save();toast('Ninja-Look ausgewählt. In deiner nächsten neuen Runde wirft er für dich!');}return;}if(b.dataset.skillInspect){selectedSkill=b.dataset.skillInspect;abilities();$('overlay-root').querySelector('.skill-detail')?.scrollIntoView({block:'nearest',behavior:'smooth'});return;}if(b.dataset.treeBranch){const skill=SKILLS.find(s=>s.branch===b.dataset.treeBranch&&!game.profile.unlockedSkills.includes(s.id))||SKILLS.find(s=>s.branch===b.dataset.treeBranch);selectedSkill=skill.id;abilities();const node=$('overlay-root').querySelector(`[data-skill-inspect="${skill.id}"]`);node?.scrollIntoView({block:'nearest',inline:'center',behavior:'smooth'});return;}if(b.dataset.unlockView){if(b.dataset.notificationId){const seen=game.markNotificationRead(b.dataset.notificationId);if(!good(seen)){toast(why(seen));return;}}const type=b.dataset.unlockView;if(type==='skill'){selectedSkill=b.dataset.unlockRef;abilities();$('overlay-root').querySelector('.skill-detail')?.scrollIntoView({block:'nearest'});}else if(type==='achievement'){achievementMenu();$('overlay-root').querySelector(`[data-achievement="${b.dataset.unlockRef}"]`)?.scrollIntoView({block:'nearest'});}else if(type==='level')playerMenu();else shop(type==='world'?'worlds':type==='skin'?'skins':'backgrounds');return;}if(b.dataset.skin){const id=b.dataset.skin,owned=game.profile.unlockedSkins.includes(id);const r=owned?game.selectSkin(id):game.buySkin(id);if(!good(r))toast(why(r));else if(!owned)game.selectSkin(id);skins();renderHUD();save();return;}
     if(b.dataset.reflectionChoice){chooseReflection(b.dataset.reflectionChoice);return;}if(b.dataset.reflectionReason){chooseReflectionReason(b.dataset.reflectionReason);return;}if(action==='reflection-retry'){retryReflection();return;}
-    if(b.dataset.campaignJump){const region=document.getElementById('campaign-region-'+b.dataset.campaignJump);region?.scrollIntoView({block:'start',behavior:getPreferences().calmEffects?'instant':'smooth'});return;}if(b.dataset.missionInspect){selectedMissionId=b.dataset.missionInspect;careerMenu();$('overlay-root').querySelector('.career-detail')?.scrollIntoView({block:'nearest',behavior:'smooth'});return;}
+    if(b.dataset.campaignJump){const region=document.getElementById('campaign-region-'+b.dataset.campaignJump);region?.scrollIntoView({block:'start',behavior:getPreferences().calmEffects?'instant':'smooth'});return;}if(b.dataset.missionInspect){selectedMissionId=b.dataset.missionInspect;const oldPanel=$('overlay-root').querySelector('.legend-career-panel');const oldScroll=oldPanel?.scrollTop||0;careerMenu();const newPanel=$('overlay-root').querySelector('.legend-career-panel');if(newPanel)newPanel.scrollTop=oldScroll;return;}
     if(b.dataset.missionStart){launchMission(b.dataset.missionStart);return;}
     if(b.dataset.careerClaim){claimAdventure('career',b.dataset.careerClaim);return;}
     if(b.dataset.weeklyClaim){claimAdventure('weekly',b.dataset.weeklyClaim);return;}

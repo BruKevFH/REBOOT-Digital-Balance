@@ -13,6 +13,7 @@ on:
       - 'notification-ninja/legend-home.css'
       - 'notification-ninja/worlds-v2.css'
       - 'notification-ninja/ux-v2.css'
+      - 'notification-ninja/ui-navigation-v3.css'
       - 'notification-ninja/assets/dojo-*-v2.svg'
       - 'notification-ninja/sw.js'
       - 'scripts/build_ninja.mjs'
