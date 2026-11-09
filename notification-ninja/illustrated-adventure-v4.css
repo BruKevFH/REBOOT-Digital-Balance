@@ -360,6 +360,6 @@ html[data-ninja-theme] .nn-career-chapter-trail{position:relative!important;isol
  .nn-village-stage *, .nn-career-adventure *, .nn-celebration, .nn-celebration *, .world-detail-panel .world-inside *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
  .nn-career-trail-path .nn-path-road{stroke-dasharray:none}
 }
-html[data-ninja-calm="true"] .nn-village-stage *,html[data-ninja-calm="true"] .nn-career-adventure *,
-html[data-ninja-calm="true"] .nn-celebration,html[data-ninja-calm="true"] .nn-celebration *,
-html[data-ninja-calm="true"] .world-detail-panel .world-inside *{animation:none!important;transition:none!important}
+body.calm-view .nn-village-stage *,body.calm-view .nn-career-adventure *,
+body.calm-view .nn-celebration,body.calm-view .nn-celebration *,
+body.calm-view .world-detail-panel .world-inside *{animation:none!important;transition:none!important}
