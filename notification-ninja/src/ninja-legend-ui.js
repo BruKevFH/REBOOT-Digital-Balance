@@ -175,58 +175,82 @@ function campaignOverworld(missions){
  </section>`;
 }
 
+
+/** Adventure progress comes only from real getCareerMissions() data. */
 export function legendaryCareer({missions=[],selectedId=null}={}){
-  const main=missions.filter(m=>m.section==='main');
-  const selected=missions.find(m=>m.id===selectedId)||main.find(m=>m.available&&!m.completed)||main[0];
-  const completed=main.filter(m=>m.completed).length;
-  const bosses=missions.filter(m=>m.bossId);
-  const extras=missions.filter(m=>m.section!=='main'&&!m.bossId);
-  const ready=missions.filter(m=>m.completed&&!m.claimed).length;
-  const state=m=>m.completed?'complete':m.available?'ready':'locked';
-  const stateLabel=m=>m.completed?'Geschafft':m.available?'Spielbar':'Gesperrt';
-  const worldNames=['study','gaming','sleep'];
-  const steps=m=>`<button type="button" class="nn-career-node is-${state(m)} ${selected?.id===m.id?'is-selected':''}" data-mission-inspect="${esc(m.id)}" aria-pressed="${selected?.id===m.id}" aria-label="Mission ${m.order}: ${esc(m.title)}, ${stateLabel(m)}">
-    <span class="nn-career-node-number" aria-hidden="true">${m.completed?'✓':String(m.order).padStart(2,'0')}</span>
-    <span class="nn-career-node-copy"><strong>${esc(m.title)}</strong><small>${stateLabel(m)}${m.completed&&!m.claimed?' · Münzen abholen':''}</small></span>
-    <span class="nn-career-node-arrow" aria-hidden="true">›</span>
-  </button>`;
-  const chapters=worldNames.map((id,i)=>{
-    const c=WORLD_DETAILS[id],group=main.filter(m=>m.chapter===id),done=group.filter(m=>m.completed).length;
-    return `<section id="campaign-region-${id}" class="nn-career-chapter nn-career-chapter-${id}" aria-labelledby="nn-chapter-${id}">
-      <div class="nn-career-chapter-cover"><img src="${c.art}" alt="" loading="lazy">
-        <div class="nn-career-chapter-label"><span>WELT ${String(i+1).padStart(2,'0')} · ${esc(c.subtitle)}</span><h4 id="nn-chapter-${id}">${esc(c.title)}</h4><small>${done} von ${group.length} Missionen geschafft</small></div>
-      </div>
-      <div class="nn-career-chapter-trail" aria-label="Missionspfad ${esc(c.title)}">
-        <svg class="nn-career-trail-path" viewBox="0 0 600 350" preserveAspectRatio="none" aria-hidden="true"><path d="M135 55 Q300 40 465 55 C535 70 535 140 465 165 Q300 180 135 165 C60 180 65 245 135 275 Q300 300 465 275"/></svg>
-        ${group.map(steps).join('')}</div>
-    </section>`;
-  }).join('');
-  const missing=(selected?.missingRequirements||[]).map(id=>missions.find(m=>m.id===id)?.title||id);
-  const prerequisites=selected?.worldLocked?'Diese Welt ist noch gesperrt.':missing.length?'Zuerst abschließen: '+missing.join(' · '):'Alle Voraussetzungen erfüllt';
-  const current=Math.max(0,Number(selected?.current)||0),target=Math.max(1,Number(selected?.target)||1);
-  const detail=selected?`<section class="nn-career-detail" aria-live="polite">
-    <span class="nn-career-eyebrow">AUSGEWÄHLTE ETAPPE</span>
-    <span class="nn-career-status is-${state(selected)}">${stateLabel(selected)}</span>
+ const main=missions.filter(m=>m.section==='main');
+ const selected=missions.find(m=>m.id===selectedId)||main.find(m=>m.available&&!m.completed)||main[0];
+ const completed=main.filter(m=>m.completed).length;
+ const bosses=missions.filter(m=>m.bossId);
+ const extras=missions.filter(m=>m.section!=='main'&&!m.bossId);
+ const ready=missions.filter(m=>m.completed&&!m.claimed).length;
+ const state=m=>m.completed?'complete':m.available?'ready':'locked';
+ const stateLabel=m=>m.completed?'Geschafft':m.available?'Spielbar':'Gesperrt';
+ const worldNames=['study','gaming','sleep'];
+ const waypoints=[[9,75],[25,52],[42,70],[57,38],[74,62],[88,28]];
+ const steps=(m,i=0,mini=false)=>{
+   const style=mini?'':`style="--nx:${waypoints[i]?.[0]||50}%;--ny:${waypoints[i]?.[1]||50}%"`;
+   return `<button type="button" class="nn-career-node is-${state(m)} ${selected?.id===m.id?'is-selected':''} ${mini?'is-bonus':''}" ${style} data-mission-inspect="${esc(m.id)}" aria-pressed="${selected?.id===m.id}" aria-label="Mission ${m.order}: ${esc(m.title)}, ${stateLabel(m)}">
+     <span class="nn-career-node-number" aria-hidden="true">${m.completed?'✓':m.available?String(m.order).padStart(2,'0'):'♧'}</span>
+     <span class="nn-career-node-copy"><strong>${esc(m.title)}</strong><small>${stateLabel(m)}${m.completed&&!m.claimed?' · Belohnung bereit':''}</small></span>
+     <span class="nn-career-node-arrow" aria-hidden="true">✦</span>
+   </button>`;
+ };
+ const chapters=worldNames.map((id,i)=>{
+  const c=WORLD_DETAILS[id],group=main.filter(m=>m.chapter===id),done=group.filter(m=>m.completed).length;
+  return `<section id="campaign-region-${id}" class="nn-career-chapter nn-career-chapter-${id}" aria-labelledby="nn-chapter-${id}">
+   <div class="nn-career-chapter-cover">
+     <span class="nn-career-chapter-emblem" aria-hidden="true">${c.symbol}</span>
+     <div class="nn-career-chapter-label"><span>WELT ${String(i+1).padStart(2,'0')} · ${esc(c.subtitle)}</span><h4 id="nn-chapter-${id}">${esc(c.title)}</h4><small>${done} von ${group.length} Missionen</small></div>
+   </div>
+   <div class="nn-career-chapter-trail" aria-label="Missionspfad ${esc(c.title)}">
+    <img class="nn-career-illustrated-landscape" src="./assets/overworld-landscape-v4.svg" alt="" loading="lazy">
+    <div class="nn-career-territory" aria-hidden="true">
+       <span class="nn-career-territory-roof">${c.symbol}</span>
+       <img src="${c.art}" alt="">
+    </div>
+    <svg class="nn-career-trail-path" viewBox="0 0 1000 500" preserveAspectRatio="none" aria-hidden="true"><path class="nn-path-shadow" d="M90 375 C145 375 200 240 250 260 S355 377 420 350 S505 170 570 190 S665 360 740 310 S823 130 880 145"/><path class="nn-path-road" d="M90 375 C145 375 200 240 250 260 S355 377 420 350 S505 170 570 190 S665 360 740 310 S823 130 880 145"/></svg>
+    <span class="nn-career-path-mascot" aria-hidden="true">${ninjaMascot}</span>
+    ${group.map((m,j)=>steps(m,j)).join('')}
+    ${villageParticles}
+    <span class="nn-career-chapter-next" aria-hidden="true">${i<2?'WEITER ZUR NÄCHSTEN WELT ↓':'DEIN WEG ZUM FINALE ✦'}</span>
+   </div>
+  </section>`;
+ }).join('');
+ const missing=(selected?.missingRequirements||[]).map(id=>missions.find(m=>m.id===id)?.title||id);
+ const prereq=selected?.worldLocked?'Diese Welt ist noch gesperrt.':missing.length?'Zuerst abschließen: '+missing.join(' · '):'Alle Voraussetzungen erfüllt';
+ const current=Math.max(0,Number(selected?.current)||0),target=Math.max(1,Number(selected?.target)||1);
+ const detail=selected?`<section class="nn-career-detail" aria-live="polite">
+    <span class="nn-career-eyebrow">DEINE AUSGEWÄHLTE MISSION</span>
+    <div class="nn-career-detail-hero"><span class="nn-career-detail-mascot">${ninjaMascot}</span><span class="nn-career-status is-${state(selected)}">${stateLabel(selected)}</span></div>
     <h4>${esc(selected.title)}</h4>
     <p>${esc(selected.description)}</p>
-    <div class="nn-career-progress"><span>${num(current)} / ${num(target)}</span><strong>+${num(selected.reward)} Münzen</strong></div>
+    <div class="nn-career-progress"><span>${num(current)} / ${num(target)} Fortschritt</span><strong>✦ +${num(selected.reward)} Münzen</strong></div>
     <div class="nn-career-meter" role="progressbar" aria-label="Missionsfortschritt" aria-valuemin="0" aria-valuemax="${target}" aria-valuenow="${Math.min(target,current)}"><span style="width:${Math.round(Math.min(current,target)/target*100)}%"></span></div>
-    ${selected.best?`<small class="nn-career-best">Bestwert: ${num(selected.best.score)} Punkte · ${num(selected.best.correct)} richtig</small>`:''}
-    <small class="nn-career-prerequisites">${esc(prerequisites)}</small>
-    <button type="button" class="legend-button legend-button-primary nn-career-start" data-mission-start="${esc(selected.id)}" ${selected.available||selected.completed?'':'disabled'}>${selected.completed?'Mission erneut spielen':'Mission starten'} <span aria-hidden="true">→</span></button>
-    ${selected.completed&&!selected.claimed?`<button type="button" class="legend-button legend-button-gold" data-career-claim="${esc(selected.id)}">+${num(selected.reward)} Münzen abholen</button>`:''}
-  </section>`: '';
-  return `<div class="nn-career">
-    <header class="nn-career-intro"><div><span class="nn-career-eyebrow">DEINE NINJA-REISE · 3 KAPITEL</span><h3>Schritt für Schritt zum Fokus-Ninja.</h3><p>Ein übersichtlicher Missionspfad durch Lernen, Gaming und Schlafen. Wähle eine Etappe; die Details bleiben neben der Karte statt darüber.</p></div><div class="nn-career-overall"><strong>${completed}<span> / ${main.length}</span></strong><small>Missionen geschafft</small></div></header>
-    <div class="nn-career-layout">
-      <div class="nn-career-worlds">
-        ${chapters}
-        <section class="nn-career-bosses" aria-labelledby="nn-boss-title"><span class="nn-career-eyebrow">BESONDERE HERAUSFORDERUNGEN</span><h4 id="nn-boss-title">Die Schattenbosse</h4><p>Drei Bosskämpfe mit eigenen Mechaniken und Voraussetzungen.</p><div class="nn-career-boss-grid">${bosses.map((m,i)=>`<button type="button" class="nn-career-boss is-${state(m)} ${selected?.id===m.id?'is-selected':''}" data-mission-inspect="${esc(m.id)}" aria-pressed="${selected?.id===m.id}"><span aria-hidden="true">${['鬼','将','龍'][i]||'鬼'}</span><strong>${esc(m.title)}</strong><small>${stateLabel(m)}</small></button>`).join('')}</div></section>
-        ${extras.length?`<details class="nn-career-bonus"><summary>Zusatzmissionen · ${extras.filter(m=>m.completed).length} / ${extras.length}</summary><div class="nn-career-bonus-grid">${extras.map(steps).join('')}</div></details>`:''}
-      </div>
-      <aside class="nn-career-sidebar" aria-label="Missionsdetails">${detail}<p class="nn-career-sidebar-tip">Wähle eine Mission auf der Karte. ${ready?'Du hast '+ready+' Belohnung(en) zum Abholen.':'Der nächste freigeschaltete Knoten zeigt dir den Weg.'}</p></aside>
-    </div>
-  </div>`;
+    ${selected.best?`<small class="nn-career-best">Bestwert: ${num(selected.best.score)} Punkte · ${num(selected.best.correct)} richtige Entscheidungen</small>`:''}
+    <small class="nn-career-prerequisites">${esc(prereq)}</small>
+    <button type="button" class="legend-button legend-button-primary nn-career-start" data-mission-start="${esc(selected.id)}" ${selected.available||selected.completed?'':'disabled'}>${selected.completed?'Mission erneut spielen':'Mission starten'} <span aria-hidden="true">➜</span></button>
+    ${selected.completed&&!selected.claimed?`<button type="button" class="legend-button legend-button-gold" data-career-claim="${esc(selected.id)}">✦ +${num(selected.reward)} Münzen abholen</button>`:''}
+   </section>`:'';
+ return `<div class="nn-career nn-career-adventure">
+  <header class="nn-career-intro">
+   <div><span class="nn-career-eyebrow">DEINE NINJA-REISE · DREI REGIONEN</span><h3>Karrierekarte</h3><p>Schritt für Schritt zum Fokus-Ninja. Folge den leuchtenden Missionssteinen durch drei Welten.</p></div>
+   <div class="nn-career-overall"><strong>${completed}<span> / ${main.length}</span></strong><small>Missionen geschafft</small></div>
+  </header>
+  <div class="nn-career-layout">
+   <div class="nn-career-worlds">${chapters}
+    <section class="nn-career-bosses" aria-labelledby="nn-boss-title">
+     <span class="nn-career-eyebrow">DIE LETZTEN PRÜFUNGEN</span><h4 id="nn-boss-title">Schattenbosse</h4><p>Drei besondere Bosskämpfe. Wähle deinen nächsten Kampf auf dem Pfad.</p>
+     <div class="nn-career-boss-grid">${bosses.map((m,i)=>`<button type="button" class="nn-career-boss is-${state(m)} ${selected?.id===m.id?'is-selected':''}" data-mission-inspect="${esc(m.id)}" aria-pressed="${selected?.id===m.id}"><span aria-hidden="true">${['鬼','将','龍'][i]||'鬼'}</span><strong>${esc(m.title)}</strong><small>${stateLabel(m)}</small></button>`).join('')}</div>
+    </section>
+    ${extras.length?`<details class="nn-career-bonus"><summary>✦ Zusatzmissionen · ${extras.filter(m=>m.completed).length} / ${extras.length}</summary><div class="nn-career-bonus-grid">${extras.map((m,i)=>steps(m,i,true)).join('')}</div></details>`:''}
+   </div>
+   <aside class="nn-career-sidebar" aria-label="Missionsdetails">
+    ${detail}
+    <p class="nn-career-sidebar-tip">✦ ${ready?'Du hast '+ready+' Münzbelohnung(en) zum Abholen.':'Wähle einen leuchtenden Missionsstein, um deine nächste Herausforderung zu entdecken.'}</p>
+   </aside>
+  </div>
+ </div>`;
 }
 
 const stampedAt=value=>{
