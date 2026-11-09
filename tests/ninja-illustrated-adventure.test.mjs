@@ -63,5 +63,5 @@ test('illustrated backgrounds, accessible meaning and real success animation are
  const main=read('src/main.js');
  for(const event of ['level-complete','career-completed','boss-defeated','rank-unlocked'])assert(main.includes("e.type==='"+event+"'"));
  assert(main.includes("celebrateUnlock(type,ref)"));
- assert(main.includes("nn-celebration-skin"));
+ assert(css.includes(".nn-celebration.nn-celebration-skin"));
 });
