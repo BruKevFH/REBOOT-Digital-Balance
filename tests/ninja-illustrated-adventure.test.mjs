@@ -57,7 +57,7 @@ test('illustrated backgrounds, accessible meaning and real success animation are
   assert(sw.includes('./'+file));assert(packageScript.includes("'"+file+"'"));
  }
  assert.match(map,/viewBox="0 0 1600 850"/);
- assert.doesNotMatch(map,/<script|<foreignObject|https?:\/\//i);
+ assert.doesNotMatch(map.replace('http://www.w3.org/2000/svg',''),/<script|<foreignObject|https?:\/\//i);
  assert(css.includes('prefers-reduced-motion:reduce'));
  assert(css.includes('body.calm-view'));
  const main=read('src/main.js');
