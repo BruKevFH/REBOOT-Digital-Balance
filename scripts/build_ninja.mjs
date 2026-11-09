@@ -1,3 +1,4 @@
+/* Release 3.5.0: produce fresh illustrated bundles for GitHub Pages after the cache migration. */
 import {build} from 'esbuild';
 import {mkdir,writeFile} from 'node:fs/promises';
 await mkdir('notification-ninja/dist',{recursive:true});
