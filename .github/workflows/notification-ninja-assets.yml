@@ -80,8 +80,10 @@ jobs:
           for attempt in {1..10}; do
             live="$(curl -fsSL --max-time 10 -H 'Cache-Control: no-cache' "$site/dist/build.json?release=${GITHUB_RUN_ID}-${attempt}" | jq -r '.version // empty' || true)"
             if [ "$live" = "3.5.0" ]; then
-              curl -fsSL --max-time 10 "$site/illustrated-adventure-v4.css?release=${GITHUB_RUN_ID}" | grep -q 'nn-village-stage'
-              curl -fsSL --max-time 10 "$site/assets/overworld-landscape-v4.svg?release=${GITHUB_RUN_ID}" | grep -q 'Ninja-Dojo-Welten'
+              curl -fsSL --max-time 10 "$site/illustrated-adventure-v4.css?release=${GITHUB_RUN_ID}" -o "$RUNNER_TEMP/nn-v4.css"
+              grep -q 'nn-village-stage' "$RUNNER_TEMP/nn-v4.css"
+              curl -fsSL --max-time 10 "$site/assets/overworld-landscape-v4.svg?release=${GITHUB_RUN_ID}" -o "$RUNNER_TEMP/nn-v4.svg"
+              grep -q 'Ninja-Dojo-Welten' "$RUNNER_TEMP/nn-v4.svg"
               echo "PUBLIC VISUAL RELEASE 3.5.0 CONFIRMED"
               exit 0
             fi
