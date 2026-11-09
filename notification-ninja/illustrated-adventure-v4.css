@@ -363,3 +363,32 @@ html[data-ninja-theme] .nn-career-chapter-trail{position:relative!important;isol
 body.calm-view .nn-village-stage *,body.calm-view .nn-career-adventure *,
 body.calm-view .nn-celebration,body.calm-view .nn-celebration *,
 body.calm-view .world-detail-panel .world-inside *{animation:none!important;transition:none!important}
+
+/* The HUD rail has enough room for meaning on desktop without covering the arena. */
+@media(min-width:1101px){body.is-playing,body.is-fullscreen-game.is-playing{--game-sidebar:174px}}
+@media(min-width:761px) and (max-width:1100px){body.is-playing,body.is-fullscreen-game.is-playing{--game-sidebar:126px}}
+.is-playing.is-flow .flow-block{border-color:#9b6ddd!important;box-shadow:0 4px 0 #9a78a5,0 0 18px #eab9ffae;animation:nnGlowPulse 2.8s ease-in-out infinite}
+.is-playing.is-overloaded .overload-block{border-color:#ee816b!important;background:linear-gradient(120deg,#ffe8db,#ffc7c6)}
+.is-playing .speed-badge{background:linear-gradient(120deg,#f4ebff,#e5dafb);border-color:#9c8fbd}
+.is-playing .run-wallet{border:2px solid #cf9f55;border-radius:13px;background:linear-gradient(120deg,#fff5d1,#ffdfa3);box-shadow:0 3px 0 #c6a56c}
+.nn-profile-panel .profile-skin{transition:translate .23s,box-shadow .23s,filter .23s}
+.nn-profile-panel .profile-skin:hover{translate:0 -4px}
+.nn-profile-panel .profile-skin.is-equipped{border-color:#3cb69f!important;box-shadow:0 0 0 4px #60d5b659,0 7px 0 #458e80!important}
+.result-panel{overflow:visible}
+.result-panel .result-summary>article{position:relative;overflow:hidden;border:4px solid #2e4254;border-radius:20px;
+ box-shadow:0 7px 0 #b68c62,0 14px 24px #25394b23;padding:21px 17px}
+.result-panel .result-summary>article:before{content:"✦";position:absolute;right:13px;top:6px;color:#ffffffaa;font-size:35px}
+.result-panel .result-summary>article>strong{font-size:clamp(30px,4vw,47px);text-shadow:1px 2px 0 #ffffff8a}
+.result-panel .result-summary>article.result-correct{background:linear-gradient(125deg,#d1f4df,#7dd8be)}
+.result-panel .result-summary>article.result-errors{background:linear-gradient(125deg,#ffe0ce,#f2a799)}
+.result-panel .reflection-question{position:relative;padding:20px!important;border:3px solid #8ca9a2!important;
+ border-radius:19px!important;background:linear-gradient(115deg,#fcf5df,#eaf6e5)!important}
+.result-panel .reflection-question:before{content:"忍";position:absolute;right:15px;top:8px;color:#8cb6a7;font-size:38px;font-weight:950}
+.result-panel .overlay-actions .btn.primary{border-width:3px;border-radius:19px;background:linear-gradient(120deg,#ff9c8a,#f16b71);
+ box-shadow:0 5px 0 #a85764;padding:13px 23px}
+@media(max-width:760px){
+ .result-panel .result-summary>article{border-width:2px;padding:11px 9px;box-shadow:0 3px 0 #b68c62}
+ .result-panel .result-summary>article>strong{font-size:clamp(20px,5vw,32px)}
+}
+@media(prefers-reduced-motion:reduce){.is-playing.is-flow .flow-block{animation:none!important}.nn-profile-panel .profile-skin{transition:none!important}}
+body.calm-view.is-playing.is-flow .flow-block{animation:none!important}
