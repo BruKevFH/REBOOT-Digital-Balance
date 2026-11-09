@@ -71,22 +71,49 @@ export const WORLD_DETAILS=Object.freeze({
   mentor:'Die schönste Technik am Abend ist manchmal, den Bildschirm bewusst auszuschalten.',
   start:'Schlafrunde starten'}
 });
+
+const ninjaMascot="<svg class=\"nn-nim-svg\" viewBox=\"0 0 130 154\" aria-hidden=\"true\" focusable=\"false\"><path d=\"M35 111Q17 101 17 90L7 95Q9 121 29 127\" fill=\"#f5a064\" stroke=\"#23374d\" stroke-width=\"6\" stroke-linejoin=\"round\"/><path d=\"M87 44q31 1 37 16-18-4-23 7l-12-11Z\" fill=\"#ff957b\" stroke=\"#23374d\" stroke-width=\"6\"/><rect x=\"33\" y=\"42\" width=\"64\" height=\"66\" rx=\"27\" fill=\"#37bea8\" stroke=\"#23374d\" stroke-width=\"7\"/><rect x=\"37\" y=\"61\" width=\"58\" height=\"29\" rx=\"14\" fill=\"#fff4e2\" stroke=\"#23374d\" stroke-width=\"6\"/><path d=\"M52 75q8-8 15 0M73 75q8-8 14 0\" fill=\"none\" stroke=\"#23374d\" stroke-width=\"4\" stroke-linecap=\"round\"/><path d=\"M53 96q12 9 26 0\" fill=\"none\" stroke=\"#e8d58b\" stroke-width=\"5\"/><path d=\"M40 105l-7 30 18 4 10-24M81 114l8 23 16-6-10-31\" fill=\"#46bda2\" stroke=\"#23374d\" stroke-width=\"7\" stroke-linejoin=\"round\"/><path d=\"M33 107l-17 6 5 15 23-5M93 107l14-16 10 10-17 25\" fill=\"#46bda2\" stroke=\"#23374d\" stroke-width=\"7\" stroke-linejoin=\"round\"/><path d=\"M57 42 64 17l8 25\" fill=\"#35bca3\" stroke=\"#23374d\" stroke-width=\"7\"/><path d=\"m65 27 3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z\" fill=\"#ffcf64\" stroke=\"#23374d\" stroke-width=\"2\"/></svg>";
+const villageParticles='<span class="nn-landscape-petal petal-one" aria-hidden="true">✿</span><span class="nn-landscape-petal petal-two" aria-hidden="true">✿</span><span class="nn-landscape-petal petal-three" aria-hidden="true">✿</span><span class="nn-landscape-petal petal-four" aria-hidden="true">✿</span><span class="nn-landscape-firefly f-one" aria-hidden="true">✦</span><span class="nn-landscape-firefly f-two" aria-hidden="true">✦</span><span class="nn-landscape-firefly f-three" aria-hidden="true">✦</span>';
+
+
 export function legendaryDojos(){
- return `<div class="legend-dojos worlds-hub">
- <header class="worlds-hub-intro"><span class="legend-kicker">DEIN EIGENER ORT · DREI STIMMUNGEN</span><h3>Entdecke deine Spielwelten.</h3><p>Jedes Dojo ist ein eigenständiger Themenraum mit einer eigenen Kurzrunde. Deine Karriere findest du separat in der Abenteuerkarte.</p></header>
- <div class="worlds-hub-grid">${['study','gaming','sleep'].map((id,i)=>{const c=WORLD_DETAILS[id];return `<article class="legend-dojo legend-dojo-${id} worlds-hub-card">
- <button type="button" class="worlds-hub-entry" data-world-enter="${id}" aria-label="${c.title} betreten">
- <span class="worlds-hub-art"><img src="${c.art}" alt="" loading="lazy"><span class="worlds-world-glimmer" aria-hidden="true">✦ ✧</span><span class="worlds-hub-number">${String(i+1).padStart(2,'0')}</span></span>
- <span class="worlds-hub-info"><span class="legend-kicker">${c.tag}</span><strong>${c.title}</strong><small>${c.subtitle}</small><span class="worlds-hub-open">Welt betreten <span aria-hidden="true">➜</span></span></span>
- </button></article>`}).join('')}</div>
- <aside class="worlds-mentor-note"><span class="worlds-mentor-face" aria-hidden="true">忍</span><div><strong>NIM · Wähle deine Stimmung.</strong><p>Du kannst jedes Dojo sofort erkunden. Die Themenrunden sind eigenständig; für die 18 Karriere-Missionen gibt es einen eigenen Bereich.</p></div></aside>
+ const labels={study:{name:'Lernen',icon:'✦',tag:'MORGENLICHT',hint:'Ablenkungen erkennen',letter:'文'},gaming:{name:'Gaming',icon:'✧',tag:'NEON-NACHT',hint:'Bewusst pausieren',letter:'遊'},sleep:{name:'Schlafen',icon:'☾',tag:'MONDLICHT',hint:'Zur Ruhe kommen',letter:'月'}};
+ return `<div class="legend-dojos worlds-hub nn-world-village">
+  <header class="nn-village-title worlds-hub-intro">
+   <span class="legend-kicker">DEINE DREI DOJO-WELTEN</span>
+   <h3>Dein Weg zur <em>digitalen Balance</em></h3>
+   <p>Drei Alltagssituationen. Bewusst entscheiden. Wähle ein Gebäude auf der Karte und entdecke seine eigene Spielregel.</p>
+  </header>
+  <section class="nn-village-stage" aria-label="Interaktive Weltkarte mit drei Dojos">
+    <img class="nn-village-landscape" src="./assets/overworld-landscape-v4.svg" alt="" loading="eager">
+    <span class="nn-village-sun" aria-hidden="true"></span><span class="nn-village-moon" aria-hidden="true">☾</span>
+    <div class="worlds-hub-grid nn-village-gates">
+      ${['study','gaming','sleep'].map((id,i)=>{const c=WORLD_DETAILS[id],d=labels[id];return `<article class="legend-dojo legend-dojo-${id} worlds-hub-card nn-village-gate nn-village-gate-${id}">
+      <button type="button" class="worlds-hub-entry nn-village-house" data-world-enter="${id}" aria-label="${c.title} betreten: ${esc(d.hint)}">
+        <span class="nn-house-halo" aria-hidden="true"></span>
+        <span class="nn-house-roof" aria-hidden="true"><span class="nn-house-roof-symbol">${d.icon}</span></span>
+        <span class="worlds-hub-art nn-house-interior"><img src="${c.art}" alt="" loading="lazy"><span class="nn-house-window-shine" aria-hidden="true"></span><span class="nn-house-lantern l-left" aria-hidden="true">✦</span><span class="nn-house-lantern l-right" aria-hidden="true">✦</span></span>
+        <span class="nn-house-plaque"><span class="nn-house-number">${String(i+1).padStart(2,'0')}</span><strong>${d.name}</strong><small>${c.title}</small></span>
+        <span class="worlds-hub-info nn-house-foot"><span class="legend-kicker">${d.tag}</span><span class="nn-house-action">Welt betreten <span aria-hidden="true">➜</span></span></span>
+       </button>
+      </article>`}).join('')}
+    </div>
+    <div class="nn-village-sakura" aria-hidden="true"></div>
+    ${villageParticles}
+    <div class="nn-village-guide" aria-label="NIMs Hinweis">
+     <span class="nn-guide-avatar">${ninjaMascot}</span>
+     <span class="nn-guide-balloon">Wähle dein <strong>Dojo!</strong><small>Jede Welt spielt sich anders.</small></span>
+    </div>
+    <span class="nn-village-water-label" aria-hidden="true">✦ NINJATAL ✦</span>
+  </section>
+  <p class="nn-village-caption">Jede Welt führt zu einer eigenen Themenrunde. Die 18 Story-Missionen findest du ausschließlich in der <strong>Karrierekarte</strong>.</p>
  </div>`;
 }
 export function legendaryWorldDetail(id){
  const c=WORLD_DETAILS[id];if(!c)return '';
  return `<div class="world-inside world-inside-${id}">
- <div class="world-inside-scene"><img src="${c.art}" alt="" loading="eager"><span class="world-inside-particles" aria-hidden="true">✧ ✦ ✧</span><span class="world-inside-name">${c.symbol}</span></div>
- <div class="world-inside-story"><span class="legend-kicker">${c.tag} · ${c.subtitle}</span><h3>Willkommen im ${c.title}!</h3><p>${c.story}</p>
+ <div class="world-inside-scene"><img src="${c.art}" alt="" loading="eager"><span class="world-inside-particles" aria-hidden="true">✧ ✦ ✧</span><span class="world-inside-name">${c.symbol}</span><span class="nn-inside-scroll"><span class="nn-inside-symbol" aria-hidden="true">${c.symbol}</span><strong>${c.title}</strong><small>${c.subtitle}</small></span><span class="nn-inside-glimmer" aria-hidden="true">✦</span></div>
+ <div class="world-inside-story"><div class="nn-inside-mini-guide"><span class="nn-inside-nim">${ninjaMascot}</span><span>WILLKOMMEN IM NINJATAL!</span></div><span class="legend-kicker">${c.tag} · ${c.subtitle}</span><h3>Willkommen im ${c.title}!</h3><p>${c.story}</p>
  <div class="world-inside-cues"><strong>Hier lernst du:</strong>${c.cues.map(x=>`<span><span aria-hidden="true">✦</span> ${x}</span>`).join('')}</div>
  <div class="world-inside-nim"><span aria-hidden="true">忍</span><p><strong>Sensei NIM</strong> „${c.mentor}“</p></div>
  <div class="world-inside-actions"><button type="button" class="legend-button legend-button-primary" data-quick-context="${id}">${c.start} <span aria-hidden="true">➜</span></button><button type="button" class="legend-button legend-button-subtle" data-world-practice="${id}">Ohne Zeitdruck üben</button></div>
