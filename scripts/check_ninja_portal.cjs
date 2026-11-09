@@ -123,6 +123,10 @@ async function acknowledge(p){for(let n=0;n<20&&(await read(p)).mentor.open;n++)
       assert.equal((await read(page)).ui,'dojos','Dojo navigation opens illustrated worlds');
       assert.equal(await page.locator('.legend-dojo').count(),3,'Three real themed worlds');
       assert.equal(await page.locator('.legend-dojo [data-world-enter]').count(),3);
+       assert.equal(await page.locator('.nn-village-stage').isVisible(),true,'Illustrated world stage is visible');
+       assert.equal(await page.locator('.nn-village-gates').evaluate(el=>getComputedStyle(el).display),'flex','Responsive village must not regress to the old 3-card grid at tablet width');
+       assert.equal(await page.locator('.nn-village-gate-study').evaluate(el=>getComputedStyle(el).position),'relative','Tablet village uses themed dojo houses, not old image cards');
+       assert.equal(await page.locator('.nn-village-landscape').count(),1,'One shared illustrated landscape');
       assert.equal(await page.locator('.legend-dojo [data-game-route="campaign"]').count(),0,'Dojo worlds must not navigate into campaign');
       await page.locator('.legend-dojo [data-world-enter="sleep"]').click();await acknowledge(page);
       assert.equal((await read(page)).ui,'world','World detail is not a campaign mission');
@@ -134,6 +138,8 @@ async function acknowledge(p){for(let n=0;n<20&&(await read(p)).mentor.open;n++)
       await page.locator('.dojo-tabs [data-game-route="campaign"]').click();await acknowledge(page);
       assert.equal((await read(page)).ui,'career','Campaign is a separate primary hub route');
       assert.equal(await page.locator('.nn-career-chapter-trail .nn-career-node').count(),18);
+       assert.equal(await page.locator('.nn-career-chapter-trail').first().evaluate(el=>getComputedStyle(el).display),'block','The adventure trail should be a map, not the previous grid');
+       assert.equal(await page.locator('.nn-career-chapter-trail .nn-career-node').first().evaluate(el=>getComputedStyle(el).position),'absolute','Mission stones follow positions along the map');
       assert.equal(await page.locator('.nn-career-boss').count(),3);
       await page.locator('[data-mission-inspect="study-02"]').click();await acknowledge(page);
       assert.equal(await page.locator('.nn-career-detail h4').innerText(),'Genau statt hektisch');
