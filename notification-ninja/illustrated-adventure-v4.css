@@ -311,7 +311,7 @@ html[data-ninja-theme] .nn-career-chapter-trail{position:relative!important;isol
 .is-playing .meter-block.flow-block{border-color:#8176ad;background:linear-gradient(140deg,#f5eeff,#e2dcff)}
 .is-playing .round-extras{border-top:0}
 .nn-hud-meaning{order:4;max-width:100%;font-size:11px;color:#4b5c62}
-.nn-hud-meaning summary{min-height:40px;display:flex;align-items:center;gap:7px;font-size:10px;
+.nn-hud-meaning summary{min-height:48px;display:flex;align-items:center;gap:7px;font-size:10px;
  cursor:pointer;color:#263c50;font-weight:900;outline-offset:2px}
 .nn-hud-meaning>p{margin:2px 0 9px;padding:9px;border:2px solid #b1a28c;border-radius:10px;
  background:#fff5df;color:#52636a;font-size:10px;line-height:1.5}
