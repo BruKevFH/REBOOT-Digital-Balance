@@ -146,6 +146,18 @@ async function acknowledge(p){for(let n=0;n<20&&(await read(p)).mentor.open;n++)
       await goHome(page);await acknowledge(page);
       assert.equal((await read(page)).ui,'home');
      }
+     if(width===1280){
+      await page.locator('.dojo-tabs [data-game-route="dojos"]').click();await acknowledge(page);
+      assert.equal(await page.locator('.nn-village-gates').evaluate(el=>getComputedStyle(el).display),'block','Desktop must use the illustrated landscape, not the old 3-card grid');
+      assert.equal(await page.locator('.nn-village-gate-study').evaluate(el=>getComputedStyle(el).position),'absolute','Desktop dojo buildings are positioned on the interactive map');
+      assert((await page.locator('.nn-village-stage').boundingBox()).height>=650,'World village should have a full illustrated scene');
+      await page.screenshot({path:path.join(output,'illustrated-village-desktop.png')});
+      await goHome(page);await acknowledge(page);
+      await page.locator('.dojo-tabs [data-game-route="campaign"]').click();await acknowledge(page);
+      assert.equal(await page.locator('.nn-career-chapter-trail .nn-career-node').first().evaluate(el=>getComputedStyle(el).position),'absolute','Desktop career must use a winding illustrated map, not the old mission-card grid');
+      await page.screenshot({path:path.join(output,'illustrated-career-desktop.png')});
+      await goHome(page);await acknowledge(page);
+     }
      await page.locator('.dojo-tabs [data-game-route="bazaar"]').click();await acknowledge(page);
      assert.equal(await page.locator('[data-shop-tab]').count(),2,'only worlds and skins in shop');
       assert.equal(await page.locator('[data-shop-tab="backgrounds"]').count(),0,'no mismatched scenes offered');
