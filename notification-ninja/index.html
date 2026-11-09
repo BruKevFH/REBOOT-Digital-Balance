@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="./worlds-v2.css" />
   <link rel="stylesheet" href="./ux-v2.css" />
   <link rel="stylesheet" href="./ui-navigation-v3.css" />
+  <link rel="stylesheet" href="./illustrated-adventure-v4.css" />
 </head>
 <body>
   <div id="arena" class="arena"><canvas id="world" aria-label="Spielfeld von Notification Ninja"></canvas></div>
@@ -126,6 +127,7 @@
         <div class="meter-block overload-block" title="Überlastung – zu viele Fehler machen es schwieriger"><span><b aria-hidden="true">!</b><i>Overload</i></span><div class="meter-track"><div id="overload-meter" class="meter-fill" style="width:0%" role="progressbar" aria-label="Überlastung" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div></div></div>
         <div class="meter-block flow-block" title="Fokus – eine gute Serie startet deinen Flow"><span><b aria-hidden="true">✦</b><i>Fokus</i></span><div class="meter-track"><div id="flow-meter" class="meter-fill" style="width:0%" role="progressbar" aria-label="Flow" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div></div></div>
       </div>
+      <details class="nn-hud-meaning"><summary>✦ Was zeigen die Werte?</summary><p><strong>Balance:</strong> Gute Entscheidungen halten dich im Gleichgewicht. <strong>Overload:</strong> Fehler erhöhen die Belastung. <strong>Fokus:</strong> Fünf richtige Entscheidungen in Folge aktivieren kurz den Flow.</p></details>
       <div class="round-extras" aria-label="Dein Fortschritt in dieser Runde">
         <span class="run-wallet" title="Münzen in dieser Runde"><span aria-hidden="true">★</span><strong id="run-coins">0</strong><small>Münzen</small></span>
         <span class="speed-badge"><svg viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="m2 10 4-4 3 2 3-5M8 3h4v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Tempo <strong id="speed-value">1,0×</strong></span>
@@ -136,6 +138,7 @@
     <div id="super-dock" class="super-dock"><span id="super-ready-hint" class="super-ready-hint" hidden>SUPER BEREIT!</span><button id="super-button" class="super-button" disabled aria-label="Super-Fähigkeit einsetzen"><span class="super-symbol" aria-hidden="true">✦</span><span class="super-copy"><strong id="super-name">Super freischalten</strong><span class="super-track"><span id="super-charge" class="super-charge" style="width:0%" role="progressbar" aria-label="Super-Ladung" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></span></span><small class="super-keyhint">Leertaste</small></span></button></div>
   </div>
   <div id="combo-pop" class="combo-pop" aria-live="polite"></div>
+  <div id="nn-celebration-root" aria-live="polite" aria-atomic="true"></div>
   <div id="save-indicator" class="save-indicator" aria-live="polite"></div>
   <div id="overlay-root"></div>
   <div id="mentor-root"></div>

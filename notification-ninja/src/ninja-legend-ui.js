@@ -71,22 +71,49 @@ export const WORLD_DETAILS=Object.freeze({
   mentor:'Die schönste Technik am Abend ist manchmal, den Bildschirm bewusst auszuschalten.',
   start:'Schlafrunde starten'}
 });
+
+const ninjaMascot="<svg class=\"nn-nim-svg\" viewBox=\"0 0 130 154\" aria-hidden=\"true\" focusable=\"false\"><path d=\"M35 111Q17 101 17 90L7 95Q9 121 29 127\" fill=\"#f5a064\" stroke=\"#23374d\" stroke-width=\"6\" stroke-linejoin=\"round\"/><path d=\"M87 44q31 1 37 16-18-4-23 7l-12-11Z\" fill=\"#ff957b\" stroke=\"#23374d\" stroke-width=\"6\"/><rect x=\"33\" y=\"42\" width=\"64\" height=\"66\" rx=\"27\" fill=\"#37bea8\" stroke=\"#23374d\" stroke-width=\"7\"/><rect x=\"37\" y=\"61\" width=\"58\" height=\"29\" rx=\"14\" fill=\"#fff4e2\" stroke=\"#23374d\" stroke-width=\"6\"/><path d=\"M52 75q8-8 15 0M73 75q8-8 14 0\" fill=\"none\" stroke=\"#23374d\" stroke-width=\"4\" stroke-linecap=\"round\"/><path d=\"M53 96q12 9 26 0\" fill=\"none\" stroke=\"#e8d58b\" stroke-width=\"5\"/><path d=\"M40 105l-7 30 18 4 10-24M81 114l8 23 16-6-10-31\" fill=\"#46bda2\" stroke=\"#23374d\" stroke-width=\"7\" stroke-linejoin=\"round\"/><path d=\"M33 107l-17 6 5 15 23-5M93 107l14-16 10 10-17 25\" fill=\"#46bda2\" stroke=\"#23374d\" stroke-width=\"7\" stroke-linejoin=\"round\"/><path d=\"M57 42 64 17l8 25\" fill=\"#35bca3\" stroke=\"#23374d\" stroke-width=\"7\"/><path d=\"m65 27 3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z\" fill=\"#ffcf64\" stroke=\"#23374d\" stroke-width=\"2\"/></svg>";
+const villageParticles='<span class="nn-landscape-petal petal-one" aria-hidden="true">✿</span><span class="nn-landscape-petal petal-two" aria-hidden="true">✿</span><span class="nn-landscape-petal petal-three" aria-hidden="true">✿</span><span class="nn-landscape-petal petal-four" aria-hidden="true">✿</span><span class="nn-landscape-firefly f-one" aria-hidden="true">✦</span><span class="nn-landscape-firefly f-two" aria-hidden="true">✦</span><span class="nn-landscape-firefly f-three" aria-hidden="true">✦</span>';
+
+
 export function legendaryDojos(){
- return `<div class="legend-dojos worlds-hub">
- <header class="worlds-hub-intro"><span class="legend-kicker">DEIN EIGENER ORT · DREI STIMMUNGEN</span><h3>Entdecke deine Spielwelten.</h3><p>Jedes Dojo ist ein eigenständiger Themenraum mit einer eigenen Kurzrunde. Deine Karriere findest du separat in der Abenteuerkarte.</p></header>
- <div class="worlds-hub-grid">${['study','gaming','sleep'].map((id,i)=>{const c=WORLD_DETAILS[id];return `<article class="legend-dojo legend-dojo-${id} worlds-hub-card">
- <button type="button" class="worlds-hub-entry" data-world-enter="${id}" aria-label="${c.title} betreten">
- <span class="worlds-hub-art"><img src="${c.art}" alt="" loading="lazy"><span class="worlds-world-glimmer" aria-hidden="true">✦ ✧</span><span class="worlds-hub-number">${String(i+1).padStart(2,'0')}</span></span>
- <span class="worlds-hub-info"><span class="legend-kicker">${c.tag}</span><strong>${c.title}</strong><small>${c.subtitle}</small><span class="worlds-hub-open">Welt betreten <span aria-hidden="true">➜</span></span></span>
- </button></article>`}).join('')}</div>
- <aside class="worlds-mentor-note"><span class="worlds-mentor-face" aria-hidden="true">忍</span><div><strong>NIM · Wähle deine Stimmung.</strong><p>Du kannst jedes Dojo sofort erkunden. Die Themenrunden sind eigenständig; für die 18 Karriere-Missionen gibt es einen eigenen Bereich.</p></div></aside>
+ const labels={study:{name:'Lernen',icon:'✦',tag:'MORGENLICHT',hint:'Ablenkungen erkennen',letter:'文'},gaming:{name:'Gaming',icon:'✧',tag:'NEON-NACHT',hint:'Bewusst pausieren',letter:'遊'},sleep:{name:'Schlafen',icon:'☾',tag:'MONDLICHT',hint:'Zur Ruhe kommen',letter:'月'}};
+ return `<div class="legend-dojos worlds-hub nn-world-village">
+  <header class="nn-village-title worlds-hub-intro">
+   <span class="legend-kicker">DEINE DREI DOJO-WELTEN</span>
+   <h3>Dein Weg zur <em>digitalen Balance</em></h3>
+   <p>Drei Alltagssituationen. Bewusst entscheiden. Wähle ein Gebäude auf der Karte und entdecke seine eigene Spielregel.</p>
+  </header>
+  <section class="nn-village-stage" aria-label="Interaktive Weltkarte mit drei Dojos">
+    <img class="nn-village-landscape" src="./assets/overworld-landscape-v4.svg" alt="" loading="eager">
+    <span class="nn-village-sun" aria-hidden="true"></span><span class="nn-village-moon" aria-hidden="true">☾</span>
+    <div class="worlds-hub-grid nn-village-gates">
+      ${['study','gaming','sleep'].map((id,i)=>{const c=WORLD_DETAILS[id],d=labels[id];return `<article class="legend-dojo legend-dojo-${id} worlds-hub-card nn-village-gate nn-village-gate-${id}">
+      <button type="button" class="worlds-hub-entry nn-village-house" data-world-enter="${id}" aria-label="${c.title} betreten: ${esc(d.hint)}">
+        <span class="nn-house-halo" aria-hidden="true"></span>
+        <span class="nn-house-roof" aria-hidden="true"><span class="nn-house-roof-symbol">${d.icon}</span></span>
+        <span class="worlds-hub-art nn-house-interior"><img src="${c.art}" alt="" loading="lazy"><span class="nn-house-window-shine" aria-hidden="true"></span><span class="nn-house-lantern l-left" aria-hidden="true">✦</span><span class="nn-house-lantern l-right" aria-hidden="true">✦</span></span>
+        <span class="nn-house-plaque"><span class="nn-house-number">${String(i+1).padStart(2,'0')}</span><strong>${d.name}</strong><small>${c.title}</small></span>
+        <span class="worlds-hub-info nn-house-foot"><span class="legend-kicker">${d.tag}</span><span class="nn-house-action">Welt betreten <span aria-hidden="true">➜</span></span></span>
+       </button>
+      </article>`}).join('')}
+    </div>
+    <div class="nn-village-sakura" aria-hidden="true"></div>
+    ${villageParticles}
+    <div class="nn-village-guide" aria-label="NIMs Hinweis">
+     <span class="nn-guide-avatar">${ninjaMascot}</span>
+     <span class="nn-guide-balloon">Wähle dein <strong>Dojo!</strong><small>Jede Welt spielt sich anders.</small></span>
+    </div>
+    <span class="nn-village-water-label" aria-hidden="true">✦ NINJATAL ✦</span>
+  </section>
+  <p class="nn-village-caption">Die Themenrunden sind eigenständig. Die 18 Story-Missionen findest du ausschließlich in der <strong>Karrierekarte</strong>.</p>
  </div>`;
 }
 export function legendaryWorldDetail(id){
  const c=WORLD_DETAILS[id];if(!c)return '';
  return `<div class="world-inside world-inside-${id}">
- <div class="world-inside-scene"><img src="${c.art}" alt="" loading="eager"><span class="world-inside-particles" aria-hidden="true">✧ ✦ ✧</span><span class="world-inside-name">${c.symbol}</span></div>
- <div class="world-inside-story"><span class="legend-kicker">${c.tag} · ${c.subtitle}</span><h3>Willkommen im ${c.title}!</h3><p>${c.story}</p>
+ <div class="world-inside-scene"><img src="${c.art}" alt="" loading="eager"><span class="world-inside-particles" aria-hidden="true">✧ ✦ ✧</span><span class="world-inside-name">${c.symbol}</span><span class="nn-inside-scroll"><span class="nn-inside-symbol" aria-hidden="true">${c.symbol}</span><strong>${c.title}</strong><small>${c.subtitle}</small></span><span class="nn-inside-glimmer" aria-hidden="true">✦</span></div>
+ <div class="world-inside-story"><div class="nn-inside-mini-guide"><span class="nn-inside-nim">${ninjaMascot}</span><span>WILLKOMMEN IM NINJATAL!</span></div><span class="legend-kicker">${c.tag} · ${c.subtitle}</span><h3>Willkommen im ${c.title}!</h3><p>${c.story}</p>
  <div class="world-inside-cues"><strong>Hier lernst du:</strong>${c.cues.map(x=>`<span><span aria-hidden="true">✦</span> ${x}</span>`).join('')}</div>
  <div class="world-inside-nim"><span aria-hidden="true">忍</span><p><strong>Sensei NIM</strong> „${c.mentor}“</p></div>
  <div class="world-inside-actions"><button type="button" class="legend-button legend-button-primary" data-quick-context="${id}">${c.start} <span aria-hidden="true">➜</span></button><button type="button" class="legend-button legend-button-subtle" data-world-practice="${id}">Ohne Zeitdruck üben</button></div>
@@ -148,58 +175,82 @@ function campaignOverworld(missions){
  </section>`;
 }
 
+
+/** Adventure progress comes only from real getCareerMissions() data. */
 export function legendaryCareer({missions=[],selectedId=null}={}){
-  const main=missions.filter(m=>m.section==='main');
-  const selected=missions.find(m=>m.id===selectedId)||main.find(m=>m.available&&!m.completed)||main[0];
-  const completed=main.filter(m=>m.completed).length;
-  const bosses=missions.filter(m=>m.bossId);
-  const extras=missions.filter(m=>m.section!=='main'&&!m.bossId);
-  const ready=missions.filter(m=>m.completed&&!m.claimed).length;
-  const state=m=>m.completed?'complete':m.available?'ready':'locked';
-  const stateLabel=m=>m.completed?'Geschafft':m.available?'Spielbar':'Gesperrt';
-  const worldNames=['study','gaming','sleep'];
-  const steps=m=>`<button type="button" class="nn-career-node is-${state(m)} ${selected?.id===m.id?'is-selected':''}" data-mission-inspect="${esc(m.id)}" aria-pressed="${selected?.id===m.id}" aria-label="Mission ${m.order}: ${esc(m.title)}, ${stateLabel(m)}">
-    <span class="nn-career-node-number" aria-hidden="true">${m.completed?'✓':String(m.order).padStart(2,'0')}</span>
-    <span class="nn-career-node-copy"><strong>${esc(m.title)}</strong><small>${stateLabel(m)}${m.completed&&!m.claimed?' · Münzen abholen':''}</small></span>
-    <span class="nn-career-node-arrow" aria-hidden="true">›</span>
-  </button>`;
-  const chapters=worldNames.map((id,i)=>{
-    const c=WORLD_DETAILS[id],group=main.filter(m=>m.chapter===id),done=group.filter(m=>m.completed).length;
-    return `<section id="campaign-region-${id}" class="nn-career-chapter nn-career-chapter-${id}" aria-labelledby="nn-chapter-${id}">
-      <div class="nn-career-chapter-cover"><img src="${c.art}" alt="" loading="lazy">
-        <div class="nn-career-chapter-label"><span>WELT ${String(i+1).padStart(2,'0')} · ${esc(c.subtitle)}</span><h4 id="nn-chapter-${id}">${esc(c.title)}</h4><small>${done} von ${group.length} Missionen geschafft</small></div>
-      </div>
-      <div class="nn-career-chapter-trail" aria-label="Missionspfad ${esc(c.title)}">
-        <svg class="nn-career-trail-path" viewBox="0 0 600 350" preserveAspectRatio="none" aria-hidden="true"><path d="M135 55 Q300 40 465 55 C535 70 535 140 465 165 Q300 180 135 165 C60 180 65 245 135 275 Q300 300 465 275"/></svg>
-        ${group.map(steps).join('')}</div>
-    </section>`;
-  }).join('');
-  const missing=(selected?.missingRequirements||[]).map(id=>missions.find(m=>m.id===id)?.title||id);
-  const prerequisites=selected?.worldLocked?'Diese Welt ist noch gesperrt.':missing.length?'Zuerst abschließen: '+missing.join(' · '):'Alle Voraussetzungen erfüllt';
-  const current=Math.max(0,Number(selected?.current)||0),target=Math.max(1,Number(selected?.target)||1);
-  const detail=selected?`<section class="nn-career-detail" aria-live="polite">
-    <span class="nn-career-eyebrow">AUSGEWÄHLTE ETAPPE</span>
-    <span class="nn-career-status is-${state(selected)}">${stateLabel(selected)}</span>
+ const main=missions.filter(m=>m.section==='main');
+ const selected=missions.find(m=>m.id===selectedId)||main.find(m=>m.available&&!m.completed)||main[0];
+ const completed=main.filter(m=>m.completed).length;
+ const bosses=missions.filter(m=>m.bossId);
+ const extras=missions.filter(m=>m.section!=='main'&&!m.bossId);
+ const ready=missions.filter(m=>m.completed&&!m.claimed).length;
+ const state=m=>m.completed?'complete':m.available?'ready':'locked';
+ const stateLabel=m=>m.completed?'Geschafft':m.available?'Spielbar':'Gesperrt';
+ const worldNames=['study','gaming','sleep'];
+ const waypoints=[[9,75],[25,52],[42,70],[57,38],[74,62],[88,28]];
+ const steps=(m,i=0,mini=false)=>{
+   const style=mini?'':`style="--nx:${waypoints[i]?.[0]||50}%;--ny:${waypoints[i]?.[1]||50}%"`;
+   return `<button type="button" class="nn-career-node is-${state(m)} ${selected?.id===m.id?'is-selected':''} ${mini?'is-bonus':''}" ${style} data-mission-inspect="${esc(m.id)}" aria-pressed="${selected?.id===m.id}" aria-label="Mission ${m.order}: ${esc(m.title)}, ${stateLabel(m)}">
+     <span class="nn-career-node-number" aria-hidden="true">${m.completed?'✓':m.available?String(m.order).padStart(2,'0'):'♧'}</span>
+     <span class="nn-career-node-copy"><strong>${esc(m.title)}</strong><small>${stateLabel(m)}${m.completed&&!m.claimed?' · Belohnung bereit':''}</small></span>
+     <span class="nn-career-node-arrow" aria-hidden="true">✦</span>
+   </button>`;
+ };
+ const chapters=worldNames.map((id,i)=>{
+  const c=WORLD_DETAILS[id],group=main.filter(m=>m.chapter===id),done=group.filter(m=>m.completed).length;
+  return `<section id="campaign-region-${id}" class="nn-career-chapter nn-career-chapter-${id}" aria-labelledby="nn-chapter-${id}">
+   <div class="nn-career-chapter-cover">
+     <span class="nn-career-chapter-emblem" aria-hidden="true">${c.symbol}</span>
+     <div class="nn-career-chapter-label"><span>WELT ${String(i+1).padStart(2,'0')} · ${esc(c.subtitle)}</span><h4 id="nn-chapter-${id}">${esc(c.title)}</h4><small>${done} von ${group.length} Missionen</small></div>
+   </div>
+   <div class="nn-career-chapter-trail" aria-label="Missionspfad ${esc(c.title)}">
+    <img class="nn-career-illustrated-landscape" src="./assets/overworld-landscape-v4.svg" alt="" loading="lazy">
+    <div class="nn-career-territory" aria-hidden="true">
+       <span class="nn-career-territory-roof">${c.symbol}</span>
+       <img src="${c.art}" alt="">
+    </div>
+    <svg class="nn-career-trail-path" viewBox="0 0 1000 500" preserveAspectRatio="none" aria-hidden="true"><path class="nn-path-shadow" d="M90 375 C145 375 200 240 250 260 S355 377 420 350 S505 170 570 190 S665 360 740 310 S823 130 880 145"/><path class="nn-path-road" d="M90 375 C145 375 200 240 250 260 S355 377 420 350 S505 170 570 190 S665 360 740 310 S823 130 880 145"/></svg>
+    <span class="nn-career-path-mascot" aria-hidden="true">${ninjaMascot}</span>
+    ${group.map((m,j)=>steps(m,j)).join('')}
+    ${villageParticles}
+    <span class="nn-career-chapter-next" aria-hidden="true">${i<2?'WEITER ZUR NÄCHSTEN WELT ↓':'DEIN WEG ZUM FINALE ✦'}</span>
+   </div>
+  </section>`;
+ }).join('');
+ const missing=(selected?.missingRequirements||[]).map(id=>missions.find(m=>m.id===id)?.title||id);
+ const prereq=selected?.worldLocked?'Diese Welt ist noch gesperrt.':missing.length?'Zuerst abschließen: '+missing.join(' · '):'Alle Voraussetzungen erfüllt';
+ const current=Math.max(0,Number(selected?.current)||0),target=Math.max(1,Number(selected?.target)||1);
+ const detail=selected?`<section class="nn-career-detail" aria-live="polite">
+    <span class="nn-career-eyebrow">DEINE AUSGEWÄHLTE MISSION</span>
+    <div class="nn-career-detail-hero"><span class="nn-career-detail-mascot">${ninjaMascot}</span><span class="nn-career-status is-${state(selected)}">${stateLabel(selected)}</span></div>
     <h4>${esc(selected.title)}</h4>
     <p>${esc(selected.description)}</p>
-    <div class="nn-career-progress"><span>${num(current)} / ${num(target)}</span><strong>+${num(selected.reward)} Münzen</strong></div>
+    <div class="nn-career-progress"><span>${num(current)} / ${num(target)} Fortschritt</span><strong>✦ +${num(selected.reward)} Münzen</strong></div>
     <div class="nn-career-meter" role="progressbar" aria-label="Missionsfortschritt" aria-valuemin="0" aria-valuemax="${target}" aria-valuenow="${Math.min(target,current)}"><span style="width:${Math.round(Math.min(current,target)/target*100)}%"></span></div>
-    ${selected.best?`<small class="nn-career-best">Bestwert: ${num(selected.best.score)} Punkte · ${num(selected.best.correct)} richtig</small>`:''}
-    <small class="nn-career-prerequisites">${esc(prerequisites)}</small>
-    <button type="button" class="legend-button legend-button-primary nn-career-start" data-mission-start="${esc(selected.id)}" ${selected.available||selected.completed?'':'disabled'}>${selected.completed?'Mission erneut spielen':'Mission starten'} <span aria-hidden="true">→</span></button>
-    ${selected.completed&&!selected.claimed?`<button type="button" class="legend-button legend-button-gold" data-career-claim="${esc(selected.id)}">+${num(selected.reward)} Münzen abholen</button>`:''}
-  </section>`: '';
-  return `<div class="nn-career">
-    <header class="nn-career-intro"><div><span class="nn-career-eyebrow">DEINE NINJA-REISE · 3 KAPITEL</span><h3>Schritt für Schritt zum Fokus-Ninja.</h3><p>Ein übersichtlicher Missionspfad durch Lernen, Gaming und Schlafen. Wähle eine Etappe; die Details bleiben neben der Karte statt darüber.</p></div><div class="nn-career-overall"><strong>${completed}<span> / ${main.length}</span></strong><small>Missionen geschafft</small></div></header>
-    <div class="nn-career-layout">
-      <div class="nn-career-worlds">
-        ${chapters}
-        <section class="nn-career-bosses" aria-labelledby="nn-boss-title"><span class="nn-career-eyebrow">BESONDERE HERAUSFORDERUNGEN</span><h4 id="nn-boss-title">Die Schattenbosse</h4><p>Drei Bosskämpfe mit eigenen Mechaniken und Voraussetzungen.</p><div class="nn-career-boss-grid">${bosses.map((m,i)=>`<button type="button" class="nn-career-boss is-${state(m)} ${selected?.id===m.id?'is-selected':''}" data-mission-inspect="${esc(m.id)}" aria-pressed="${selected?.id===m.id}"><span aria-hidden="true">${['鬼','将','龍'][i]||'鬼'}</span><strong>${esc(m.title)}</strong><small>${stateLabel(m)}</small></button>`).join('')}</div></section>
-        ${extras.length?`<details class="nn-career-bonus"><summary>Zusatzmissionen · ${extras.filter(m=>m.completed).length} / ${extras.length}</summary><div class="nn-career-bonus-grid">${extras.map(steps).join('')}</div></details>`:''}
-      </div>
-      <aside class="nn-career-sidebar" aria-label="Missionsdetails">${detail}<p class="nn-career-sidebar-tip">Wähle eine Mission auf der Karte. ${ready?'Du hast '+ready+' Belohnung(en) zum Abholen.':'Der nächste freigeschaltete Knoten zeigt dir den Weg.'}</p></aside>
-    </div>
-  </div>`;
+    ${selected.best?`<small class="nn-career-best">Bestwert: ${num(selected.best.score)} Punkte · ${num(selected.best.correct)} richtige Entscheidungen</small>`:''}
+    <small class="nn-career-prerequisites">${esc(prereq)}</small>
+    <button type="button" class="legend-button legend-button-primary nn-career-start" data-mission-start="${esc(selected.id)}" ${selected.available||selected.completed?'':'disabled'}>${selected.completed?'Mission erneut spielen':'Mission starten'} <span aria-hidden="true">➜</span></button>
+    ${selected.completed&&!selected.claimed?`<button type="button" class="legend-button legend-button-gold" data-career-claim="${esc(selected.id)}">✦ +${num(selected.reward)} Münzen abholen</button>`:''}
+   </section>`:'';
+ return `<div class="nn-career nn-career-adventure">
+  <header class="nn-career-intro">
+   <div><span class="nn-career-eyebrow">DEINE NINJA-REISE · DREI REGIONEN</span><h3>Karrierekarte</h3><p>Schritt für Schritt zum Fokus-Ninja. Folge den leuchtenden Missionssteinen durch drei Welten.</p></div>
+   <div class="nn-career-overall"><strong>${completed}<span> / ${main.length}</span></strong><small>Missionen geschafft</small></div>
+  </header>
+  <div class="nn-career-layout">
+   <div class="nn-career-worlds">${chapters}
+    <section class="nn-career-bosses" aria-labelledby="nn-boss-title">
+     <span class="nn-career-eyebrow">DIE LETZTEN PRÜFUNGEN</span><h4 id="nn-boss-title">Schattenbosse</h4><p>Drei besondere Bosskämpfe. Wähle deinen nächsten Kampf auf dem Pfad.</p>
+     <div class="nn-career-boss-grid">${bosses.map((m,i)=>`<button type="button" class="nn-career-boss is-${state(m)} ${selected?.id===m.id?'is-selected':''}" data-mission-inspect="${esc(m.id)}" aria-pressed="${selected?.id===m.id}"><span aria-hidden="true">${['鬼','将','龍'][i]||'鬼'}</span><strong>${esc(m.title)}</strong><small>${stateLabel(m)}</small></button>`).join('')}</div>
+    </section>
+    ${extras.length?`<details class="nn-career-bonus"><summary>✦ Zusatzmissionen · ${extras.filter(m=>m.completed).length} / ${extras.length}</summary><div class="nn-career-bonus-grid">${extras.map((m,i)=>steps(m,i,true)).join('')}</div></details>`:''}
+   </div>
+   <aside class="nn-career-sidebar" aria-label="Missionsdetails">
+    ${detail}
+    <p class="nn-career-sidebar-tip">✦ ${ready?'Du hast '+ready+' Münzbelohnung(en) zum Abholen.':'Wähle einen leuchtenden Missionsstein, um deine nächste Herausforderung zu entdecken.'}</p>
+   </aside>
+  </div>
+ </div>`;
 }
 
 const stampedAt=value=>{
