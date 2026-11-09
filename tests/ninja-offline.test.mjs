@@ -41,12 +41,27 @@ test('offline worker preserves distinct homepage/game/query routes and never int
   assert.equal(await w.request('/api/v3/runs/test/finish','cors','POST'),undefined);
 });
 
-test('configuration is fetched fresh online while bundled game assets remain available from cache',async()=>{
+test('game JS, CSS and configuration update from network instead of a stale previous release',async()=>{
   const online={ok:true,clone:()=>({copy:true})},calls=[];
-  const w=worker({fetch:async request=>{calls.push(request.url);return online;}});
-  assert.equal(await w.request('accounts-config.json'),online);assert.equal(w.puts.length,1);
-  assert.equal((await w.request('dist/ninja.js')).cachedUrl,w.scope+'dist/ninja.js');
-  assert.equal(calls.length,1);
+  const w=worker({fetch:async (request,options)=>{calls.push({url:request.url,cache:options?.cache});return online;}});
+  for(const path of ['accounts-config.json','dist/ninja.js','illustrated-adventure-v4.css','assets/overworld-landscape-v4.svg']){
+    assert.equal(await w.request(path),online,'Fresh online response for '+path);
+  }
+  // Unchanged large images stay cached rather than downloading every time.
+  assert.equal((await w.request('assets/dojo-study.png')).cachedUrl,w.scope+'assets/dojo-study.png');
+  assert.equal(calls.length,4);
+  assert.equal(w.puts.length,4,'Fresh responses replace the offline copies');
+  assert(calls.every(call=>call.cache==='no-store'),'Do not use a stale browser HTTP cache');
+});
+
+test('3.5 offline assets retain a usable fallback when internet access fails',async()=>{
+  const w=worker();
+  for(const path of ['dist/ninja.js','illustrated-adventure-v4.css','assets/overworld-landscape-v4.svg']){
+    assert.equal((await w.request(path)).cachedUrl,w.scope+path);
+  }
+  const sw=readFileSync(root+'sw.js','utf8');
+  assert(sw.includes('networkFirst(event.request,key)'),'Presentation assets must never regress to cache-first');
+  assert(!sw.includes('${PREFIX}3.4.0'),'Do not reuse the old 3.4.0 cache name');
 });
 
 

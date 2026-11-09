@@ -29,7 +29,14 @@ function markSection(id){for(const link of sectionLinks){if(link.hash===`#${id}`
 for(const link of sectionLinks)link.addEventListener('click',()=>markSection(link.hash.slice(1)));
 markSection(location.hash.slice(1)||'start');
 if('IntersectionObserver' in window){const sections=new IntersectionObserver(entries=>{const visible=entries.filter(entry=>entry.isIntersecting).sort((a,b)=>b.intersectionRatio-a.intersectionRatio)[0];if(visible)markSection(visible.target.id);},{rootMargin:'-8% 0px -55% 0px',threshold:[0,.1,.5]});for(const link of sectionLinks){const section=document.getElementById(link.hash.slice(1));if(section)sections.observe(section);}}
-if(location.protocol.startsWith('http')&&'serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});
+if(location.protocol.startsWith('http')&&'serviceWorker' in navigator){
+ const controlled=Boolean(navigator.serviceWorker.controller);
+ let refreshed=false;
+ navigator.serviceWorker.addEventListener('controllerchange',()=>{
+   if(controlled&&!refreshed){refreshed=true;location.reload();}
+ });
+ navigator.serviceWorker.register('./sw.js',{updateViaCache:'none'}).then(registration=>registration.update()).catch(()=>{});
+}
 
 // A privacy link from registration opens the actual policy, including on reload.
 function openPrivacy(){if(location.hash==='#projekt'){const details=document.getElementById('privacy-details');if(details)details.open=true;}}
