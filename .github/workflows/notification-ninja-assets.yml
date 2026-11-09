@@ -24,6 +24,7 @@ on:
 
 permissions:
   contents: write
+  pages: write
 
 concurrency:
   group: ninja-build-assets-main
@@ -59,3 +60,13 @@ jobs:
             git commit -m "build(ninja): publish tested focus-first browser bundles [skip ci]"
             git push origin HEAD:main
           fi
+
+      - name: Request Pages rebuild after asset release
+        if: success()
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # GITHUB_TOKEN pushes do not trigger branch-based Pages builds.
+          # Explicitly publish the generated dist/ and ZIP revision.
+          gh api -X POST "repos/${{ github.repository }}/pages/builds"
