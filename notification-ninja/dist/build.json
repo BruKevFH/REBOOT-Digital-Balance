@@ -1,8 +1,8 @@
 {
   "name": "Notification Ninja",
-  "version": "3.4.0",
+  "version": "3.5.0",
   "engine": "Canvas 2D / Web Audio",
-  "style": "Focus-first illustrated dojo",
+  "style": "Illustrated animated ninja world",
   "illustratedRoomArt": true,
   "villageMap": true,
   "logo": "branding/Notification-Ninja-Logo.png",
