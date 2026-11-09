@@ -1,0 +1,365 @@
+
+/* Notification Ninja — illustrated world v4.
+ * Narrative scene surfaces are real buttons/mission states, not static screenshots.
+ * Transitions respect the app's calmer-effects setting and prefers-reduced-motion.
+ */
+:root{--nn-ink:#21364b;--nn-cream:#fff5dc;--nn-coral:#fa857d;--nn-gold:#ffce70;--nn-mint:#4cc7aa}
+@keyframes nnFloat{0%,100%{translate:0 0}50%{translate:0 -9px}}
+@keyframes nnPetal{0%{transform:translate3d(-30px,-45px,0) rotate(0);opacity:0}15%{opacity:.95}85%{opacity:.8}100%{transform:translate3d(145px,170px,0) rotate(310deg);opacity:0}}
+@keyframes nnGlint{0%,100%{opacity:.25;transform:scale(.75)}50%{opacity:1;transform:scale(1.35)}}
+@keyframes nnRoad{to{stroke-dashoffset:-75}}
+@keyframes nnGlowPulse{0%,100%{box-shadow:0 0 0 4px #ffe9a488,0 0 18px #ffd08066}50%{box-shadow:0 0 0 9px #ffe9a444,0 0 35px #ffd080cf}}
+@keyframes nnCelebrateIn{0%{opacity:0;transform:translateY(35px) scale(.7) rotate(-4deg)}65%{transform:translateY(-8px) scale(1.05) rotate(2deg)}100%{opacity:1;transform:translateY(0) scale(1) rotate(0)}}
+@keyframes nnCelebrateOut{to{opacity:0;transform:translateY(-35px) scale(.93)}}
+@keyframes nnCoinRain{from{transform:translateY(-45px) rotate(0);opacity:0}18%{opacity:1}to{transform:translateY(195px) rotate(390deg);opacity:0}}
+@keyframes nnLevelRise{0%,100%{translate:0 0}50%{translate:0 -5px}}
+/* The world selector is a playable-looking diorama, not three repeated cards. */
+html[data-ninja-theme] .legend-dojos-panel{width:min(1500px,100%)!important}
+.nn-world-village,.nn-career-adventure{font-family:inherit;--nn-outline:#24374c}
+.nn-village-title{position:relative;text-align:center;margin:0 auto -4px!important;padding:12px 10px 24px!important;z-index:3}
+.nn-village-title .legend-kicker{display:inline-block;padding:6px 15px;background:#d7f6e7;border:1px solid #76b8a9;border-radius:99px;color:#197a71;font-weight:900}
+.nn-village-title h3{font-size:clamp(30px,4.8vw,57px)!important;color:var(--ar-ink)!important;line-height:1.1;margin:15px 0 9px;font-weight:1000;letter-spacing:-.05em;text-wrap:balance}
+.nn-village-title h3 em{font-style:normal;color:#d96761;text-shadow:1px 2px 0 #ffe1a5}
+.nn-village-title p{font-size:clamp(12px,1.5vw,15px)!important;max-width:720px;margin:auto;color:var(--ar-muted);line-height:1.5}
+.nn-village-stage{position:relative;isolation:isolate;overflow:hidden;min-height:680px;border:5px solid #253d50;border-radius:31px;
+ box-shadow:0 11px 0 #447d7990,0 25px 43px #162c4173;background:linear-gradient(105deg,#d3f1f6,#f5e8c4 35%,#9d96cd);
+}
+.nn-village-landscape{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none}
+.nn-village-stage:after{content:"";position:absolute;z-index:0;inset:0;pointer-events:none;background:
+ radial-gradient(circle at 10% 16%,#ffffbb7e 0,transparent 20%),radial-gradient(circle at 94% 16%,#7571b67a 0,transparent 25%),linear-gradient(180deg,transparent 65%,#163b4330)}
+.nn-village-sun{position:absolute;top:8%;left:11%;width:75px;aspect-ratio:1;border-radius:50%;background:#fff1ba70;box-shadow:0 0 100px 55px #ffeca55c;pointer-events:none}
+.nn-village-moon{position:absolute;top:8%;right:8%;font-size:65px;color:#fff5c2;filter:drop-shadow(0 0 20px #ffeeaa);animation:nnFloat 6s ease-in-out infinite;pointer-events:none}
+html[data-ninja-theme] .nn-village-gates{position:absolute!important;z-index:2;inset:19% 2.3% 14%!important;display:block!important;max-width:none!important;
+ margin:0!important;padding:0!important;background:transparent!important;box-shadow:none!important}
+html[data-ninja-theme] .nn-village-gates .nn-village-gate{position:absolute!important;top:0;left:0;width:32%;height:100%;padding:0!important;margin:0!important;
+ border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;overflow:visible}
+html[data-ninja-theme] .nn-village-gates .nn-village-gate-gaming{left:34%;top:4%}
+html[data-ninja-theme] .nn-village-gates .nn-village-gate-sleep{left:68%;top:0}
+html[data-ninja-theme] .nn-village-house{display:block!important;position:relative!important;width:100%!important;height:100%!important;min-height:0!important;
+ padding:0!important;margin:0!important;overflow:visible!important;border:0!important;border-radius:0!important;outline-offset:4px;background:transparent!important;box-shadow:none!important;cursor:pointer;transform:none!important}
+.nn-house-halo{position:absolute;inset:8% 3% 22%;border-radius:45%;background:#a4fbd733;filter:blur(29px);transform:scale(.88);
+ transition:transform .35s,opacity .35s;opacity:.8;pointer-events:none}
+.nn-village-gate-gaming .nn-house-halo{background:#ba72fe98;filter:blur(37px)}
+.nn-village-gate-sleep .nn-house-halo{background:#86aafa88;filter:blur(39px)}
+.nn-house-roof{position:absolute;z-index:3;top:2%;left:-5%;width:110%;height:28%;background:repeating-linear-gradient(111deg,#327b74 0 16px,#45a593 16px 20px,#25605f 20px 34px);
+ border:8px solid #263d4d;clip-path:polygon(4% 79%,23% 50%,45% 6%,58% 6%,79% 50%,96% 79%,92% 100%,5% 100%);
+ filter:drop-shadow(0 7px 0 #16344a);pointer-events:none}
+.nn-village-gate-gaming .nn-house-roof{background:repeating-linear-gradient(111deg,#7944ab 0 16px,#bb5cd9 16px 21px,#452f77 21px 34px)}
+.nn-village-gate-sleep .nn-house-roof{background:repeating-linear-gradient(111deg,#294f97 0 16px,#5b7fbd 16px 20px,#243d74 20px 34px)}
+.nn-house-roof-symbol{display:none}
+html[data-ninja-theme] .nn-house-interior{display:block!important;position:absolute!important;top:22%;left:4%;width:92%;height:67%!important;min-height:0!important;overflow:hidden;
+ border:9px solid #3e6b65;border-bottom-width:14px;border-radius:15px 15px 4px 4px;background:#cfb991!important;box-shadow:0 10px 0 #1d4452,0 23px 32px #16384a67}
+.nn-house-interior img{width:100%!important;height:100%!important;object-fit:cover!important;object-position:center center!important;transition:transform .4s;filter:saturate(1.16)}
+.nn-village-gate-gaming .nn-house-interior{border-color:#6e40a1!important;box-shadow:0 10px 0 #2f2558,0 0 33px #d865f9cf}
+.nn-village-gate-gaming .nn-house-interior img{filter:hue-rotate(16deg) saturate(1.75) brightness(.83)}
+.nn-village-gate-sleep .nn-house-interior{border-color:#334d80!important;box-shadow:0 10px 0 #1c2d59,0 0 34px #83a3e69c}
+.nn-village-gate-sleep .nn-house-interior img{filter:hue-rotate(36deg) saturate(1.3) brightness(.63)}
+.nn-house-window-shine{position:absolute;inset:0;pointer-events:none;background:linear-gradient(125deg,#fff7db35,transparent 42%,#f8dfa91f)}
+.nn-village-gate-gaming .nn-house-window-shine{background:linear-gradient(130deg,#ee61ff49,transparent 48%,#7b65fa85)}
+.nn-village-gate-sleep .nn-house-window-shine{background:linear-gradient(115deg,#444fd93e,#1a378869 70%)}
+.nn-house-lantern{position:absolute;top:16%;font-size:25px;color:#ffeaa3;text-shadow:0 0 18px #ffd464,0 0 31px #ffe1a7;animation:nnGlint 3s ease-in-out infinite}
+.nn-house-lantern.l-left{left:6%}.nn-house-lantern.l-right{right:7%;animation-delay:1.3s}
+.nn-village-gate-gaming .nn-house-lantern{color:#ffe2ff;text-shadow:0 0 23px #e55bff}
+.nn-village-gate-sleep .nn-house-lantern{color:#d8edff;text-shadow:0 0 23px #9d9ffd}
+.nn-house-plaque{position:absolute;z-index:5;top:4%;left:50%;translate:-50% 0;display:flex;flex-direction:column;align-items:center;
+ min-width:55%;max-width:90%;padding:13px 23px 8px;border:5px solid #263a4a;border-radius:44% 44% 20px 20px;
+ color:#25384b;background:linear-gradient(135deg,#fff6d5,#dbfbe1);box-shadow:0 6px 0 #327b6c,0 10px 22px #152e4580;
+ transform:rotate(-1deg);transition:scale .25s,translate .25s;pointer-events:none}
+.nn-house-plaque strong{font-size:clamp(18px,2.1vw,27px);white-space:nowrap;font-weight:1000;line-height:1.1}
+.nn-house-plaque small{font-size:clamp(10px,1vw,13px);white-space:nowrap;font-weight:900;opacity:.76}
+.nn-house-number{position:absolute;left:-31px;top:-15px;display:grid;place-items:center;width:47px;height:47px;border:4px solid #254759;
+ border-radius:50%;background:#ffefc0;color:#17374c;font-size:18px;font-weight:1000}
+.nn-village-gate-gaming .nn-house-plaque{background:linear-gradient(135deg,#f8dffb,#ffecfb);box-shadow:0 6px 0 #9152b6,0 0 25px #e26bf1}
+.nn-village-gate-sleep .nn-house-plaque{background:linear-gradient(135deg,#f7e4c5,#d7e0fd);box-shadow:0 6px 0 #6286be,0 0 20px #e2e8ff}
+.nn-house-foot{position:absolute!important;z-index:5;bottom:4%;left:12%;width:76%;height:auto!important;min-height:0!important;
+ display:flex!important;flex-direction:column!important;align-items:center;justify-content:center;gap:4px!important;
+ padding:11px 9px!important;border:4px solid #28495a!important;border-radius:15px!important;
+ background:#edf6da!important;color:#204d49!important;box-shadow:0 5px 0 #467d67,0 10px 14px #1b344b5b}
+.nn-house-foot .legend-kicker{color:inherit!important;font-size:9px;letter-spacing:.16em}
+.nn-house-action{font-size:14px;font-weight:1000}
+.nn-house-action span{margin-left:13px;font-size:19px}
+.nn-village-gate-gaming .nn-house-foot{background:#ead2ff!important;color:#50366e!important;box-shadow:0 5px 0 #8157ad,0 10px 14px #1b344b5b}
+.nn-village-gate-sleep .nn-house-foot{background:#dfe7ff!important;color:#2b416e!important;box-shadow:0 5px 0 #5876aa,0 10px 14px #1b344b5b}
+.nn-village-house:hover .nn-house-interior img,.nn-village-house:focus-visible .nn-house-interior img{transform:scale(1.075)}
+.nn-village-house:hover .nn-house-plaque,.nn-village-house:focus-visible .nn-house-plaque{scale:1.055;translate:-50% -8px}
+.nn-village-house:hover .nn-house-halo,.nn-village-house:focus-visible .nn-house-halo{transform:scale(1.2);opacity:1}
+.nn-village-house:focus-visible{outline:4px solid #fadd67!important;outline-offset:6px!important}
+.nn-village-guide{position:absolute;z-index:4;bottom:1.5%;left:3%;display:flex;align-items:flex-end;gap:10px;pointer-events:none}
+.nn-guide-avatar{width:clamp(95px,14vw,161px);height:clamp(115px,17vw,183px);filter:drop-shadow(3px 8px 0 #192b4288);animation:nnFloat 4.5s ease-in-out infinite}
+.nn-guide-avatar svg{width:100%;height:100%}
+.nn-guide-balloon{position:relative;display:flex;flex-direction:column;gap:3px;align-items:center;justify-content:center;
+ margin-bottom:20px;min-width:150px;padding:13px 18px;border:4px solid #263e50;border-radius:28px 28px 28px 9px;
+ background:#fff9e5;box-shadow:3px 6px 0 #436472a8;font-weight:850;color:#24384e}
+.nn-guide-balloon strong{color:#db685c;font-size:21px}.nn-guide-balloon small{font-size:10px}
+.nn-village-water-label{position:absolute;left:47%;bottom:4%;z-index:1;color:#ebffef;font-size:11px;font-weight:950;letter-spacing:.3em;text-shadow:2px 2px 3px #2f6683}
+.nn-landscape-petal{position:absolute;z-index:4;pointer-events:none;font-size:25px;color:#ffc6dc;animation:nnPetal 12s linear infinite;text-shadow:0 2px 4px #f37ea560}
+.nn-landscape-petal.petal-one{top:17%;left:9%}.nn-landscape-petal.petal-two{top:27%;left:27%;animation-delay:3s}
+.nn-landscape-petal.petal-three{top:8%;left:69%;animation-delay:5.5s}.nn-landscape-petal.petal-four{top:43%;left:83%;animation-delay:8s}
+.nn-landscape-firefly{position:absolute;z-index:3;pointer-events:none;color:#fff7ba;font-size:20px;text-shadow:0 0 12px #ffe987;animation:nnGlint 3s ease-in-out infinite}
+.nn-landscape-firefly.f-one{top:24%;left:12%}.nn-landscape-firefly.f-two{top:26%;right:29%;animation-delay:1s}
+.nn-landscape-firefly.f-three{bottom:24%;right:7%;animation-delay:2s}
+.nn-village-caption{margin:16px auto 0;max-width:850px;text-align:center;font-size:12px;line-height:1.6;color:var(--ar-muted)}
+.nn-village-caption strong{color:var(--ar-ink)}
+/* A world is a place, not a second copy of the same card. */
+.world-detail-panel .world-inside{border:5px solid #273d4f!important;border-radius:27px!important;overflow:hidden}
+.world-detail-panel .world-inside-scene{position:relative;overflow:hidden}
+.world-detail-panel .world-inside-scene>img{animation:nnFloat 14s ease-in-out infinite alternate;scale:1.045}
+.world-detail-panel .world-inside-scene:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#203b4604,#213d6240)}
+.nn-inside-scroll{position:absolute;z-index:3;top:20px;left:20px;display:flex;align-items:center;gap:11px;flex-wrap:wrap;padding:12px 19px;
+ border:4px solid #233e51;border-radius:13px;background:#fff3d2ee;box-shadow:4px 5px 0 #b37b5b7d;color:#243748}
+.nn-inside-scroll strong{font-weight:950;font-size:20px}.nn-inside-scroll small{font-size:11px}
+.nn-inside-symbol{font-size:23px;color:#288b7b}
+.world-inside-gaming .nn-inside-scroll{background:#e9d0ffee}.world-inside-gaming .nn-inside-symbol{color:#8236a9}
+.world-inside-sleep .nn-inside-scroll{background:#d5e5ffee}.world-inside-sleep .nn-inside-symbol{color:#4a60b4}
+.nn-inside-mini-guide{display:flex;gap:12px;align-items:center;margin-bottom:12px;color:var(--ar-accent);font-size:10px;font-weight:950;letter-spacing:.1em}
+.nn-inside-nim{width:52px;height:60px;flex:0 0 52px;animation:nnFloat 5s ease-in-out infinite}
+.nn-inside-nim svg{width:100%;height:100%}
+.nn-inside-glimmer{position:absolute;z-index:3;right:12%;top:20%;font-size:46px;color:#fff2b2;animation:nnGlint 3s infinite}
+/* Storybook chapters: one winding trail, six real clickable missions per region. */
+html[data-ninja-theme] .legend-career-panel{width:min(1540px,100%)!important}
+.nn-career-adventure{padding:0 3px 35px}
+.nn-career-adventure .nn-career-intro{position:relative;overflow:hidden;border:4px solid #243f53;border-radius:25px;
+ background:linear-gradient(120deg,#fff3cf,#fff5e2 55%,#ddeef9)!important;box-shadow:0 7px 0 #5a9a8b,0 15px 22px #233c4b38}
+.nn-career-adventure .nn-career-intro:before{content:"✦ ✧ ✦";position:absolute;top:6px;right:23%;color:#f0b655;font-size:26px}
+.nn-career-adventure .nn-career-intro h3{font-size:clamp(36px,5vw,55px);color:#23394b!important;text-shadow:2px 3px 0 #ffdb93}
+.nn-career-adventure .nn-career-intro p{max-width:570px}
+.nn-career-adventure .nn-career-layout{display:grid;grid-template-columns:minmax(0,2.15fr) minmax(300px,.85fr);gap:22px}
+.nn-career-adventure .nn-career-chapter{border:0;background:transparent;border-radius:0;box-shadow:none;overflow:visible;margin:0 0 25px}
+.nn-career-adventure .nn-career-chapter-cover{position:relative;z-index:2;height:auto;min-height:81px;
+ display:flex;align-items:center;gap:15px;padding:9px 20px;margin:0 8px -23px;
+ border:4px solid #2b4051;border-radius:18px;background:linear-gradient(110deg,#fff7da,#f5e5b3);
+ box-shadow:0 7px 0 #c49b64,0 12px 20px #1d384d44}
+.nn-career-adventure .nn-career-chapter-label{position:relative;left:auto;bottom:auto;z-index:2;color:#21364a;flex:1}
+.nn-career-adventure .nn-career-chapter-label span{color:#197b71;font-weight:950;font-size:10px}
+.nn-career-adventure .nn-career-chapter-label h4{color:#21364a;font-size:clamp(20px,2.5vw,29px);margin:3px 0}
+.nn-career-adventure .nn-career-chapter-label small{color:#59717c;font-size:11px}
+.nn-career-chapter-emblem{display:grid;place-items:center;flex:0 0 52px;width:52px;height:52px;border:3px solid #264258;
+ border-radius:50%;background:#abefd6;color:#22675d;font-size:24px;box-shadow:0 3px 0 #3b7f6e}
+.nn-career-chapter-gaming .nn-career-chapter-emblem{background:#e3baff;color:#75439f}
+.nn-career-chapter-sleep .nn-career-chapter-emblem{background:#cbd8ff;color:#425c9c}
+html[data-ninja-theme] .nn-career-chapter-trail{position:relative!important;isolation:isolate;display:block!important;
+ height:510px!important;padding:0!important;overflow:hidden;border:5px solid #2a4353;
+ border-radius:25px;background:linear-gradient(130deg,#a5dfca,#c9def0)!important;box-shadow:0 10px 0 #558c82,0 18px 22px #1c355449}
+.nn-career-illustrated-landscape{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:saturate(1.08)}
+.nn-career-chapter-study .nn-career-illustrated-landscape{object-position:left}
+.nn-career-chapter-gaming .nn-career-illustrated-landscape{filter:hue-rotate(12deg) saturate(1.35) brightness(.79)}
+.nn-career-chapter-sleep .nn-career-illustrated-landscape{filter:hue-rotate(35deg) saturate(.88) brightness(.6)}
+.nn-career-chapter-trail:after{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:linear-gradient(180deg,#fff4bc18 0%,transparent 50%,#0e4a4540 100%)}
+.nn-career-chapter-gaming .nn-career-chapter-trail:after{background:linear-gradient(140deg,#af5dfe33,#34235e49 85%)}
+.nn-career-chapter-sleep .nn-career-chapter-trail:after{background:linear-gradient(120deg,#729ec439,#152b6780)}
+.nn-career-territory{position:absolute;z-index:1;right:5%;top:10%;width:34%;height:35%;
+ border:8px solid #346d69;border-radius:14px 14px 5px 5px;transform:rotate(2deg);
+ background:#ecdbb9;box-shadow:0 9px 0 #223e4d,0 15px 20px #26384c70;pointer-events:none}
+.nn-career-territory img{display:block;width:100%;height:100%;object-fit:cover}
+.nn-career-territory-roof{position:absolute;z-index:1;top:-35px;left:-7%;width:114%;height:48px;
+ display:grid;place-items:center;border:4px solid #243b50;border-radius:65% 65% 15% 15%;background:#338c7e;color:#fff3cf;font-size:24px}
+.nn-career-chapter-gaming .nn-career-territory{border-color:#8d55b4}.nn-career-chapter-gaming .nn-career-territory-roof{background:#7435a3}
+.nn-career-chapter-sleep .nn-career-territory{border-color:#5073b1}.nn-career-chapter-sleep .nn-career-territory-roof{background:#354f9e}
+.nn-career-adventure .nn-career-trail-path{position:absolute;z-index:1;inset:0;width:100%;height:100%;
+ pointer-events:none;filter:drop-shadow(0 3px 2px #17394970)}
+.nn-career-trail-path .nn-path-shadow{fill:none;stroke:#314a5b;stroke-width:23;stroke-linecap:round;stroke-linejoin:round}
+.nn-career-trail-path .nn-path-road{fill:none;stroke:#ffe8a7;stroke-width:12;stroke-linecap:round;stroke-dasharray:9 20;animation:nnRoad 6s linear infinite}
+.nn-career-path-mascot{position:absolute;z-index:2;left:4%;bottom:3%;width:90px;height:100px;
+ filter:drop-shadow(2px 5px 0 #234b57a1);animation:nnFloat 4s ease-in-out infinite;pointer-events:none}
+.nn-career-path-mascot svg{width:100%;height:100%}
+.nn-career-adventure .nn-career-chapter-trail .nn-career-node{position:absolute!important;z-index:4;
+ left:var(--nx);top:var(--ny);transform:translate(-50%,-50%)!important;
+ display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:0!important;
+ width:114px!important;min-width:0!important;min-height:90px!important;height:auto!important;
+ padding:3px!important;border:0!important;background:transparent!important;box-shadow:none!important;
+ text-align:center;color:#223a4c;cursor:pointer;opacity:1;transition:filter .2s}
+.nn-career-chapter-trail .nn-career-node:hover{filter:brightness(1.06)!important}
+.nn-career-chapter-trail .nn-career-node:focus-visible{outline:4px solid #ffcf61;outline-offset:5px;border-radius:30px}
+.nn-career-adventure .nn-career-chapter-trail .nn-career-node-number{display:grid;place-items:center;flex:0 0 61px;
+ width:61px;height:61px;border:5px solid #2d4252;border-radius:50%;font-size:20px;font-weight:1000;
+ background:linear-gradient(140deg,#eef4f8,#adc2cc);color:#384e60;box-shadow:0 6px 0 #3f64727a,0 8px 16px #142e4177}
+.nn-career-chapter-trail .nn-career-node.is-ready .nn-career-node-number{background:linear-gradient(135deg,#fff5ac,#ffbc62)!important;
+ color:#283d53!important;border-color:#945e3b!important;animation:nnGlowPulse 2.8s ease-in-out infinite}
+.nn-career-chapter-trail .nn-career-node.is-complete .nn-career-node-number{background:linear-gradient(135deg,#cefbe1,#5acbb1)!important;color:#1e6959!important}
+.nn-career-chapter-trail .nn-career-node.is-selected .nn-career-node-number{outline:4px solid #ffeaaa;outline-offset:4px;scale:1.1}
+.nn-career-adventure .nn-career-chapter-trail .nn-career-node-copy{display:flex;flex-direction:column;align-items:center;gap:3px;
+ width:118px!important;max-width:118px;min-width:0;margin-top:2px;padding:6px 4px;border:3px solid #2e4455;border-radius:10px;
+ background:#fff4d9;color:#23384b;box-shadow:0 4px 0 #8e7b74,0 5px 12px #14374b60}
+.nn-career-chapter-trail .nn-career-node.is-selected .nn-career-node-copy{background:#ffe5a4;border-color:#aa7046}
+.nn-career-chapter-trail .nn-career-node.is-locked .nn-career-node-copy{background:#e1e6eb}
+.nn-career-adventure .nn-career-chapter-trail .nn-career-node-copy strong{font-size:10px;line-height:1.25;color:#213547;overflow-wrap:anywhere}
+.nn-career-adventure .nn-career-chapter-trail .nn-career-node-copy small{font-size:9px;line-height:1.2;color:#587382}
+.nn-career-chapter-trail .nn-career-node-arrow{display:none}
+.nn-career-chapter-next{position:absolute;z-index:1;right:3%;bottom:4%;font-size:10px;letter-spacing:.2em;font-weight:950;
+ padding:6px 12px;border-radius:12px;color:#f9f2de;background:#203c50b9}
+.nn-career-adventure .nn-career-sidebar{position:sticky;top:72px;z-index:6}
+.nn-career-adventure .nn-career-detail{position:relative;overflow:hidden;gap:10px;padding:21px 20px 24px;
+ border:5px solid #2c4656;border-radius:26px;background:linear-gradient(140deg,#fff9e9,#fff0c9)!important;
+ box-shadow:0 8px 0 #ddac6d,0 18px 29px #1c3d4c69}
+.nn-career-adventure .nn-career-detail:before{content:"";position:absolute;left:5%;right:5%;top:6px;height:4px;border-top:2px dashed #b9a27c}
+.nn-career-adventure .nn-career-eyebrow{color:#9b623e;font-size:10px;font-weight:1000}
+.nn-career-detail-hero{display:flex;align-items:center;justify-content:space-between;gap:9px}
+.nn-career-detail-mascot{display:block;width:75px;height:90px;animation:nnFloat 5s ease-in-out infinite}
+.nn-career-detail-mascot svg{width:100%;height:100%}
+.nn-career-adventure .nn-career-status{padding:7px 13px;border:3px solid #496b6c;border-radius:17px;background:#b9ead4;
+ color:#25554d;font-size:11px;box-shadow:0 4px 0 #779f91}
+.nn-career-status.is-locked{background:#e0e3ec;border-color:#7d899c;color:#525f76}
+.nn-career-status.is-complete{background:#ffe19a;border-color:#bd8953;color:#6d4b35}
+.nn-career-adventure .nn-career-detail h4{font-size:clamp(24px,2.8vw,31px);font-weight:1000;color:#253c4d;line-height:1.15;margin:0;letter-spacing:-.03em}
+.nn-career-adventure .nn-career-detail p{color:#566a6d;font-weight:650}
+.nn-career-adventure .nn-career-progress{flex-wrap:wrap;font-size:12px;color:#344d5b}
+.nn-career-adventure .nn-career-progress strong{color:#a56837;font-weight:950}
+.nn-career-adventure .nn-career-meter{height:15px;border:3px solid #29465a;background:#dae6e0;box-shadow:0 3px 0 #ffffffaa}
+.nn-career-adventure .nn-career-meter>span{background:linear-gradient(90deg,#50c0aa,#ffe084)!important}
+.nn-career-adventure .nn-career-prerequisites{padding:11px;border:2px dashed #c8b090;border-radius:12px;background:#fff9ee;color:#526c6c}
+.nn-career-adventure .nn-career-start{min-height:59px;margin-top:12px;border:4px solid #593c55!important;border-radius:21px!important;
+ background:linear-gradient(120deg,#ff9a87,#f16c6d)!important;color:#fffdf3!important;font-size:16px;font-weight:1000;
+ box-shadow:0 5px 0 #a14a56,0 9px 18px #a8666099;transition:transform .2s,filter .2s}
+.nn-career-adventure .nn-career-start:hover:not(:disabled){transform:translateY(-3px);filter:brightness(1.07)}
+.nn-career-adventure .nn-career-start:disabled{background:#aebbbd!important;box-shadow:none!important;opacity:.7}
+.nn-career-sidebar-tip{font-size:12px;padding:12px;border:1px solid #9bbdaf;border-radius:14px;background:#f0fae5}
+.nn-career-adventure .nn-career-bosses{position:relative;overflow:hidden;background:linear-gradient(125deg,#242855,#553774)!important;border:5px solid #4e3f6e;
+ box-shadow:0 8px 0 #a17abe,0 12px 25px #1c2e4570;padding:24px}
+.nn-career-bosses:before{content:"✦  ✧  ✦";position:absolute;right:4%;top:8%;font-size:40px;color:#ad93e3;opacity:.3}
+.nn-career-adventure .nn-career-boss{border:3px solid #a78cc9;border-radius:60px 60px 20px 20px;background:linear-gradient(#6a4e98,#3b3562);
+ box-shadow:0 5px 0 #1f1d47;transition:translate .2s}
+.nn-career-adventure .nn-career-boss:hover{translate:0 -4px}
+.nn-career-adventure .nn-career-boss>span{font-size:35px;color:#ffdc85;text-shadow:0 0 12px #ffca699f}
+.nn-career-adventure .nn-career-bonus{border:4px solid #6d9892;border-radius:20px;background:#eaf1e4;padding:18px;
+ box-shadow:0 6px 0 #88b8ae}
+.nn-career-adventure .nn-career-bonus-grid{grid-template-columns:repeat(auto-fit,minmax(146px,1fr));margin-top:15px}
+.nn-career-adventure .nn-career-bonus-grid .nn-career-node{min-height:76px;border:2px solid #abc6bc;background:#fffdf0;box-shadow:0 4px 0 #aac0ad}
+.nn-career-bonus-grid .nn-career-node-number{flex:0 0 43px;width:43px;height:43px}
+.nn-career-bonus-grid .nn-career-node-copy strong{font-size:12px}
+@media(max-width:1100px){
+ .nn-career-adventure .nn-career-layout{grid-template-columns:1fr}
+ .nn-career-adventure .nn-career-sidebar{position:static;order:-1}
+ .nn-career-adventure .nn-career-detail{display:grid;grid-template-columns:1fr 1.2fr;align-items:center;column-gap:19px}
+ .nn-career-detail .nn-career-eyebrow,.nn-career-detail .nn-career-detail-hero{grid-column:1}
+ .nn-career-detail h4,.nn-career-detail>p{grid-column:2}
+ .nn-career-detail .nn-career-start{grid-column:2}
+ .nn-career-detail .nn-career-progress,.nn-career-detail .nn-career-meter,.nn-career-detail .nn-career-best,.nn-career-detail .nn-career-prerequisites{grid-column:1}
+}
+@media(max-width:950px){
+ html[data-ninja-theme] .nn-village-stage{min-height:1280px}
+ html[data-ninja-theme] .nn-village-gates{position:relative!important;inset:auto!important;top:100px!important;width:min(520px,92%)!important;
+  height:auto!important;margin:0 auto!important;display:flex!important;flex-direction:column!important;gap:35px!important}
+ html[data-ninja-theme] .nn-village-gates .nn-village-gate,
+ html[data-ninja-theme] .nn-village-gates .nn-village-gate-gaming,
+ html[data-ninja-theme] .nn-village-gates .nn-village-gate-sleep{position:relative!important;top:auto!important;left:auto!important;
+  width:100%!important;height:285px!important;flex:0 0 285px}
+ .nn-village-stage .nn-village-guide{bottom:1%;left:3%}
+ .nn-village-water-label{display:none}
+ .nn-house-roof{height:34%}.nn-house-plaque{top:5%}
+ .nn-house-foot{bottom:0}
+ .nn-village-landscape{object-position:40% 40%;opacity:.97}
+}
+@media(max-width:720px){
+ .nn-career-adventure .nn-career-intro{padding:18px;align-items:center}
+ .nn-career-adventure .nn-career-detail{display:flex;flex-direction:column}
+ .nn-career-adventure .nn-career-chapter-trail{height:440px!important}
+ .nn-career-territory{width:42%;height:28%;right:3%;top:15%;border-width:5px}
+ .nn-career-chapter-trail .nn-career-path-mascot{width:60px;height:70px}
+ .nn-career-adventure .nn-career-chapter-trail .nn-career-node{width:100px!important;min-height:80px!important}
+ .nn-career-adventure .nn-career-chapter-trail .nn-career-node-number{flex-basis:51px;width:51px;height:51px;font-size:17px}
+ .nn-career-adventure .nn-career-chapter-trail .nn-career-node-copy{width:105px!important;max-width:105px}
+ .nn-career-adventure .nn-career-chapter-trail .nn-career-node-copy strong{font-size:10px}
+ .nn-career-adventure .nn-career-chapter-trail .nn-career-node:nth-of-type(1){left:16%;top:30%}
+ .nn-career-adventure .nn-career-chapter-trail .nn-career-node:nth-of-type(2){left:49%;top:28%}
+ .nn-career-adventure .nn-career-chapter-trail .nn-career-node:nth-of-type(3){left:82%;top:29%}
+ .nn-career-adventure .nn-career-chapter-trail .nn-career-node:nth-of-type(4){left:16%;top:70%}
+ .nn-career-adventure .nn-career-chapter-trail .nn-career-node:nth-of-type(5){left:49%;top:72%}
+ .nn-career-adventure .nn-career-chapter-trail .nn-career-node:nth-of-type(6){left:82%;top:69%}
+ .nn-career-adventure .nn-career-trail-path{opacity:.65}
+}
+@media(max-width:500px){
+ html[data-ninja-theme] .nn-village-stage{min-height:1160px;border-radius:19px}
+ html[data-ninja-theme] .nn-village-gates{top:72px!important;gap:24px!important}
+ html[data-ninja-theme] .nn-village-gates .nn-village-gate,
+ html[data-ninja-theme] .nn-village-gates .nn-village-gate-gaming,
+ html[data-ninja-theme] .nn-village-gates .nn-village-gate-sleep{height:278px!important;flex-basis:278px}
+ .nn-house-plaque strong{font-size:21px}
+ .nn-guide-avatar{width:83px;height:95px}
+ .nn-guide-balloon{min-width:0;padding:8px 10px;font-size:12px}
+ .nn-guide-balloon strong{font-size:17px}
+ .nn-guide-balloon small{font-size:9px}
+ .nn-village-title h3{font-size:30px!important}
+ .nn-career-adventure .nn-career-chapter-cover{padding:8px 10px;margin:0 2px -18px;gap:9px}
+ .nn-career-chapter-emblem{width:42px;height:42px;flex:0 0 42px}
+ .nn-career-adventure .nn-career-chapter-label h4{font-size:21px}
+ .nn-career-adventure .nn-career-chapter-trail{height:425px!important;border-width:3px}
+ .nn-career-territory{opacity:.68}
+}
+/* In-game hanging wooden signboards and meaningful, accessible meters. */
+.is-playing .hud-top{border-bottom:4px solid #604a40!important;background:linear-gradient(180deg,#f8e8bf,#fff7e1)!important;
+ box-shadow:inset 0 5px 0 #b7835a,0 6px 15px #263b5060!important}
+.is-playing .context-block{padding:7px 11px;border:2px solid #b98c57;border-radius:14px;background:#fff8e7}
+.is-playing .context-block #context-label{font-weight:1000;color:#283e4e}
+.is-playing .score-block,.is-playing .combo-block{padding:5px 13px;border:3px solid #5b4c59;border-radius:12px;
+ background:#fff6de;box-shadow:0 4px 0 #cda780}
+.is-playing .score-block>strong{color:#c88a35}.is-playing .combo-block>strong{color:#d46b4b}
+.is-playing .lives-block{padding:7px 11px;border:3px solid #734d59;border-radius:16px;background:#fff2e1;box-shadow:0 4px 0 #a96e74}
+.is-playing .hud-sidebar{border-left:5px solid #5e4c45!important;background:linear-gradient(180deg,#f9eccc,#e9d6b2)!important;
+ box-shadow:inset 7px 0 0 #ddbd8c, -7px 0 16px #2b3d5040}
+.is-playing .hud-sidebar .sidebar-title{font-size:10px;font-weight:1000;letter-spacing:.08em;color:#4c474c}
+.is-playing .hud-sidebar .time-block{border:3px solid #594f52!important;border-radius:17px!important;
+ background:linear-gradient(155deg,#fff9df,#ffefbf)!important;box-shadow:0 5px 0 #bfa777!important}
+.is-playing .hud-sidebar .time-block>strong{color:#263d4f}
+.is-playing .hud-sidebar .meter-cluster{padding:8px 3px;border-top:0;gap:11px}
+.is-playing .meter-block{position:relative;padding:9px 7px 11px;border:3px solid #684d46;border-radius:12px;
+ background:linear-gradient(130deg,#fff8e1,#f8e6c4);box-shadow:0 4px 0 #c0a078}
+.is-playing .meter-block>span{font-size:11px;font-weight:900;color:#263d4e}
+.is-playing .meter-block>span b{font-size:17px!important;width:20px;height:20px}
+.is-playing .meter-track{height:12px;border:2px solid #65574c;border-radius:12px;background:#e6dfc8}
+.is-playing .meter-fill{transition:width .25s ease!important}
+.is-playing .meter-block.overload-block{border-color:#ab7972;background:linear-gradient(140deg,#fff0e0,#ffdfd9)}
+.is-playing .meter-block.flow-block{border-color:#8176ad;background:linear-gradient(140deg,#f5eeff,#e2dcff)}
+.is-playing .round-extras{border-top:0}
+.nn-hud-meaning{order:4;max-width:100%;font-size:11px;color:#4b5c62}
+.nn-hud-meaning summary{min-height:40px;display:flex;align-items:center;gap:7px;font-size:10px;
+ cursor:pointer;color:#263c50;font-weight:900;outline-offset:2px}
+.nn-hud-meaning>p{margin:2px 0 9px;padding:9px;border:2px solid #b1a28c;border-radius:10px;
+ background:#fff5df;color:#52636a;font-size:10px;line-height:1.5}
+@media(max-width:820px){.is-playing .meter-block{padding:6px 2px}.is-playing .meter-block>span{font-size:9px}
+ .is-playing .score-block,.is-playing .combo-block{padding:2px 5px;border-width:2px;border-radius:8px}
+ .is-playing .lives-block{padding:2px 5px;border-width:2px}
+ .nn-hud-meaning{display:none}
+}
+@media(max-width:520px){.is-playing .hud-sidebar{border-left-width:2px!important;box-shadow:none}
+ .is-playing .meter-block{border-width:2px;border-radius:9px;box-shadow:0 2px 0 #baa58e}
+ .is-playing .meter-block>span i{display:none}
+ .is-playing .context-block{padding:3px;border-width:1px}
+}
+/* Real progression/reward celebrations; never fake currency or write save data. */
+#nn-celebration-root{position:fixed;z-index:250;inset:0;display:flex;align-items:flex-start;justify-content:center;
+ pointer-events:none;padding:clamp(75px,16vh,155px) 12px 0}
+#nn-celebration-root:empty{display:none}
+.nn-celebration{position:relative;isolation:isolate;width:min(510px,94vw);
+ display:grid;grid-template-columns:105px minmax(0,1fr);gap:14px;align-items:center;
+ padding:17px 22px;border:5px solid #293e55;border-radius:29px 27px 33px 24px;
+ background:linear-gradient(130deg,#fff3bb,#fff9e9 58%,#f9d0dd);color:#253a4b;
+ box-shadow:0 8px 0 #a87a66,0 18px 0 #f7d78865,0 23px 40px #1d344baa;
+ animation:nnCelebrateIn .48s cubic-bezier(.18,.82,.3,1.1) both;overflow:visible}
+.nn-celebration.is-leaving{animation:nnCelebrateOut .3s ease-in both}
+.nn-celebration:before{content:"★  ✦  ✧  ★";position:absolute;z-index:-1;inset:-23px 5% auto;text-align:center;letter-spacing:1.8em;color:#ffb445;
+ text-shadow:0 0 14px #ffcd80;font-size:19px;animation:nnGlint 1.9s infinite}
+.nn-celebration-avatar{width:105px;height:118px;animation:nnLevelRise 1.5s ease-in-out infinite}
+.nn-celebration-avatar svg{width:100%;height:100%;filter:drop-shadow(3px 5px 0 #293e5544)}
+.nn-celebration-kicker{display:block;color:#bd6947;letter-spacing:.16em;font-size:10px;font-weight:1000}
+.nn-celebration h3{margin:6px 0;color:#213a4d;font-size:clamp(21px,4vw,30px);font-weight:1000;line-height:1.1}
+.nn-celebration p{margin:0;color:#475f67;font-size:13px;line-height:1.5}
+.nn-celebration .nn-celebration-spark{position:absolute;color:#fbc266;font-size:24px;animation:nnCoinRain 3.2s ease-out infinite;pointer-events:none}
+.nn-celebration .s-one{top:-30px;left:10%;animation-delay:-.4s}
+.nn-celebration .s-two{top:-12px;right:16%;animation-delay:.2s}
+.nn-celebration .s-three{top:-25px;left:63%;animation-delay:1.2s}
+.nn-celebration .s-four{top:-15px;right:40%;animation-delay:1.9s}
+.nn-celebration.nn-celebration-skin{background:linear-gradient(135deg,#efe0ff,#fff2dc 70%,#c7f2ef);border-color:#654e94;box-shadow:0 8px 0 #9a74c8,0 20px 32px #2a245e88}
+.nn-celebration.nn-celebration-mission{background:linear-gradient(135deg,#d4f4d3,#fff8df 65%,#ffe2aa)}
+.nn-celebration.nn-celebration-level{background:linear-gradient(135deg,#fff4b8,#fff6e4 66%,#ffe0a1)}
+.nn-celebration.nn-celebration-boss{background:linear-gradient(135deg,#f7dfff,#fff0d7 68%,#fdc6ce)}
+@media(max-width:520px){#nn-celebration-root{padding-top:70px}
+ .nn-celebration{grid-template-columns:68px 1fr;gap:10px;padding:12px 13px;border-width:3px;border-radius:20px}
+ .nn-celebration-avatar{width:68px;height:82px}.nn-celebration h3{font-size:21px}.nn-celebration p{font-size:11px}
+}
+@media(prefers-reduced-motion:reduce){
+ .nn-village-stage *, .nn-career-adventure *, .nn-celebration, .nn-celebration *, .world-detail-panel .world-inside *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+ .nn-career-trail-path .nn-path-road{stroke-dasharray:none}
+}
+html[data-ninja-calm="true"] .nn-village-stage *,html[data-ninja-calm="true"] .nn-career-adventure *,
+html[data-ninja-calm="true"] .nn-celebration,html[data-ninja-calm="true"] .nn-celebration *,
+html[data-ninja-calm="true"] .world-detail-panel .world-inside *{animation:none!important;transition:none!important}
