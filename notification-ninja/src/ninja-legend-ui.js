@@ -106,7 +106,7 @@ export function legendaryDojos(){
     </div>
     <span class="nn-village-water-label" aria-hidden="true">✦ NINJATAL ✦</span>
   </section>
-  <p class="nn-village-caption">Jede Welt führt zu einer eigenen Themenrunde. Die 18 Story-Missionen findest du ausschließlich in der <strong>Karrierekarte</strong>.</p>
+  <p class="nn-village-caption">Die Themenrunden sind eigenständig. Die 18 Story-Missionen findest du ausschließlich in der <strong>Karrierekarte</strong>.</p>
  </div>`;
 }
 export function legendaryWorldDetail(id){
