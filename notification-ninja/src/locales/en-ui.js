@@ -1,5 +1,15 @@
 /** English copy for the existing Ninja interface. Stable data IDs and player names are never translated. */
 export const EN_UI = Object.freeze({
+  "Spielnavigation auf dem Handy": "Mobile game navigation",
+  "Spielwelten, Karriere und Basar sind im Menü. Konto und Einstellungen findest du im Profil.": "Worlds, Career and Bazaar are in the menu. Find your account and settings in Profile.",
+  "Wische Ablenkungen weg. Behalte, was wichtig ist.": "Swipe distractions away. Keep what matters.",
+  "Dein Ninja-Abenteuer beginnt gleich!": "Your ninja adventure starts soon!",
+  "Wähle deinen Spielmodus.": "Choose your game mode.",
+  "Wähle dein Dojo.": "Choose your dojo.",
+  "18 Story-Missionen findest du in der": "Find 18 story missions in",
+  "Levelzahl: starten. Titel: Details.": "Level number: play. Title: details.",
+  "Drei Bosse. Drei Herausforderungen.": "Three bosses. Three challenges.",
+  "Wähle ein leuchtendes Level.": "Choose a glowing level.",
   "DEINE DREI DOJO-WELTEN": "YOUR THREE DOJO WORLDS",
   "Dein Weg zur": "Your path to",
   "digitalen Balance": "digital balance",
