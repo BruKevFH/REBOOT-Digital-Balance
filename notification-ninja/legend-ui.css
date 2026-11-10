@@ -414,7 +414,7 @@
  .legend-dojo{grid-template-columns:minmax(200px,.8fr) 1.2fr}
 }
 @media(max-width:760px){
- .dojo-tabs{grid-template-columns:repeat(5,minmax(0,1fr));z-index:6!important;background:#14283beF!important;border-top:1px solid #498679!important}
+ .dojo-tabs{grid-template-columns:repeat(6,minmax(0,1fr));z-index:6!important;background:#14283beF!important;border-top:1px solid #498679!important}
  .dojo-tabs>a{color:#c1d8d3!important}
  .dojo-tabs>a[data-game-route=bazaar]{display:none!important}
  .home{padding-bottom:calc(118px + env(safe-area-inset-bottom))!important}
@@ -999,7 +999,7 @@ html[data-ninja-theme=relaxed] .legend-career-hero .legend-kicker{color:#287a60!
  .arcade-theme-cycle{min-width:43px;padding:6px 9px}
  .arcade-theme-cycle small{display:none}
  html[data-ninja-theme] .home{padding-bottom:calc(116px + env(safe-area-inset-bottom))!important}
- html[data-ninja-theme] .home .dojo-tabs{grid-template-columns:repeat(5,minmax(0,1fr))}
+ html[data-ninja-theme] .home .dojo-tabs{grid-template-columns:repeat(6,minmax(0,1fr))}
  .arcade-mode-banner{min-height:165px}
  .arcade-mode-portals{gap:11px}
  .arcade-mode-portal{height:327px!important}
