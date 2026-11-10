@@ -16,6 +16,7 @@ on:
       - 'notification-ninja/ui-navigation-v3.css'
       - 'notification-ninja/illustrated-adventure-v4.css'
       - 'notification-ninja/dojo-worlds-v5.css'
+      - 'notification-ninja/mobile-navigation-v6.css'
       - 'notification-ninja/assets/dojo-*-v5.svg'
       - 'notification-ninja/assets/overworld-landscape-v4.svg'
       - 'notification-ninja/assets/dojo-*-v2.svg'
@@ -55,7 +56,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add notification-ninja/dist/ninja.js notification-ninja/dist/home.js notification-ninja/dist/build.json
-          git add notification-ninja/downloads/Notification-Ninja-3.6.0.zip notification-ninja/downloads/Notification-Ninja-3.6.0.zip.sha256
+          git add notification-ninja/downloads/Notification-Ninja-3.7.0.zip notification-ninja/downloads/Notification-Ninja-3.7.0.zip.sha256
           if git diff --cached --quiet; then
             echo "Generated files are already up to date."
           else
@@ -73,7 +74,7 @@ jobs:
           # Explicitly publish the generated dist/ and ZIP revision.
           gh api -X POST "repos/${{ github.repository }}/pages/builds"
 
-      - name: Verify public 3.6.0 assets after Pages rebuild
+      - name: Verify public 3.7.0 assets after Pages rebuild
         if: success()
         continue-on-error: true
         shell: bash
@@ -81,12 +82,12 @@ jobs:
           site="https://brukevfh.github.io/REBOOT-Digital-Balance/notification-ninja"
           for attempt in {1..10}; do
             live="$(curl -fsSL --max-time 10 -H 'Cache-Control: no-cache' "$site/dist/build.json?release=${GITHUB_RUN_ID}-${attempt}" | jq -r '.version // empty' || true)"
-            if [ "$live" = "3.6.0" ]; then
+            if [ "$live" = "3.7.0" ]; then
               curl -fsSL --max-time 10 "$site/dojo-worlds-v5.css?release=${GITHUB_RUN_ID}" -o "$RUNNER_TEMP/nn-v5.css"
               grep -q 'nn-village-gate-gaming' "$RUNNER_TEMP/nn-v5.css"
               curl -fsSL --max-time 10 "$site/assets/dojo-gaming-v5.svg?release=${GITHUB_RUN_ID}" -o "$RUNNER_TEMP/nn-v5.svg"
               grep -q 'Gaming-Dojo' "$RUNNER_TEMP/nn-v5.svg"
-              echo "PUBLIC VISUAL RELEASE 3.6.0 CONFIRMED"
+              echo "PUBLIC VISUAL RELEASE 3.7.0 CONFIRMED"
               exit 0
             fi
             echo "Pages still serves version: ${live:-unknown} (attempt ${attempt})"
