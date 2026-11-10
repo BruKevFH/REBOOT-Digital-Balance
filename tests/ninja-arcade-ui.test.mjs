@@ -67,7 +67,7 @@ test('actual dojo assets exist and the map shows a progress-aware character',()=
  assert.equal((html.match(/class="nn-career-chapter-trail"/g)||[]).length,3);
  assert(html.includes('nn-career-sidebar'));
  const worlds=legendaryDojos({missions,worlds:['study']});
- assert(worlds.includes('src="./assets/dojo-gaming.png"'));
+ assert(worlds.includes('src="./assets/dojo-gaming-v5.svg"'));
  assert.equal((worlds.match(/class="legend-dojo legend-dojo-/g)||[]).length,3);
 });
 test('theme and new labels have explicit English localization',()=>{
