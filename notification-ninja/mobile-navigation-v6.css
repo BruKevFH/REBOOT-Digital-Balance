@@ -118,3 +118,12 @@
 }
 @media(prefers-reduced-motion:reduce){.nn-mobile-nav a{transition:none!important}}
 body.calm-view .nn-mobile-nav a{transition:none!important}
+
+/* A moving play button is difficult to tap: animate its halo, never its position. */
+.nn-career-chapter-trail .nn-career-node.is-ready .nn-career-direct-start{
+ animation:nnGlowPulse 2.8s ease-in-out infinite!important;
+}
+@media(prefers-reduced-motion:reduce){
+ .nn-career-chapter-trail .nn-career-node.is-ready .nn-career-direct-start{animation:none!important}
+}
+body.calm-view .nn-career-chapter-trail .nn-career-node.is-ready .nn-career-direct-start{animation:none!important}
