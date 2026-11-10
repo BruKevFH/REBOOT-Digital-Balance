@@ -206,11 +206,8 @@ export function legendaryCareer({missions=[],selectedId=null}={}){
      <div class="nn-career-chapter-label"><span>WELT ${String(i+1).padStart(2,'0')} · ${esc(c.subtitle)}</span><h4 id="nn-chapter-${id}">${esc(c.title)}</h4><small>${done} von ${group.length} Missionen</small></div>
    </div>
    <div class="nn-career-chapter-trail" aria-label="Missionspfad ${esc(c.title)}">
-    <img class="nn-career-illustrated-landscape" src="./assets/overworld-landscape-v4.svg" alt="" loading="lazy">
-    <div class="nn-career-territory" aria-hidden="true">
-       <span class="nn-career-territory-roof">${c.symbol}</span>
-       <img src="${c.art}" alt="">
-    </div>
+    <img class="nn-career-illustrated-landscape" src="${c.art}" alt="" loading="lazy">
+    <span class="nn-career-region-emblem" aria-hidden="true">${c.symbol}</span>
     <svg class="nn-career-trail-path" viewBox="0 0 1000 500" preserveAspectRatio="none" aria-hidden="true"><path class="nn-path-shadow" d="M90 375 C145 375 200 240 250 260 S355 377 420 350 S505 170 570 190 S665 360 740 310 S823 130 880 145"/><path class="nn-path-road" d="M90 375 C145 375 200 240 250 260 S355 377 420 350 S505 170 570 190 S665 360 740 310 S823 130 880 145"/></svg>
     <span class="nn-career-path-mascot" aria-hidden="true">${ninjaMascot}</span>
     ${group.map((m,j)=>steps(m,j)).join('')}
@@ -236,7 +233,7 @@ export function legendaryCareer({missions=[],selectedId=null}={}){
    </section>`:'';
  return `<div class="nn-career nn-career-adventure">
   <header class="nn-career-intro">
-   <div><span class="nn-career-eyebrow">DEINE NINJA-REISE · DREI REGIONEN</span><h3>Karrierekarte</h3><p>Schritt für Schritt zum Fokus-Ninja. Folge den leuchtenden Missionssteinen durch drei Welten.</p></div>
+   <div><span class="nn-career-eyebrow">DEINE NINJA-REISE · DREI REGIONEN</span><h3>Karrierekarte</h3><p>Tippe auf eine leuchtende Level-Zahl, um sofort zu spielen. Über den Titel darunter kannst du die Mission zuerst ansehen.</p></div>
    <div class="nn-career-overall"><strong>${completed}<span> / ${main.length}</span></strong><small>Missionen geschafft</small></div>
   </header>
   <div class="nn-career-layout">
