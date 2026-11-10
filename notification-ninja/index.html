@@ -16,6 +16,7 @@
   <link rel="stylesheet" href="./ui-navigation-v3.css" />
   <link rel="stylesheet" href="./illustrated-adventure-v4.css" />
   <link rel="stylesheet" href="./dojo-worlds-v5.css" />
+  <link rel="stylesheet" href="./mobile-navigation-v6.css" />
 </head>
 <body>
   <div id="arena" class="arena"><canvas id="world" aria-label="Spielfeld von Notification Ninja"></canvas></div>
@@ -26,7 +27,7 @@
     <strong>Dein nächstes Abenteuer wartet.</strong>
     <span id="loading-status">Spiel wird vorbereitet …</span>
     <div class="loading-track"><i id="loading-progress" style="width:0%" role="progressbar" aria-label="Ladefortschritt" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></i></div>
-    <p class="loading-story">Ein kleiner Wischer. Eine neue Kraft.<br />Und ein Ninja, der mit dir wächst.</p>
+    <p class="loading-story">Dein Ninja-Abenteuer beginnt gleich!</p>
   </div>
 
   <nav class="global-nav" aria-label="Spieloptionen">
@@ -41,7 +42,7 @@
   <main id="landing" class="landing" hidden>
     <header class="landing-header"><a class="landing-brand" href="./" aria-label="Notification Ninja Startseite"><svg viewBox="0 0 36 36" fill="none" aria-hidden="true"><path d="m18 3 4 10 11 5-10 4-5 11-4-10-11-5 10-4 5-11Z" fill="#f7cd73" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span>Notification <strong>Ninja</strong></span></a><div class="landing-tools"><div class="language-switch" role="group" aria-label="Sprache wählen"><button type="button" data-language="de" aria-label="Deutsch" aria-pressed="true" translate="no">DE</button><button type="button" data-language="en" aria-label="English" aria-pressed="false" translate="no">EN</button></div><button class="access-settings" data-open-settings title="Einstellungen" aria-label="Einstellungen öffnen">⚙</button><a class="landing-tag homepage-link" href="./home.html">← Zur Homepage</a></div></header>
     <section class="landing-hero" aria-labelledby="landing-title">
-      <div class="landing-copy"><span class="landing-eyebrow">DEIN FOKUS. DEINE ENTSCHEIDUNG.</span><h1 id="landing-title"><span>Notification</span><br /><em>Ninja</em></h1><p class="landing-intro">Lernen, Gaming oder Schlafen: Erkenne Ablenkungen und behalte, was gerade wichtig ist. Eine kurze Runde. Ein klares Ziel.</p>
+      <div class="landing-copy"><span class="landing-eyebrow">DEIN FOKUS. DEINE ENTSCHEIDUNG.</span><h1 id="landing-title"><span>Notification</span><br /><em>Ninja</em></h1><p class="landing-intro">Wische Ablenkungen weg. Behalte, was wichtig ist.</p>
         <div id="landing-player" class="landing-return" hidden><span class="return-dot" aria-hidden="true"></span><span>Willkommen zurück, <strong id="landing-player-name" data-user-text>Ninja</strong>!<small>Dein Dojo wartet auf diesem Gerät.</small></span></div>
         <button id="landing-start" class="btn primary landing-start"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m8 5 12 7-12 7V5Z" fill="#fff3cb" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span id="landing-start-label">Direkt spielen</span><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M3 10h14m-5-5 5 5-5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
         <div class="account-entry"><button type="button" class="btn ghost" data-account-view="login">Anmelden</button><button type="button" class="btn ghost" data-account-view="register">Konto erstellen</button></div><button id="landing-name" class="btn ghost optional-name">Eigenen Ninja-Namen wählen</button><p class="landing-device">Gastspiel ohne Anmeldung · Mit Finger oder Maus</p>
@@ -60,7 +61,7 @@
 
     <section class="home-content" aria-label="Dein Dojo und nächste Schritte">
       <section id="ninja-hub" class="ninja-hub" aria-label="Dein Ninja-Hub"></section>
-      <section class="nn-home-guide" aria-label="So findest du dich zurecht"><span class="nn-home-guide-symbol" aria-hidden="true">忍</span><div><span class="nn-home-guide-kicker">NIM ZEIGT DIR DEN WEG</span><h2>Ein Dojo. Ein klarer Weg.</h2><p>Oben findest du Spielwelten, Karriere, Spielmodi, Basar und Rangliste. Deine Ausrüstung, Erfolge, Einstellungen und dein Konto gehören zu deinem Ninja-Profil.</p></div></section>
+      <section class="nn-home-guide" aria-label="So findest du dich zurecht"><span class="nn-home-guide-symbol" aria-hidden="true">忍</span><div><span class="nn-home-guide-kicker">NIM ZEIGT DIR DEN WEG</span><h2>Ein Dojo. Ein klarer Weg.</h2><p>Spielwelten, Karriere und Basar sind im Menü. Konto und Einstellungen findest du im Profil.</p></div></section>
       <button id="continue" class="btn resume-button" hidden><span><small>Du warst schon mittendrin</small><strong>Runde fortsetzen</strong></span><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m-5-5 5 5-5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       
       
@@ -107,6 +108,8 @@
     <aside class="dojo-stamp" aria-label="Dein Ninja"><div class="dojo-badge"><span aria-hidden="true">✦</span> Kleine Wischer. Große Wirkung.</div><strong>Ein guter Tag<br />beginnt mit <em>dir.</em></strong><p>Bist du bereit für die nächste Runde?</p></aside>
     <footer class="home-footer"><span>Ein kleiner Cut. Ein bisschen mehr Fokus.</span></footer>
   </main>
+
+  <nav class="nn-mobile-nav" aria-label="Spielnavigation auf dem Handy"><a href="#worlds" data-game-route="worlds" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5M5.5 10.5V20h13v-9.5M9.5 20v-6h5v6" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" fill="none"/></svg><span>Übersicht</span></a><a href="#dojos" data-game-route="dojos"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18M6 21V10l6-6 6 6v11M4 11l8-8 8 8M9.5 21v-8h5v8M3 12h18" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" fill="none"/></svg><span>Spielwelten</span></a><a href="#campaign" data-game-route="campaign"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5 9 4l6 2 5-2v14.5l-5 2-6-2-5 2V5.5ZM9 4v14.5M15 6v14.5M11 9l3 3-3 3" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" fill="none"/></svg><span>Karriere</span></a><a href="#modes" data-game-route="modes"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5 19 12 8 18.5V5.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" fill="none"/><path d="M5 5v14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span>Modi</span></a><a href="#bazaar" data-game-route="bazaar"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h16V20H4V9.5ZM3.5 9.5 6 4h12l2.5 5.5M9 20v-6h6v6M4 9.5c0 2 4 2 4 0 0 2 4 2 4 0 0 2 4 2 4 0 0 2 4 2 4 0" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" fill="none"/></svg><span>Basar</span></a><a href="#leaderboard" data-game-route="leaderboard"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 20.5h17M5 20V12h4v8m1.5 0V5h4v15m1.5 0v-10h4v10" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" fill="none"/></svg><span>Rangliste</span></a></nav>
 
   <div id="hud" class="hud" hidden>
     <div class="hud-top">
