@@ -30,7 +30,7 @@ export function legendaryModes({account=false}={}){
   <header class="arcade-mode-banner">
    <div class="arcade-banner-label"><span class="arcade-level-dot" aria-hidden="true">✦</span> NINJA-AUSWAHL · WELCHER PFAD PASST HEUTE?</div>
    <h3>Wähle dein nächstes <em>Abenteuer.</em></h3>
-   <p>Ein klarer Start: Die zwei großen Wege sind deine Hauptmodi. Weitere Herausforderungen findest du darunter.</p>
+   <p>Wähle deinen Spielmodus.</p>
    <div class="arcade-world-signs" aria-hidden="true"><span>☀ Lernen</span><span>✦ Gaming</span><span>☾ Schlaf</span></div>
   </header>
   <div class="arcade-mode-section-head"><div><span class="arcade-section-index">01 / HAUPTWEGE</span><h4>Dein Abenteuer beginnt hier</h4></div><span class="arcade-section-hint">WÄHLE EIN PORTAL <span aria-hidden="true">↘</span></span></div>
@@ -82,7 +82,7 @@ export function legendaryDojos(){
   <header class="nn-village-title worlds-hub-intro">
    <span class="legend-kicker">DEINE DREI DOJO-WELTEN</span>
    <h3>Dein Weg zur <em>digitalen Balance</em></h3>
-   <p>Drei Alltagssituationen. Bewusst entscheiden. Wähle ein Gebäude auf der Karte und entdecke seine eigene Spielregel.</p>
+   <p>Wähle dein Dojo.</p>
   </header>
   <section class="nn-village-stage" aria-label="Interaktive Weltkarte mit drei Dojos">
     <img class="nn-village-landscape" src="./assets/overworld-landscape-v4.svg" alt="" loading="eager">
@@ -107,7 +107,7 @@ export function legendaryDojos(){
     </div>
     <span class="nn-village-water-label" aria-hidden="true">✦ NINJATAL ✦</span>
   </section>
-  <p class="nn-village-caption">Die Themenrunden sind eigenständig. Die 18 Story-Missionen findest du ausschließlich in der <strong>Karrierekarte</strong>.</p>
+  <p class="nn-village-caption">18 Story-Missionen findest du in der <strong>Karriere</strong>.</p>
  </div>`;
 }
 export function legendaryWorldDetail(id){
@@ -194,7 +194,7 @@ export function legendaryCareer({missions=[],selectedId=null}={}){
    const playable=m.available||m.completed;
    return `<div class="nn-career-node is-${state(m)} ${selected?.id===m.id?'is-selected':''} ${mini?'is-bonus':''}" ${style} role="group" aria-label="Mission ${m.order}: ${esc(m.title)}, ${stateLabel(m)}">
      ${playable?`<button type="button" class="nn-career-node-number nn-career-direct-start" data-mission-start="${esc(m.id)}" aria-label="Mission ${esc(m.title)} ${m.completed?'erneut ':''}direkt starten"><span class="nn-node-count">${String(m.order).padStart(2,'0')}</span><span class="nn-node-play-symbol" aria-hidden="true">▶</span></button>`:`<span class="nn-career-node-number nn-career-node-locked" aria-hidden="true">♧</span>`}
-     <button type="button" class="nn-career-node-copy nn-career-inspect" data-mission-inspect="${esc(m.id)}" aria-pressed="${selected?.id===m.id}" aria-label="Details zu Mission ${esc(m.title)} ansehen"><strong>${esc(m.title)}</strong><small>${stateLabel(m)}${playable?' · ▶ Start am Stein':''}${m.completed&&!m.claimed?' · Belohnung bereit':''}</small></button>
+     <button type="button" class="nn-career-node-copy nn-career-inspect" data-mission-inspect="${esc(m.id)}" aria-pressed="${selected?.id===m.id}" aria-label="Details zu Mission ${esc(m.title)} ansehen"><strong>${esc(m.title)}</strong><small>${stateLabel(m)}${m.completed&&!m.claimed?' · Belohnung bereit':''}</small></button>
      <span class="nn-career-node-arrow" aria-hidden="true">✦</span>
    </div>`;
  };
@@ -233,20 +233,20 @@ export function legendaryCareer({missions=[],selectedId=null}={}){
    </section>`:'';
  return `<div class="nn-career nn-career-adventure">
   <header class="nn-career-intro">
-   <div><span class="nn-career-eyebrow">DEINE NINJA-REISE · DREI REGIONEN</span><h3>Karrierekarte</h3><p>Tippe auf eine leuchtende Level-Zahl, um sofort zu spielen. Über den Titel darunter kannst du die Mission zuerst ansehen.</p></div>
+   <div><span class="nn-career-eyebrow">DEINE NINJA-REISE · DREI REGIONEN</span><h3>Karrierekarte</h3><p>Levelzahl: starten. Titel: Details.</p></div>
    <div class="nn-career-overall"><strong>${completed}<span> / ${main.length}</span></strong><small>Missionen geschafft</small></div>
   </header>
   <div class="nn-career-layout">
    <div class="nn-career-worlds">${chapters}
     <section class="nn-career-bosses" aria-labelledby="nn-boss-title">
-     <span class="nn-career-eyebrow">DIE LETZTEN PRÜFUNGEN</span><h4 id="nn-boss-title">Schattenbosse</h4><p>Drei besondere Bosskämpfe. Wähle deinen nächsten Kampf auf dem Pfad.</p>
+     <span class="nn-career-eyebrow">DIE LETZTEN PRÜFUNGEN</span><h4 id="nn-boss-title">Schattenbosse</h4><p>Drei Bosse. Drei Herausforderungen.</p>
      <div class="nn-career-boss-grid">${bosses.map((m,i)=>`<button type="button" class="nn-career-boss is-${state(m)} ${selected?.id===m.id?'is-selected':''}" data-mission-inspect="${esc(m.id)}" aria-pressed="${selected?.id===m.id}"><span aria-hidden="true">${['鬼','将','龍'][i]||'鬼'}</span><strong>${esc(m.title)}</strong><small>${stateLabel(m)}</small></button>`).join('')}</div>
     </section>
     ${extras.length?`<details class="nn-career-bonus"><summary>✦ Zusatzmissionen · ${extras.filter(m=>m.completed).length} / ${extras.length}</summary><div class="nn-career-bonus-grid">${extras.map((m,i)=>steps(m,i,true)).join('')}</div></details>`:''}
    </div>
    <aside class="nn-career-sidebar" aria-label="Missionsdetails">
     ${detail}
-    <p class="nn-career-sidebar-tip">✦ ${ready?'Du hast '+ready+' Münzbelohnung(en) zum Abholen.':'Wähle einen leuchtenden Missionsstein, um deine nächste Herausforderung zu entdecken.'}</p>
+    <p class="nn-career-sidebar-tip">✦ ${ready?'Du hast '+ready+' Münzbelohnung(en) zum Abholen.':'Wähle ein leuchtendes Level.'}</p>
    </aside>
   </div>
  </div>`;
