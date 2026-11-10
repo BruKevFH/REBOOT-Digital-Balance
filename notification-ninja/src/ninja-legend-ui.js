@@ -8,7 +8,7 @@ const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;
 const num=value=>Number.isFinite(Number(value))?Number(value).toLocaleString('de-DE'):'0';
 const chapters={
   study:{name:'Lern-Dojo',subtitle:'Tal der Konzentration',art:'./assets/dojo-study-v5.svg',label:'FOKUS',symbol:'文',text:'Schütze deine Gedanken und erkenne echte Prioritäten.',hint:'Jede Entscheidung beginnt mit einem klaren Ziel.'},
-  gaming:{name:'Gaming-Dojo',subtitle:'Neonviertel der Balance',art:'./assets/dojo-gaming.svg',label:'BALANCE',symbol:'遊',text:'Meistere dein Team und setze deinem Abenteuer Grenzen.',hint:'Spiele bewusst. Nicht der Autoplay-Loop entscheidet.'},
+  gaming:{name:'Gaming-Dojo',subtitle:'Neonviertel der Balance',art:'./assets/dojo-gaming-v5.svg',label:'BALANCE',symbol:'遊',text:'Meistere dein Team und setze deinem Abenteuer Grenzen.',hint:'Spiele bewusst. Nicht der Autoplay-Loop entscheidet.'},
   sleep:{name:'Schlaf-Dojo',subtitle:'Tempel des Mondes',art:'./assets/dojo-sleep-v5.svg',label:'RUHE',symbol:'月',text:'Bewahre die Ruhe und finde den richtigen Moment zum Aufhören.',hint:'Ein gutes Ende ist deine stärkste Technik.'}
 };
 const icon=(kind)=>kind==='swords'?'<svg viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M11 9 36 36m1-27L12 34M7 6l5 3 28 29-6 4L7 13V6Zm34 0-6 4L9 36l5 5 27-28V6Z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/></svg>':kind==='scroll'?'<svg viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M13 9h25v30H11a5 5 0 0 1 0-10h22M14 9v22M20 17h11m-11 7h8" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>':kind==='infinity'?'<svg viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M24 24C17 12 5 14 5 24s12 12 19 0c7-12 19-10 19 0s-12 12-19 0Z" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/></svg>':kind==='moon'?'<svg viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M31 6A19 19 0 1 0 42 33 19 19 0 0 1 31 6Zm-17 3 1.8 4 4.2 1.7-4.2 1.7-1.8 4-1.8-4L8 14.7l4.2-1.7L14 9Z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/></svg>':kind==='spark'?'<svg viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="m24 3 4.5 15.5L44 24l-15.5 5.5L24 45l-5.5-15.5L4 24l14.5-5.5L24 3Z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/></svg>':'<svg viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M24 5v38M5 24h38m-31-12 24 24m0-24L12 36" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>';
@@ -55,7 +55,7 @@ export function legendaryModes({account=false}={}){
 }
 
 export const WORLD_DETAILS=Object.freeze({
- study:{title:'Lern-Dojo',subtitle:'Tal des Fokus',tag:'RUHIGER TAG',art:'./assets/dojo-study.png',symbol:'文',
+ study:{title:'Lern-Dojo',subtitle:'Tal des Fokus',tag:'RUHIGER TAG',art:'./assets/dojo-study-v5.svg',symbol:'文',
   story:'Zwischen Bambus und Wasser lernst du, Benachrichtigungen bewusst auszuwählen. Hier zählt dein Ziel – nicht der lauteste Hinweis.',
   cues:['Fokus behalten','Wichtige Informationen erkennen','Bewusst Pausen einplanen'],
   mentor:'Nicht alles ist dringend. Entscheide erst, was dir gerade wirklich wichtig ist.',
@@ -65,7 +65,7 @@ export const WORLD_DETAILS=Object.freeze({
   cues:['Gemeinsame Zeit gestalten','Autoplay durchschauen','Eigene Grenzen setzen'],
   mentor:'Ein gutes Match darf Spaß machen. Du entscheidest, wann der nächste Tag beginnt.',
   start:'Gamingrunde starten'},
- sleep:{title:'Schlaf-Dojo',subtitle:'Mondtempel der Ruhe',tag:'STILLE STERNENNACHT',art:'./assets/dojo-sleep.png',symbol:'月',
+ sleep:{title:'Schlaf-Dojo',subtitle:'Mondtempel der Ruhe',tag:'STILLE STERNENNACHT',art:'./assets/dojo-sleep-v5.svg',symbol:'月',
   story:'Unter einem ruhigen Mond löst du dich vom nächsten Video und findest den passenden Moment zum Aufhören. Dieses Dojo ist bewusst langsamer und stiller.',
   cues:['Abendrituale entwickeln','Autoplay stoppen','Ruhe und Schlaf schützen'],
   mentor:'Die schönste Technik am Abend ist manchmal, den Bildschirm bewusst auszuschalten.',
