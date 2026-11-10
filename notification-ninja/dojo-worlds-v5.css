@@ -1,0 +1,149 @@
+
+/* Notification Ninja · distinct three-world art direction (v5) + one-tap mission stones.
+   Loads after illustrated-adventure-v4.css. No external resources or game-state writes. */
+:root{--dojo-jade:#4fb999;--dojo-violet:#cc69eb;--dojo-moon:#a4bde7}
+@keyframes nnNeonCircuit{0%,100%{filter:brightness(.89) drop-shadow(0 0 9px #9d6bed)}48%{filter:brightness(1.3) drop-shadow(0 0 20px #ee65fc)}51%{filter:brightness(.98) drop-shadow(0 0 9px #c75aff)}}
+@keyframes nnMoonBreathe{0%,100%{opacity:.55;transform:scale(.92)}50%{opacity:1;transform:scale(1.12)}}
+@keyframes nnStudyGlow{0%,100%{opacity:.45;translate:0 0}50%{opacity:.95;translate:0 -12px}}
+@keyframes nnWorldEntrance{0%{transform:translateY(8px) scale(.97);opacity:.5}100%{transform:translateY(0) scale(1);opacity:1}}
+@keyframes nnStoneReady{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-5px) rotate(2deg)}}
+.nn-village-gates .nn-village-gate{animation:nnWorldEntrance .65s both}
+.nn-village-gates .nn-village-gate:nth-child(2){animation-delay:.15s}
+.nn-village-gates .nn-village-gate:nth-child(3){animation-delay:.3s}
+.nn-world-scenery{position:absolute;z-index:4;inset:2% 0 16%;pointer-events:none}
+.nn-world-scenery .nn-scenery-spark{position:absolute;display:block;color:#fff8ae;text-shadow:0 0 16px #ffde9b;animation:nnGlint 4s ease-in-out infinite}
+.nn-world-scenery .nn-scenery-spark:nth-child(1){left:9%;top:27%;font-size:29px}
+.nn-world-scenery .nn-scenery-spark:nth-child(2){right:7%;top:42%;font-size:20px;animation-delay:1s}
+.nn-world-scenery .nn-scenery-spark:nth-child(3){right:15%;bottom:21%;font-size:23px;animation-delay:2s}
+/* Study: organic timber pavilion, timber pillars and garden blossoms. */
+html[data-ninja-theme] .nn-village-gate-study .nn-house-interior{
+ top:17%;left:0;width:99%;height:73%!important;border:10px solid #6e775a!important;
+ border-top:15px solid #588f6c!important;border-radius:10px 10px 20px 20px!important;
+ box-shadow:0 12px 0 #554c43,0 20px 0 #b9a26e,0 24px 26px #0d4e3b66!important}
+.nn-village-gate-study .nn-house-interior img{filter:saturate(1.13) brightness(1.06)!important;object-position:center!important}
+.nn-village-gate-study .nn-house-roof{
+ top:0;left:-6%;width:111%;height:23%;clip-path:polygon(0 78%,12% 73%,49% 3%,52% 3%,90% 72%,100% 79%,93% 100%,7% 100%);
+ background:repeating-linear-gradient(96deg,#327b62,#327b62 21px,#7ab58c 23px,#285f59 39px)!important;
+ border-color:#30474c!important;filter:drop-shadow(0 6px 0 #325e52)}
+.nn-village-gate-study .nn-house-plaque{top:1%;background:linear-gradient(#fff8ce,#daedcf)!important;border-color:#386858!important;
+ box-shadow:0 5px 0 #6fae80,0 9px 23px #3d745e8c!important}
+.nn-village-gate-study .nn-house-foot{bottom:2%;background:linear-gradient(120deg,#fff4ca,#c9ebd4)!important;border-color:#427967!important;
+ box-shadow:0 5px 0 #558e7a!important}
+.nn-village-gate-study .nn-world-scenery::before{content:"✿  ✿  ✿";position:absolute;left:-5%;top:28%;font-size:26px;letter-spacing:1.8em;
+ color:#ffadc5;text-shadow:0 3px 7px #bd7697;animation:nnStudyGlow 6s ease-in-out infinite}
+.nn-village-gate-study .nn-house-halo{background:#cdfec260;filter:blur(29px)}
+/* Gaming: electric cyber-city arcade tower, angular LED architecture, neon magenta and cyan. */
+html[data-ninja-theme] .nn-village-gate-gaming{top:-1%!important}
+html[data-ninja-theme] .nn-village-gate-gaming .nn-house-interior{
+ top:12%;left:0;width:100%;height:80%!important;border:10px solid #24c4d6!important;border-top-width:15px!important;
+ border-bottom-color:#9b4df2!important;border-radius:30px 30px 8px 8px!important;
+ box-shadow:0 7px 0 #492b83,0 14px 0 #20e2e785,0 0 35px #e368ffbf!important}
+.nn-village-gate-gaming .nn-house-interior img{filter:saturate(1.5) brightness(1.06)!important;object-position:center!important}
+.nn-village-gate-gaming .nn-house-window-shine{background:linear-gradient(110deg,#fa68f129 0%,transparent 55%,#20cbd927 100%)!important}
+.nn-village-gate-gaming .nn-house-roof{
+ top:0%;left:12%;width:78%;height:17%;clip-path:polygon(4% 5%,96% 5%,100% 100%,0% 100%)!important;
+ background:repeating-linear-gradient(92deg,#482b7d 0 15px,#9253c2 15px 26px,#242458 26px 40px)!important;
+ border:8px solid #48f6ec!important;filter:drop-shadow(0 0 11px #eb60ff)}
+.nn-village-gate-gaming .nn-house-plaque{
+ top:1%;background:linear-gradient(125deg,#2b265c,#613484)!important;color:#fff0fe!important;
+ border-color:#5df5eb!important;border-radius:18px!important;transform:rotate(0)!important;
+ box-shadow:0 5px 0 #a44adc,0 0 19px #df58f1!important;animation:nnNeonCircuit 5s ease-in-out infinite}
+.nn-village-gate-gaming .nn-house-number{color:#fff0fe;background:#652c83;border-color:#5aebef}
+.nn-village-gate-gaming .nn-house-foot{
+ bottom:1%;background:linear-gradient(110deg,#2c215c,#58318b)!important;color:#f6efff!important;
+ border-color:#68e8ed!important;box-shadow:0 5px 0 #6e3cab,0 0 24px #bb65efaa!important}
+.nn-village-gate-gaming .nn-house-foot .legend-kicker{color:#75f7e7!important}
+.nn-village-gate-gaming .nn-world-scenery .nn-scenery-spark{color:#ff9eff;text-shadow:0 0 12px #ff65ef,0 0 23px #a656fa;animation-duration:1.7s}
+.nn-village-gate-gaming .nn-house-halo{background:#a03bf492;filter:blur(35px)}
+/* Sleep: vaulted moon portal, pillared observatory, indigo night and unhurried starlight. */
+html[data-ninja-theme] .nn-village-gate-sleep .nn-house-interior{
+ top:9%;left:4%;width:92%;height:81%!important;border:11px solid #91a9d1!important;
+ border-bottom-color:#4c5a99!important;border-radius:49% 49% 17px 17px!important;
+ box-shadow:0 9px 0 #384e82,0 0 37px #9caeeec4!important}
+.nn-village-gate-sleep .nn-house-interior img{filter:saturate(1.1) brightness(1.1)!important;object-position:center!important}
+.nn-village-gate-sleep .nn-house-roof{
+ top:0%;left:8%;width:84%;height:36%;clip-path:none!important;
+ border:10px solid #586d9a!important;border-bottom:0!important;border-radius:50% 50% 0 0!important;
+ background:linear-gradient(140deg,#7f9bc5,#c4cbe5 42%,#6e82b7)!important;opacity:.95;
+ filter:drop-shadow(0 0 14px #aeb8ff)}
+.nn-village-gate-sleep .nn-house-plaque{top:1%;background:linear-gradient(120deg,#e1e7ff,#fff1d1)!important;
+ border-color:#617fa9!important;box-shadow:0 5px 0 #5f79a9,0 0 18px #c4d4fb!important}
+.nn-village-gate-sleep .nn-house-foot{bottom:1%;border-color:#6478b2!important;
+ background:linear-gradient(125deg,#e7ecff,#c6daf6)!important;
+ box-shadow:0 5px 0 #6f80ae,0 0 21px #afc7fb!important}
+.nn-village-gate-sleep .nn-world-scenery::before{content:"☾";position:absolute;top:19%;right:13%;font-size:52px;
+ color:#ffedb7;text-shadow:0 0 18px #e4e4ff;animation:nnMoonBreathe 9s ease-in-out infinite}
+.nn-village-gate-sleep .nn-world-scenery .nn-scenery-spark{color:#e7ecff;text-shadow:0 0 20px #ced9ff;animation-duration:8s}
+.nn-village-gate-sleep .nn-house-halo{background:#819de490;filter:blur(43px)}
+.nn-village-gate-gaming .nn-village-house:hover{filter:drop-shadow(0 0 14px #e565fa)}
+.nn-village-gate-sleep .nn-village-house:hover{filter:drop-shadow(0 0 10px #c6d9fb)}
+.nn-village-gate-study .nn-village-house:hover{filter:drop-shadow(0 0 10px #8dd4a1)}
+/* Unique story locations inside each Dojo, not the same tan room with a different label. */
+.world-inside-study .world-inside-scene{background:#c8e5c2}
+.world-inside-gaming .world-inside-scene{background:#1d1648}
+.world-inside-sleep .world-inside-scene{background:#242a62}
+.world-inside-study .world-inside-scene>img{filter:saturate(1.15) brightness(1.05)}
+.world-inside-gaming .world-inside-scene>img{filter:saturate(1.45) brightness(1.07)}
+.world-inside-sleep .world-inside-scene>img{filter:brightness(1.1) saturate(1.17)}
+.world-inside-study .nn-inside-scroll{border-color:#538271!important;background:#f7f0d4f2!important}
+.world-inside-gaming .nn-inside-scroll{border-color:#5af0ea!important;background:#272154f2!important;color:#fef0fa!important;box-shadow:0 5px 0 #a44dd0!important}
+.world-inside-sleep .nn-inside-scroll{border-color:#8ba9dc!important;background:#c9d8f2f2!important;color:#284274!important;box-shadow:0 5px 0 #617fae!important}
+.world-inside-gaming .nn-inside-scroll strong,.world-inside-gaming .nn-inside-scroll small{color:#fff1fa!important}
+/* Careers use different regional illustrations, not one identical recolored landscape. */
+.nn-career-chapter-study .nn-career-illustrated-landscape{filter:saturate(1.15)!important;object-position:center 54%}
+.nn-career-chapter-gaming .nn-career-illustrated-landscape{filter:saturate(1.3) brightness(1.05)!important;object-position:center 55%}
+.nn-career-chapter-sleep .nn-career-illustrated-landscape{filter:saturate(1.1) brightness(1.07)!important;object-position:center 50%}
+.nn-career-chapter-gaming .nn-career-chapter-cover{background:linear-gradient(115deg,#292457,#593878)!important;border-color:#513469!important}
+.nn-career-chapter-sleep .nn-career-chapter-cover{background:linear-gradient(115deg,#344a86,#8395ca)!important;border-color:#4f6596!important}
+.nn-career-chapter-gaming .nn-career-chapter-label h4,.nn-career-chapter-sleep .nn-career-chapter-label h4{color:#fef0df!important}
+.nn-career-chapter-gaming .nn-career-chapter-label span,.nn-career-chapter-sleep .nn-career-chapter-label span{color:#e0cef8!important}
+.nn-career-chapter-gaming .nn-career-chapter-label small,.nn-career-chapter-sleep .nn-career-chapter-label small{color:#f0e2fb!important}
+.nn-career-chapter-study .nn-career-chapter-trail{border-color:#456f60!important}
+.nn-career-chapter-gaming .nn-career-chapter-trail{border-color:#6d4cab!important;box-shadow:0 9px 0 #a570c7,0 18px 25px #24194660!important}
+.nn-career-chapter-sleep .nn-career-chapter-trail{border-color:#677caf!important;box-shadow:0 9px 0 #758ec4,0 18px 25px #232d6560!important}
+.nn-career-region-emblem{position:absolute;z-index:1;right:7%;top:6%;display:grid;place-items:center;
+ width:73px;height:73px;border:5px solid #385a58;border-radius:50%;
+ background:#d9f3d4ed;color:#367c73;font-size:37px;font-weight:950;
+ box-shadow:0 5px 0 #536c68,0 0 18px #fbefb6a3;pointer-events:none}
+.nn-career-chapter-gaming .nn-career-region-emblem{border-color:#bc77e8;background:#352a70ed;color:#faf0ff;box-shadow:0 5px 0 #4b357b,0 0 20px #fc79e2a0}
+.nn-career-chapter-sleep .nn-career-region-emblem{border-color:#afc3ef;background:#344a82ed;color:#ffeac2;box-shadow:0 5px 0 #485d86,0 0 20px #c4dfff8a}
+/* Clear direct level start: number is a real button, title is an independent details button. */
+.nn-career-adventure .nn-career-node{cursor:default!important}
+.nn-career-adventure .nn-career-node .nn-career-direct-start{position:relative;cursor:pointer!important;user-select:none;
+ transition:scale .2s,filter .2s,translate .2s;touch-action:manipulation}
+.nn-career-adventure .nn-career-node .nn-career-direct-start:hover{scale:1.14;filter:brightness(1.12)}
+.nn-career-adventure .nn-career-node .nn-career-direct-start:active{scale:.96;translate:0 2px}
+.nn-career-adventure .nn-career-node .nn-career-direct-start:focus-visible{outline:4px solid #ffdd73;outline-offset:4px}
+.nn-career-direct-start .nn-node-count{font-size:19px;line-height:1.2}
+.nn-career-direct-start .nn-node-play-symbol{position:absolute;right:-11px;bottom:-6px;display:grid;place-items:center;
+ width:29px;height:29px;border:3px solid #374b56;border-radius:50%;background:#fdf3c3;color:#285b48;
+ font-size:12px;box-shadow:0 3px 0 #42765d}
+.nn-career-adventure .nn-career-node .nn-career-inspect{font-family:inherit;cursor:pointer;touch-action:manipulation}
+.nn-career-node .nn-career-inspect:hover{filter:brightness(1.06);outline:2px solid #f4d274}
+.nn-career-node .nn-career-inspect:focus-visible{outline:3px solid #ffd567;outline-offset:3px}
+.nn-career-node-locked{cursor:not-allowed!important;opacity:.8}
+.nn-career-chapter-trail .nn-career-node.is-ready .nn-career-direct-start{animation:nnStoneReady 3.2s ease-in-out infinite}
+.nn-career-chapter-trail .nn-career-node.is-selected .nn-career-direct-start{animation:none}
+.nn-career-bonus-grid .nn-career-node .nn-career-direct-start{flex:0 0 44px!important;width:44px!important;height:44px!important;
+ border-radius:50%;font-size:12px}
+.nn-career-bonus-grid .nn-career-node .nn-career-inspect{min-width:0;flex:1;background:transparent;border:0;text-align:left}
+.nn-career-bonus-grid .nn-career-node .nn-career-direct-start .nn-node-play-symbol{width:19px;height:19px;font-size:8px;right:-7px}
+@media(max-width:950px){
+ .nn-village-gate-gaming .nn-house-plaque{min-width:48%;padding:10px 13px}
+ .nn-village-gate-sleep .nn-house-plaque{min-width:48%;padding:10px 13px}
+ .nn-village-gate-study .nn-house-plaque{min-width:48%;padding:10px 13px}
+}
+@media(max-width:520px){
+ .nn-village-gate-study .nn-house-interior,.nn-village-gate-gaming .nn-house-interior,.nn-village-gate-sleep .nn-house-interior{border-width:6px!important}
+ .nn-village-gate-gaming .nn-house-plaque{min-width:54%}
+ .nn-career-adventure .nn-career-node .nn-career-direct-start{min-width:47px;min-height:47px}
+ .nn-career-adventure .nn-career-node .nn-career-inspect{min-height:38px}
+ .nn-career-region-emblem{width:55px;height:55px;font-size:27px}
+}
+@media(prefers-reduced-motion:reduce){
+ .nn-village-gates .nn-village-gate,.nn-village-gate-gaming .nn-house-plaque,.nn-village-gate-gaming .nn-world-scenery *,
+ .nn-village-gate-sleep .nn-world-scenery *, .nn-village-gate-study .nn-world-scenery *,
+ .nn-career-adventure .nn-career-node .nn-career-direct-start{animation:none!important;transition:none!important}
+}
+body.calm-view .nn-village-gates .nn-village-gate,body.calm-view .nn-world-scenery *,
+body.calm-view .nn-career-direct-start,body.calm-view .nn-village-gate-gaming .nn-house-plaque{animation:none!important;transition:none!important}

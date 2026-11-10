@@ -143,6 +143,11 @@ async function acknowledge(p){for(let n=0;n<20&&(await read(p)).mentor.open;n++)
       assert.equal(await page.locator('.nn-career-boss').count(),3);
       await page.locator('[data-mission-inspect="study-02"]').click();await acknowledge(page);
       assert.equal(await page.locator('.nn-career-detail h4').innerText(),'Genau statt hektisch');
+      assert.equal(await page.locator('.nn-career-chapter-study .nn-career-direct-start').count(),1,'Only the unlocked starting stone can launch');
+      assert.equal(await page.locator('.nn-career-chapter-sleep .nn-career-direct-start').count(),0,'Locked chapter has no direct launch');
+      await page.locator('.nn-career-chapter-study .nn-career-direct-start').first().click();
+      await page.waitForFunction(()=>window.__NOTIFICATION_NINJA__?.getSnapshot().ui==='briefing');
+      assert.equal((await read(page)).state.missionId,'study-01','Level 01 itself launches the actual mission');
       await goHome(page);await acknowledge(page);
       assert.equal((await read(page)).ui,'home');
      }

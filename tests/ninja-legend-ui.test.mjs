@@ -23,6 +23,8 @@ test('rendered campaign has all 18 genuine main missions on connected paths',()=
  assert(html.includes('data-mission-inspect="study-01"'));
  assert(html.includes('data-mission-inspect="sleep-06"'));
  assert(html.includes('data-mission-start="study-01"'));
+ assert(html.includes('class="nn-career-node-number nn-career-direct-start"'));
+ assert.equal((html.match(/class="nn-career-node-number nn-career-direct-start"/g)||[]).length,2,'Only playable stones offer immediate start');
  assert(html.includes('data-career-claim="study-01"'));
  assert(html.includes('aria-pressed="true"'));
  assert(html.includes('Münzen abholen'));
@@ -46,7 +48,7 @@ test('locked mission may be inspected but cannot be started or claimed',()=>{
 test('dojo scenes, progress, and free short rounds preserve chapter identity',()=>{
  const html=legendaryDojos({missions:fixture,worlds:['study']});
  for(const context of ['study','gaming','sleep']){
-   assert(html.includes('assets/dojo-'+context+'.png'));
+   assert(html.includes('assets/dojo-'+context+'-v5.svg'));
    assert(html.includes('data-world-enter="'+context+'"'));
  }
  assert.equal((html.match(/class="legend-dojo legend-dojo-/g)||[]).length,3);

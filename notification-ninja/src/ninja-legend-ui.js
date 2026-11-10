@@ -7,9 +7,9 @@
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const num=value=>Number.isFinite(Number(value))?Number(value).toLocaleString('de-DE'):'0';
 const chapters={
-  study:{name:'Lern-Dojo',subtitle:'Tal der Konzentration',art:'./assets/dojo-study.png',label:'FOKUS',symbol:'文',text:'Schütze deine Gedanken und erkenne echte Prioritäten.',hint:'Jede Entscheidung beginnt mit einem klaren Ziel.'},
-  gaming:{name:'Gaming-Dojo',subtitle:'Neonviertel der Balance',art:'./assets/dojo-gaming.svg',label:'BALANCE',symbol:'遊',text:'Meistere dein Team und setze deinem Abenteuer Grenzen.',hint:'Spiele bewusst. Nicht der Autoplay-Loop entscheidet.'},
-  sleep:{name:'Schlaf-Dojo',subtitle:'Tempel des Mondes',art:'./assets/dojo-sleep.png',label:'RUHE',symbol:'月',text:'Bewahre die Ruhe und finde den richtigen Moment zum Aufhören.',hint:'Ein gutes Ende ist deine stärkste Technik.'}
+  study:{name:'Lern-Dojo',subtitle:'Tal der Konzentration',art:'./assets/dojo-study-v5.svg',label:'FOKUS',symbol:'文',text:'Schütze deine Gedanken und erkenne echte Prioritäten.',hint:'Jede Entscheidung beginnt mit einem klaren Ziel.'},
+  gaming:{name:'Gaming-Dojo',subtitle:'Neonviertel der Balance',art:'./assets/dojo-gaming-v5.svg',label:'BALANCE',symbol:'遊',text:'Meistere dein Team und setze deinem Abenteuer Grenzen.',hint:'Spiele bewusst. Nicht der Autoplay-Loop entscheidet.'},
+  sleep:{name:'Schlaf-Dojo',subtitle:'Tempel des Mondes',art:'./assets/dojo-sleep-v5.svg',label:'RUHE',symbol:'月',text:'Bewahre die Ruhe und finde den richtigen Moment zum Aufhören.',hint:'Ein gutes Ende ist deine stärkste Technik.'}
 };
 const icon=(kind)=>kind==='swords'?'<svg viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M11 9 36 36m1-27L12 34M7 6l5 3 28 29-6 4L7 13V6Zm34 0-6 4L9 36l5 5 27-28V6Z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/></svg>':kind==='scroll'?'<svg viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M13 9h25v30H11a5 5 0 0 1 0-10h22M14 9v22M20 17h11m-11 7h8" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>':kind==='infinity'?'<svg viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M24 24C17 12 5 14 5 24s12 12 19 0c7-12 19-10 19 0s-12 12-19 0Z" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/></svg>':kind==='moon'?'<svg viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M31 6A19 19 0 1 0 42 33 19 19 0 0 1 31 6Zm-17 3 1.8 4 4.2 1.7-4.2 1.7-1.8 4-1.8-4L8 14.7l4.2-1.7L14 9Z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/></svg>':kind==='spark'?'<svg viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="m24 3 4.5 15.5L44 24l-15.5 5.5L24 45l-5.5-15.5L4 24l14.5-5.5L24 3Z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/></svg>':'<svg viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M24 5v38M5 24h38m-31-12 24 24m0-24L12 36" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>';
 
@@ -55,17 +55,17 @@ export function legendaryModes({account=false}={}){
 }
 
 export const WORLD_DETAILS=Object.freeze({
- study:{title:'Lern-Dojo',subtitle:'Tal des Fokus',tag:'RUHIGER TAG',art:'./assets/dojo-study.png',symbol:'文',
+ study:{title:'Lern-Dojo',subtitle:'Tal des Fokus',tag:'RUHIGER TAG',art:'./assets/dojo-study-v5.svg',symbol:'文',
   story:'Zwischen Bambus und Wasser lernst du, Benachrichtigungen bewusst auszuwählen. Hier zählt dein Ziel – nicht der lauteste Hinweis.',
   cues:['Fokus behalten','Wichtige Informationen erkennen','Bewusst Pausen einplanen'],
   mentor:'Nicht alles ist dringend. Entscheide erst, was dir gerade wirklich wichtig ist.',
   start:'Lernrunde starten'},
- gaming:{title:'Gaming-Dojo',subtitle:'Die Arcade-Nacht',tag:'LEUCHTENDES VIERTEL',art:'./assets/dojo-gaming.png',symbol:'遊',
+ gaming:{title:'Gaming-Dojo',subtitle:'Die Arcade-Nacht',tag:'LEUCHTENDES VIERTEL',art:'./assets/dojo-gaming-v5.svg',symbol:'遊',
   story:'Arcade-Lichter, Team-Einladungen und ein Abenteuer, das immer weitergeht: Im Gaming-Dojo trainierst du faire Grenzen und bewusste Pausen.',
   cues:['Gemeinsame Zeit gestalten','Autoplay durchschauen','Eigene Grenzen setzen'],
   mentor:'Ein gutes Match darf Spaß machen. Du entscheidest, wann der nächste Tag beginnt.',
   start:'Gamingrunde starten'},
- sleep:{title:'Schlaf-Dojo',subtitle:'Mondtempel der Ruhe',tag:'STILLE STERNENNACHT',art:'./assets/dojo-sleep.png',symbol:'月',
+ sleep:{title:'Schlaf-Dojo',subtitle:'Mondtempel der Ruhe',tag:'STILLE STERNENNACHT',art:'./assets/dojo-sleep-v5.svg',symbol:'月',
   story:'Unter einem ruhigen Mond löst du dich vom nächsten Video und findest den passenden Moment zum Aufhören. Dieses Dojo ist bewusst langsamer und stiller.',
   cues:['Abendrituale entwickeln','Autoplay stoppen','Ruhe und Schlaf schützen'],
   mentor:'Die schönste Technik am Abend ist manchmal, den Bildschirm bewusst auszuschalten.',
@@ -92,6 +92,7 @@ export function legendaryDojos(){
       <button type="button" class="worlds-hub-entry nn-village-house" data-world-enter="${id}" aria-label="${c.title} betreten: ${esc(d.hint)}">
         <span class="nn-house-halo" aria-hidden="true"></span>
         <span class="nn-house-roof" aria-hidden="true"><span class="nn-house-roof-symbol">${d.icon}</span></span>
+        <span class="nn-world-scenery ${id==='study'?'nn-world-scenery-garden':id==='gaming'?'nn-world-scenery-neon':'nn-world-scenery-moon'}" aria-hidden="true"><span class="nn-scenery-spark">✦</span><span class="nn-scenery-spark">✧</span><span class="nn-scenery-spark">✦</span></span>
         <span class="worlds-hub-art nn-house-interior"><img src="${c.art}" alt="" loading="lazy"><span class="nn-house-window-shine" aria-hidden="true"></span><span class="nn-house-lantern l-left" aria-hidden="true">✦</span><span class="nn-house-lantern l-right" aria-hidden="true">✦</span></span>
         <span class="nn-house-plaque"><span class="nn-house-number">${String(i+1).padStart(2,'0')}</span><strong>${d.name}</strong><small>${c.title}</small></span>
         <span class="worlds-hub-info nn-house-foot"><span class="legend-kicker">${d.tag}</span><span class="nn-house-action">Welt betreten <span aria-hidden="true">➜</span></span></span>
@@ -190,11 +191,12 @@ export function legendaryCareer({missions=[],selectedId=null}={}){
  const waypoints=[[9,75],[25,52],[42,70],[57,38],[74,62],[88,28]];
  const steps=(m,i=0,mini=false)=>{
    const style=mini?'':`style="--nx:${waypoints[i]?.[0]||50}%;--ny:${waypoints[i]?.[1]||50}%"`;
-   return `<button type="button" class="nn-career-node is-${state(m)} ${selected?.id===m.id?'is-selected':''} ${mini?'is-bonus':''}" ${style} data-mission-inspect="${esc(m.id)}" aria-pressed="${selected?.id===m.id}" aria-label="Mission ${m.order}: ${esc(m.title)}, ${stateLabel(m)}">
-     <span class="nn-career-node-number" aria-hidden="true">${m.completed?'✓':m.available?String(m.order).padStart(2,'0'):'♧'}</span>
-     <span class="nn-career-node-copy"><strong>${esc(m.title)}</strong><small>${stateLabel(m)}${m.completed&&!m.claimed?' · Belohnung bereit':''}</small></span>
+   const playable=m.available||m.completed;
+   return `<div class="nn-career-node is-${state(m)} ${selected?.id===m.id?'is-selected':''} ${mini?'is-bonus':''}" ${style} role="group" aria-label="Mission ${m.order}: ${esc(m.title)}, ${stateLabel(m)}">
+     ${playable?`<button type="button" class="nn-career-node-number nn-career-direct-start" data-mission-start="${esc(m.id)}" aria-label="Mission ${esc(m.title)} ${m.completed?'erneut ':''}direkt starten"><span class="nn-node-count">${String(m.order).padStart(2,'0')}</span><span class="nn-node-play-symbol" aria-hidden="true">▶</span></button>`:`<span class="nn-career-node-number nn-career-node-locked" aria-hidden="true">♧</span>`}
+     <button type="button" class="nn-career-node-copy nn-career-inspect" data-mission-inspect="${esc(m.id)}" aria-pressed="${selected?.id===m.id}" aria-label="Details zu Mission ${esc(m.title)} ansehen"><strong>${esc(m.title)}</strong><small>${stateLabel(m)}${playable?' · ▶ Start am Stein':''}${m.completed&&!m.claimed?' · Belohnung bereit':''}</small></button>
      <span class="nn-career-node-arrow" aria-hidden="true">✦</span>
-   </button>`;
+   </div>`;
  };
  const chapters=worldNames.map((id,i)=>{
   const c=WORLD_DETAILS[id],group=main.filter(m=>m.chapter===id),done=group.filter(m=>m.completed).length;
@@ -204,11 +206,8 @@ export function legendaryCareer({missions=[],selectedId=null}={}){
      <div class="nn-career-chapter-label"><span>WELT ${String(i+1).padStart(2,'0')} · ${esc(c.subtitle)}</span><h4 id="nn-chapter-${id}">${esc(c.title)}</h4><small>${done} von ${group.length} Missionen</small></div>
    </div>
    <div class="nn-career-chapter-trail" aria-label="Missionspfad ${esc(c.title)}">
-    <img class="nn-career-illustrated-landscape" src="./assets/overworld-landscape-v4.svg" alt="" loading="lazy">
-    <div class="nn-career-territory" aria-hidden="true">
-       <span class="nn-career-territory-roof">${c.symbol}</span>
-       <img src="${c.art}" alt="">
-    </div>
+    <img class="nn-career-illustrated-landscape" src="${c.art}" alt="" loading="lazy">
+    <span class="nn-career-region-emblem" aria-hidden="true">${c.symbol}</span>
     <svg class="nn-career-trail-path" viewBox="0 0 1000 500" preserveAspectRatio="none" aria-hidden="true"><path class="nn-path-shadow" d="M90 375 C145 375 200 240 250 260 S355 377 420 350 S505 170 570 190 S665 360 740 310 S823 130 880 145"/><path class="nn-path-road" d="M90 375 C145 375 200 240 250 260 S355 377 420 350 S505 170 570 190 S665 360 740 310 S823 130 880 145"/></svg>
     <span class="nn-career-path-mascot" aria-hidden="true">${ninjaMascot}</span>
     ${group.map((m,j)=>steps(m,j)).join('')}
@@ -234,7 +233,7 @@ export function legendaryCareer({missions=[],selectedId=null}={}){
    </section>`:'';
  return `<div class="nn-career nn-career-adventure">
   <header class="nn-career-intro">
-   <div><span class="nn-career-eyebrow">DEINE NINJA-REISE · DREI REGIONEN</span><h3>Karrierekarte</h3><p>Schritt für Schritt zum Fokus-Ninja. Folge den leuchtenden Missionssteinen durch drei Welten.</p></div>
+   <div><span class="nn-career-eyebrow">DEINE NINJA-REISE · DREI REGIONEN</span><h3>Karrierekarte</h3><p>Tippe auf eine leuchtende Level-Zahl, um sofort zu spielen. Über den Titel darunter kannst du die Mission zuerst ansehen.</p></div>
    <div class="nn-career-overall"><strong>${completed}<span> / ${main.length}</span></strong><small>Missionen geschafft</small></div>
   </header>
   <div class="nn-career-layout">

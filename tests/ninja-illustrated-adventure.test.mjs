@@ -19,7 +19,7 @@ test('the new village is an interactive illustration with exactly three distinct
  for(const id of ['study','gaming','sleep']){
   assert.match(html,new RegExp('nn-village-gate-'+id));
   assert.match(html,new RegExp('data-world-enter="'+id+'"'));
-  assert.match(html,new RegExp('assets/dojo-'+id+'\\.png'));
+  assert.match(html,new RegExp('assets/dojo-'+id+'-v5\\.svg'));
  }
  assert(!html.includes('data-game-route="campaign"'),'Career must not be duplicated in world selection');
  assert(html.includes('ninjaMascot')===false,'The mascot is rendered as actual vector markup');
@@ -35,6 +35,8 @@ test('career journey has 18 data-bound map stones, three readable regions and re
  assert(html.includes('data-career-claim="study-01"'));
  assert(!html.includes('data-career-claim="sleep-06"'));
  assert(html.includes('nn-career-path-mascot'));
+ assert(html.includes('class="nn-career-node-number nn-career-direct-start"'));
+ assert(!html.includes('nn-career-territory'), 'No repeated inset card on top of the adventure scenery');
 });
 
 test('each illustrated world still runs the genuine contextual quick round',()=>{
@@ -53,13 +55,14 @@ test('illustrated backgrounds, accessible meaning and real success animation are
  assert(index.includes('href="./illustrated-adventure-v4.css"'));
  assert(index.includes('id="nn-celebration-root"'));
  assert(index.includes('class="nn-hud-meaning"'));
- for(const file of ['illustrated-adventure-v4.css','assets/overworld-landscape-v4.svg']){
+ for(const file of ['illustrated-adventure-v4.css','assets/overworld-landscape-v4.svg','dojo-worlds-v5.css',...['study','gaming','sleep'].map(id=>'assets/dojo-'+id+'-v5.svg')]){
   assert(sw.includes('./'+file));assert(packageScript.includes("'"+file+"'"));
  }
  assert.match(map,/viewBox="0 0 1600 850"/);
  assert.doesNotMatch(map.replace('http://www.w3.org/2000/svg',''),/<script|<foreignObject|https?:\/\//i);
  assert(css.includes('prefers-reduced-motion:reduce'));
  assert(css.includes('body.calm-view'));
+ const newCss=read('dojo-worlds-v5.css');assert(newCss.includes('prefers-reduced-motion:reduce'));assert(newCss.includes('nn-village-gate-gaming'));
  const main=read('src/main.js');
  for(const event of ['level-complete','career-completed','boss-defeated','rank-unlocked'])assert(main.includes("e.type==='"+event+"'"));
  assert(main.includes("celebrateUnlock(type,ref)"));
