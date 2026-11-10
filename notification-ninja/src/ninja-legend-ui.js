@@ -190,11 +190,12 @@ export function legendaryCareer({missions=[],selectedId=null}={}){
  const waypoints=[[9,75],[25,52],[42,70],[57,38],[74,62],[88,28]];
  const steps=(m,i=0,mini=false)=>{
    const style=mini?'':`style="--nx:${waypoints[i]?.[0]||50}%;--ny:${waypoints[i]?.[1]||50}%"`;
-   return `<button type="button" class="nn-career-node is-${state(m)} ${selected?.id===m.id?'is-selected':''} ${mini?'is-bonus':''}" ${style} data-mission-inspect="${esc(m.id)}" aria-pressed="${selected?.id===m.id}" aria-label="Mission ${m.order}: ${esc(m.title)}, ${stateLabel(m)}">
-     <span class="nn-career-node-number" aria-hidden="true">${m.completed?'✓':m.available?String(m.order).padStart(2,'0'):'♧'}</span>
-     <span class="nn-career-node-copy"><strong>${esc(m.title)}</strong><small>${stateLabel(m)}${m.completed&&!m.claimed?' · Belohnung bereit':''}</small></span>
+   const playable=m.available||m.completed;
+   return `<div class="nn-career-node is-${state(m)} ${selected?.id===m.id?'is-selected':''} ${mini?'is-bonus':''}" ${style} role="group" aria-label="Mission ${m.order}: ${esc(m.title)}, ${stateLabel(m)}">
+     ${playable?`<button type="button" class="nn-career-node-number nn-career-direct-start" data-mission-start="${esc(m.id)}" aria-label="Mission ${esc(m.title)} ${m.completed?'erneut ':''}direkt starten"><span class="nn-node-count">${String(m.order).padStart(2,'0')}</span><span class="nn-node-play-symbol" aria-hidden="true">▶</span></button>`:`<span class="nn-career-node-number nn-career-node-locked" aria-hidden="true">♧</span>`}
+     <button type="button" class="nn-career-node-copy nn-career-inspect" data-mission-inspect="${esc(m.id)}" aria-pressed="${selected?.id===m.id}" aria-label="Details zu Mission ${esc(m.title)} ansehen"><strong>${esc(m.title)}</strong><small>${stateLabel(m)}${playable?' · ▶ Start am Stein':''}${m.completed&&!m.claimed?' · Belohnung bereit':''}</small></button>
      <span class="nn-career-node-arrow" aria-hidden="true">✦</span>
-   </button>`;
+   </div>`;
  };
  const chapters=worldNames.map((id,i)=>{
   const c=WORLD_DETAILS[id],group=main.filter(m=>m.chapter===id),done=group.filter(m=>m.completed).length;
