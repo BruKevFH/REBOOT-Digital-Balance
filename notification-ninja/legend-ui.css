@@ -416,7 +416,7 @@
 @media(max-width:760px){
  .dojo-tabs{grid-template-columns:repeat(6,minmax(0,1fr));z-index:6!important;background:#14283beF!important;border-top:1px solid #498679!important}
  .dojo-tabs>a{color:#c1d8d3!important}
- .dojo-tabs>a[data-game-route=bazaar]{display:none!important}
+ /* Bazaar stays visible in mobile navigation. */
  .home{padding-bottom:calc(118px + env(safe-area-inset-bottom))!important}
  .ninja-hub{grid-template-columns:115px minmax(0,1fr)!important;gap:13px;padding:19px;min-height:0}
  .hub-portrait{max-width:115px!important}
