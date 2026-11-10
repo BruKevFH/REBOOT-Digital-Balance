@@ -53,7 +53,7 @@ test('dojo scenes, progress, and free short rounds preserve chapter identity',()
  }
  assert.equal((html.match(/class="legend-dojo legend-dojo-/g)||[]).length,3);
  assert(!html.includes('data-game-route="campaign"'),'Worlds must not be campaign duplicates');
- assert(html.includes('Die Themenrunden sind eigenständig'));
+ assert(html.includes('18 Story-Missionen findest du in der'));
 });
 
 test('mode cards only request known game routes and existing modes',()=>{
