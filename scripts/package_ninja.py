@@ -4,9 +4,9 @@ from zipfile import ZipFile, ZipInfo, ZIP_DEFLATED
 from hashlib import sha256
 
 ROOT=Path(__file__).resolve().parents[1]/'notification-ninja'
-NAME='Notification-Ninja-3.7.0'
-FILES=['index.html','home.html','styles.css','focus-ui.css','focus-home.css','legend-ui.css','worlds-v2.css','ux-v2.css','ui-navigation-v3.css','illustrated-adventure-v4.css','dojo-worlds-v5.css','mobile-navigation-v6.css','legend-home.css','sw.js','manifest.webmanifest','favicon.svg','dist/ninja.js','dist/home.js','dist/build.json','leaderboard-config.json','accounts-config.json','assets/dojo-study.png','assets/dojo-gaming.svg','assets/dojo-gaming.png','assets/dojo-sleep.png','assets/focus-village.png','assets/overworld-landscape-v4.svg','assets/dojo-study-v5.svg','assets/dojo-gaming-v5.svg','assets/dojo-sleep-v5.svg','assets/dojo-study-v2.svg','assets/dojo-gaming-v2.svg','assets/dojo-sleep-v2.svg','branding/Notification-Ninja-Logo.png']
-INSTRUCTIONS='''NOTIFICATION NINJA — 3.7.0
+NAME='Notification-Ninja-3.8.0'
+FILES=['index.html','home.html','styles.css','focus-ui.css','focus-home.css','legend-ui.css','worlds-v2.css','ux-v2.css','ui-navigation-v3.css','illustrated-adventure-v4.css','dojo-worlds-v5.css','mobile-navigation-v6.css','ninja-feedback-v7.css','legend-home.css','sw.js','manifest.webmanifest','favicon.svg','dist/ninja.js','dist/home.js','dist/build.json','leaderboard-config.json','accounts-config.json','assets/dojo-study.png','assets/dojo-gaming.svg','assets/dojo-gaming.png','assets/dojo-sleep.png','assets/focus-village.png','assets/overworld-landscape-v4.svg','assets/dojo-study-v5.svg','assets/dojo-gaming-v5.svg','assets/dojo-sleep-v5.svg','assets/dojo-study-v2.svg','assets/dojo-gaming-v2.svg','assets/dojo-sleep-v2.svg','branding/Notification-Ninja-Logo.png']
+INSTRUCTIONS='''NOTIFICATION NINJA — 3.8.0
 DEUTSCH / ENGLISH
 
 DEUTSCH
