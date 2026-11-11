@@ -1,0 +1,73 @@
+/* Notification Ninja 3.8 · short reward loops, phone SUPER, thematic living worlds. */
+@keyframes nnRewardReveal{0%{opacity:0;transform:translateY(16px) scale(.96)}75%{opacity:1;transform:translateY(-3px) scale(1.01)}100%{transform:none}}
+@keyframes nnCoinShimmer{0%,100%{transform:rotate(-8deg) scale(1);box-shadow:0 0 0 0 #f6d17655,0 5px 0 #9c672e}50%{transform:rotate(7deg) scale(1.14);box-shadow:0 0 0 13px #f6d17616,0 5px 0 #9c672e}}
+@keyframes nnMistPetals{0%{transform:translateY(-12px) translateX(-5px);opacity:.15}50%{opacity:.7}100%{transform:translateY(45px) translateX(12px);opacity:0}}
+@keyframes nnArcadeScan{0%,100%{transform:translateY(-10%);opacity:0}30%,60%{opacity:.34}75%{transform:translateY(130%);opacity:0}}
+@keyframes nnMoonFloat{0%,100%{transform:translateY(0);filter:brightness(1)}50%{transform:translateY(-6px);filter:brightness(1.14)}}
+@keyframes nnSuperAvailable{0%,100%{box-shadow:0 6px 0 #654d32,0 0 0 4px #ffdb7450}50%{box-shadow:0 6px 0 #654d32,0 0 0 12px #ffdb7416,0 0 26px #ffd270}}
+.nn-round-reward{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0 12px}
+.nn-round-reward>div{display:flex;align-items:center;gap:14px;min-width:0;min-height:128px;padding:15px;border:3px solid #253f51;border-radius:23px;box-shadow:0 7px 0 #283f4b;background:#e9f8e8;color:#234a52;animation:nnRewardReveal .62s both}
+.nn-round-reward .nn-round-reward-coins{background:linear-gradient(130deg,#fff0ad,#f5c86f 56%,#f6dfae);border-color:#926b30}
+.nn-round-reward .nn-round-reward-skin{animation-delay:.13s;background:linear-gradient(130deg,#dfddfa,#b5d4e4 70%,#d9eddf)}
+.nn-round-reward>div>div:not(.nn-reward-avatar){display:flex;flex-direction:column;gap:3px;min-width:0;flex:1}
+.nn-round-reward small{font-size:9px;font-weight:950;letter-spacing:.1em;color:#775839}
+.nn-round-reward strong{font-size:clamp(17px,2.5vw,26px);line-height:1.15;color:#183a50}
+.nn-round-reward span:not(.nn-reward-coin-art){font-size:10px;font-weight:700;line-height:1.4}
+.nn-reward-coin-art{display:grid;place-items:center;flex:0 0 63px;height:63px;border:5px solid #936f36;border-radius:50%;background:radial-gradient(circle at 30% 20%,#fff9c4,#f4b84d);font-size:35px;color:#fff0aa;text-shadow:0 3px 1px #ad7336;animation:nnCoinShimmer 2.5s ease-in-out infinite}
+.nn-reward-avatar{flex:0 0 69px;width:69px;height:79px;overflow:hidden;border-radius:17px;background:#c4d0ea;border:3px solid #738dbd}
+.nn-reward-avatar svg{display:block;width:100%;height:100%}
+.nn-reward-progress{height:10px;border:2px solid #617c98;border-radius:20px;background:#f8f5e6;overflow:hidden}
+.nn-reward-progress i{display:block;height:100%;background:linear-gradient(90deg,#63bdb4,#f5c874);border-radius:20px}
+.is-playing .super-dock{z-index:90!important;isolation:isolate;pointer-events:auto!important}
+.is-playing .super-dock .super-button{touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none}
+.is-playing .super-dock .super-button.is-ready{animation:nnSuperAvailable 1.8s ease-in-out infinite}
+.is-playing .super-dock .super-button:focus-visible{outline:4px solid #f7c971;outline-offset:5px}
+.is-playing .super-dock .super-button:active{transform:scale(.94)}
+/* Distinct world staging in the selector. */
+.nn-village-gate-study .nn-house-interior{box-shadow:0 18px 0 #566d4b,0 24px 25px #154e3c88!important}
+.nn-village-gate-gaming .nn-house-interior{border-radius:9px!important;box-shadow:0 9px 0 #603b9b,0 20px 40px #853bcbc4!important}
+.nn-village-gate-gaming .nn-house-interior::after{content:"";position:absolute;z-index:6;pointer-events:none;left:0;right:0;top:0;height:19%;background:linear-gradient(0deg,transparent,#b1faff6a 48%,transparent);animation:nnArcadeScan 4.2s linear infinite}
+.nn-village-gate-sleep .nn-house-interior{border-radius:46% 46% 16px 16px!important;box-shadow:0 10px 0 #52688f,0 20px 45px #5a71b9b7!important}
+.nn-village-gate-sleep .nn-world-scenery-moon{animation:nnMoonFloat 8s ease-in-out infinite}
+.nn-village-gate-study .nn-world-scenery-garden{animation:nnMistPetals 8s ease-in-out infinite}
+.world-inside-study .world-inside-scene{border:8px solid #6a9f79!important;border-radius:24px!important}
+.world-inside-gaming .world-inside-scene{border:8px solid #8046bb!important;border-radius:10px!important;box-shadow:0 8px 0 #3c2e67,0 0 35px #975ae48b!important}
+.world-inside-sleep .world-inside-scene{border:8px solid #6f8ab8!important;border-radius:45% 45% 25px 25px / 10% 10% 25px 25px!important;box-shadow:0 8px 0 #4b608a,0 0 38px #b2c5ee81!important}
+.world-inside-gaming .nn-inside-scroll{background:linear-gradient(120deg,#35265e,#492c7e)!important;color:#f3eaff!important}
+.world-inside-sleep .nn-inside-scroll{background:linear-gradient(120deg,#d6e5ff,#a5bce5)!important}
+.world-inside-study .nn-inside-scroll{background:linear-gradient(120deg,#f5e7b8,#bde0c0)!important}
+.world-inside-gaming .world-inside-particles{color:#f88bf7!important;animation:nnMoonFloat 2s ease-in-out infinite}
+.world-inside-sleep .world-inside-particles{color:#f9edc4!important;animation:nnMoonFloat 7s ease-in-out infinite}
+.world-inside-study .world-inside-particles{color:#ffbdbb!important;animation:nnMistPetals 8s ease-in-out infinite}
+.world-inside-story>p{max-width:56ch;line-height:1.55}
+@media(max-width:760px){
+ .nn-round-reward{grid-template-columns:1fr;gap:11px;margin:10px 0}
+ .nn-round-reward>div{min-height:97px;padding:12px;gap:13px;border-width:2px}
+ .nn-reward-coin-art{flex-basis:53px;height:53px;font-size:27px;border-width:3px}
+ .nn-reward-avatar{flex-basis:50px;width:50px;height:56px}
+ .nn-round-reward strong{font-size:21px}
+ .result-panel .result-extra summary{min-height:44px}
+ .result-panel .round-lesson{display:none}
+ .world-inside-story>p,.world-inside-nim,.world-inside-mini-guide,.world-inside-cues>strong{display:none!important}
+ .world-inside-cues{gap:7px!important}
+ .world-inside-cues>span{font-size:11px!important;padding:7px!important}
+ .world-inside-story h3{font-size:24px!important;line-height:1.2!important;margin:8px 0!important}
+ .world-inside-actions{gap:8px!important}
+ .world-inside-actions button{min-height:48px!important}
+ .shop-panel .shop-awning>span,.shop-panel .shop-awning+div>span{display:none!important}
+ /* Separate touch target above iOS/Android browser chrome and finger gesture bar. */
+ body.is-playing:not(.is-paused) .super-dock{left:calc(12px + env(safe-area-inset-left,0px))!important;bottom:calc(20px + env(safe-area-inset-bottom,0px))!important;width:84px!important;z-index:110!important;pointer-events:auto!important}
+ body.is-playing:not(.is-paused) .super-dock .super-button{width:84px!important;height:84px!important;min-height:84px!important;border-width:4px!important}
+ body.is-playing .super-ready-hint:not([hidden]){font-size:10px!important;bottom:91px!important;white-space:nowrap}
+ .super-keyhint{display:none!important}
+ .nn-round-reward-coins strong{white-space:normal}
+}
+@media(max-width:390px){
+ .world-inside-cues>span:nth-of-type(n+3){display:none!important}
+ .world-inside-scene{min-height:260px!important}
+ .nn-round-reward>div{padding:9px}
+}
+@media(prefers-reduced-motion:reduce){
+ .nn-round-reward>div,.nn-reward-coin-art,.nn-village-gate-gaming .nn-house-interior::after,.nn-village-gate-sleep .nn-world-scenery-moon,.nn-village-gate-study .nn-world-scenery-garden,.world-inside-particles,.is-playing .super-dock .super-button.is-ready{animation:none!important;transition:none!important}
+}
+body.calm-view .nn-round-reward>div,body.calm-view .nn-reward-coin-art,body.calm-view .nn-village-gate-gaming .nn-house-interior::after,body.calm-view .super-dock .super-button.is-ready{animation:none!important}
