@@ -32,6 +32,8 @@ export const SKINS = [
   {id:'dawn',name:'Morgenwind',cost:0,color:'#f6b85c',unlock:'rank',rank:'dawn'},
   {id:'shadow',name:'Schatten-Ninja',cost:0,color:'#6570ab',unlock:'rank',rank:'shadow'},
   {id:'grandmaster',name:'Großmeister',cost:0,color:'#e9d29a',unlock:'rank',rank:'grandmaster'},
+  {id:'focus-fox',name:'Fokus-Fuchs',cost:0,color:'#ffc77d',unlock:'mastery',requiredCorrect:60,description:'Goldener Fuchs-Ninja für 60 richtige Entscheidungen.'},
+  {id:'night-guardian',name:'Nachtwächter',cost:0,color:'#96a9ff',unlock:'mastery',requiredCorrect:180,description:'Leuchtender Mond-Ninja für 180 richtige Entscheidungen.'},
   ...WEEKLY_SKINS
 ];
 const kinds = (study,gaming,sleep) => ({study,gaming,sleep});
@@ -137,7 +139,7 @@ export class NinjaGame {
   _hasSkill(id){return this.state.skillIds.includes(id);}
   _difficulty(){return getDifficulty(this.state.difficulty);}
   _speed(){return this.state.isTutorial?1:bossMode(this.state.mode)?getBossSpeed(this.state.boss):this.state.mode==='open'?getOpenSpeedFactor(this.state.difficulty,this.state.elapsed):getSpeedFactor(this.state.difficulty,this.state.elapsed);}
-  _coinCap(){return Math.floor(this._difficulty().coinCap*(this._hasSkill('coin-boost')?1.25:1));}
+  _coinCap(){return this.state.quickRound?24:Math.floor(this._difficulty().coinCap*(this._hasSkill('coin-boost')?1.25:1));}
   _coinMultiplier(){return this._difficulty().coinMultiplier*(this._hasSkill('coin-boost')?1.25:1);}
   _earnCoins(amount,events,reason,position={}){const s=this.state;if(s.isTutorial||amount<=0)return;
     const total=amount*this._coinMultiplier()*(s.bonusPhase?.id==='coin-rush'?2:1)+s.coinRemainder;
@@ -306,7 +308,8 @@ export class NinjaGame {
   _good(events,obj){const s=this.state;s.metrics.correctDecisions++;s.stageMetrics.correctDecisions++;s.decisionStreak++;s.bestDecisionStreak=Math.max(s.bestDecisionStreak,s.decisionStreak);this._balance();
     if(s.isTutorial)s.tutorialDecisions++;
     else {if(!standardChallenge(s.mode)&&!this._superSlicing)s.superCharge=Math.min(100,s.superCharge+8+(this._hasSkill('focus-root')?2:0));
-      if(s.metrics.correctDecisions%(this._hasSkill('coin-root')?12:14)===0)this._earnCoins(1,events,'correct-decisions');
+      if(s.quickRound)this._earnCoins(1,events,'quick-correct',{x:obj?.x??this.width/2,y:obj?.y??this.height/2});
+       else if(s.metrics.correctDecisions%(this._hasSkill('coin-root')?12:14)===0)this._earnCoins(1,events,'correct-decisions');
       const points={10:250,25:750,50:2000}[s.decisionStreak];
       if(points&&!s.comboMilestones.includes(s.decisionStreak)){s.comboMilestones.push(s.decisionStreak);this._arcade(points);events.push({type:'combo-milestone',milestone:s.decisionStreak,streak:s.decisionStreak,points,context:obj?.context||s.context,x:obj?.x??this.width/2,y:obj?.y??this.height/2});}}
     if(s.decisionStreak%5===0){const duration=5+(!s.isTutorial&&this._hasSkill('flow-boost')?2:0);s.effects.flow=duration;s.metrics.flowTriggers++;events.push({type:'flow-started',duration});if(!s.isTutorial)this._achievement('flow-five');}
@@ -409,6 +412,9 @@ export class NinjaGame {
       else {
       this.profile.totalRuns=Math.min(MAX,this.profile.totalRuns+1);this.profile.highScores[s.mode]=Math.max(this.profile.highScores[s.mode],s.score);if((s.mode==='campaign'||s.mode==='master')&&['complete','healthy-stop'].includes(result))this._achievement('context-master');
       const stats=this.profile.stats;stats.correct=Math.min(MAX,stats.correct+s.metrics.correctDecisions);stats.coinsEarned=Math.min(MAX,stats.coinsEarned+coins);stats.superUses=Math.min(MAX,stats.superUses+s.metrics.superUses);stats.bestCombo=Math.max(stats.bestCombo,s.bestCombo);
+       for(const skin of SKINS)if(skin.unlock==='mastery'&&stats.correct>=skin.requiredCorrect&&!this.profile.unlockedSkins.includes(skin.id)){
+         this.profile.unlockedSkins.push(skin.id);events.push({type:'skin-unlocked',id:skin.id,skin:skin.id,name:skin.name,requiredCorrect:skin.requiredCorrect});
+       }
       if(s.difficulty==='hard'&&['complete','healthy-stop'].includes(result))stats.hardClears=Math.min(MAX,stats.hardClears+1);for(const id of unlockAchievements(this.profile))events.push({type:'achievement-unlocked',id});
       events.push(...recordDailyRun(this.profile,s,this._time()),...applyRankUnlocks(this.profile,this._time()),...recordAdventureRun(this.profile,s,this._time()));}}
     events.push({type:'ended',result,score:s.score,scoreArcade:s.scoreArcade,balanceScore:s.balanceScore,coins:s.awardedCoins});this._record('ended',{result});this.save();}
@@ -450,6 +456,7 @@ export class NinjaGame {
     this._record('super-used',{id});this.save();return {ok:true,events};}
   buySkin(id){const skin=SKIN_MAP.get(id);if(!skin)return fail('Unbekannter Skin.');if(this.profile.unlockedSkins.includes(id))return fail('Dieser Skin ist bereits freigeschaltet.');
     if(skin.unlock==='rank')return fail('Dieses Outfit verdienst du mit deinem Ninja-Rang.');
+    if(skin.unlock==='mastery')return fail('Dieses Outfit verdienst du durch richtige Entscheidungen.');
     if(skin.unlock==='weekly')return fail('Dieses besondere Outfit verdienst du mit Wochenherausforderungen.');
     if(this.profile.coins<skin.cost)return fail('Dafür fehlen Coins.');this.profile.coins-=skin.cost;this.profile.unlockedSkins.push(id);this.save();return {ok:true,id,coins:this.profile.coins};}
   selectSkin(id){if(!SKIN_MAP.has(id)||!this.profile.unlockedSkins.includes(id))return fail('Schalte diesen Skin zuerst frei.');this.profile.selectedSkin=id;this.state.skin=id;this.save();return {ok:true,id};}
