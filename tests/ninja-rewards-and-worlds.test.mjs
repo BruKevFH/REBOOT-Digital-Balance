@@ -27,7 +27,7 @@ test('short everyday simulation earns one coin per correct decision, with a tran
 
 test('two decision mastery skins unlock at cumulative 60/180 correct, once each, without purchasing',()=>{
  const storage=new MemoryStore(),game=new NinjaGame({storage,seed:'cosmetic-mastery'});
- for(const [i,limit] of [[1,30],[2,30],[3,60],[4,60]].entries()){
+ for(const [i,limit] of [30,30,60,60].entries()){
    begin(game);answer(game,limit);const events=finish(game);
    if(i===0)assert(!game.profile.unlockedSkins.includes('focus-fox'));
    if(i===1){assert(game.profile.unlockedSkins.includes('focus-fox'));assert.equal(events.filter(e=>e.type==='skin-unlocked'&&e.id==='focus-fox').length,1);}
