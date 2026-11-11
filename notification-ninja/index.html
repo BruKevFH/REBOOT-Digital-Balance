@@ -17,6 +17,7 @@
   <link rel="stylesheet" href="./illustrated-adventure-v4.css" />
   <link rel="stylesheet" href="./dojo-worlds-v5.css" />
   <link rel="stylesheet" href="./mobile-navigation-v6.css" />
+  <link rel="stylesheet" href="./ninja-feedback-v7.css" />
 </head>
 <body>
   <div id="arena" class="arena"><canvas id="world" aria-label="Spielfeld von Notification Ninja"></canvas></div>
@@ -123,7 +124,7 @@
       <span id="boss-cue" class="boss-cue" hidden>Nächste Welle angekündigt</span>
     </section>
     <aside class="hud-sidebar" aria-label="Dein Run: Zeit, Münzen, Tempo und Balance">
-      <span class="sidebar-title">Dein Run</span>
+      <span class="sidebar-title">RUNDE</span>
       <div class="time-block"><span>Noch</span><strong id="time-value">01:15</strong></div>
       <button id="stop-button" class="stop-button" hidden><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="5" y="5" width="10" height="10" rx="1" fill="currentColor"/></svg><span>Bewusst stoppen</span></button>
       <div class="meter-cluster">
@@ -131,7 +132,7 @@
         <div class="meter-block overload-block" title="Überlastung – zu viele Fehler machen es schwieriger"><span><b aria-hidden="true">!</b><i>Overload</i></span><div class="meter-track"><div id="overload-meter" class="meter-fill" style="width:0%" role="progressbar" aria-label="Überlastung" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div></div></div>
         <div class="meter-block flow-block" title="Fokus – eine gute Serie startet deinen Flow"><span><b aria-hidden="true">✦</b><i>Fokus</i></span><div class="meter-track"><div id="flow-meter" class="meter-fill" style="width:0%" role="progressbar" aria-label="Flow" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></div></div></div>
       </div>
-      <details class="nn-hud-meaning"><summary>✦ Was zeigen die Werte?</summary><p><strong>Balance:</strong> Gute Entscheidungen halten dich im Gleichgewicht. <strong>Overload:</strong> Fehler erhöhen die Belastung. <strong>Fokus:</strong> Fünf richtige Entscheidungen in Folge aktivieren kurz den Flow.</p></details>
+      <details class="nn-hud-meaning"><summary>✦ Was bedeutet das?</summary><p><strong>Balance:</strong> Gute Entscheidungen halten dich im Gleichgewicht. <strong>Overload:</strong> Fehler erhöhen die Belastung. <strong>Fokus:</strong> Fünf richtige Entscheidungen in Folge aktivieren kurz den Flow.</p></details>
       <div class="round-extras" aria-label="Dein Fortschritt in dieser Runde">
         <span class="run-wallet" title="Münzen in dieser Runde"><span aria-hidden="true">★</span><strong id="run-coins">0</strong><small>Münzen</small></span>
         <span class="speed-badge"><svg viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="m2 10 4-4 3 2 3-5M8 3h4v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Tempo <strong id="speed-value">1,0×</strong></span>
