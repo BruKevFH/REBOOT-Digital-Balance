@@ -427,6 +427,49 @@ export function createRenderer(canvas){
     // Late-run petals stay at the edges, outside the principal swipe lanes.
     if(petalAmount&&!reducedMotion){ctx.save();ctx.globalAlpha=petalAmount*.58;for(let i=0;i<10;i++){const side=i%2?-1:1,px=side>0?width*(.012+(i%3)*.012):width*(.988-(i%3)*.012),py=height*((i*.127+t*.018)%1);oval(ctx,px+Math.sin(t*.6+i)*4,py,4.5,2.3,i%3?'#edbcaf':'#efcf8f',null,time*.5+i);}ctx.restore();}
   }
+  function drawAttentionAtmosphere(state,time,mode){
+    // Ambient distraction motifs stay in the outer 8% of the arena; objects and swipes remain clear.
+    if(reducedMotion||state.scene!=='playing'||state.paused||state.shopPreview)return;
+    const overload=clamp(finite(state.overload,0)/100,0,1);
+    const t=time*.55,xEdge=width*.028,ySize=height*.72;
+    ctx.save();ctx.textAlign='center';ctx.textBaseline='middle';
+    if(mode==='gaming'){
+      // Fast, glitchy notification pings at the screen edges, increasing with overload.
+      for(let i=0;i<5;i++){
+        const side=i%2?-1:1,px=side>0?width*.94:width*.06,py=height*(.19+(i*.19+time*.023)% .65);
+        const pulse=.2+.14*Math.sin(t*3+i*2)+overload*.28;
+        ctx.globalAlpha=clamp(pulse,.07,.62);ctx.save();ctx.translate(px,py);
+        rect(ctx,-14,-17,28,34,i%2?'#a36de6':'#44dae5',null,7);
+        rect(ctx,-9,-12,18,18,'#272253','#b8f6ff',4);
+        ctx.fillStyle='#ffe6a9';ctx.font='900 15px system-ui';ctx.fillText(i%3===0?'!':'✦',0,-2);
+        oval(ctx,7,10,3,3,'#f1b7ff');ctx.restore();
+      }
+      if(overload>.24){
+        ctx.globalAlpha=overload*.18;ctx.strokeStyle='#f289ff';ctx.lineWidth=3;
+        for(let i=0;i<4;i++){const y=(height*(i+.5)/4+time*17)%height;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(width*.06,y);ctx.moveTo(width*.94,y);ctx.lineTo(width,y);ctx.stroke();}
+      }
+    }else if(mode==='study'){
+      // Calm focus fragments and blossoms drifting past, with distraction alerts only at the edge.
+      for(let i=0;i<11;i++){
+        const x=i%2?width*.025:width*.975,py=(height*(i*.107+.09)+time*(5+i%3*2))%height;
+        const dx=Math.sin(t+i*2)*7;
+        ctx.globalAlpha=.21+Math.sin(time*.8+i)*.09;
+        oval(ctx,x+dx,py,4+i%3,2.5,i%3?'#ffd4c7':'#f8f0b5',null,i*.8+t);
+      }
+      if(overload>.25){ctx.globalAlpha=overload*.28;ctx.fillStyle='#eaa67d';
+        for(let i=0;i<3;i++){const y=height*(.24+i*.2)+Math.sin(t*2+i)*9;rect(ctx,width*.014,y,6,33,'#f08f75',null,2);}}
+    }else if(mode==='sleep'){
+      // DND moon, slow fireflies and notifications dissolving into starlight.
+      for(let i=0;i<14;i++){
+        const x=i%2?width*.027:width*.973,py=height*((i*.091+time*.004)%1);
+        ctx.globalAlpha=.26+.18*(Math.sin(time*.63+i)+1)*.5;
+        star(ctx,x+Math.sin(t*.8+i)*5,py,2.4+i%2,'#ffefb8',4,time*.08+i);
+      }
+      if(overload>.3){ctx.globalAlpha=overload*.3;ctx.fillStyle='#ebafd9';ctx.font='700 19px system-ui';
+        ctx.fillText('…',width*.055,height*.25+Math.sin(t)*10);}
+    }
+    ctx.restore();
+  }
   function drawRoomArtwork(c,image,mode){
     // Cover-crop keeps the painted room undistorted on portrait phones and
     // wide desktops. A slightly lower focal point preserves the usable floor.
@@ -467,7 +510,7 @@ export function createRenderer(canvas){
       caches.set(cacheKey,image);
     }
     ctx.drawImage(image,0,0,width,height);
-    drawWorldAmbience(state,time,scene,illustrated);
+    drawWorldAmbience(state,time,scene,illustrated);drawAttentionAtmosphere(state,time,mode);
     ctx.save();ctx.globalAlpha=mode==='sleep'?.18:.13;for(let i=0;i<(reducedMotion?0:15);i++){const ambientTime=reducedMotion?0:time,x=((i*.183*width+Math.sin(ambientTime*.27+i)*13)%width+width)%width,y=(i*.263*height-ambientTime*(mode==='sleep'?2:4))%height;oval(ctx,x,y<0?y+height:y,1.8,1.8,mode==='sleep'?'#fff2c4':'#ffffff');}ctx.restore();
     drawBonusAccents(state,time);if(!reducedMotion&&(finite(state.effects?.flow)>0||state.flow||finite(state.flowRemaining)>0)){ctx.save();ctx.strokeStyle=rgba(GOLD,.32);ctx.lineWidth=4;for(let i=0;i<3;i++){ctx.beginPath();for(let x=0;x<=width;x+=30){const y=height*(.25+i*.27)+Math.sin(x/width*TAU+time*.75+i)*height*.025;x?ctx.lineTo(x,y):ctx.moveTo(x,y);}ctx.stroke();}ctx.restore();}if(finite(state.effects?.shield)>0){ctx.strokeStyle=rgba(GREEN,.28);ctx.lineWidth=5;rounded(ctx,7,7,width-14,height-14,16);ctx.stroke();}if(finite(state.overload)>50){ctx.fillStyle=rgba(CORAL,(state.overload-50)/800);ctx.fillRect(0,0,width,10);ctx.fillRect(0,height-10,width,10);}if(home)ninja(time,state);else drawSquad(state);
   }
