@@ -78,6 +78,18 @@ async function acknowledge(p){for(let n=0;n<20&&(await read(p)).mentor.open;n++)
      assert.equal(await page.locator('#dojo-rooms').evaluate(el=>el.open),false);
      await page.locator('a[data-game-route="modes"]:visible').click();
      assert.equal((await read(page)).ui,'modes');
+     assert.equal(await page.locator('.arcade-mode-quest .nn-quest-scene img').count(),4,'Each mode has distinct illustrated artwork');
+     const modesFit=await page.locator('.arcade-mode-quest').evaluateAll(nodes=>nodes.every(el=>{const r=el.getBoundingClientRect();return r.left>=-1&&r.right<=innerWidth+1;}));
+     assert(modesFit,'Mode posters must fit within phone width');
+     await page.screenshot({path:path.join(output,'mint-modes-'+width+'.png')});
+     await page.locator('.nn-mobile-nav [data-game-route="dojos"]').click();await acknowledge(page);
+     assert.equal((await read(page)).ui,'dojos');
+     assert.equal(await page.locator('.nn-mint-world-grid .nn-world-poster').count(),4,'Four illustrated world posters');
+     assert.equal(await page.locator('.nn-mint-world-grid [data-world-enter]').count(),3,'Three familiar short-round Dojos');
+     assert.equal(await page.locator('.nn-mint-world-grid [data-mode-start="master"]').count(),1,'Mixed Balance Master portal');
+     const worldsFit=await page.locator('.nn-mint-world-grid .nn-world-poster').evaluateAll(nodes=>nodes.every(el=>{const r=el.getBoundingClientRect();return r.left>=-1&&r.right<=innerWidth+1&&r.width>100;}));
+     assert(worldsFit,'Dojo posters must fit within phone width');
+     await page.screenshot({path:path.join(output,'mint-worlds-'+width+'.png')});
      await goHome(page);
      assert.equal(await page.locator('.dojo-tabs [data-game-route]').count(),6,'Six clear navigation choices');
       assert.equal(await page.locator('.nn-mobile-nav [data-game-route]').count(),6,'Mobile navigation contains every destination');
