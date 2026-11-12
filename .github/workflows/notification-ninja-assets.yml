@@ -19,6 +19,8 @@ on:
       - 'notification-ninja/mobile-navigation-v6.css'
       - 'notification-ninja/ninja-feedback-v7.css'
       - 'notification-ninja/ninja-mint-ui-v9.css'
+      - 'notification-ninja/nn-reference-play-v10.css'
+      - 'notification-ninja/MASTER_PROMPT_EXACT_INDIE_DESIGN_V4.md'
       - 'notification-ninja/ninja-mint-home-v9.css'
       - 'notification-ninja/assets/ninja-mint-*-v9.svg'
       - 'notification-ninja/assets/dojo-*-v5.svg'
@@ -60,7 +62,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add notification-ninja/dist/ninja.js notification-ninja/dist/home.js notification-ninja/dist/build.json
-          git add notification-ninja/downloads/Notification-Ninja-3.9.0.zip notification-ninja/downloads/Notification-Ninja-3.9.0.zip.sha256
+          git add notification-ninja/downloads/Notification-Ninja-4.0.0.zip notification-ninja/downloads/Notification-Ninja-4.0.0.zip.sha256
           if git diff --cached --quiet; then
             echo "Generated files are already up to date."
           else
@@ -78,7 +80,7 @@ jobs:
           # Explicitly publish the generated dist/ and ZIP revision.
           gh api -X POST "repos/${{ github.repository }}/pages/builds"
 
-      - name: Verify public 3.9.0 assets after Pages rebuild
+      - name: Verify public 4.0.0 assets after Pages rebuild
         if: success()
         continue-on-error: true
         shell: bash
@@ -86,12 +88,12 @@ jobs:
           site="https://brukevfh.github.io/REBOOT-Digital-Balance/notification-ninja"
           for attempt in {1..10}; do
             live="$(curl -fsSL --max-time 10 -H 'Cache-Control: no-cache' "$site/dist/build.json?release=${GITHUB_RUN_ID}-${attempt}" | jq -r '.version // empty' || true)"
-            if [ "$live" = "3.9.0" ]; then
-              curl -fsSL --max-time 10 "$site/ninja-mint-ui-v9.css?release=${GITHUB_RUN_ID}" -o "$RUNNER_TEMP/nn-v9.css"
-              grep -q 'nn-mint-world-grid' "$RUNNER_TEMP/nn-v5.css"
+            if [ "$live" = "4.0.0" ]; then
+              curl -fsSL --max-time 10 "$site/nn-reference-play-v10.css?release=${GITHUB_RUN_ID}" -o "$RUNNER_TEMP/nn-v9.css"
+              grep -q 'nn-ref-mode-list' "$RUNNER_TEMP/nn-v5.css"
               curl -fsSL --max-time 10 "$site/assets/ninja-mint-boss-v9.svg?release=${GITHUB_RUN_ID}" -o "$RUNNER_TEMP/nn-v9.svg"
               grep -q 'illustrated adventure' "$RUNNER_TEMP/nn-v5.svg"
-              echo "PUBLIC VISUAL RELEASE 3.9.0 CONFIRMED"
+              echo "PUBLIC VISUAL RELEASE 4.0.0 CONFIRMED"
               exit 0
             fi
             echo "Pages still serves version: ${live:-unknown} (attempt ${attempt})"
