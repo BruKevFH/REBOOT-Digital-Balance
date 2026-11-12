@@ -132,7 +132,7 @@ html[data-ninja-theme] .nn-play-topbar .panel-back{
 .nn-play-flourish i{width:clamp(40px,18vw,190px);height:2px;background:#26958b}
 .nn-play-torii{font-size:30px;color:#0b3542;margin-bottom:-5px;filter:drop-shadow(0 3px #246e63)}
 .nn-play-world-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
-.nn-play-world{min-width:0;min-height:0}
+.nn-play-world{position:relative;min-width:0;min-height:0}
 .nn-play-world-entry{position:relative;isolation:isolate;display:block;width:100%;height:258px;
  padding:0;border:3px solid #286e79;border-radius:28px;background:#2c526b;
  overflow:hidden;cursor:pointer;box-shadow:0 6px 0 #276a70,0 13px 17px #06263845;
