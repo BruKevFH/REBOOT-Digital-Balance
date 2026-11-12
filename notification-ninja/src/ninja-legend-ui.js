@@ -15,15 +15,15 @@ const icon=(kind)=>kind==='swords'?'<svg viewBox="0 0 48 48" fill="none" aria-hi
 
 export function legendaryModes({account=false}={}){
  const feature=[
-  {kind:'day',title:'Ein ganzer Tag',kicker:'01 · DIE STORY-RUNDE',desc:'Vom Lernen über Gaming bis zur Abendruhe: drei Situationen in einer zusammenhängenden Spielrunde.',meta:['Drei Alltagsthemen','Bewusste Entscheidungen','Story-Run'],mode:'campaign',action:'Tagesabenteuer starten',icon:'scroll',scene:'./assets/focus-village.png',emblem:'日'},
-  {kind:'open',title:'Open Run',kicker:'02 · DER ENDLOSE PFAD',desc:'Drei Herzen, kein Zeitlimit. Die Wellen werden schneller – wie lange bleibst du im Flow?',meta:['3 Herzen','Highscore','Kein Zeitlimit'],mode:'open',action:'Open Run starten',icon:'infinity',scene:'./assets/dojo-gaming.svg',emblem:'∞'}
+  {kind:'day',title:'Ein ganzer Tag',kicker:'01 · DIE STORY-RUNDE',desc:'Vom Lernen über Gaming bis zur Abendruhe: drei Situationen in einer zusammenhängenden Spielrunde.',meta:['Drei Alltagsthemen','Bewusste Entscheidungen','Story-Run'],mode:'campaign',action:'Tagesabenteuer starten',icon:'scroll',scene:'./assets/ninja-mint-day-v9.svg',emblem:'日'},
+  {kind:'open',title:'Open Run',kicker:'02 · DER ENDLOSE PFAD',desc:'Drei Herzen, kein Zeitlimit. Die Wellen werden schneller – wie lange bleibst du im Flow?',meta:['3 Herzen','Highscore','Kein Zeitlimit'],mode:'open',action:'Open Run starten',icon:'infinity',scene:'./assets/ninja-mint-open-v9.svg',emblem:'∞'}
  ];
  const others=[
-  {kind:'boss',title:'Boss Rush',desc:'Drei besondere Bosse. Drei unterschiedliche Taktiken.',mode:'boss-rush',tag:'3 Bossgegner',icon:'swords',sign:'鬼',level:'HERAUSFORDERUNG'},
+  {kind:'boss',title:'Boss Rush',desc:'Drei besondere Bosse. Drei unterschiedliche Taktiken.',mode:'boss-rush',tag:'3 Bossgegner',icon:'swords',sign:'鬼',level:'HERAUSFORDERUNG',art:'./assets/ninja-mint-boss-v9.svg'},
   
-  {kind:'daily',title:'Tages-Challenge',desc:account?'Gemeinsame Herausforderung nach Serverzeit.':'Lokale Tagesübung; für geprüfte Ergebnisse anmelden.',mode:'daily',tag:'Täglich neu',icon:'spark',sign:'星',level:'TÄGLICH'},
-  {kind:'practice',title:'Zen-Training',desc:'Wischen und Entscheidungen ohne Zeitdruck üben.',route:'practice',tag:'Ohne Ranglistenwertung',icon:'scroll',sign:'禅',level:'ENTSPANNT'},
-   {kind:'weekly',title:'Wochenziele',desc:'Drei Aufgaben, echte Belohnungen und ein besonderes Outfit.',route:'weekly',tag:'Wöchentlich',icon:'scroll',sign:'週',level:'DEINE ZIELE'}
+  {kind:'daily',title:'Tages-Challenge',desc:account?'Gemeinsame Herausforderung nach Serverzeit.':'Lokale Tagesübung; für geprüfte Ergebnisse anmelden.',mode:'daily',tag:'Täglich neu',icon:'spark',sign:'星',level:'TÄGLICH',art:'./assets/ninja-mint-daily-v9.svg'},
+  {kind:'practice',title:'Zen-Training',desc:'Wischen und Entscheidungen ohne Zeitdruck üben.',route:'practice',tag:'Ohne Ranglistenwertung',icon:'scroll',sign:'禅',level:'ENTSPANNT',art:'./assets/ninja-mint-zen-v9.svg'},
+   {kind:'weekly',title:'Wochenziele',desc:'Drei Aufgaben, echte Belohnungen und ein besonderes Outfit.',route:'weekly',tag:'Wöchentlich',icon:'scroll',sign:'週',level:'DEINE ZIELE',art:'./assets/ninja-mint-weekly-v9.svg'}
  ];
  const attr=x=>x.route?`data-game-route="${x.route}"`:`data-mode-start="${x.mode}"`;
  return `<div class="legend-modes arcade-mode-board">
@@ -41,14 +41,14 @@ export function legendaryModes({account=false}={}){
       <span class="arcade-portal-title"><strong>${x.title}</strong><span class="arcade-portal-icon">${icon(x.icon)}</span></span>
       <span class="arcade-portal-description">${x.desc}</span>
       <span class="legend-mode-meta">${x.meta.map(k=>`<em>${k}</em>`).join('')}</span>
-      <span class="arcade-portal-cta"><span>${x.action}</span><span class="arcade-cta-arrow" aria-hidden="true">➜</span></span>
+      <span class="arcade-portal-cta"><span>${x.action}</span><span class="arcade-cta-arrow nn-play-glyph" aria-hidden="true">▶</span></span>
      </span>
    </button>`).join('')}</div>
   <div class="arcade-mode-section-head arcade-secondary-header"><div><span class="arcade-section-index">02 / NEBENWEGE</span><h4>Mehr Herausforderungen</h4></div><span class="arcade-section-hint">DEIN TEMPO. DEINE WAHL.</span></div>
   <div class="legend-mode-secondary arcade-mode-quests">${others.map((x,i)=>`<button type="button" class="legend-mode-small legend-mode-${x.kind} arcade-mode-quest" ${attr(x)}>
-     <span class="arcade-quest-symbol" aria-hidden="true"><span class="arcade-quest-symbol-bg">${x.sign}</span>${icon(x.icon)}</span>
+     <span class="arcade-quest-symbol" aria-hidden="true"><span class="arcade-quest-symbol-bg">${x.sign}</span>${icon(x.icon)}</span><span class="nn-quest-scene" aria-hidden="true"><img src="${x.art}" alt="" loading="lazy"></span>
      <span class="legend-mode-info"><span class="arcade-quest-level">${x.level} · ${String(i+1).padStart(2,'0')}</span><strong>${x.title}</strong><small>${x.desc}</small><em>✦ ${x.tag}</em></span>
-     <span class="arcade-quest-arrow" aria-hidden="true">➜</span>
+     <span class="arcade-quest-arrow nn-play-glyph" aria-hidden="true">▶</span>
    </button>`).join('')}</div>
   <footer class="arcade-mode-footer"><span class="arcade-mode-footer-icon" aria-hidden="true">忍</span><p>Jeder Spielmodus ist eigenständig. Für die Themenrunden findest du den Bereich „Spielwelten“ in der Hauptnavigation.</p></footer>
  </div>`;
@@ -78,26 +78,33 @@ const villageParticles='<span class="nn-landscape-petal petal-one" aria-hidden="
 
 export function legendaryDojos(){
  const labels={study:{name:'Lernen',icon:'✦',tag:'MORGENLICHT',hint:'Ablenkungen erkennen',letter:'文'},gaming:{name:'Gaming',icon:'✧',tag:'NEON-NACHT',hint:'Bewusst pausieren',letter:'遊'},sleep:{name:'Schlafen',icon:'☾',tag:'MONDLICHT',hint:'Zur Ruhe kommen',letter:'月'}};
- return `<div class="legend-dojos worlds-hub nn-world-village">
+ return `<div class="legend-dojos worlds-hub nn-world-village nn-mint-world-selector">
   <header class="nn-village-title worlds-hub-intro">
-   <span class="legend-kicker">DEINE DREI DOJO-WELTEN</span>
-   <h3>Dein Weg zur <em>digitalen Balance</em></h3>
+   <span class="legend-kicker">DEINE NINJA-WELTEN</span>
+   <h3>Spielwelten</h3>
    <p>Wähle dein Dojo.</p>
   </header>
-  <section class="nn-village-stage" aria-label="Interaktive Weltkarte mit drei Dojos">
+  <section class="nn-village-stage nn-mint-world-stage" aria-label="Interaktive Weltkarte mit drei Dojos">
     <img class="nn-village-landscape" src="./assets/overworld-landscape-v4.svg" alt="" loading="eager">
     <span class="nn-village-sun" aria-hidden="true"></span><span class="nn-village-moon" aria-hidden="true">☾</span>
-    <div class="worlds-hub-grid nn-village-gates">
-      ${['study','gaming','sleep'].map((id,i)=>{const c=WORLD_DETAILS[id],d=labels[id];return `<article class="legend-dojo legend-dojo-${id} worlds-hub-card nn-village-gate nn-village-gate-${id}">
-      <button type="button" class="worlds-hub-entry nn-village-house" data-world-enter="${id}" aria-label="${c.title} betreten: ${esc(d.hint)}">
+    <div class="worlds-hub-grid nn-village-gates nn-mint-world-grid">
+      ${['gaming','study','sleep'].map((id,i)=>{const c=WORLD_DETAILS[id],d=labels[id];return `<article class="legend-dojo legend-dojo-${id} worlds-hub-card nn-village-gate nn-village-gate-${id} nn-world-poster">
+      <button type="button" class="worlds-hub-entry nn-village-house nn-world-poster-button" data-world-enter="${id}" aria-label="${c.title} betreten: ${esc(d.hint)}">
         <span class="nn-house-halo" aria-hidden="true"></span>
         <span class="nn-house-roof" aria-hidden="true"><span class="nn-house-roof-symbol">${d.icon}</span></span>
         <span class="nn-world-scenery ${id==='study'?'nn-world-scenery-garden':id==='gaming'?'nn-world-scenery-neon':'nn-world-scenery-moon'}" aria-hidden="true"><span class="nn-scenery-spark">✦</span><span class="nn-scenery-spark">✧</span><span class="nn-scenery-spark">✦</span></span>
-        <span class="worlds-hub-art nn-house-interior"><img src="${c.art}" alt="" loading="lazy"><span class="nn-house-window-shine" aria-hidden="true"></span><span class="nn-house-lantern l-left" aria-hidden="true">✦</span><span class="nn-house-lantern l-right" aria-hidden="true">✦</span></span>
+        <span class="worlds-hub-art nn-house-interior nn-world-poster-art"><img src="${c.art}" alt="" loading="lazy"><span class="nn-house-window-shine" aria-hidden="true"></span><span class="nn-house-lantern l-left" aria-hidden="true">✦</span><span class="nn-house-lantern l-right" aria-hidden="true">✦</span></span>
         <span class="nn-house-plaque"><span class="nn-house-number">${String(i+1).padStart(2,'0')}</span><strong>${d.name}</strong><small>${c.title}</small></span>
-        <span class="worlds-hub-info nn-house-foot"><span class="legend-kicker">${d.tag}</span><span class="nn-house-action">Welt betreten <span aria-hidden="true">➜</span></span></span>
+        <span class="worlds-hub-info nn-house-foot nn-world-poster-foot"><span class="legend-kicker">${d.tag}</span><span class="nn-house-action">Welt betreten <span aria-hidden="true">➜</span></span></span>
        </button>
       </article>`}).join('')}
+        <article class="legend-dojo legend-dojo-balance worlds-hub-card nn-village-gate nn-village-gate-balance nn-world-poster">
+          <button type="button" class="worlds-hub-entry nn-village-house nn-world-poster-button" data-mode-start="master" aria-label="Balance-Master: gemischte Runde starten">
+            <span class="worlds-hub-art nn-house-interior nn-world-poster-art"><img src="./assets/ninja-mint-balance-v9.svg" alt="" loading="lazy"></span>
+            <span class="nn-world-poster-top" aria-hidden="true">☯</span>
+            <span class="worlds-hub-info nn-house-foot nn-world-poster-foot"><strong>Balance-Master</strong><span class="nn-house-action">Runde starten <span aria-hidden="true">➜</span></span></span>
+          </button>
+        </article>
     </div>
     <div class="nn-village-sakura" aria-hidden="true"></div>
     ${villageParticles}
