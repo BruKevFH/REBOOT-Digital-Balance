@@ -199,7 +199,7 @@ async function acknowledge(p){for(let n=0;n<20&&(await read(p)).mentor.open;n++)
      const before=(await read(page)).profile;
      await page.locator('a[data-game-route="play"]:visible').click();
      assert.equal((await read(page)).ui,'modes');
-     await page.locator('.legend-mode-small[data-game-route="practice"]').click();assert.equal((await read(page)).ui,'practice');
+     await page.locator('.nn-ref-mode[data-game-route="practice"]').click();assert.equal((await read(page)).ui,'practice');
      assert.deepEqual((await read(page)).profile,before,'practice does not alter guest progression');
      await page.keyboard.press('Escape');await acknowledge(page);
     }
