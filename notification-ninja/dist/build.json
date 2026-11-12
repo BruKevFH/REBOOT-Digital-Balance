@@ -1,6 +1,6 @@
 {
   "name": "Notification Ninja",
-  "version": "3.8.0",
+  "version": "3.9.0",
   "engine": "Canvas 2D / Web Audio",
   "style": "Illustrated animated ninja world",
   "illustratedRoomArt": true,
