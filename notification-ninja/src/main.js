@@ -110,7 +110,7 @@ function handleAccountClick(event){
 function navigateRoute(route,{replace=false}={}){
   if(route==='guest'){if(accountActive()||localLoggedIn)showHome();else enterDojo();if(replace)history.replaceState(history.state,'','#worlds');return;}
   if(route==='account'){accountActive()?accountUI.profile(game.profile):accountUI.login();return;}
-  const aliases={worlds:'home',campaign:'career',bazaar:'shop',dojo:'home'},target=aliases[route]||route;
+  const aliases={worlds:'home',campaign:'career',bazaar:'shop',dojo:'modes',dojos:'modes'},target=aliases[route]||route;
   if(['login','register','recovery'].includes(target)){if(accountActive()){showHome();toast('Du bist bereits angemeldet.');}else accountUI[target]();return;}
   if(!localLoggedIn){showLanding();return;}
   if(target==='home'){showHome();if(route==='worlds')history.replaceState(history.state,'','#worlds');}
@@ -126,12 +126,12 @@ function navigateRoute(route,{replace=false}={}){
 }
 function modesMenu(){
   if(!openMenu('modes'))return;
-  dialog('Wähle deinen Spielmodus',legendaryModes({account:accountActive()}),'',{label:'NINJA-ABENTEUER · DEIN WEG',classes:'legend-modes-panel'});
+  dialog('Spielen',legendaryModes({account:accountActive()}),'',{label:'NOTIFICATION NINJA · DEIN ABENTEUER',classes:'legend-modes-panel nn-indie-unified-panel'});
 }
 let currentWorld='study';
 function dojosMenu(){
-  if(ui!=='dojos'&&!openMenu('dojos'))return;
-  dialog('Deine Spielwelten',legendaryDojos(),'',{label:'DREI DOJOS · EINE BONUSWELT',classes:'legend-dojos-panel'});
+  // Backward compatible #dojos links now open the unified Spielen page.
+  modesMenu();
 }
 function worldDetailsMenu(context='study'){
   if(!['study','gaming','sleep'].includes(context))return;
@@ -226,7 +226,7 @@ function navigateBack(){
   if(navDepth>0){history.back();return;}
   if(ui==='onboarding')showLanding();else if(ui==='paused'||ui==='sleep-choice')resume();else showHome();
 }
-function scene(next){ui=next;for(const nav of document.querySelectorAll('[data-game-route],[data-route]')){const active=(nav.dataset.gameRoute||nav.dataset.route)===({home:'worlds',career:'campaign',shop:'bazaar'}[next]||next);if(active)nav.setAttribute('aria-current','page');else nav.removeAttribute('aria-current');}document.body.classList.toggle('nn-menu-context',['home','modes','dojos','world','career','shop','leaderboard','profile','settings','weekly','abilities','achievements','notifications','highscores','help','skins'].includes(next));const lobby=['home','landing','onboarding','rest'].includes(next);$('home').hidden=next!=='home';if($('landing'))$('landing').hidden=next!=='landing';$('hud').hidden=lobby;document.body.classList.toggle('is-landing',next==='landing'||next==='onboarding');document.body.classList.toggle('is-playing',!lobby);document.body.classList.toggle('is-paused',next!=='playing');swipePointer=null;lastPoint=null;renderer.resize();const size=renderer.getSize();game.resize(size.width,size.height);saveNavigation();}
+function scene(next){ui=next;for(const nav of document.querySelectorAll('[data-game-route],[data-route]')){const active=(nav.dataset.gameRoute||nav.dataset.route)===({home:'worlds',career:'campaign',shop:'bazaar',dojos:'modes'}[next]||next);if(active)nav.setAttribute('aria-current','page');else nav.removeAttribute('aria-current');}document.body.classList.toggle('nn-menu-context',['home','modes','dojos','world','career','shop','leaderboard','profile','settings','weekly','abilities','achievements','notifications','highscores','help','skins'].includes(next));const lobby=['home','landing','onboarding','rest'].includes(next);$('home').hidden=next!=='home';if($('landing'))$('landing').hidden=next!=='landing';$('hud').hidden=lobby;document.body.classList.toggle('is-landing',next==='landing'||next==='onboarding');document.body.classList.toggle('is-playing',!lobby);document.body.classList.toggle('is-paused',next!=='playing');swipePointer=null;lastPoint=null;renderer.resize();const size=renderer.getSize();game.resize(size.width,size.height);saveNavigation();}
 function dialog(title,body,actions,{label='NOTIFICATION NINJA',classes=''}={}){
   const backLabel=ui==='onboarding'?'Startseite':ui==='paused'?'Weiterspielen':'Zurück';
   const sections={modes:'SPIELMODI',dojos:'SPIELWELTEN',career:'KARRIEREKARTE',shop:'NINJA-BASAR',leaderboard:'RANGLISTE',settings:'EINSTELLUNGEN',profile:'PROFIL',achievements:'ERFOLGE',weekly:'WOCHENZIELE',abilities:'FÄHIGKEITEN',results:'RUNDE BEENDET',onboarding:'DEIN NINJA'};
