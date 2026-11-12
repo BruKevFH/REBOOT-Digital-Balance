@@ -48,10 +48,10 @@ test('Relaxed/Dark/Noir remain device-only and never pollute account or game pre
 });
 test('home and modal navigation distinguish Overview from thematic Game Worlds',()=>{
  const home=read('index.html'),main=read('src/main.js');
- assert.match(home,/<span>Übersicht<\/span><\/a><a href="#dojos"/);
- assert.match(home,/<span>Spielwelten<\/span><\/a><a href="#campaign"/);
- assert(main.includes("dojos:'SPIELWELTEN'"));
- assert(main.includes("modes:'SPIELMODI'"));
+ assert.match(home,/<span>Übersicht<\/span><\/a><a href="#play"/);
+ assert.match(home,/<span>Spielen<\/span><\/a><a href="#campaign"/);
+ assert(main.includes("dojos:'SPIELEN'"));
+ assert(main.includes("modes:'SPIELEN'"));
  assert(main.includes('class="panel-header arcade-sticky-header"'));
  assert(!main.includes('class="arcade-theme-cycle"'),'No appearance toggle in every dialog');
  assert(main.includes('class="panel-header arcade-sticky-header"'));

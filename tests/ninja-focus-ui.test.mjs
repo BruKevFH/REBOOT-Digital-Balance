@@ -26,18 +26,18 @@ test('hub offers one primary mission and three unambiguous secondary choices',()
  assert.equal((index.match(/class="hub-path-card"/g)||[]).length,0);
  assert.match(index,/data-game-route="campaign"/);
  assert.doesNotMatch(index,/data-hub-shortcut="open"/);
- assert.match(index,/data-game-route="dojos"/);
+ assert.match(index,/data-game-route="play"/);
  assert.match(index,/class="nn-home-guide"/);
  assert.match(index,/<details id="adventure-details"/);
  assert.doesNotMatch(index,/<details id="adventure-details"[^>]*open/);
 });
 
-test('navigation has six destinations including dojos; account remains available in header',()=>{
+test('navigation has five unique destinations including Play; account remains available in header',()=>{
  const index=read('index.html');
  const nav=index.match(/<nav class="dojo-tabs"[^>]*>([\s\S]*?)<\/nav>/)?.[1];
  assert(nav);
- assert.equal((nav.match(/data-game-route="/g)||[]).length,6);
- for(const route of ['worlds','dojos','campaign','modes','bazaar','leaderboard']){
+ assert.equal((nav.match(/data-game-route="/g)||[]).length,5);
+ for(const route of ['worlds','play','campaign','bazaar','leaderboard']){
    assert(nav.includes('data-game-route="'+route+'"'));
  }
  assert(!nav.includes('account-nav-link'));
