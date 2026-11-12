@@ -78,6 +78,18 @@ async function acknowledge(p){for(let n=0;n<20&&(await read(p)).mentor.open;n++)
      assert.equal(await page.locator('#dojo-rooms').evaluate(el=>el.open),false);
      await page.locator('a[data-game-route="modes"]:visible').click();
      assert.equal((await read(page)).ui,'modes');
+     assert.equal(await page.locator('.arcade-mode-quest .nn-quest-scene img').count(),4,'Each mode has distinct illustrated artwork');
+     const modesFit=await page.locator('.arcade-mode-quest').evaluateAll(nodes=>nodes.every(el=>{const r=el.getBoundingClientRect();return r.left>=-1&&r.right<=innerWidth+1;}));
+     assert(modesFit,'Mode posters must fit within phone width');
+     await page.screenshot({path:path.join(output,'mint-modes-'+width+'.png')});
+     await page.locator('.nn-mobile-nav [data-game-route="dojos"]').click();await acknowledge(page);
+     assert.equal((await read(page)).ui,'dojos');
+     assert.equal(await page.locator('.nn-mint-world-grid .nn-world-poster').count(),4,'Four illustrated world posters');
+     assert.equal(await page.locator('.nn-mint-world-grid [data-world-enter]').count(),3,'Three familiar short-round Dojos');
+     assert.equal(await page.locator('.nn-mint-world-grid [data-mode-start="master"]').count(),1,'Mixed Balance Master portal');
+     const worldsFit=await page.locator('.nn-mint-world-grid .nn-world-poster').evaluateAll(nodes=>nodes.every(el=>{const r=el.getBoundingClientRect();return r.left>=-1&&r.right<=innerWidth+1&&r.width>100;}));
+     assert(worldsFit,'Dojo posters must fit within phone width');
+     await page.screenshot({path:path.join(output,'mint-worlds-'+width+'.png')});
      await goHome(page);
      assert.equal(await page.locator('.dojo-tabs [data-game-route]').count(),6,'Six clear navigation choices');
       assert.equal(await page.locator('.nn-mobile-nav [data-game-route]').count(),6,'Mobile navigation contains every destination');
@@ -133,10 +145,11 @@ async function acknowledge(p){for(let n=0;n<20&&(await read(p)).mentor.open;n++)
      if(width===768){
       await page.locator('a[data-game-route="dojos"]:visible').click();await acknowledge(page);
       assert.equal((await read(page)).ui,'dojos','Dojo navigation opens illustrated worlds');
-      assert.equal(await page.locator('.legend-dojo').count(),3,'Three real themed worlds');
+      assert.equal(await page.locator('.legend-dojo').count(),4,'Three themed Dojos plus Balance Master');
+       assert.equal(await page.locator('.nn-village-stage [data-mode-start="master"]').count(),1,'Balance Master is a real mixed context mode');
       assert.equal(await page.locator('.legend-dojo [data-world-enter]').count(),3);
        assert.equal(await page.locator('.nn-village-stage').isVisible(),true,'Illustrated world stage is visible');
-       assert.equal(await page.locator('.nn-village-gates').evaluate(el=>getComputedStyle(el).display),'flex','Responsive village must not regress to the old 3-card grid at tablet width');
+       assert.equal(await page.locator('.nn-village-gates').evaluate(el=>getComputedStyle(el).display),'grid','Responsive village uses the four-poster 2×2 world grid');
        assert.equal(await page.locator('.nn-village-gate-study').evaluate(el=>getComputedStyle(el).position),'relative','Tablet village uses themed dojo houses, not old image cards');
        assert.equal(await page.locator('.nn-village-landscape').count(),1,'One shared illustrated landscape');
       assert.equal(await page.locator('.legend-dojo [data-game-route="campaign"]').count(),0,'Dojo worlds must not navigate into campaign');
@@ -165,9 +178,9 @@ async function acknowledge(p){for(let n=0;n<20&&(await read(p)).mentor.open;n++)
      }
      if(width===1280){
       await page.locator('a[data-game-route="dojos"]:visible').click();await acknowledge(page);
-      assert.equal(await page.locator('.nn-village-gates').evaluate(el=>getComputedStyle(el).display),'block','Desktop must use the illustrated landscape, not the old 3-card grid');
-      assert.equal(await page.locator('.nn-village-gate-study').evaluate(el=>getComputedStyle(el).position),'absolute','Desktop dojo buildings are positioned on the interactive map');
-      assert((await page.locator('.nn-village-stage').boundingBox()).height>=650,'World village should have a full illustrated scene');
+      assert.equal(await page.locator('.nn-village-gates').evaluate(el=>getComputedStyle(el).display),'grid','Desktop uses the four-poster mint world selector');
+      assert.equal(await page.locator('.nn-village-gate-study').evaluate(el=>getComputedStyle(el).position),'relative','Desktop uses independent illustrated world posters');
+      assert((await page.locator('.nn-village-stage').boundingBox()).height>=500,'Four world posters remain clearly visible on desktop');
       await page.screenshot({path:path.join(output,'illustrated-village-desktop.png')});
       await goHome(page);await acknowledge(page);
       await page.locator('a[data-game-route="campaign"]:visible').click();await acknowledge(page);

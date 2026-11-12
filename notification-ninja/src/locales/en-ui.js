@@ -1,5 +1,11 @@
 /** English copy for the existing Ninja interface. Stable data IDs and player names are never translated. */
 export const EN_UI = Object.freeze({
+  "DEINE NINJA-WELTEN": "YOUR NINJA WORLDS",
+  "DREI DOJOS · EINE BONUSWELT": "THREE DOJOS · ONE BONUS WORLD",
+  "Deine Spielwelten": "Your game worlds",
+  "Balance-Master": "Balance Master",
+  "Runde starten": "Start round",
+  "Spielwelten": "Game worlds",
   "Spielnavigation auf dem Handy": "Mobile game navigation",
   "Spielwelten, Karriere und Basar sind im Menü. Konto und Einstellungen findest du im Profil.": "Worlds, Career and Bazaar are in the menu. Find your account and settings in Profile.",
   "Wische Ablenkungen weg. Behalte, was wichtig ist.": "Swipe distractions away. Keep what matters.",

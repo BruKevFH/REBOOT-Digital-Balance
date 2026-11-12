@@ -1,0 +1,69 @@
+/* Notification Ninja – mint illustrated landing, consistent with game UI. */
+:root{--ink:#0c2942;--paper:#fff7e8;--mint:#92ecc7;--coral:#fb8974;--gold:#ffd47c;--line:#8cbaaa;--muted:#536d69;--shadow:0 6px 0 #5f9d8d}
+html,body{scroll-behavior:smooth!important;background:#fff9eb!important;color:#12384c!important}
+body{background:radial-gradient(circle at 92% 7%,#f3e7bf 0,transparent 30%),radial-gradient(circle at 10% 19%,#d4f2df,transparent 32%),#fff9eb!important}
+body:before{background:linear-gradient(90deg,transparent 30%,#faf1d1 70%,transparent)!important;opacity:.55!important}
+.top-nav{background:#fff8e6ec;border-bottom:2px solid #a6d1bd!important;border-radius:0 0 23px 23px;padding:12px 18px!important;box-shadow:0 6px 0 #c6dec444}
+.top-nav .brand img{width:175px;height:75px;object-fit:contain;object-position:left center;filter:none!important}
+.top-nav .nav-links a{color:#194b4d!important;font-weight:850}
+.top-nav .nav-links a:hover{color:#0b9477!important}
+.top-nav .language-picker{background:#eaf8e8!important;border:2px solid #9bceb7!important}
+.top-nav .language-picker button{color:#24574f!important}
+.top-nav .language-picker button[aria-pressed=true]{background:#9eeac7!important;color:#133f43!important}
+.hero{min-height:0!important;padding:36px 0 52px!important;gap:35px!important}
+.nn-hero-logo{display:block;width:min(95%,440px);height:auto;max-height:187px;object-fit:contain;object-position:left;margin:-8px 0 18px}
+.hero h1{position:absolute;width:1px;height:1px;margin:-1px!important;padding:0!important;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.hero .eyebrow{color:#238c77!important;font-weight:950!important;letter-spacing:.14em!important}
+.hero-copy{color:#46635f!important;line-height:1.55!important;max-width:490px!important;font-size:clamp(15px,1.6vw,18px)!important}
+.hero .hero-note{max-width:500px;color:#658078!important;font-size:12px!important;line-height:1.45!important}
+.hero .hero-note strong{color:#1d7e70!important}
+.hero .hero-art{isolation:isolate}
+.hero .hero-art::before{background:linear-gradient(115deg,#d7f5e4,#ffe4b8)!important;border:3px solid #89b8a5!important;border-radius:34px!important;transform:rotate(1.3deg);box-shadow:0 12px 0 #b2d2ae6b}
+.hero .hero-art svg{filter:drop-shadow(0 8px 4px #103d4433)!important}
+.hero .art-tag{background:#fff3cf!important;color:#22534f!important;border:2px solid #70a994!important}
+.hero .button,.hero-actions .button{min-height:50px;border:3px solid #246a62!important;border-radius:18px!important;
+ background:linear-gradient(130deg,#a4f0d0,#65dcb5)!important;color:#123d49!important;
+ box-shadow:0 5px 0 #4c9483!important;font-size:14px;font-weight:1000}
+.hero .button.secondary{background:#fff4d9!important;border-color:#af9971!important;color:#29453f!important;box-shadow:0 5px 0 #c5ab84!important}
+.hero .guest-home-link{color:#1f786e!important;font-weight:900}
+.section{background:transparent!important}
+.section-heading h2,.section h2{color:#12394a!important;letter-spacing:-.045em!important}
+.section-heading p{color:#5a726e!important;max-width:680px;line-height:1.5}
+.section .eyebrow{color:#288979!important}
+.situation-grid{gap:16px!important}
+.situation-card{position:relative;overflow:hidden;border:3px solid #80bba9!important;border-radius:23px!important;
+ background:#fff8e8!important;box-shadow:0 6px 0 #96bea9!important;color:#173e4a!important;
+ padding-top:165px!important}
+.situation-card:before{content:"";position:absolute;top:0;left:0;right:0;height:165px;background-size:cover;background-position:center}
+.situation-card:nth-child(1):before{background-image:url('./assets/dojo-study-v5.svg')}
+.situation-card:nth-child(2):before{background-image:url('./assets/dojo-gaming-v5.svg')}
+.situation-card:nth-child(3):before{background-image:url('./assets/dojo-sleep-v5.svg')}
+.situation-card:nth-child(1){border-color:#78b8a0!important}
+.situation-card:nth-child(2){border-color:#a47cc7!important}
+.situation-card:nth-child(3){border-color:#8ca4d8!important}
+.situation-card .situation-head{margin-top:12px}
+.situation-card .situation-head h3{color:#183b4b!important}
+.situation-card>p,.context-cta{color:#536a69!important}
+.village-preview{border:3px solid #77a998!important;border-radius:25px!important;box-shadow:0 6px 0 #a4c1a4}
+.village-preview img{object-fit:cover}
+.section .button{background:#9bebc8!important;color:#173f49!important}
+footer{background:transparent!important;color:#4c6967!important}
+@media(max-width:760px){
+ .shell{width:min(100% - 26px,560px)!important}
+ .top-nav{padding:10px 12px!important;gap:8px!important}
+ .top-nav .brand img{width:135px;height:58px}
+ .top-nav .nav-links{display:none!important}
+ .hero{padding:21px 0 28px!important;gap:16px!important}
+ .nn-hero-logo{width:min(92%,315px);margin:0 0 8px;max-height:130px}
+ .hero-copy{font-size:14px!important;line-height:1.55!important}
+ .hero-actions{margin:14px 0!important;gap:9px}
+ .hero .button{min-height:49px!important;padding:9px 13px!important}
+ .hero .hero-note{font-size:11px!important}
+ .hero-art{max-width:440px;width:100%;margin:auto}
+ .section-heading>div>p{display:none}
+ .situation-grid{grid-template-columns:1fr!important;gap:15px!important}
+ .situation-card{min-height:0!important;padding-top:119px!important}
+ .situation-card:before{height:120px}
+ .situation-card p{font-size:12px!important}
+}
+@media(prefers-reduced-motion:reduce){.hero *, .section *{transition:none!important;animation:none!important}}
