@@ -54,6 +54,37 @@ export function legendaryModes({account=false}={}){
  </div>`;
 }
 
+
+/* One true play portal. Old modes / dojos deep-links both render this same screen. */
+export function legendaryUnifiedPlay({account=false}={}){
+ const main=[
+  {kind:'boss',title:'Boss Rush',meta:'☠ ☠ ☠',mode:'boss-rush',image:'./assets/ninja-mint-boss-v9.svg',icon:'⚔',action:'Boss Rush starten'},
+  {kind:'daily',title:'Tages-Challenge',meta:'✓  ●  ●',mode:'daily',image:'./assets/ninja-mint-daily-v9.svg',icon:'▣',action:'Tages-Challenge starten'},
+  {kind:'zen',title:'Zen-Training',meta:'✿  ●  ●',route:'practice',image:'./assets/ninja-mint-zen-v9.svg',icon:'✿',action:'Zen-Training starten'},
+  {kind:'weekly',title:'Wochenziele',meta:'✓  ✓  ◯',route:'weekly',image:'./assets/ninja-mint-weekly-v9.svg',icon:'★',action:'Wochenziele ansehen'}
+ ];
+ const banners=main.map((m,i)=>`<button class="nn-ref-mode nn-ref-mode-${m.kind}" type="button" ${m.route?`data-game-route="${m.route}"`:`data-mode-start="${m.mode}"`} aria-label="${esc(m.action)}">
+   <span class="nn-ref-mode-scene" aria-hidden="true"><img src="${m.image}" alt="" loading="lazy"></span>
+   <span class="nn-ref-mode-emblem" aria-hidden="true">${m.icon}</span>
+   <span class="nn-ref-mode-text"><strong>${esc(m.title)}</strong><small aria-hidden="true">${m.meta}</small></span>
+   <span class="nn-ref-mode-play" aria-hidden="true">▶</span>
+  </button>`).join('');
+ return `<div class="nn-unified-play" data-unified-play="true">
+    <div class="nn-ref-cover" aria-hidden="true"><img class="nn-ref-logo" src="./assets/ninja-mint-logo-v9.svg" alt="" loading="eager"><span class="nn-cover-fuji">富士</span><span class="nn-ref-sakura">✿ ✿ ✿</span></div>
+    <section class="nn-ref-section nn-ref-modes" aria-label="Spielmodi">
+      <header class="nn-ref-heading"><span class="nn-ref-heading-ornament" aria-hidden="true">✥</span><h3>SPIELMODI</h3><span class="nn-ref-heading-rule" aria-hidden="true">◆</span></header>
+      <div class="nn-ref-mode-list">${banners}</div>
+    </section>
+    ${legendaryDojos()}
+    <details class="nn-ref-more-modes"><summary><span>Weitere Abenteuer</span><small>Ein ganzer Tag · Open Run</small><span aria-hidden="true">⌄</span></summary>
+     <div class="nn-ref-bonus-list">
+      <button type="button" data-mode-start="campaign"><img src="./assets/ninja-mint-day-v9.svg" alt="" loading="lazy"><span><strong>Ein ganzer Tag</strong><small>Lernen · Gaming · Schlaf</small></span><b aria-hidden="true">▶</b></button>
+      <button type="button" data-mode-start="open"><img src="./assets/ninja-mint-open-v9.svg" alt="" loading="lazy"><span><strong>Open Run</strong><small>Endlos · 3 Herzen</small></span><b aria-hidden="true">▶</b></button>
+     </div>
+    </details>
+  </div>`;
+}
+
 export const WORLD_DETAILS=Object.freeze({
  study:{title:'Lern-Dojo',subtitle:'Tal des Fokus',tag:'RUHIGER TAG',art:'./assets/dojo-study-v5.svg',symbol:'文',
   story:'Zwischen Bambus und Wasser lernst du, Benachrichtigungen bewusst auszuwählen. Hier zählt dein Ziel – nicht der lauteste Hinweis.',
