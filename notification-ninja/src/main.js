@@ -131,7 +131,7 @@ function modesMenu(){
 let currentWorld='study';
 function dojosMenu(){
   if(ui!=='dojos'&&!openMenu('dojos'))return;
-  dialog('Die drei Spielwelten',legendaryDojos(),'',{label:'LERNE · SPIELE · RUHE DICH AUS',classes:'legend-dojos-panel'});
+  dialog('Deine Spielwelten',legendaryDojos(),'',{label:'DREI DOJOS · EINE BONUSWELT',classes:'legend-dojos-panel'});
 }
 function worldDetailsMenu(context='study'){
   if(!['study','gaming','sleep'].includes(context))return;
@@ -231,7 +231,7 @@ function dialog(title,body,actions,{label='NOTIFICATION NINJA',classes=''}={}){
   const backLabel=ui==='onboarding'?'Startseite':ui==='paused'?'Weiterspielen':'Zurück';
   const sections={modes:'SPIELMODI',dojos:'SPIELWELTEN',career:'KARRIEREKARTE',shop:'NINJA-BASAR',leaderboard:'RANGLISTE',settings:'EINSTELLUNGEN',profile:'PROFIL',achievements:'ERFOLGE',weekly:'WOCHENZIELE',abilities:'FÄHIGKEITEN',results:'RUNDE BEENDET',onboarding:'DEIN NINJA'};
   const navigableMenu=['modes','dojos','world','career','shop','leaderboard','profile','settings','weekly','abilities','achievements','notifications','highscores','help','skins'].includes(ui);
-   const header=`<header class="panel-header arcade-sticky-header"><button class="panel-back" data-action="nav-back" aria-label="${backLabel}"><span aria-hidden="true">←</span> ${backLabel}</button><span class="panel-header-title">${sections[ui]||'NOTIFICATION NINJA'}</span></header>`;
+   const header=`<header class="panel-header arcade-sticky-header"><button class="panel-back" data-action="nav-back" aria-label="${backLabel}"><span aria-hidden="true">←</span> ${backLabel}</button><img class="nn-panel-crest" src="./assets/ninja-mint-logo-v9.svg" alt="" aria-hidden="true"><span class="panel-header-title">${sections[ui]||'NOTIFICATION NINJA'}</span></header>`;
   $('overlay-root').innerHTML=`<div class="modal-shade"><section class="panel ${classes}" role="dialog" aria-modal="${navigableMenu?'false':'true'}" aria-labelledby="dialog-title">${header}<div class="eyebrow">${label}</div><h2 id="dialog-title">${title}</h2>${body}${actions?`<div class="overlay-actions">${actions}</div>`:''}</section></div>`;
   applyTheme();
   $('overlay-root').querySelector('button:not(:disabled),input')?.focus({preventScroll:true});
@@ -491,7 +491,7 @@ function renderPlayerOverview(){const p=game.profile,progress=getPlayerProgress(
 function examples(context){const c=contexts[context]||contexts.study;return `<div class="briefing-items"><div><span class="item-tag is-distraction">JETZT ABWEHREN</span><p>${c.slice.map(escape).join(' · ')}</p></div><div><span class="item-tag is-useful">JETZT DURCHLASSEN</span><p>${c.pass.map(escape).join(' · ')}</p></div></div>`}
 function briefing(){
   if(['boss','boss-rush'].includes(game.state.mode)){bossBriefing();return;}
-  const s=game.state,c=contexts[s.context]||contexts.study;scene('briefing');const stageStats=s.metrics?.stageStats||[],previous=stageStats[stageStats.length-1];
+  const s=game.state,c=contexts[s.context]||contexts.study;document.body.dataset.ninjaRoom=['study','gaming','sleep'].includes(s.context)?s.context:'balance';scene('briefing');const stageStats=s.metrics?.stageStats||[],previous=stageStats[stageStats.length-1];
   const example=s.context==='gaming'?'Zum Beispiel: Ein Team-Signal darf bleiben. Den endlosen Video-Feed schneidest du weg.':s.context==='sleep'?'Zum Beispiel: Ein Kissen darf bleiben. Noch ein Video schneidest du weg.':'Zum Beispiel: Dein Lernheft darf bleiben. Autoplay schneidest du weg.';
   const summary=previous?`<span class="briefing-last">Letzter Abschnitt: ${Number(previous.score??previous.scoreArcade??0).toLocaleString(getLocale())} Punkte</span>`:'';
   const rule=s.mode==='daily'?`60 Sekunden, drei Herzen und gleiche Bedingungen. ${s.dailyChallenge?.practice?'Lokale Tagesübung · ungewertet':'Serverdatum (UTC)'}: ${s.dailyChallenge?.day||''}`:s.mode==='open'?'Kein Zeitlimit: Das Tempo steigt immer weiter, bis deine Herzen aufgebraucht sind. Für einen fairen Vergleich bleiben gekaufte Fähigkeiten und Supers in diesem Modus aus.':s.isTutorial?'Ziehe mit gedrückter Maustaste oder mit dem Finger durch Ablenkungen. Lass hilfreiche Dinge bis zum oberen Rand fliegen.':s.levelIndex===1?`Dein Zeitfenster: ${s.missionId?s.duration:s.gamingLimit} Sekunden. Am Ende entscheidest du, ob du bewusst aufhörst.`:s.levelIndex===2?'Eine bewusste Pause zählt. Du kannst die Nacht früh abschließen oder einmal den Bonus ausprobieren.':'Bleib bei deinem Ziel. Das Tempo nimmt während der Runde spürbar zu.';
