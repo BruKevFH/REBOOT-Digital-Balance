@@ -145,7 +145,8 @@ async function acknowledge(p){for(let n=0;n<20&&(await read(p)).mentor.open;n++)
      if(width===768){
       await page.locator('a[data-game-route="dojos"]:visible').click();await acknowledge(page);
       assert.equal((await read(page)).ui,'dojos','Dojo navigation opens illustrated worlds');
-      assert.equal(await page.locator('.legend-dojo').count(),3,'Three real themed worlds');
+      assert.equal(await page.locator('.legend-dojo').count(),4,'Three themed Dojos plus Balance Master');
+       assert.equal(await page.locator('.nn-village-stage [data-mode-start="master"]').count(),1,'Balance Master is a real mixed context mode');
       assert.equal(await page.locator('.legend-dojo [data-world-enter]').count(),3);
        assert.equal(await page.locator('.nn-village-stage').isVisible(),true,'Illustrated world stage is visible');
        assert.equal(await page.locator('.nn-village-gates').evaluate(el=>getComputedStyle(el).display),'flex','Responsive village must not regress to the old 3-card grid at tablet width');
