@@ -135,7 +135,8 @@ async function acknowledge(p){for(let n=0;n<20&&(await read(p)).mentor.open;n++)
       const before=await page.locator('.nn-play-topbar').evaluate(el=>el.getBoundingClientRect().top);
       await page.locator('.nn-play-panel').evaluate(el=>el.scrollTop=340);
       const after=await page.locator('.nn-play-topbar').evaluate(el=>el.getBoundingClientRect().top);
-      assert(Math.abs(before-after)<5,'Back and Overview remain at top when scrolling');
+      const panelTop=await page.locator('.nn-play-panel').evaluate(el=>el.getBoundingClientRect().top);
+      assert(after<=before+1&&after>=panelTop-4&&after<=panelTop+8,'Illustrated masthead scrolls away while Back remains sticky and reachable');
       await goHome(page);await page.locator('a[data-game-route="play"]:visible').click();await acknowledge(page);
       assert.equal((await read(page)).ui,'play','Worlds portal opens real illustrated worlds');
       await goHome(page);await page.locator('a[data-game-route="play"]:visible').click();await acknowledge(page);assert.equal((await read(page)).ui,'play','Modes remain available from their unique navigation tab');
