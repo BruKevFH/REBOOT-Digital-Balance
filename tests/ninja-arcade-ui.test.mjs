@@ -22,8 +22,8 @@ test('two illustrated primary portals and four purposeful secondary arcade modes
  assert(!html.includes('data-game-route="campaign"'));
  assert(!html.includes('data-game-route="dojos"'));
  assert.equal((html.match(/class="arcade-scene"/g)||[]).length,2);
- assert(html.includes('./assets/focus-village.png'));
- assert(html.includes('./assets/dojo-gaming.svg'));
+ assert(html.includes('./assets/ninja-mint-day-v9.svg'));
+ assert(html.includes('./assets/ninja-mint-open-v9.svg'));
  assert(html.includes('Gemeinsame Herausforderung nach Serverzeit'));
  assert(!html.includes('Eine kurze Alltagssituation'));
  assert(!html.includes('Zurück zum Dojo'));
@@ -68,7 +68,8 @@ test('actual dojo assets exist and the map shows a progress-aware character',()=
  assert(html.includes('nn-career-sidebar'));
  const worlds=legendaryDojos({missions,worlds:['study']});
  assert(worlds.includes('src="./assets/dojo-gaming-v5.svg"'));
- assert.equal((worlds.match(/class="legend-dojo legend-dojo-/g)||[]).length,3);
+ assert.equal((worlds.match(/class="legend-dojo legend-dojo-/g)||[]).length,4);
+  assert(worlds.includes('data-mode-start="master"'),'Balance Master starts the real mixed context mode');
 });
 test('theme and new labels have explicit English localization',()=>{
  setLanguage('en');
