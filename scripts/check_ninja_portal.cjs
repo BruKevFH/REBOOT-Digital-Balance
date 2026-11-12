@@ -178,9 +178,9 @@ async function acknowledge(p){for(let n=0;n<20&&(await read(p)).mentor.open;n++)
      }
      if(width===1280){
       await page.locator('a[data-game-route="dojos"]:visible').click();await acknowledge(page);
-      assert.equal(await page.locator('.nn-village-gates').evaluate(el=>getComputedStyle(el).display),'block','Desktop must use the illustrated landscape, not the old 3-card grid');
-      assert.equal(await page.locator('.nn-village-gate-study').evaluate(el=>getComputedStyle(el).position),'absolute','Desktop dojo buildings are positioned on the interactive map');
-      assert((await page.locator('.nn-village-stage').boundingBox()).height>=650,'World village should have a full illustrated scene');
+      assert.equal(await page.locator('.nn-village-gates').evaluate(el=>getComputedStyle(el).display),'grid','Desktop uses the four-poster mint world selector');
+      assert.equal(await page.locator('.nn-village-gate-study').evaluate(el=>getComputedStyle(el).position),'relative','Desktop uses independent illustrated world posters');
+      assert((await page.locator('.nn-village-stage').boundingBox()).height>=500,'Four world posters remain clearly visible on desktop');
       await page.screenshot({path:path.join(output,'illustrated-village-desktop.png')});
       await goHome(page);await acknowledge(page);
       await page.locator('a[data-game-route="campaign"]:visible').click();await acknowledge(page);
