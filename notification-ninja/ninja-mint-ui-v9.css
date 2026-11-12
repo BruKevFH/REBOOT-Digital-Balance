@@ -1,0 +1,283 @@
+/* Notification Ninja – Mint Adventure visual system, 12 Nov 2026.
+   Visual presentation only: mission IDs, route actions, purchases and accounts are unchanged. */
+:root{--nn-cream:#fff8e9;--nn-ink:#0d2942;--nn-jade:#62dbb0;--nn-coral:#ff8473;--nn-gold:#ffcf72;--nn-pearl:#f8ebce;--nn-edge:#286f67}
+@keyframes nnMintFloat{0%,100%{translate:0 0}50%{translate:0 -5px}}
+@keyframes nnMintPetal{0%{transform:translate3d(-10px,-20px,0) rotate(0);opacity:0}18%{opacity:1}100%{transform:translate3d(90px,160px,0) rotate(250deg);opacity:0}}
+@keyframes nnMintSpark{0%,100%{opacity:.36;transform:scale(.8)}50%{opacity:1;transform:scale(1.2)}}
+@keyframes nnMintButton{0%,100%{box-shadow:0 5px 0 #338779,0 10px 22px #112b4055}50%{box-shadow:0 5px 0 #338779,0 0 20px #83e7c8aa}}
+/* Unified parchment, cartoon ink and jade chrome. Retain dark/noir settings via color variables. */
+html[data-ninja-theme=relaxed]{
+ --ar-page:#f9f4e8;--ar-page-glow:#fff1d4;--ar-panel:#fff9ed;
+ --ar-ink:#0c2b42;--ar-muted:#5a6b69;--ar-border:#85b9a7;
+ --ar-nav:#eaf8ec;--ar-nav-ink:#104744;--ar-header:#eaf7ed;
+ --ar-accent:#177d6c;--ar-accent-soft:#b6efda;--ar-gold:#f8c86c;
+ --ar-shadow:#194e4e24;
+}
+html[data-ninja-theme] .panel{border-radius:27px!important;border:3px solid var(--ar-border,#7bb8a5)!important;
+ background:var(--ar-panel,#fff7e8)!important;box-shadow:0 12px 0 #153f5030,0 28px 62px #09243e40!important;overflow-x:hidden}
+html[data-ninja-theme] .panel .eyebrow{color:var(--ar-accent)!important;font-weight:950;letter-spacing:.13em}
+html[data-ninja-theme] .panel h2#dialog-title{font-size:clamp(25px,3.4vw,43px)!important;letter-spacing:-.045em;line-height:1.12!important;font-weight:1000}
+html[data-ninja-theme] .arcade-sticky-header{
+ min-height:80px!important;background:var(--ar-header)!important;border-bottom:3px solid var(--ar-border)!important;
+ padding:9px 17px!important;gap:14px!important;
+}
+.nn-panel-crest{display:block;width:140px;max-width:31%;height:60px;object-fit:contain;object-position:left center;flex:none}
+html[data-ninja-theme] .panel-header-title{font-weight:1000!important;letter-spacing:.12em!important;font-size:clamp(12px,2vw,21px)!important;color:var(--ar-ink)!important}
+html[data-ninja-theme] .panel-back{min-height:48px!important;border:3px solid var(--ar-accent)!important;
+ border-radius:16px!important;background:var(--ar-panel)!important;color:var(--ar-ink)!important;
+ font-weight:950!important;box-shadow:0 4px 0 #5b9687!important}
+html[data-ninja-theme] .btn.primary,html[data-ninja-theme] .legend-button-primary{
+ border:3px solid #145d52!important;border-radius:18px!important;background:linear-gradient(135deg,#9af1ce,#49cfb1)!important;
+ color:#0c3546!important;font-weight:1000!important;box-shadow:0 5px 0 #368b78,0 12px 21px #205b5940!important;
+}
+html[data-ninja-theme] .btn.primary:hover:not(:disabled),html[data-ninja-theme] .legend-button-primary:hover:not(:disabled){filter:brightness(1.07);transform:translateY(-2px)}
+html[data-ninja-theme] .btn.ghost{border:2px solid var(--ar-border)!important;border-radius:15px!important;background:var(--ar-panel)!important;color:var(--ar-ink)!important}
+html[data-ninja-theme] .shop-panel,.nn-profile-panel,.weekly-panel,.result-panel,.legend-leaderboard-panel,.legend-career-panel,.legend-modes-panel,.legend-dojos-panel,.world-detail-panel{
+ --nn-current-ink:var(--ar-ink);color:var(--ar-ink)!important
+}
+/* Adventure section headers without repeated text blocks. */
+.arcade-mode-banner{background:linear-gradient(110deg,#e2f6e7,#fff4d9)!important;
+ min-height:95px!important;border:2px solid #86b9a6!important;border-radius:25px!important;padding:14px 19px!important;
+ box-shadow:0 6px 0 #9bb7a67a}
+.arcade-mode-banner:before{opacity:.2}
+.arcade-mode-banner h3{font-size:clamp(25px,3.6vw,43px)!important;line-height:1.08!important}
+.arcade-mode-banner h3 em{color:#13a087!important}
+.arcade-mode-banner>p,.arcade-mode-banner .arcade-world-signs,.arcade-mode-footer,
+.arcade-mode-section-head .arcade-section-hint{display:none!important}
+.arcade-mode-section-head{margin:16px 0 9px!important;gap:5px}
+.arcade-mode-section-head h4{font-weight:1000!important;letter-spacing:-.03em;font-size:clamp(17px,2.1vw,24px)!important}
+.arcade-mode-section-head .arcade-section-index{color:var(--ar-accent)!important}
+/* Illustrated hero modes use landscape posters with short, high-contrast text. */
+html[data-ninja-theme] .arcade-mode-portals{grid-template-columns:repeat(2,minmax(0,1fr));gap:13px!important}
+html[data-ninja-theme] .arcade-mode-portal{height:276px!important;border:3px solid #24796e!important;border-radius:23px!important;
+ box-shadow:0 7px 0 #3b826e,0 15px 25px #143c4c33!important;overflow:hidden;background:#d9f3e8!important}
+.arcade-mode-portal .arcade-scene{inset:0!important;height:100%!important;border-radius:0!important}
+.arcade-mode-portal .arcade-scene img{width:100%!important;height:100%!important;object-fit:cover!important;filter:saturate(1.2)!important}
+.arcade-mode-portal .arcade-scene:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#09223dce 0%,#09223d66 53%,transparent);pointer-events:none}
+.arcade-mode-portal .arcade-portal-content{position:absolute!important;inset:0!important;z-index:3;justify-content:end!important;gap:6px!important;
+ padding:16px 18px!important;background:transparent!important;pointer-events:none;color:#fff8e6!important}
+.arcade-mode-portal .arcade-portal-title strong{color:#fff7e4!important;text-shadow:0 2px 5px #061c31;font-weight:1000!important;font-size:clamp(23px,3.4vw,39px)!important}
+.arcade-mode-portal .arcade-portal-description,.arcade-mode-portal .legend-mode-meta{display:none!important}
+.arcade-mode-portal .arcade-portal-index span{color:#fff4d4!important}
+.arcade-mode-portal .arcade-portal-cta{width:max-content;max-width:100%;min-height:48px;border:3px solid #275f59!important;
+ border-radius:16px!important;background:#79e5be!important;color:#0d3445!important;box-shadow:0 5px 0 #2c897b;font-weight:1000!important}
+.arcade-mode-portal.legend-mode-open .arcade-portal-cta{background:#ffce7e!important;border-color:#987347!important;box-shadow:0 5px 0 #a66f4d}
+.arcade-mode-portal .nn-play-glyph{font-size:16px;color:inherit}
+.arcade-mode-portal .arcade-scene-cloud,.arcade-mode-portal .arcade-scene-stars,.arcade-mode-portal .arcade-scene-gate{display:none!important}
+/* Quest mode banners, each with its own illustration on the left. */
+html[data-ninja-theme] .arcade-mode-quests{display:grid!important;grid-template-columns:1fr!important;gap:12px!important}
+html[data-ninja-theme] .arcade-mode-quest{
+ position:relative!important;isolation:isolate;overflow:hidden;display:grid!important;
+ grid-template-columns:minmax(0,41%) minmax(0,1fr) 57px!important;align-items:center!important;
+ gap:15px!important;min-height:158px!important;padding:0 13px 0 0!important;
+ border:3px solid #237a72!important;border-radius:25px!important;
+ background:linear-gradient(105deg,#f2e8ce,#fff6e5)!important;color:#0d2942!important;
+ box-shadow:0 6px 0 #8aa69d,0 12px 23px #153d492e!important;
+}
+.arcade-mode-quest::after{content:none!important}
+.arcade-mode-quest .nn-quest-scene{grid-column:1;grid-row:1;position:relative;display:block;width:100%;height:100%;min-height:150px;
+ overflow:hidden;border-radius:21px 38% 38% 21px!important;background:#ceece4}
+.arcade-mode-quest .nn-quest-scene img{width:100%;height:100%;position:absolute;inset:0;object-fit:cover;object-position:center;transition:scale .3s}
+.arcade-mode-quest:hover .nn-quest-scene img{scale:1.055}
+.arcade-mode-quest .arcade-quest-symbol{position:absolute!important;z-index:2;left:12px;bottom:10px;width:51px;height:51px;
+ border-radius:16px!important;border:3px solid #123f50!important;background:#fff4cdea!important;box-shadow:0 4px 0 #567d79}
+.arcade-mode-quest .arcade-quest-symbol svg{color:#23776f!important;width:29px;height:29px}
+.arcade-mode-quest .arcade-quest-symbol-bg{display:none!important}
+html[data-ninja-theme] .arcade-mode-quest .legend-mode-info{grid-column:2;grid-row:1;z-index:2;gap:7px!important;padding:6px 0;min-width:0}
+.arcade-mode-quest .arcade-quest-level{font-size:10px!important;letter-spacing:.1em!important;color:#258578!important;font-weight:950!important}
+html[data-ninja-theme] .arcade-mode-quest .legend-mode-info strong{color:#122b42!important;font-size:clamp(21px,3vw,33px)!important;
+ line-height:1.08!important;letter-spacing:-.04em;font-weight:1000!important}
+html[data-ninja-theme] .arcade-mode-quest .legend-mode-info small{color:#596962!important;font-size:clamp(11px,1.5vw,15px)!important;
+ line-height:1.34!important;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+html[data-ninja-theme] .arcade-mode-quest .legend-mode-info em{display:inline-flex;width:max-content;max-width:100%;background:#cfefde;
+ border-radius:19px;padding:5px 10px;color:#1d705f!important;font-size:11px!important;white-space:normal}
+.arcade-mode-quest .arcade-quest-arrow{grid-column:3;grid-row:1;z-index:3;display:grid;place-items:center;min-width:48px;min-height:48px;
+ border:3px solid #174f55;border-radius:50%;font-size:20px;font-weight:900;background:#93efc8;color:#103a43!important;
+ box-shadow:0 4px 0 #439b89}
+.arcade-mode-quest.legend-mode-boss .nn-quest-scene{background:#33224f}
+.arcade-mode-quest.legend-mode-boss .arcade-quest-arrow{background:#ffbf82}
+.arcade-mode-quest.legend-mode-zen .arcade-quest-arrow{background:#d9bef7}
+.arcade-mode-quest.legend-mode-weekly .arcade-quest-arrow{background:#ffdb83}
+/* Four posters replace overlapping pseudo-3D houses: screenshot-inspired two-column card grid. */
+html[data-ninja-theme] .nn-mint-world-selector .nn-village-title{text-align:center;padding:11px 8px 18px!important}
+html[data-ninja-theme] .nn-mint-world-selector .nn-village-title h3{font-size:clamp(26px,4vw,43px)!important;letter-spacing:-.05em!important;
+ color:var(--ar-ink)!important;margin:5px 0!important}
+.nn-mint-world-selector .nn-village-title>p{margin:0!important;font-size:12px!important}
+html[data-ninja-theme] .nn-mint-world-stage{min-height:0!important;overflow:visible!important;background:transparent!important;
+ border:0!important;border-radius:0!important;box-shadow:none!important;padding:4px!important}
+html[data-ninja-theme] .nn-mint-world-stage:after,.nn-mint-world-stage>.nn-village-landscape,
+.nn-mint-world-stage>.nn-village-sun,.nn-mint-world-stage>.nn-village-moon,
+.nn-mint-world-stage>.nn-village-guide,.nn-mint-world-stage>.nn-village-water-label,
+.nn-mint-world-stage>.nn-landscape-petal{display:none!important}
+html[data-ninja-theme] .nn-mint-world-selector .nn-mint-world-grid{
+ position:relative!important;z-index:1;inset:auto!important;top:auto!important;left:auto!important;right:auto!important;bottom:auto!important;
+ display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:16px!important;
+ width:100%!important;max-width:1100px!important;height:auto!important;margin:0 auto!important;padding:0!important;
+}
+html[data-ninja-theme] .nn-mint-world-grid .nn-world-poster,
+html[data-ninja-theme] .nn-mint-world-grid .nn-village-gate{
+ position:relative!important;top:auto!important;left:auto!important;right:auto!important;bottom:auto!important;
+ width:100%!important;min-width:0!important;height:294px!important;flex:none!important;
+ padding:0!important;margin:0!important;border:3px solid #236e73!important;border-radius:25px!important;
+ background:#d8f3e7!important;overflow:hidden!important;animation:none!important;
+ box-shadow:0 6px 0 #83aa99,0 14px 23px #18404b33!important;
+}
+html[data-ninja-theme] .nn-mint-world-grid .nn-world-poster-button{
+ position:relative!important;inset:auto!important;display:block!important;width:100%!important;height:100%!important;
+ border:0!important;padding:0!important;box-shadow:none!important;background:transparent!important;
+}
+html[data-ninja-theme] .nn-mint-world-grid .nn-world-poster .nn-world-poster-art{
+ display:block!important;position:absolute!important;inset:0!important;top:0!important;left:0!important;
+ width:100%!important;height:100%!important;min-height:0!important;margin:0!important;overflow:hidden!important;
+ border:0!important;border-radius:0!important;box-shadow:none!important;filter:none!important
+}
+html[data-ninja-theme] .nn-mint-world-grid .nn-world-poster-art img{
+ display:block;width:100%!important;height:100%!important;object-fit:cover!important;filter:saturate(1.14) brightness(1.04)!important;
+ object-position:center center!important;transition:transform .3s!important
+}
+.nn-mint-world-grid .nn-world-poster-button:hover .nn-world-poster-art img{transform:scale(1.045)!important}
+html[data-ninja-theme] .nn-mint-world-grid .nn-world-poster .nn-house-roof,
+html[data-ninja-theme] .nn-mint-world-grid .nn-world-poster .nn-house-plaque,
+html[data-ninja-theme] .nn-mint-world-grid .nn-world-poster .nn-world-scenery,
+html[data-ninja-theme] .nn-mint-world-grid .nn-world-poster .nn-house-halo,
+html[data-ninja-theme] .nn-mint-world-grid .nn-world-poster .nn-house-lantern{display:none!important}
+html[data-ninja-theme] .nn-mint-world-grid .nn-world-poster .nn-world-poster-foot{
+ position:absolute!important;z-index:4;bottom:0!important;left:0!important;width:100%!important;height:auto!important;
+ min-height:105px!important;display:flex!important;flex-direction:column!important;align-items:center;justify-content:end!important;
+ gap:8px!important;padding:17px 10px 15px!important;margin:0!important;
+ border:0!important;border-radius:0!important;background:linear-gradient(180deg,transparent,#0b2540e8 30%,#0b2540f4)!important;
+ box-shadow:none!important;color:#fff7e6!important
+}
+.nn-mint-world-grid .nn-world-poster-foot>.legend-kicker{display:none!important}
+.nn-mint-world-grid .nn-world-poster-foot>strong{font-weight:1000!important;font-size:clamp(20px,2.7vw,29px)!important;
+ letter-spacing:-.04em;text-shadow:0 3px 9px #051a2c;color:#fffaf0!important}
+.nn-mint-world-grid .nn-world-poster-foot .nn-house-action{
+ display:flex;align-items:center;justify-content:center;gap:12px;min-height:42px;min-width:145px;max-width:97%;
+ padding:5px 15px;border:2.5px solid #275a5b;border-radius:20px;
+ font-size:clamp(11px,1.5vw,15px)!important;font-weight:1000!important;
+ color:#0d3044!important;background:#abefd0!important;
+ box-shadow:0 4px 0 #348c7d!important
+}
+.nn-mint-world-grid .nn-village-gate-gaming .nn-house-action{background:#ff9bce!important;border-color:#96396f;box-shadow:0 4px 0 #a54591!important}
+.nn-mint-world-grid .nn-village-gate-sleep .nn-house-action{background:#aec7ff!important;border-color:#5469a5;box-shadow:0 4px 0 #536dba!important}
+.nn-mint-world-grid .nn-village-gate-balance .nn-house-action{background:#ffda83!important;border-color:#9b6f3a;box-shadow:0 4px 0 #ae8449!important}
+.nn-mint-world-grid .nn-village-gate-gaming{border-color:#8e4db6!important}
+.nn-mint-world-grid .nn-village-gate-sleep{border-color:#567bc2!important}
+.nn-mint-world-grid .nn-village-gate-balance{border-color:#387f7b!important}
+.nn-mint-world-grid .nn-world-poster-button:focus-visible{outline:5px solid #ffe286!important;outline-offset:-6px!important}
+/* Career map, results, collection, profile, shop and leaderboard share one comic-card language. */
+html[data-ninja-theme] .nn-career-intro,.nn-profile-identity,.weekly-period,.shop-panel .shop-awning,
+.legend-leaderboard-panel .legend-leaderboard-hero,.result-panel .result-hero{
+ border:3px solid #649e92!important;border-radius:24px!important;background:linear-gradient(125deg,#dff6e8,#fff5df)!important;
+ box-shadow:0 6px 0 #6b97874f!important;color:#173b4c!important;
+}
+html[data-ninja-theme] .nn-career-adventure .nn-career-chapter-cover{border:3px solid #376f6c!important;
+ border-radius:20px!important;box-shadow:0 5px 0 #7ea797!important;
+ background:linear-gradient(120deg,#fff5d7,#daf1db)!important}
+html[data-ninja-theme] .nn-career-adventure .nn-career-chapter-label h4{color:#163c4e!important}
+html[data-ninja-theme] .nn-career-adventure .nn-career-chapter-label span,
+html[data-ninja-theme] .nn-career-adventure .nn-career-chapter-label small{color:#377770!important}
+html[data-ninja-theme] .nn-career-detail{
+ border:3px solid #397f72!important;border-radius:23px!important;
+ background:linear-gradient(132deg,#fff7de,#e7f7e5)!important;box-shadow:0 7px 0 #7ca890!important}
+html[data-ninja-theme] .nn-career-start{background:linear-gradient(125deg,#6be1b9,#a1f1d0)!important;
+ border-color:#257e70!important;box-shadow:0 5px 0 #4e9f8d!important;color:#0b3444!important}
+html[data-ninja-theme] .nn-career-node.is-ready .nn-career-node-number{
+ background:linear-gradient(#fff1b8,#f7c46f)!important;border-color:#8c6a3c!important}
+html[data-ninja-theme] .shop-panel .shop-card,html[data-ninja-theme] .weekly-card,
+html[data-ninja-theme] .nn-profile-facts>div,html[data-ninja-theme] .nn-profile-section,
+html[data-ninja-theme] .achievement-card,html[data-ninja-theme] .skill-card{
+ border:2.5px solid #a7c5b2!important;border-radius:21px!important;
+ background:#fffbef!important;color:#213d48!important;box-shadow:0 5px 0 #afc8b5!important;overflow:hidden
+}
+html[data-ninja-theme] .shop-panel .shop-preview{background:linear-gradient(125deg,#a9e7d1,#f9e2b8)!important}
+html[data-ninja-theme] .shop-panel .shop-awning{color:#12394a!important}
+html[data-ninja-theme] .shop-panel .shop-awning>strong{color:#133d47!important}
+html[data-ninja-theme] .shop-panel .shop-tabs>button.is-active{background:#9aefd0!important;color:#0c3945!important;border-color:#298573!important}
+html[data-ninja-theme] .nn-round-reward>div{border-radius:22px!important}
+html[data-ninja-theme] .nn-celebration{border:4px solid #176c64!important;background:linear-gradient(120deg,#ecf9e0,#fff5cf 68%,#ffe5b1)!important;color:#13394a!important}
+html[data-ninja-theme] .result-panel .result-summary>article{border-radius:20px!important}
+html[data-ninja-theme] .leaderboard-row{border-color:var(--ar-border)!important}
+/* Home and play HUD use the same visual identity; no interference with hit detection. */
+html[data-ninja-theme] .home{background:var(--ar-page)!important;color:var(--ar-ink)!important}
+html[data-ninja-theme=relaxed] .home:before{opacity:.22}
+html[data-ninja-theme] .ninja-hub{border:3px solid #7cb6a2!important;border-radius:25px!important;
+ background:linear-gradient(130deg,#fff8e5,#ddf5e7)!important;box-shadow:0 7px 0 #9ac0a6!important}
+html[data-ninja-theme] .quick-context{border-radius:22px!important}
+html[data-ninja-theme] .home .dojo-tabs{border:2px solid #88c3af!important;border-radius:24px!important;
+ background:linear-gradient(135deg,#ecf9e7,#fff9e6)!important;box-shadow:0 6px 0 #a6c6ad!important}
+html[data-ninja-theme] .home .dojo-tabs>a{color:#1b514e!important}
+html[data-ninja-theme] .home .dojo-tabs>a[aria-current=page]{background:#aceed5!important;border-color:#3b998a!important;color:#123c44!important}
+html[data-ninja-theme] .nn-mobile-nav{background:linear-gradient(120deg,#f1fae8,#fff7e6)!important;
+ color:#143c46!important;border:2px solid #7cb3a3!important;border-bottom:0!important;
+ border-radius:27px 27px 0 0!important;box-shadow:0 -7px 26px #173d4a2e!important}
+html[data-ninja-theme] .nn-mobile-nav a{color:#17434a!important}
+html[data-ninja-theme] .nn-mobile-nav a[aria-current=page]{background:linear-gradient(130deg,#a5f0d0,#e9f8e3)!important;
+ color:#0c3a43!important;border-color:#369785!important;box-shadow:0 5px 0 #428d7f!important}
+html[data-ninja-theme] .is-playing .hud-top{background:#fff5da!important;border-bottom:3px solid #7fae9c!important}
+html[data-ninja-theme] .is-playing .hud-sidebar{background:linear-gradient(#ffefcd,#edf7df)!important;border-left:3px solid #79b39d!important}
+html[data-ninja-theme] .is-playing .hud-sidebar .time-block{background:#fff9e7!important}
+html[data-ninja-theme] .is-playing .super-dock .super-button.is-ready{border-color:#196c66!important}
+/* No horizontal clipping on narrow devices. */
+@media(max-width:1000px){
+ html[data-ninja-theme] .nn-mint-world-selector .nn-mint-world-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ html[data-ninja-theme] .nn-mint-world-grid .nn-village-gate{height:245px!important}
+}
+@media(max-width:760px){
+ html[data-ninja-theme] .panel{border-radius:20px!important;border-width:2px!important;box-shadow:none!important}
+ html[data-ninja-theme] .arcade-sticky-header{min-height:61px!important;padding:7px 10px!important;gap:8px!important}
+ .nn-panel-crest{display:none!important}
+ html[data-ninja-theme] .panel-header-title{font-size:clamp(13px,4vw,19px)!important}
+ html[data-ninja-theme] .panel-back{min-height:48px!important;padding:7px 12px!important}
+ html[data-ninja-theme] .legend-modes-panel>.eyebrow{display:none!important}
+ html[data-ninja-theme] .arcade-mode-banner{min-height:0!important;padding:12px 16px!important;margin-bottom:9px!important}
+ html[data-ninja-theme] .arcade-mode-banner h3{font-size:clamp(23px,6vw,30px)!important;margin:4px 0!important}
+ html[data-ninja-theme] .arcade-mode-section-head{margin:9px 0 7px!important}
+ html[data-ninja-theme] .arcade-mode-portals{grid-template-columns:1fr!important;gap:10px!important}
+ html[data-ninja-theme] .arcade-mode-portal{height:168px!important;min-height:168px!important;border-radius:20px!important}
+ html[data-ninja-theme] .arcade-mode-portal .arcade-portal-content{padding:13px 15px!important;justify-content:end!important}
+ html[data-ninja-theme] .arcade-mode-portal .arcade-portal-title strong{font-size:clamp(22px,6vw,31px)!important}
+ html[data-ninja-theme] .arcade-mode-portal .arcade-portal-cta{min-height:39px!important;padding:6px 12px!important;font-size:12px!important}
+ html[data-ninja-theme] .arcade-mode-portal .arcade-portal-index{font-size:9px!important}
+ html[data-ninja-theme] .arcade-mode-quests{grid-template-columns:1fr!important;gap:10px!important}
+ html[data-ninja-theme] .arcade-mode-quest{
+  grid-template-columns:42% minmax(0,1fr) 42px!important;gap:7px!important;
+  min-height:130px!important;max-height:156px!important;padding-right:8px!important;border-width:2px!important;border-radius:19px!important
+ }
+ html[data-ninja-theme] .arcade-mode-quest .nn-quest-scene{min-height:130px!important;border-radius:16px 29% 29% 16px!important}
+ html[data-ninja-theme] .arcade-mode-quest .arcade-quest-symbol{width:33px;height:33px;left:5px;bottom:7px;border-width:2px;border-radius:10px!important}
+ html[data-ninja-theme] .arcade-mode-quest .arcade-quest-symbol svg{width:22px;height:22px}
+ html[data-ninja-theme] .arcade-mode-quest .legend-mode-info{gap:3px!important}
+ html[data-ninja-theme] .arcade-mode-quest .legend-mode-info strong{font-size:clamp(16px,5vw,25px)!important;line-height:1.12!important}
+ html[data-ninja-theme] .arcade-mode-quest .legend-mode-info small{display:-webkit-box!important;-webkit-line-clamp:1!important;font-size:11px!important}
+ html[data-ninja-theme] .arcade-mode-quest .legend-mode-info em{font-size:9px!important;padding:4px 7px}
+ .arcade-mode-quest .arcade-quest-level{font-size:8px!important}
+ html[data-ninja-theme] .arcade-mode-quest .arcade-quest-arrow{min-width:39px;min-height:39px;font-size:16px}
+ html[data-ninja-theme] .nn-mint-world-selector .nn-village-title h3{font-size:27px!important}
+ html[data-ninja-theme] .nn-mint-world-selector .nn-mint-world-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}
+ html[data-ninja-theme] .nn-mint-world-grid .nn-village-gate{height:190px!important;border-width:2px!important;border-radius:18px!important}
+ html[data-ninja-theme] .nn-mint-world-grid .nn-world-poster-foot{padding:10px 5px 9px!important;min-height:87px!important;gap:4px!important}
+ .nn-mint-world-grid .nn-world-poster-foot>strong{font-size:clamp(14px,3.8vw,19px)!important}
+ .nn-mint-world-grid .nn-world-poster-foot .nn-house-action{min-width:0;width:96%;min-height:39px;padding:5px 7px;font-size:clamp(10px,2.7vw,13px)!important;gap:4px}
+ .nn-mint-world-grid .nn-house-action span{margin:0!important}
+ .nn-mint-world-grid .nn-world-poster-top{display:none}
+ .nn-village-title>p{display:none!important}
+ .nn-career-adventure .nn-career-intro{padding:12px!important}
+ .nn-career-adventure .nn-career-detail{padding:13px!important}
+ .shop-panel .shop-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ html[data-ninja-theme] .panel .eyebrow{font-size:9px!important}
+ .world-inside-story>p,.world-inside-nim{display:none!important}
+ .nn-mobile-nav a{min-height:60px!important}
+}
+@media(max-width:375px){
+ html[data-ninja-theme] .arcade-mode-quest{grid-template-columns:39% minmax(0,1fr) 36px!important}
+ html[data-ninja-theme] .arcade-mode-quest .legend-mode-info strong{font-size:16px!important}
+ html[data-ninja-theme] .nn-mint-world-grid .nn-village-gate{height:166px!important}
+ .nn-mint-world-grid .nn-world-poster-foot>strong{font-size:14px!important}
+ .nn-mint-world-grid .nn-world-poster-foot .nn-house-action{font-size:10px!important;padding:4px!important}
+ .shop-panel .shop-grid{grid-template-columns:1fr!important}
+}
+@media(prefers-reduced-motion:reduce){
+ .nn-mint-world-selector *, .arcade-mode-board *, .nn-mobile-nav *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+}
+body.calm-view .nn-mint-world-selector *,body.calm-view .arcade-mode-board *,body.calm-view .nn-mobile-nav *{animation:none!important;transition:none!important}
