@@ -1,5 +1,5 @@
 import {createAccounts,createAccountStorage} from './accounts.js';
-import {legendaryModes,legendaryDojos,legendaryWorldDetail,legendaryCareer,legendaryLeaderboard} from './ninja-legend-ui.js';
+import {legendaryModes,legendaryDojos,legendaryUnifiedPlay,legendaryWorldDetail,legendaryCareer,legendaryLeaderboard} from './ninja-legend-ui.js';
 import {applyTheme,setTheme,cycleTheme,getTheme} from './display-theme.js';
 import {reflectionQuest,renderReflectionQuest,readReflectionSeals,awardReflectionSeal,clearReflectionSeals} from './reflection-quest.js';
 import {createVerifiedRun,gameFromServerSnapshot,readVerifiedTrace,restoreVerifiedGame,traceKey} from './verified-run.js';
@@ -110,7 +110,7 @@ function handleAccountClick(event){
 function navigateRoute(route,{replace=false}={}){
   if(route==='guest'){if(accountActive()||localLoggedIn)showHome();else enterDojo();if(replace)history.replaceState(history.state,'','#worlds');return;}
   if(route==='account'){accountActive()?accountUI.profile(game.profile):accountUI.login();return;}
-  const aliases={worlds:'home',campaign:'career',bazaar:'shop',dojo:'home'},target=aliases[route]||route;
+  const aliases={worlds:'home',campaign:'career',bazaar:'shop',dojo:'home',play:'modes',dojos:'modes'},target=aliases[route]||route;
   if(['login','register','recovery'].includes(target)){if(accountActive()){showHome();toast('Du bist bereits angemeldet.');}else accountUI[target]();return;}
   if(!localLoggedIn){showLanding();return;}
   if(target==='home'){showHome();if(route==='worlds')history.replaceState(history.state,'','#worlds');}
@@ -126,13 +126,10 @@ function navigateRoute(route,{replace=false}={}){
 }
 function modesMenu(){
   if(!openMenu('modes'))return;
-  dialog('Wähle deinen Spielmodus',legendaryModes({account:accountActive()}),'',{label:'NINJA-ABENTEUER · DEIN WEG',classes:'legend-modes-panel'});
+  dialog('Spielen',legendaryUnifiedPlay({account:accountActive()}),'',{label:'SPIELMODI & SPIELWELTEN',classes:'legend-modes-panel nn-unified-play-panel'});
 }
 let currentWorld='study';
-function dojosMenu(){
-  if(ui!=='dojos'&&!openMenu('dojos'))return;
-  dialog('Deine Spielwelten',legendaryDojos(),'',{label:'DREI DOJOS · EINE BONUSWELT',classes:'legend-dojos-panel'});
-}
+function dojosMenu(){return modesMenu();}
 function worldDetailsMenu(context='study'){
   if(!['study','gaming','sleep'].includes(context))return;
   currentWorld=context;
@@ -207,7 +204,7 @@ function celebrateUnlock(type,ref){
  celebrateMilestone(kind,message.title,text,type==='skin'?ref:null,`unlock:${type}:${ref}`);
 }
 function save(){game.save();verifiedRun?.flush();$('save-indicator').textContent=accountActive()?verifiedRun&&!lastVerified?'Konto · Run wird am Ende geprüft':'Konto · bestätigter Fortschritt':game.storageFailed?'Speicherung blockiert · Sitzung spielbar':'Lokal gespeichert'}
-function routeHash(kind){return '#'+({home:'worlds',career:'campaign',shop:'bazaar',landing:'start',onboarding:'name'}[kind]||kind);}
+function routeHash(kind){return '#'+({home:'worlds',career:'campaign',shop:'bazaar',modes:'play',dojos:'play',landing:'start',onboarding:'name'}[kind]||kind);}
 function captureView(){return {kind:ui,shopTab,selectedSkill,selectedMissionId,scroll:$('overlay-root').querySelector('.panel')?.scrollTop??window.scrollY};}
 function saveNavigation(){if(restoringView)return;history.replaceState({ninjaNavigation:navSession,depth:navDepth,view:captureView()},'',routeHash(ui));}
 function resetNavigation(){navDepth=0;navSession=String(Date.now())+Math.random().toString(36).slice(2);saveNavigation();}
@@ -216,7 +213,7 @@ function restoreView(view){
   if(!localLoggedIn){showLanding();return;}
   restoringView=true;
   try{shopTab=view.shopTab||shopTab;selectedSkill=view.selectedSkill||selectedSkill;selectedMissionId=view.selectedMissionId||selectedMissionId;
-    const routes={modes:modesMenu,dojos:dojosMenu,world:()=>worldDetailsMenu(currentWorld),home:showHome,settings:settingsMenu,rest:showRest,career:careerMenu,weekly:weeklyMenu,profile:playerMenu,abilities,achievements:achievementMenu,notifications,shop:()=>shop(shopTab),skins,highscores,help,leaderboard:leaderboardMenu,'delete-profile':deleteProfileMenu,paused:pauseDialog,'sleep-choice':sleepChoice,playing:resume};
+    const routes={modes:modesMenu,dojos:modesMenu,world:()=>worldDetailsMenu(currentWorld),home:showHome,settings:settingsMenu,rest:showRest,career:careerMenu,weekly:weeklyMenu,profile:playerMenu,abilities,achievements:achievementMenu,notifications,shop:()=>shop(shopTab),skins,highscores,help,leaderboard:leaderboardMenu,'delete-profile':deleteProfileMenu,paused:pauseDialog,'sleep-choice':sleepChoice,playing:resume};
     if(routes[view.kind])routes[view.kind]();else if(view.kind==='briefing'&&game.state.scene==='briefing')briefing();else if(view.kind==='results'&&game.state.ended)results();else showHome();
   }finally{restoringView=false;}
   requestAnimationFrame(()=>{const panel=$('overlay-root').querySelector('.panel');if(panel)panel.scrollTop=view.scroll||0;else window.scrollTo(0,view.scroll||0);});
@@ -226,10 +223,10 @@ function navigateBack(){
   if(navDepth>0){history.back();return;}
   if(ui==='onboarding')showLanding();else if(ui==='paused'||ui==='sleep-choice')resume();else showHome();
 }
-function scene(next){ui=next;for(const nav of document.querySelectorAll('[data-game-route],[data-route]')){const active=(nav.dataset.gameRoute||nav.dataset.route)===({home:'worlds',career:'campaign',shop:'bazaar'}[next]||next);if(active)nav.setAttribute('aria-current','page');else nav.removeAttribute('aria-current');}document.body.classList.toggle('nn-menu-context',['home','modes','dojos','world','career','shop','leaderboard','profile','settings','weekly','abilities','achievements','notifications','highscores','help','skins'].includes(next));const lobby=['home','landing','onboarding','rest'].includes(next);$('home').hidden=next!=='home';if($('landing'))$('landing').hidden=next!=='landing';$('hud').hidden=lobby;document.body.classList.toggle('is-landing',next==='landing'||next==='onboarding');document.body.classList.toggle('is-playing',!lobby);document.body.classList.toggle('is-paused',next!=='playing');swipePointer=null;lastPoint=null;renderer.resize();const size=renderer.getSize();game.resize(size.width,size.height);saveNavigation();}
+function scene(next){ui=next;for(const nav of document.querySelectorAll('[data-game-route],[data-route]')){const active=(nav.dataset.gameRoute||nav.dataset.route)===({home:'worlds',career:'campaign',shop:'bazaar',modes:'play',dojos:'play',world:'play'}[next]||next);if(active)nav.setAttribute('aria-current','page');else nav.removeAttribute('aria-current');}document.body.classList.toggle('nn-menu-context',['home','modes','dojos','world','career','shop','leaderboard','profile','settings','weekly','abilities','achievements','notifications','highscores','help','skins'].includes(next));const lobby=['home','landing','onboarding','rest'].includes(next);$('home').hidden=next!=='home';if($('landing'))$('landing').hidden=next!=='landing';$('hud').hidden=lobby;document.body.classList.toggle('is-landing',next==='landing'||next==='onboarding');document.body.classList.toggle('is-playing',!lobby);document.body.classList.toggle('is-paused',next!=='playing');swipePointer=null;lastPoint=null;renderer.resize();const size=renderer.getSize();game.resize(size.width,size.height);saveNavigation();}
 function dialog(title,body,actions,{label='NOTIFICATION NINJA',classes=''}={}){
   const backLabel=ui==='onboarding'?'Startseite':ui==='paused'?'Weiterspielen':'Zurück';
-  const sections={modes:'SPIELMODI',dojos:'SPIELWELTEN',career:'KARRIEREKARTE',shop:'NINJA-BASAR',leaderboard:'RANGLISTE',settings:'EINSTELLUNGEN',profile:'PROFIL',achievements:'ERFOLGE',weekly:'WOCHENZIELE',abilities:'FÄHIGKEITEN',results:'RUNDE BEENDET',onboarding:'DEIN NINJA'};
+  const sections={modes:'SPIELEN',dojos:'SPIELEN',career:'KARRIEREKARTE',shop:'NINJA-BASAR',leaderboard:'RANGLISTE',settings:'EINSTELLUNGEN',profile:'PROFIL',achievements:'ERFOLGE',weekly:'WOCHENZIELE',abilities:'FÄHIGKEITEN',results:'RUNDE BEENDET',onboarding:'DEIN NINJA'};
   const navigableMenu=['modes','dojos','world','career','shop','leaderboard','profile','settings','weekly','abilities','achievements','notifications','highscores','help','skins'].includes(ui);
    const header=`<header class="panel-header arcade-sticky-header"><button class="panel-back" data-action="nav-back" aria-label="${backLabel}"><span aria-hidden="true">←</span> ${backLabel}</button><img class="nn-panel-crest" src="./assets/ninja-mint-logo-v9.svg" alt="" aria-hidden="true"><span class="panel-header-title">${sections[ui]||'NOTIFICATION NINJA'}</span></header>`;
   $('overlay-root').innerHTML=`<div class="modal-shade"><section class="panel ${classes}" role="dialog" aria-modal="${navigableMenu?'false':'true'}" aria-labelledby="dialog-title">${header}<div class="eyebrow">${label}</div><h2 id="dialog-title">${title}</h2>${body}${actions?`<div class="overlay-actions">${actions}</div>`:''}</section></div>`;
