@@ -135,7 +135,7 @@ function worldDetailsMenu(context='study'){
   if(!['study','gaming','sleep'].includes(context))return;
   currentWorld=context;
   if(ui!=='world'&&!openMenu('world'))return;
-  const names={study:'Lern-Dojo',gaming:'Gaming-Dojo',sleep:'Schlaf-Dojo'};
+  const names={study:'Schul-Dojo',gaming:'Gaming-Dojo',sleep:'Schlaf-Dojo'};
   dialog(names[context],legendaryWorldDetail(context),'',{label:'DEINE SPIELWELT · FREI ERKUNDEN',classes:'world-detail-panel'});
 }
 function accountRouteChanged(kind){const route={login:'login',register:'register',recovery:'recovery',profile:'account'}[kind];if(!route||restoringView||location.hash===`#${route}`)return;history.pushState(history.state,'',`#${route}`);}
