@@ -149,7 +149,7 @@ async function acknowledge(p){for(let n=0;n<20&&(await read(p)).mentor.open;n++)
        assert.equal(await page.locator('.nn-village-stage [data-mode-start="master"]').count(),1,'Balance Master is a real mixed context mode');
       assert.equal(await page.locator('.legend-dojo [data-world-enter]').count(),3);
        assert.equal(await page.locator('.nn-village-stage').isVisible(),true,'Illustrated world stage is visible');
-       assert.equal(await page.locator('.nn-village-gates').evaluate(el=>getComputedStyle(el).display),'flex','Responsive village must not regress to the old 3-card grid at tablet width');
+       assert.equal(await page.locator('.nn-village-gates').evaluate(el=>getComputedStyle(el).display),'grid','Responsive village uses the four-poster 2×2 world grid');
        assert.equal(await page.locator('.nn-village-gate-study').evaluate(el=>getComputedStyle(el).position),'relative','Tablet village uses themed dojo houses, not old image cards');
        assert.equal(await page.locator('.nn-village-landscape').count(),1,'One shared illustrated landscape');
       assert.equal(await page.locator('.legend-dojo [data-game-route="campaign"]').count(),0,'Dojo worlds must not navigate into campaign');
