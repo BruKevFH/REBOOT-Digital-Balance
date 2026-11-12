@@ -281,3 +281,48 @@ html[data-ninja-theme] .is-playing .super-dock .super-button.is-ready{border-col
  .nn-mint-world-selector *, .arcade-mode-board *, .nn-mobile-nav *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
 }
 body.calm-view .nn-mint-world-selector *,body.calm-view .arcade-mode-board *,body.calm-view .nn-mobile-nav *{animation:none!important;transition:none!important}
+
+/* Identity applied to loading, profile, user account, briefing and result surfaces. */
+.nn-loading-brand{display:block;width:min(330px,70vw);max-height:112px;object-fit:contain;margin:0 auto 8px;filter:drop-shadow(0 8px 4px #113e4a19)}
+.loading-screen{background:radial-gradient(circle at 16% 12%,#e1f8df,transparent 42%),linear-gradient(#fff9e7,#f8ebd4)!important;color:#193a48!important}
+.loading-screen .loading-eyebrow{color:#167e6b!important}
+.loading-screen .loading-track{background:#d9e9d5!important;border-color:#5fa894!important}
+.loading-screen .loading-track i{background:linear-gradient(90deg,#76e0b7,#ffd277)!important}
+html[data-ninja-theme] .home-header .logo-brand img{object-fit:contain;object-position:center;width:100%;height:100%}
+html[data-ninja-theme] .briefing-panel .briefing-hero,
+html[data-ninja-theme] .boss-briefing-panel .boss-briefing-hero,
+html[data-ninja-theme] .world-detail-panel .world-inside-story,
+html[data-ninja-theme] .nn-profile-identity{border:2px solid #7eb9a3!important;border-radius:24px!important;box-shadow:0 5px 0 #9ebfac!important}
+html[data-ninja-theme] .briefing-panel .briefing-rule,
+html[data-ninja-theme] .briefing-panel .briefing-quickinfo,
+html[data-ninja-theme] .result-panel .reflection-question{
+ border:2px solid #b2c9ab!important;border-radius:17px!important;
+ background:linear-gradient(130deg,#fff7da,#ecf7e8)!important;color:#204853!important;
+}
+html[data-ninja-theme] .nn-profile-portrait{background:radial-gradient(circle,#e7fbe9,#bee9d9)!important;border-radius:22px!important}
+html[data-ninja-theme] .shop-panel .shop-card .shop-info,
+html[data-ninja-theme] .weekly-card .weekly-task-meta{color:#204554!important}
+html[data-ninja-theme] .shop-panel .shop-price{color:#a66739!important;font-weight:1000}
+html[data-ninja-theme] .result-panel .result-summary>article{background:linear-gradient(130deg,#fef4cf,#d2f5dd)!important;color:#224858!important}
+html[data-ninja-theme] .result-panel .result-summary>article strong{color:#174850!important}
+html[data-ninja-theme] .result-panel .overlay-actions .btn.primary{background:linear-gradient(125deg,#71e2b7,#adefcd)!important;border-color:#288b7a!important;color:#123b43!important}
+html[data-ninja-theme] .legend-leaderboard-panel .legend-leaderboard-hero{color:#194552!important}
+html[data-ninja-theme] .leaderboard-row:nth-child(1){background:#fff1c9!important}
+html[data-ninja-theme] .nn-celebration{box-shadow:0 8px 0 #529983,0 20px 30px #123f4b48!important}
+html[data-ninja-theme] .nn-celebration h3{color:#0c3f44!important}
+html[data-ninja-theme] .nn-celebration .nn-celebration-spark{color:#f7c96c}
+/* Compact context-aware gameplay chrome without obscuring clickable swipes. */
+body.is-playing[data-ninja-room=study] .hud-top{border-color:#559e82!important}
+body.is-playing[data-ninja-room=gaming] .hud-top{border-color:#bd76d5!important}
+body.is-playing[data-ninja-room=gaming] .hud-sidebar{border-color:#956cbd!important;background:linear-gradient(#f8e8ff,#f7ecd5)!important}
+body.is-playing[data-ninja-room=sleep] .hud-top{border-color:#8fa8d7!important}
+body.is-playing[data-ninja-room=sleep] .hud-sidebar{border-color:#91a4cf!important;background:linear-gradient(#e9eefd,#fff1dc)!important}
+body.is-playing[data-ninja-room=balance] .hud-top{border-color:#ffcb74!important}
+@media(max-width:760px){
+ .nn-loading-brand{max-height:85px}
+ .loading-screen .loading-story{display:none}
+ html[data-ninja-theme] .nn-profile-identity{border-radius:17px!important}
+ html[data-ninja-theme] .nn-career-detail>p{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+ html[data-ninja-theme] .weekly-panel .weekly-card p{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+ html[data-ninja-theme] .result-panel .result-hero p{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+}
