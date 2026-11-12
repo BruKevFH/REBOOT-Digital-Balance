@@ -53,7 +53,7 @@ test('mobile SUPER remains a real touch button, scenes and rewards ship in onlin
  assert.match(styles,/touch-action:manipulation/);
  assert.match(styles,/body\.is-playing:not\(\.is-paused\) \.super-dock/);
  assert.match(ui,/\$\('super-button'\)\.onclick=activateSuper/);
- for(const name of ['study','gaming','sleep'])assert(render.includes('dojo-'+name+'-v5.svg'));
+ for(const name of ['dojo-study.png','dojo-gaming-v5.svg','dojo-sleep.png','ninja-mint-balance-v9.svg'])assert(render.includes(name));
  assert(ui.includes('nn-round-reward')&&ui.includes('nn-reward-progress'));
  assert(read('index.html').includes('ninja-feedback-v7.css'));
  assert(pkg.includes('ninja-feedback-v7.css'));

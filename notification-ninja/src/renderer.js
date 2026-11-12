@@ -8,7 +8,7 @@ const THEMES={study:{wall:'#fff0d2',bottom:'#f7d59e'},gaming:{wall:'#eadff6',bot
 const SKINS={default:'#78e1b6',classic:'#78e1b6',mint:'#78b7c5',neon:'#b88bd1',solar:'#ecad43',gold:'#ecad43',dawn:'#eaaa65',shadow:'#72b9b0',grandmaster:'#e4bc61',lotus:'#b278ae',ember:'#ef8b5d',tide:'#6ca9bc','focus-fox':'#ffc77d','night-guardian':'#96a9ff'};
 const PLAYER_PALETTES={default:{body:'#79e1b8',hood:'#53c99e',dark:'#246d68',arm:'#9ef1ca',scarf:'#fb8574',light:'#d7fae7'},solar:{body:'#d29a4b',hood:'#a86842',dark:'#876449',arm:'#e3b065',scarf:'#e87544',light:'#ffe0a0'},mint:{body:'#82b5ca',hood:'#5f91ad',dark:'#4b6e8e',arm:'#b1dce4',scarf:'#b0d8ec',light:'#e3f9fc'},neon:{body:'#a786c2',hood:'#7d639e',dark:'#5f4c7c',arm:'#c7a6df',scarf:'#e798bd',light:'#e8d2ef'},dawn:{body:'#d59976',hood:'#b66f61',dark:'#986057',arm:'#e8b58b',scarf:'#efb65e',light:'#ffe3b1'},shadow:{body:'#626b8b',hood:'#434d72',dark:'#343e5a',arm:'#7d90a9',scarf:'#7dc3b8',light:'#c3e1d7'},grandmaster:{body:'#eee3c6',hood:'#e1cc9c',dark:'#9a7659',arm:'#fff0cf',scarf:'#c56859',light:'#fff7e2'},lotus:{body:'#a5bba1',hood:'#698d7a',dark:'#507268',arm:'#c4d4b2',scarf:'#d88ba3',light:'#f4e4c4'},ember:{body:'#c7815b',hood:'#975c48',dark:'#784938',arm:'#e5a573',scarf:'#efc06c',light:'#ffe2a6'},tide:{body:'#79a6aa',hood:'#4e7c8a',dark:'#3f6673',arm:'#a4ccd0',scarf:'#f1d8a6',light:'#ddede4'},'focus-fox':{body:'#d18b53',hood:'#a86848',dark:'#794e42',arm:'#efc078',scarf:'#ffdb83',light:'#fff1ca'},'night-guardian':{body:'#7183ba',hood:'#445884',dark:'#303e68',arm:'#9ca8d4',scarf:'#d4c7f1',light:'#eff2ff'}};
 const THROW_STYLES={default:'ribbon',solar:'flame',mint:'crystal',neon:'comic-stars',dawn:'sunrise-fan',shadow:'shadow-feathers',grandmaster:'golden-lotus',lotus:'lotus-petals',ember:'ember-koi',tide:'tidal-curls','focus-fox':'fox-sparks','night-guardian':'moon-stars'};
-const ROOM_ART_FILES={classroom:'dojo-study-v5.svg','game-room':'dojo-gaming-v5.svg',bedroom:'dojo-sleep-v5.svg'};
+const ROOM_ART_FILES={classroom:'dojo-study.png','game-room':'dojo-gaming-v5.svg',bedroom:'dojo-sleep.png','balance-master':'ninja-mint-balance-v9.svg'};
 const roomArtPools=new Map();
 function roomArtPool(document){
   // Resolve from the actual game document so the hosted game and extracted ZIP
@@ -488,7 +488,7 @@ export function createRenderer(canvas){
     const mode=home?'home':modeOf(state),theme=THEMES[mode];
     const defaults={study:'classroom',gaming:'game-room',sleep:'bedroom',home:'dojo'};
     const allowed={study:['classroom','paper-garden'],gaming:['game-room','pixel-cove'],sleep:['bedroom','moon-isles']};
-    const requested=state.backgrounds?.[mode],scene=home?'dojo':allowed[mode]?.includes(requested)?requested:defaults[mode];
+    const requested=state.backgrounds?.[mode],scene=!home&&state.mode==='master'?'balance-master':home?'dojo':allowed[mode]?.includes(requested)?requested:defaults[mode];
     const asset=roomAssets.get(scene),illustrated=asset?.status==='ready';
     // A load/error changes the key, invalidating a cached fallback on the next
     // frame without an animation loop, delayed screenshot or layout change.

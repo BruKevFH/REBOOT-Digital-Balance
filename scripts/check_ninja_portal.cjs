@@ -11,13 +11,13 @@ const version=JSON.parse(fs.readFileSync(path.join(__dirname,'../notification-ni
 const read=p=>p.evaluate(()=>window.__NOTIFICATION_NINJA__.getSnapshot());
 async function ready(p){try{await p.waitForFunction(v=>window.__NOTIFICATION_NINJA__?.getSnapshot().version===v,version,{timeout:15000});}catch(error){const diagnosis=await p.evaluate(()=>({url:location.href,loading:document.readyState,error:document.querySelector('#loading-status')?.textContent,snapshot:Boolean(window.__NOTIFICATION_NINJA__),scripts:[...document.scripts].map(s=>s.src)}));console.error('NINJA_BOOT_DIAGNOSTIC',JSON.stringify(diagnosis));throw error;}}
 async function checkNewModes(p,practice,width){
- await p.locator('a[data-game-route="modes"]:visible').click();
+ await p.locator('a[data-game-route="play"]:visible').click();
  await p.locator('[data-mode-start="daily"]').click();
  await p.waitForFunction(()=>window.__NOTIFICATION_NINJA__.getSnapshot().state.mode==='daily');await acknowledge(p);
  let snapshot=await read(p);assert.equal(snapshot.state.maxLives,3);assert.equal(snapshot.state.dailyChallenge.practice,practice);assert.match(snapshot.state.dailyChallenge.day,/^\d{4}-\d{2}-\d{2}$/);
  assert.equal(snapshot.ui,'briefing');
  await goHome(p);
- await p.locator('a[data-game-route="modes"]:visible').click();await p.locator('[data-mode-start="boss-rush"]').click();
+ await p.locator('a[data-game-route="play"]:visible').click();await p.locator('[data-mode-start="boss-rush"]').click();
  await p.waitForFunction(()=>window.__NOTIFICATION_NINJA__.getSnapshot().state.mode==='boss-rush');await acknowledge(p);
  snapshot=await read(p);assert.equal(snapshot.state.boss.id,'scout');assert.equal(snapshot.state.bossRush.index,0);assert.equal(snapshot.state.maxLives,3);
  assert.match(await p.locator('.boss-briefing-panel').innerText(),/Fokus-Symbole/);
@@ -76,23 +76,23 @@ async function acknowledge(p){for(let n=0;n<20&&(await read(p)).mentor.open;n++)
      assert.equal(await page.locator('#ninja-hub .hub-play').count(),0,'No duplicate mission shortcut on hub');
      assert.equal(await page.locator('#ninja-hub h1').isVisible(),true,'hub shows the player name');
      assert.equal(await page.locator('#dojo-rooms').evaluate(el=>el.open),false);
-     await page.locator('a[data-game-route="modes"]:visible').click();
-     assert.equal((await read(page)).ui,'modes');
-     assert.equal(await page.locator('.arcade-mode-quest .nn-quest-scene img').count(),4,'Each mode has distinct illustrated artwork');
-     const modesFit=await page.locator('.arcade-mode-quest').evaluateAll(nodes=>nodes.every(el=>{const r=el.getBoundingClientRect();return r.left>=-1&&r.right<=innerWidth+1;}));
+     await page.locator('a[data-game-route="play"]:visible').click();
+     assert.equal((await read(page)).ui,'play');
+     assert.equal(await page.locator('.nn-play-banner .nn-play-mode-art').count(),4,'Each mode has distinct illustrated artwork');
+     const modesFit=await page.locator('.nn-play-banner').evaluateAll(nodes=>nodes.every(el=>{const r=el.getBoundingClientRect();return r.left>=-1&&r.right<=innerWidth+1;}));
      assert(modesFit,'Mode posters must fit within phone width');
      await page.screenshot({path:path.join(output,'mint-modes-'+width+'.png')});
-     await page.locator('.nn-mobile-nav [data-game-route="dojos"]').click();await acknowledge(page);
-     assert.equal((await read(page)).ui,'dojos');
-     assert.equal(await page.locator('.nn-mint-world-grid .nn-world-poster').count(),4,'Four illustrated world posters');
-     assert.equal(await page.locator('.nn-mint-world-grid [data-world-enter]').count(),3,'Three familiar short-round Dojos');
-     assert.equal(await page.locator('.nn-mint-world-grid [data-mode-start="master"]').count(),1,'Mixed Balance Master portal');
-     const worldsFit=await page.locator('.nn-mint-world-grid .nn-world-poster').evaluateAll(nodes=>nodes.every(el=>{const r=el.getBoundingClientRect();return r.left>=-1&&r.right<=innerWidth+1&&r.width>100;}));
+     await page.locator('.nn-mobile-nav [data-game-route="play"]').click();await acknowledge(page);
+     assert.equal((await read(page)).ui,'play');
+     assert.equal(await page.locator('.nn-play-world-grid .nn-play-world').count(),4,'Four illustrated world posters in the combined menu');
+     assert.equal(await page.locator('.nn-play-world-grid [data-world-enter]').count(),3,'Three familiar short-round Dojos');
+     assert.equal(await page.locator('.nn-play-world-grid [data-mode-start="master"]').count(),1,'Mixed Balance Master portal');
+     const worldsFit=await page.locator('.nn-play-world-grid .nn-play-world').evaluateAll(nodes=>nodes.every(el=>{const r=el.getBoundingClientRect();return r.left>=-1&&r.right<=innerWidth+1&&r.width>100;}));
      assert(worldsFit,'Dojo posters must fit within phone width');
      await page.screenshot({path:path.join(output,'mint-worlds-'+width+'.png')});
      await goHome(page);
-     assert.equal(await page.locator('.dojo-tabs [data-game-route]').count(),6,'Six clear navigation choices');
-      assert.equal(await page.locator('.nn-mobile-nav [data-game-route]').count(),6,'Mobile navigation contains every destination');
+     assert.equal(await page.locator('.dojo-tabs [data-game-route]').count(),5,'Exactly five clear primary routes');
+      assert.equal(await page.locator('.nn-mobile-nav [data-game-route]').count(),5,'Mobile navigation contains every destination');
       assert.equal(await page.locator('.nn-mobile-nav [data-game-route="bazaar"]').isVisible(),true,'Bazaar is visible on phones');
       const bazaarRect=await page.locator('.nn-mobile-nav [data-game-route="bazaar"]').boundingBox();
       assert(bazaarRect&&bazaarRect.x>=0&&bazaarRect.x+bazaarRect.width<=width+1,'Bazaar tab fits the phone screen');
@@ -111,8 +111,8 @@ async function acknowledge(p){for(let n=0;n<20&&(await read(p)).mentor.open;n++)
      await page.locator('[data-account="guest"]').click();await acknowledge(page);
      assert.equal((await read(page)).ui,'home');
      assert.equal(await page.locator('#ninja-hub h1').isVisible(),true,'hub shows the player name');
-     assert.equal(await page.locator('.dojo-tabs [data-game-route]').count(),6,'Six clear navigation choices');
-      assert.equal(await page.locator('.nn-mobile-nav [data-game-route]').count(),6,'Phone and desktop navigation share six destinations');
+     assert.equal(await page.locator('.dojo-tabs [data-game-route]').count(),5,'Exactly five clear primary routes');
+      assert.equal(await page.locator('.nn-mobile-nav [data-game-route]').count(),5,'Phone and desktop navigation share five destinations');
       assert.equal(await page.locator('.nn-mobile-nav').isVisible(),false,'Dock hidden on tablet/desktop');
      assert.equal(await page.locator('#hub-paths .hub-path-card').count(),0,'Navigation is in the main tabs');
      assert.equal(await page.locator('.nn-home-guide').isVisible(),width>760,'Mobile skips duplicate navigation explanation');
@@ -120,40 +120,41 @@ async function acknowledge(p){for(let n=0;n<20&&(await read(p)).mentor.open;n++)
      assert.equal(await page.locator('#dojo-rooms').isVisible(),false,'The duplicated dojo selector is hidden');
      await page.screenshot({path:path.join(output,'hub-'+width+'.png')});
      if(width===768){
-      await page.locator('a[data-game-route="modes"]:visible').click();await acknowledge(page);await page.locator('[data-mode-start="open"]').click();
+      await page.locator('a[data-game-route="play"]:visible').click();await acknowledge(page);await page.locator('.nn-play-more summary').click();await page.locator('[data-mode-start="open"]').click();
       await page.waitForFunction(()=>window.__NOTIFICATION_NINJA__.getSnapshot().state.mode==='open');
       await acknowledge(page);
       assert.notEqual((await read(page)).ui,'home','Open Run shortcut really starts game');
       await goHome(page);
      }
      if(width===768){
-      await page.locator('a[data-game-route="modes"]:visible').click();await acknowledge(page);
-      assert.equal((await read(page)).ui,'modes');
-      assert.equal(await page.locator('.arcade-mode-portal').count(),2,'two illustrated portals');
-      assert.equal(await page.locator('.arcade-mode-quest').count(),4,'four secondary adventures');
+      await page.locator('a[data-game-route="play"]:visible').click();await acknowledge(page);
+      assert.equal((await read(page)).ui,'play');
+      assert.equal(await page.locator('.nn-play-extra').count(),2,'two preserved additional adventures');
+      assert.equal(await page.locator('.nn-play-banner').count(),4,'four illustrated challenges');
       assert.equal(await page.locator('.arcade-theme-strip [data-ninja-theme]').count(),0,'Appearance is only changed in Settings');
-      const before=await page.locator('.arcade-sticky-header').evaluate(el=>el.getBoundingClientRect().top);
-      await page.locator('.legend-modes-panel').evaluate(el=>el.scrollTop=340);
-      const after=await page.locator('.arcade-sticky-header').evaluate(el=>el.getBoundingClientRect().top);
-      assert(Math.abs(before-after)<5,'Back and Overview remain at top when scrolling');
-      await goHome(page);await page.locator('a[data-game-route="dojos"]:visible').click();await acknowledge(page);
-      assert.equal((await read(page)).ui,'dojos','Worlds portal opens real illustrated worlds');
-      await goHome(page);await page.locator('a[data-game-route="modes"]:visible').click();await acknowledge(page);assert.equal((await read(page)).ui,'modes','Modes remain available from their unique navigation tab');
+      const before=await page.locator('.nn-play-topbar').evaluate(el=>el.getBoundingClientRect().top);
+      await page.locator('.nn-play-panel').evaluate(el=>el.scrollTop=340);
+      const after=await page.locator('.nn-play-topbar').evaluate(el=>el.getBoundingClientRect().top);
+      const panelTop=await page.locator('.nn-play-panel').evaluate(el=>el.getBoundingClientRect().top);
+      assert(after<=before+1&&after>=panelTop-4&&after<=panelTop+8,'Illustrated masthead scrolls away while Back remains sticky and reachable');
+      await goHome(page);await page.locator('a[data-game-route="play"]:visible').click();await acknowledge(page);
+      assert.equal((await read(page)).ui,'play','Worlds portal opens real illustrated worlds');
+      await goHome(page);await page.locator('a[data-game-route="play"]:visible').click();await acknowledge(page);assert.equal((await read(page)).ui,'play','Modes remain available from their unique navigation tab');
       await goHome(page);await acknowledge(page);
       assert.equal((await read(page)).ui,'home','Overview returns to home hub');
      }
      if(width===768){
-      await page.locator('a[data-game-route="dojos"]:visible').click();await acknowledge(page);
-      assert.equal((await read(page)).ui,'dojos','Dojo navigation opens illustrated worlds');
-      assert.equal(await page.locator('.legend-dojo').count(),4,'Three themed Dojos plus Balance Master');
-       assert.equal(await page.locator('.nn-village-stage [data-mode-start="master"]').count(),1,'Balance Master is a real mixed context mode');
-      assert.equal(await page.locator('.legend-dojo [data-world-enter]').count(),3);
-       assert.equal(await page.locator('.nn-village-stage').isVisible(),true,'Illustrated world stage is visible');
-       assert.equal(await page.locator('.nn-village-gates').evaluate(el=>getComputedStyle(el).display),'grid','Responsive village uses the four-poster 2×2 world grid');
-       assert.equal(await page.locator('.nn-village-gate-study').evaluate(el=>getComputedStyle(el).position),'relative','Tablet village uses themed dojo houses, not old image cards');
-       assert.equal(await page.locator('.nn-village-landscape').count(),1,'One shared illustrated landscape');
-      assert.equal(await page.locator('.legend-dojo [data-game-route="campaign"]').count(),0,'Dojo worlds must not navigate into campaign');
-      await page.locator('.legend-dojo [data-world-enter="sleep"]').click();await acknowledge(page);
+      await page.locator('a[data-game-route="play"]:visible').click();await acknowledge(page);
+      assert.equal((await read(page)).ui,'play','Dojo navigation opens illustrated worlds');
+      assert.equal(await page.locator('.nn-play-world').count(),4,'Three themed Dojos plus Balance Master');
+       assert.equal(await page.locator('.nn-play-world-grid [data-mode-start="master"]').count(),1,'Balance Master is a real mixed context mode');
+      assert.equal(await page.locator('.nn-play-world [data-world-enter]').count(),3);
+       assert.equal(await page.locator('.nn-play-world-grid').isVisible(),true,'Illustrated world stage is visible');
+       assert.equal(await page.locator('.nn-play-world-grid').evaluate(el=>getComputedStyle(el).display),'grid','Responsive play menu uses a 2×2 world grid');
+       assert.equal(await page.locator('.nn-play-world-study').evaluate(el=>getComputedStyle(el).position),'relative','Tablet has independently illustrated world posters');
+       assert.equal(await page.locator('.nn-play-masthead-logo').count(),1,'One branded illustrated masthead');
+      assert.equal(await page.locator('.nn-play-world [data-game-route="campaign"]').count(),0,'Dojo worlds must not navigate into campaign');
+      await page.locator('.nn-play-world [data-world-enter="sleep"]').click();await acknowledge(page);
       assert.equal((await read(page)).ui,'world','World detail is not a campaign mission');
       assert.equal(await page.locator('.world-inside-sleep [data-quick-context="sleep"]').count(),1);
       await page.locator('.panel-back').click();
@@ -177,10 +178,10 @@ async function acknowledge(p){for(let n=0;n<20&&(await read(p)).mentor.open;n++)
       assert.equal((await read(page)).ui,'home');
      }
      if(width===1280){
-      await page.locator('a[data-game-route="dojos"]:visible').click();await acknowledge(page);
-      assert.equal(await page.locator('.nn-village-gates').evaluate(el=>getComputedStyle(el).display),'grid','Desktop uses the four-poster mint world selector');
-      assert.equal(await page.locator('.nn-village-gate-study').evaluate(el=>getComputedStyle(el).position),'relative','Desktop uses independent illustrated world posters');
-      assert((await page.locator('.nn-village-stage').boundingBox()).height>=500,'Four world posters remain clearly visible on desktop');
+      await page.locator('a[data-game-route="play"]:visible').click();await acknowledge(page);
+      assert.equal(await page.locator('.nn-play-world-grid').evaluate(el=>getComputedStyle(el).display),'grid','Desktop uses the four-poster unified play grid');
+      assert.equal(await page.locator('.nn-play-world-study').evaluate(el=>getComputedStyle(el).position),'relative','Desktop uses independent illustrated world posters');
+      assert((await page.locator('.nn-play-world-grid').boundingBox()).height>=500,'Four world posters remain clearly visible on desktop');
       await page.screenshot({path:path.join(output,'illustrated-village-desktop.png')});
       await goHome(page);await acknowledge(page);
       await page.locator('a[data-game-route="campaign"]:visible').click();await acknowledge(page);
@@ -197,9 +198,9 @@ async function acknowledge(p){for(let n=0;n<20&&(await read(p)).mentor.open;n++)
      assert.equal(await page.locator('.shop-card.is-owned:visible').count(),0);
      await goHome(page);
      const before=(await read(page)).profile;
-     await page.locator('a[data-game-route="modes"]:visible').click();
-     assert.equal((await read(page)).ui,'modes');
-     await page.locator('.legend-mode-small[data-game-route="practice"]').click();assert.equal((await read(page)).ui,'practice');
+     await page.locator('a[data-game-route="play"]:visible').click();
+     assert.equal((await read(page)).ui,'play');
+     await page.locator('.nn-play-banner[data-game-route="practice"]').click();assert.equal((await read(page)).ui,'practice');
      assert.deepEqual((await read(page)).profile,before,'practice does not alter guest progression');
      await page.keyboard.press('Escape');await acknowledge(page);
     }

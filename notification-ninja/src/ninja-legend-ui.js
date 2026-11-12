@@ -7,7 +7,7 @@
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const num=value=>Number.isFinite(Number(value))?Number(value).toLocaleString('de-DE'):'0';
 const chapters={
-  study:{name:'Lern-Dojo',subtitle:'Tal der Konzentration',art:'./assets/dojo-study-v5.svg',label:'FOKUS',symbol:'文',text:'Schütze deine Gedanken und erkenne echte Prioritäten.',hint:'Jede Entscheidung beginnt mit einem klaren Ziel.'},
+  study:{name:'Schul-Dojo',subtitle:'Tal der Konzentration',art:'./assets/dojo-study-v5.svg',label:'FOKUS',symbol:'文',text:'Schütze deine Gedanken und erkenne echte Prioritäten.',hint:'Jede Entscheidung beginnt mit einem klaren Ziel.'},
   gaming:{name:'Gaming-Dojo',subtitle:'Neonviertel der Balance',art:'./assets/dojo-gaming-v5.svg',label:'BALANCE',symbol:'遊',text:'Meistere dein Team und setze deinem Abenteuer Grenzen.',hint:'Spiele bewusst. Nicht der Autoplay-Loop entscheidet.'},
   sleep:{name:'Schlaf-Dojo',subtitle:'Tempel des Mondes',art:'./assets/dojo-sleep-v5.svg',label:'RUHE',symbol:'月',text:'Bewahre die Ruhe und finde den richtigen Moment zum Aufhören.',hint:'Ein gutes Ende ist deine stärkste Technik.'}
 };
@@ -55,7 +55,7 @@ export function legendaryModes({account=false}={}){
 }
 
 export const WORLD_DETAILS=Object.freeze({
- study:{title:'Lern-Dojo',subtitle:'Tal des Fokus',tag:'RUHIGER TAG',art:'./assets/dojo-study-v5.svg',symbol:'文',
+ study:{title:'Schul-Dojo',subtitle:'Tal des Fokus',tag:'RUHIGER TAG',art:'./assets/dojo-study-v5.svg',symbol:'文',
   story:'Zwischen Bambus und Wasser lernst du, Benachrichtigungen bewusst auszuwählen. Hier zählt dein Ziel – nicht der lauteste Hinweis.',
   cues:['Fokus behalten','Wichtige Informationen erkennen','Bewusst Pausen einplanen'],
   mentor:'Nicht alles ist dringend. Entscheide erst, was dir gerade wirklich wichtig ist.',
@@ -290,5 +290,50 @@ export function legendaryLeaderboard({message='',entries=[],own=null,filter='all
     ${account?`<div class="legend-rank-actions"><button class="legend-button legend-button-subtle" data-action="refresh-leaderboard">Aktualisieren</button><button class="legend-button legend-button-primary" data-action="submit-score" ${canPublish&&!busy?'':'disabled'}>${published?'Bereits veröffentlicht ✓':'Geprüften Run veröffentlichen'}</button></div>`:`<button class="legend-button legend-button-primary" data-account-view="login">Zum Konto anmelden</button>`}
     <div class="legend-rank-actions"><button class="legend-button legend-button-subtle" data-action="highscores">Meine Rekorde ansehen →</button></div>
   </section><p class="legend-fair-note">Freundeslisten sind derzeit nicht verfügbar. Es werden keine erfundenen Spieler oder Ergebnisse angezeigt.</p>
+ </div>`;
+}
+
+
+/** Unified play hub: four illustrated modes + four illustrated worlds, one route. */
+export function legendaryPlayHub({account=false}={}){
+ const challenges=[
+  {id:'boss',title:'Boss Rush',art:'./assets/ninja-mint-boss-v9.svg',icon:'swords',tag:'☠ ☠ ☠',aria:'Drei Bossgegner',mode:'boss-rush',tone:'fire'},
+  {id:'daily',title:'Tages-Challenge',art:'./assets/ninja-mint-daily-v9.svg',icon:'spark',tag:'✦ Täglich neu',aria:account?'Tagesaufgabe mit Kontofortschritt':'Tagesaufgabe lokal spielen',mode:'daily',tone:'mint'},
+  {id:'zen',title:'Zen-Training',art:'./assets/ninja-mint-zen-v9.svg',icon:'moon',tag:'✿ Entspannt',aria:'Zen-Training ohne Zeitdruck',route:'practice',tone:'lotus'},
+  {id:'weekly',title:'Wochenziele',art:'./assets/ninja-mint-weekly-v9.svg',icon:'scroll',tag:'✓ ✓ ◯',aria:'Wochenziele ansehen',route:'weekly',tone:'gold'}
+ ];
+ const worlds=[
+  {id:'gaming',title:'Gaming-Dojo',art:'./assets/dojo-gaming-v5.svg',symbol:'✦',tone:'gaming'},
+  {id:'study',title:'Schul-Dojo',art:'./assets/dojo-study.png',symbol:'文',tone:'study'},
+  {id:'sleep',title:'Schlaf-Dojo',art:'./assets/dojo-sleep.png',symbol:'☾',tone:'sleep'},
+  {id:'balance',title:'Balance-Master',art:'./assets/ninja-mint-balance-v9.svg',symbol:'☯',tone:'balance'}
+ ];
+ const command=data=>data.route?'data-game-route="'+data.route+'"':'data-mode-start="'+data.mode+'"';
+ const worldCommand=w=>w.id==='balance'?'data-mode-start="master"':'data-world-enter="'+w.id+'"';
+ return `<div class="nn-unified-play" data-ninja-play-hub>
+  <div class="nn-play-section-heading" id="nn-play-modes-heading"><h3>SPIELMODI</h3><span class="nn-play-flourish" aria-hidden="true"><i></i>✦<i></i></span></div>
+  <section class="nn-play-mode-list" aria-labelledby="nn-play-modes-heading">
+    ${challenges.map((m,i)=>`<button type="button" class="nn-play-banner nn-play-banner-${m.tone}" ${command(m)} aria-label="${esc(m.title)} – ${esc(m.aria)}">
+      <img class="nn-play-mode-art" src="${m.art}" alt="" loading="${i===0?'eager':'lazy'}" decoding="async">
+      <span class="nn-play-image-shade" aria-hidden="true"></span><span class="nn-play-symbol">${icon(m.icon)}</span>
+      <span class="nn-play-banner-copy"><strong>${esc(m.title)}</strong><small>${m.tag}</small></span>
+      <span class="nn-play-go" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="m11 7 15 9-15 9V7Z" fill="currentColor" stroke="currentColor" stroke-linejoin="round"/></svg></span>
+    </button>`).join('')}
+  </section>
+  <details class="nn-play-more"><summary>Weitere Abenteuer <span aria-hidden="true">⌄</span></summary>
+   <div class="nn-play-more-grid">
+    <button type="button" data-mode-start="campaign" class="nn-play-extra nn-play-extra-day" aria-label="Ein ganzer Tag – Story-Runde starten"><img src="./assets/ninja-mint-day-v9.svg" alt="" loading="lazy"><span><strong>Ein ganzer Tag</strong><small>3 Alltagsthemen</small></span><b aria-hidden="true">▶</b></button>
+    <button type="button" data-mode-start="open" class="nn-play-extra nn-play-extra-open" aria-label="Open Run ohne Zeitlimit starten"><img src="./assets/ninja-mint-open-v9.svg" alt="" loading="lazy"><span><strong>Open Run</strong><small>Endlos spielen</small></span><b aria-hidden="true">▶</b></button>
+   </div>
+  </details>
+  <div class="nn-play-section-heading nn-play-worlds-heading" id="nn-play-worlds-heading"><span class="nn-play-torii" aria-hidden="true">⛩</span><h3>SPIELWELTEN</h3><span class="nn-play-flourish" aria-hidden="true"><i></i>✦<i></i></span></div>
+  <section class="nn-play-world-grid" aria-labelledby="nn-play-worlds-heading">
+  ${worlds.map(w=>`<article class="nn-play-world nn-play-world-${w.tone}">
+   <button type="button" class="nn-play-world-entry" ${worldCommand(w)} aria-label="${esc(w.title)} – ${w.id==='balance'?'gemischte Runde starten':'Welt betreten'}">
+    <img class="nn-play-world-art" src="${w.art}" alt="" loading="lazy" decoding="async"><span class="nn-play-world-sheen" aria-hidden="true"></span>
+    <span class="nn-play-world-bottom"><strong><span class="nn-play-world-icon" aria-hidden="true">${w.symbol}</span>${esc(w.title)}</strong>
+      <span class="nn-play-world-cta">Welt betreten <span aria-hidden="true">➜</span></span></span>
+   </button></article>`).join('')}
+  </section><div class="nn-play-end-decor" aria-hidden="true">✿ <span>✦</span> ✿</div>
  </div>`;
 }
