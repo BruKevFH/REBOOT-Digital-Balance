@@ -27,13 +27,13 @@ export function legendaryModes({account=false}={}){
  ];
  const attr=x=>x.route?`data-game-route="${x.route}"`:`data-mode-start="${x.mode}"`;
  return `<div class="legend-modes arcade-mode-board">
-  <header class="arcade-mode-banner">
+  <header class="arcade-mode-banner nn-indie-mode-header">
    <div class="arcade-banner-label"><span class="arcade-level-dot" aria-hidden="true">✦</span> NINJA-AUSWAHL · WELCHER PFAD PASST HEUTE?</div>
    <h3>Wähle dein nächstes <em>Abenteuer.</em></h3>
    <p>Wähle deinen Spielmodus.</p>
    <div class="arcade-world-signs" aria-hidden="true"><span>☀ Lernen</span><span>✦ Gaming</span><span>☾ Schlaf</span></div>
   </header>
-  <div class="arcade-mode-section-head"><div><span class="arcade-section-index">01 / HAUPTWEGE</span><h4>Dein Abenteuer beginnt hier</h4></div><span class="arcade-section-hint">WÄHLE EIN PORTAL <span aria-hidden="true">↘</span></span></div>
+  <div class="arcade-mode-section-head"><div><span class="arcade-section-index">DEINE ABENTEUER</span><h4>Ein ganzer Tag &amp; Open Run</h4></div></div>
   <div class="legend-mode-featured arcade-mode-portals">${feature.map((x,i)=>`<button type="button" class="legend-mode-feature legend-mode-${x.kind} arcade-mode-portal" ${attr(x)} aria-label="${esc(x.title)}: ${esc(x.action)}">
      <span class="arcade-scene" aria-hidden="true"><img src="${x.scene}" alt="" loading="lazy"><span class="arcade-scene-cloud cloud-a"></span><span class="arcade-scene-cloud cloud-b"></span><span class="arcade-scene-stars">✦ <i>✦</i> ✧</span><span class="arcade-scene-gate"><span>${x.emblem}</span></span><span class="arcade-scene-floor"></span></span>
      <span class="arcade-portal-content">
@@ -44,13 +44,16 @@ export function legendaryModes({account=false}={}){
       <span class="arcade-portal-cta"><span>${x.action}</span><span class="arcade-cta-arrow nn-play-glyph" aria-hidden="true">▶</span></span>
      </span>
    </button>`).join('')}</div>
-  <div class="arcade-mode-section-head arcade-secondary-header"><div><span class="arcade-section-index">02 / NEBENWEGE</span><h4>Mehr Herausforderungen</h4></div><span class="arcade-section-hint">DEIN TEMPO. DEINE WAHL.</span></div>
+  <div class="arcade-mode-section-head arcade-secondary-header"><div><span class="arcade-section-index">SPIELMODI</span><h4>Deine Herausforderungen</h4></div></div>
   <div class="legend-mode-secondary arcade-mode-quests">${others.map((x,i)=>`<button type="button" class="legend-mode-small legend-mode-${x.kind} arcade-mode-quest" ${attr(x)}>
      <span class="arcade-quest-symbol" aria-hidden="true"><span class="arcade-quest-symbol-bg">${x.sign}</span>${icon(x.icon)}</span><span class="nn-quest-scene" aria-hidden="true"><img src="${x.art}" alt="" loading="lazy"></span>
-     <span class="legend-mode-info"><span class="arcade-quest-level">${x.level} · ${String(i+1).padStart(2,'0')}</span><strong>${x.title}</strong><small>${x.desc}</small><em>✦ ${x.tag}</em></span>
+     <span class="legend-mode-info"><strong>${x.title}</strong><span class="nn-quest-progress" aria-hidden="true">${x.kind==='boss'?'☠ ☠ ☠':x.kind==='daily'?'✦ ◉ ◉':x.kind==='practice'?'✿ ● ●':'✓ ✓ ◯'}</span></span>
      <span class="arcade-quest-arrow nn-play-glyph" aria-hidden="true">▶</span>
    </button>`).join('')}</div>
-  <footer class="arcade-mode-footer"><span class="arcade-mode-footer-icon" aria-hidden="true">忍</span><p>Jeder Spielmodus ist eigenständig. Für die Themenrunden findest du den Bereich „Spielwelten“ in der Hauptnavigation.</p></footer>
+  <section class="nn-unified-world-section" aria-label="Spielwelten">
+    <div class="nn-unified-divider"><span aria-hidden="true">⛩</span><h3>SPIELWELTEN</h3></div>
+    ${legendaryDojos()}
+  </section>
  </div>`;
 }
 
@@ -80,11 +83,9 @@ export function legendaryDojos(){
  const labels={study:{name:'Lernen',icon:'✦',tag:'MORGENLICHT',hint:'Ablenkungen erkennen',letter:'文'},gaming:{name:'Gaming',icon:'✧',tag:'NEON-NACHT',hint:'Bewusst pausieren',letter:'遊'},sleep:{name:'Schlafen',icon:'☾',tag:'MONDLICHT',hint:'Zur Ruhe kommen',letter:'月'}};
  return `<div class="legend-dojos worlds-hub nn-world-village nn-mint-world-selector">
   <header class="nn-village-title worlds-hub-intro">
-   <span class="legend-kicker">DEINE NINJA-WELTEN</span>
-   <h3>Spielwelten</h3>
-   <p>Wähle dein Dojo.</p>
+   <span class="legend-kicker">WÄHLE DEIN DOJO</span>
   </header>
-  <section class="nn-village-stage nn-mint-world-stage" aria-label="Interaktive Weltkarte mit drei Dojos">
+  <section class="nn-village-stage nn-mint-world-stage" aria-label="Vier illustrierte Spielwelten">
     <img class="nn-village-landscape" src="./assets/overworld-landscape-v4.svg" alt="" loading="eager">
     <span class="nn-village-sun" aria-hidden="true"></span><span class="nn-village-moon" aria-hidden="true">☾</span>
     <div class="worlds-hub-grid nn-village-gates nn-mint-world-grid">
@@ -94,15 +95,15 @@ export function legendaryDojos(){
         <span class="nn-house-roof" aria-hidden="true"><span class="nn-house-roof-symbol">${d.icon}</span></span>
         <span class="nn-world-scenery ${id==='study'?'nn-world-scenery-garden':id==='gaming'?'nn-world-scenery-neon':'nn-world-scenery-moon'}" aria-hidden="true"><span class="nn-scenery-spark">✦</span><span class="nn-scenery-spark">✧</span><span class="nn-scenery-spark">✦</span></span>
         <span class="worlds-hub-art nn-house-interior nn-world-poster-art"><img src="${c.art}" alt="" loading="lazy"><span class="nn-house-window-shine" aria-hidden="true"></span><span class="nn-house-lantern l-left" aria-hidden="true">✦</span><span class="nn-house-lantern l-right" aria-hidden="true">✦</span></span>
-        <span class="nn-house-plaque"><span class="nn-house-number">${String(i+1).padStart(2,'0')}</span><strong>${d.name}</strong><small>${c.title}</small></span>
-        <span class="worlds-hub-info nn-house-foot nn-world-poster-foot"><span class="legend-kicker">${d.tag}</span><span class="nn-house-action">Welt betreten <span aria-hidden="true">➜</span></span></span>
+        <span class="nn-house-plaque"><strong>${id==='study'?'Schul-Dojo':c.title}</strong></span>
+        <span class="worlds-hub-info nn-house-foot nn-world-poster-foot"><span class="nn-house-action">Welt betreten <span aria-hidden="true">➜</span></span></span>
        </button>
       </article>`}).join('')}
         <article class="legend-dojo legend-dojo-balance worlds-hub-card nn-village-gate nn-village-gate-balance nn-world-poster">
           <button type="button" class="worlds-hub-entry nn-village-house nn-world-poster-button" data-mode-start="master" aria-label="Balance-Master: gemischte Runde starten">
             <span class="worlds-hub-art nn-house-interior nn-world-poster-art"><img src="./assets/ninja-mint-balance-v9.svg" alt="" loading="lazy"></span>
             <span class="nn-world-poster-top" aria-hidden="true">☯</span>
-            <span class="worlds-hub-info nn-house-foot nn-world-poster-foot"><strong>Balance-Master</strong><span class="nn-house-action">Runde starten <span aria-hidden="true">➜</span></span></span>
+            <span class="worlds-hub-info nn-house-foot nn-world-poster-foot"><strong>Balance-Master</strong><span class="nn-house-action">Welt betreten <span aria-hidden="true">➜</span></span></span>
           </button>
         </article>
     </div>
