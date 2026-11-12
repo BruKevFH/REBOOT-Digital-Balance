@@ -91,8 +91,8 @@ async function acknowledge(p){for(let n=0;n<20&&(await read(p)).mentor.open;n++)
      assert(worldsFit,'Dojo posters must fit within phone width');
      await page.screenshot({path:path.join(output,'mint-worlds-'+width+'.png')});
      await goHome(page);
-     assert.equal(await page.locator('.dojo-tabs [data-game-route]').count(),6,'Six clear navigation choices');
-      assert.equal(await page.locator('.nn-mobile-nav [data-game-route]').count(),6,'Mobile navigation contains every destination');
+     assert.equal(await page.locator('.dojo-tabs [data-game-route]').count(),5,'Five clear navigation choices');
+      assert.equal(await page.locator('.nn-mobile-nav [data-game-route]').count(),5,'Mobile navigation contains all five destinations');
       assert.equal(await page.locator('.nn-mobile-nav [data-game-route="bazaar"]').isVisible(),true,'Bazaar is visible on phones');
       const bazaarRect=await page.locator('.nn-mobile-nav [data-game-route="bazaar"]').boundingBox();
       assert(bazaarRect&&bazaarRect.x>=0&&bazaarRect.x+bazaarRect.width<=width+1,'Bazaar tab fits the phone screen');
@@ -111,8 +111,8 @@ async function acknowledge(p){for(let n=0;n<20&&(await read(p)).mentor.open;n++)
      await page.locator('[data-account="guest"]').click();await acknowledge(page);
      assert.equal((await read(page)).ui,'home');
      assert.equal(await page.locator('#ninja-hub h1').isVisible(),true,'hub shows the player name');
-     assert.equal(await page.locator('.dojo-tabs [data-game-route]').count(),6,'Six clear navigation choices');
-      assert.equal(await page.locator('.nn-mobile-nav [data-game-route]').count(),6,'Phone and desktop navigation share six destinations');
+     assert.equal(await page.locator('.dojo-tabs [data-game-route]').count(),5,'Five clear navigation choices');
+      assert.equal(await page.locator('.nn-mobile-nav [data-game-route]').count(),5,'Phone and desktop navigation share five destinations');
       assert.equal(await page.locator('.nn-mobile-nav').isVisible(),false,'Dock hidden on tablet/desktop');
      assert.equal(await page.locator('#hub-paths .hub-path-card').count(),0,'Navigation is in the main tabs');
      assert.equal(await page.locator('.nn-home-guide').isVisible(),width>760,'Mobile skips duplicate navigation explanation');
