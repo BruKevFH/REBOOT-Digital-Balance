@@ -51,7 +51,8 @@ test('dojo scenes, progress, and free short rounds preserve chapter identity',()
    assert(html.includes('assets/dojo-'+context+'-v5.svg'));
    assert(html.includes('data-world-enter="'+context+'"'));
  }
- assert.equal((html.match(/class="legend-dojo legend-dojo-/g)||[]).length,3);
+ assert.equal((html.match(/class="legend-dojo legend-dojo-/g)||[]).length,4);
+  assert(html.includes('data-mode-start="master"'));
  assert(!html.includes('data-game-route="campaign"'),'Worlds must not be campaign duplicates');
  assert(html.includes('18 Story-Missionen findest du in der'));
 });
