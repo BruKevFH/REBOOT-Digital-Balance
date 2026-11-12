@@ -15,14 +15,14 @@ test('one real Play portal contains the four illustrated primary modes ABOVE the
  assert.equal((html.match(/class="legend-dojo legend-dojo-/g)||[]).length,4);
  assert.equal((html.match(/data-world-enter=/g)||[]).length,3);
  assert.equal((html.match(/data-mode-start="master"/g)||[]).length,1);
- assert(html.indexOf('class="nn-ref-mode-list"')<html.indexOf('class="nn-mint-world-grid"'));
+ assert(html.indexOf('class="nn-ref-mode-list"')<html.indexOf('class="worlds-hub-grid nn-village-gates nn-mint-world-grid"'));
  for(const k of ['boss','daily','zen','weekly'])assert(html.includes('./assets/ninja-mint-'+k+'-v9.svg'));
  for(const k of ['gaming','study','sleep'])assert(html.includes('data-world-enter="'+k+'"'));
 });
 
 test('existing Open Run and Campaign remain playable, but appear only after primary screenshot composition',()=>{
  const bonus=html.indexOf('class="nn-ref-more-modes"');
- assert(bonus>html.indexOf('class="nn-mint-world-grid"'));
+ assert(bonus>html.indexOf('class="worlds-hub-grid nn-village-gates nn-mint-world-grid"'));
  assert(html.includes('data-mode-start="campaign"'));
  assert(html.includes('data-mode-start="open"'));
  assert.equal((html.match(/data-mode-start="open"/g)||[]).length,1);
