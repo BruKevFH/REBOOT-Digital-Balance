@@ -4,7 +4,7 @@
   "start_url":"./home.html",
   "scope":"./",
   "display":"standalone",
-  "background_color":"#fff7e5",
-  "theme_color":"#ffab66",
+  "background_color":"#FFF7E6",
+  "theme_color":"#70E2B5",
   "icons":[{"src":"./favicon.svg","sizes":"any","type":"image/svg+xml","purpose":"any"}]
 }
