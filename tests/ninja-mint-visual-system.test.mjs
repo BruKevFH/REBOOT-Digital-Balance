@@ -61,7 +61,7 @@ test('branding does not replace user state, scoring or server validation',()=>{
  const game=read('src/game.js');
  assert(game.includes("startQuickRound(context,options={})"));
  const render=read('src/renderer.js');
- for(const id of ['study','gaming','sleep'])assert(render.includes('dojo-'+id+'-v5.svg'));
+ for(const art of ['dojo-study.png','dojo-gaming-v5.svg','dojo-sleep.png','ninja-mint-balance-v9.svg'])assert(render.includes(art));
 });
 
 test('cartoon world posters override former absolutely positioned houses at desktop and preserve phone 2×2 layout',()=>{
@@ -71,6 +71,6 @@ test('cartoon world posters override former absolutely positioned houses at desk
  assert(css.includes('position:relative!important;top:auto!important;left:auto!important'));
  assert(css.includes('@media(max-width:375px)'));
  const browser=readFileSync('scripts/check_ninja_portal.cjs','utf8');
- assert(browser.includes("'grid','Desktop uses the four-poster mint world selector'"));
- assert(browser.includes("'Four illustrated world posters'"));
+ assert(browser.includes("'grid','Desktop uses the four-poster unified play grid'"));
+ assert(browser.includes("'Four illustrated world posters in the combined menu'"));
 });
