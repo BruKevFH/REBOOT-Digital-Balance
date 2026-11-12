@@ -396,3 +396,10 @@ body.calm-view .nn-unified-play *{animation:none!important;transition:none!impor
     justify-content:center!important;font-size:10px!important;
   }
 }
+
+@media(max-width:760px){
+ /* Exactly one visible navigation at a time. The previous desktop !important
+    could unintentionally override the small-screen hide rule. */
+ html[data-ninja-theme] .home .dojo-tabs{display:none!important}
+ html[data-ninja-theme] body.nn-menu-context .nn-mobile-nav{display:grid!important}
+}
