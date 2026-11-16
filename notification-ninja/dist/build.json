@@ -1,6 +1,6 @@
 {
   "name": "Notification Ninja",
-  "version": "3.10.0",
+  "version": "3.10.1",
   "engine": "Canvas 2D / Web Audio",
   "style": "Sakura indie dojo",
   "sharedPlayMenu": true,

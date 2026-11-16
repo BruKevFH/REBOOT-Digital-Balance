@@ -1,6 +1,6 @@
 # Notification Ninja 3.1.0 – Entwicklungs- und Abnahmestand
 
-> Historischer Einrichtungsbericht. Der aktuelle Designstand baut auf dem späteren 3.9.0-main auf; siehe [Design-Abnahme 3.10.0](DESIGN_IMPLEMENTATION.md). Die damaligen Zugriffssperren beschreiben keine erneute Prüfung des heutigen Livebetriebs.
+> Historischer Einrichtungsbericht. Der aktuelle Designstand baut auf dem späteren 3.9.0-main auf; siehe [Design-Abnahme 3.10.1](DESIGN_IMPLEMENTATION.md). Die damaligen Zugriffssperren beschreiben keine erneute Prüfung des heutigen Livebetriebs.
 
 Stand: **07.11.2026**. Dieser Bericht unterscheidet lokale Nachweise von einer öffentlichen Bereitstellung. Die alte Cloud-Umgebung wurde weder gelöscht noch verändert.
 

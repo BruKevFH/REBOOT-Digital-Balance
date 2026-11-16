@@ -6,9 +6,9 @@ import argparse
 import json
 
 ROOT=Path(__file__).resolve().parents[1]/'notification-ninja'
-NAME='Notification-Ninja-3.10.0'
+NAME='Notification-Ninja-3.10.1'
 FILES=['index.html', 'home.html', 'styles.css', 'focus-ui.css', 'focus-home.css', 'legend-ui.css', 'worlds-v2.css', 'ux-v2.css', 'ui-navigation-v3.css', 'illustrated-adventure-v4.css', 'dojo-worlds-v5.css', 'mobile-navigation-v6.css', 'ninja-feedback-v7.css', 'ninja-mint-ui-v9.css', 'ninja-mint-home-v9.css', 'legend-home.css', 'sw.js', 'manifest.webmanifest', 'favicon.svg', 'dist/ninja.js', 'dist/home.js', 'dist/build.json', 'leaderboard-config.json', 'accounts-config.json', 'assets/dojo-study.png', 'assets/dojo-gaming.svg', 'assets/dojo-gaming.png', 'assets/dojo-sleep.png', 'assets/focus-village.png', 'assets/overworld-landscape-v4.svg', 'assets/dojo-study-v5.svg', 'assets/dojo-gaming-v5.svg', 'assets/dojo-sleep-v5.svg', 'assets/ninja-mint-logo-v9.svg', 'assets/ninja-mint-boss-v9.svg', 'assets/ninja-mint-daily-v9.svg', 'assets/ninja-mint-zen-v9.svg', 'assets/ninja-mint-weekly-v9.svg', 'assets/ninja-mint-day-v9.svg', 'assets/ninja-mint-open-v9.svg', 'assets/ninja-mint-balance-v9.svg', 'assets/dojo-study-v2.svg', 'assets/dojo-gaming-v2.svg', 'assets/dojo-sleep-v2.svg', 'branding/Notification-Ninja-Logo.png', 'assets/indie-wordmark.png', 'indie-theme.css', 'assets/indie-modes.png', 'assets/indie-worlds.png', 'assets/indie-masthead.png', 'assets/indie-masthead.svg', 'assets/fonts/nunito-latin-wght-normal.woff2', 'assets/fonts/nunito-latin-ext-wght-normal.woff2', 'assets/fonts/OFL-Nunito.txt']
-INSTRUCTIONS='''NOTIFICATION NINJA — 3.10.0
+INSTRUCTIONS='''NOTIFICATION NINJA — 3.10.1
 DEUTSCH / ENGLISH
 
 DEUTSCH
