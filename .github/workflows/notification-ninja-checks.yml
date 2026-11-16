@@ -77,9 +77,20 @@ jobs:
             sleep 1
           done
           curl -fsS http://127.0.0.1:8083/api/v3/health
-          node scripts/check_ninja_portal.cjs
-          node scripts/check_ninja_indie.cjs
-          npm run test:ninja:browser
+          for ninja_check in check_ninja_portal check_ninja_indie check_ninja_browser; do
+            ninja_log="$RUNNER_TEMP/${ninja_check}.log"
+            if node "scripts/${ninja_check}.cjs" > "$ninja_log" 2>&1; then
+              cat "$ninja_log"
+            else
+              cat "$ninja_log"
+              {
+                printf '### Notification Ninja: %s failed\n\n```text\n' "$ninja_check"
+                tail -100 "$ninja_log"
+                printf '\n```\n'
+              } >> "$GITHUB_STEP_SUMMARY"
+              exit 1
+            fi
+          done
       - run: npm run package:ninja
       - name: Verify bundled entry and offline homepage routes
         run: |
