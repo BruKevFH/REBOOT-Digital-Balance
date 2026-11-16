@@ -5,7 +5,7 @@
 
 Der Dienst unterstützt **PostgreSQL für öffentliches Hosting** und weiterhin **SQLite lokal**. Der historische Ranglistenserver und vorhandene Gastspielstände bleiben erhalten. Gastguthaben wird nicht als verifiziertes Kontoguthaben importiert.
 
-**Live-Status vom 07.11.2026:** Die öffentliche Account-Konfiguration bleibt deaktiviert. In dieser Umgebung fehlen `RENDER_API_KEY` und `NEON_API_KEY`; die Netzwerkpolicy verweigerte Render, Neon und die Homepage mit CONNECT 403. Das beweist keinen Ausfall des entfernten Servers. Es wurden keine kostenpflichtigen Ressourcen bestellt. Lokale Tests ersetzen keine öffentliche Abnahme.
+**Historischer Live-Status vom 07.11.2026:** Der separate Render-Free-Accountdienst ist mit einer eigenen Datenbank im bestehenden Neon-Free-Projekt verbunden; Render meldet das Deployment als live. Die neue Account-Domain ist in dieser Cloud-Maschine noch nicht freigegeben. Deshalb bleibt die öffentliche Account-Konfiguration bis zur tatsächlichen HTTPS-/Neustart-Abnahme deaktiviert. Der alte Ranglistenserver liefert weiterhin API v2. Keine kostenpflichtigen Ressourcen wurden bestellt. Dieser damalige Status ist keine erneute Live-Abnahme. Die spätere öffentliche Konfiguration auf `main` bleibt erhalten; aktuelle Design-Nachweise: [DESIGN_IMPLEMENTATION.md](../notification-ninja/DESIGN_IMPLEMENTATION.md).
 
 ## Lokal mit SQLite
 

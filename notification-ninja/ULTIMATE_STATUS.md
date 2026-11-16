@@ -1,5 +1,7 @@
 # Notification Ninja 3.1.0 – Entwicklungs- und Abnahmestand
 
+> Historischer Einrichtungsbericht. Der aktuelle Designstand baut auf dem späteren 3.9.0-main auf; siehe [Design-Abnahme 3.10.0](DESIGN_IMPLEMENTATION.md). Die damaligen Zugriffssperren beschreiben keine erneute Prüfung des heutigen Livebetriebs.
+
 Stand: **07.11.2026**. Dieser Bericht unterscheidet lokale Nachweise von einer öffentlichen Bereitstellung. Die alte Cloud-Umgebung wurde weder gelöscht noch verändert.
 
 ## Tatsächliche Ausgangsbasis
@@ -31,16 +33,25 @@ Der vorhandene Checkout war sauber und stand auf `9738b6b58cf4f3688edf5e1bc65066
 | Echter Container-Lebenszyklus mit SQLite-Volume | Zwei Konten angelegt, Container entfernt/neu erstellt, Sitzungen/Profile erhalten, erneut angemeldet, beide Konten gelöscht; nur eigene Testcontainer/-volumes entfernt |
 | `npm run build:ninja` | Beide Bundles für 3.1.0 gebaut |
 | `npm run package:ninja`, zweimal | Identische ZIP-/SHA-256-Ausgabe; Laufzeitidentität und CRC geprüft |
-
 | Finale Browser-Spielabnahme | 360/390/768/1280/1920 px bestanden; fünf Runden mit echten Maus-/Touch-Eingaben, Einstellungen/Übung/Rückkehr, keine JS-Fehler, keine fehlenden Übersetzungen oder zu kleinen geprüften Bedienelemente |
 | Finaler Portal-/Hub-Browsertest | 360/768/1280 px bestanden: Passwort-/Zustimmungssperren, echte Registrierung mit anschließender Kontolöschung, Hub-Name, Basarfilter, Gästeprofil-Erhalt, tatsächlicher Daily-/Boss-Rush-Start und englisches Portal |
 | Mobile Sichtprüfung | Hub, Registrierung und neues Cyber-Dojo in Chromium visuell geprüft; SVG über HTTP geladen, kein horizontaler Seitenüberlauf |
 
 Die Tests liefen mit Node24.22.1, PostgreSQL17, Chromium156.0.8078.79 und Playwright1.62.1. Mobilprüfungen verwenden emulierte Bildschirmgrößen/Touch, keine physischen Geräte. CI erhält einen echten PostgreSQL-Service und Browserprüfungen, damit Datenbanktests dort nicht still übersprungen werden. GitHub-CI-Erfolg nach dem Push ist separat zu prüfen.
 
+## Fortsetzung nach Veröffentlichung der Cloud-Umgebung
+
+Am 07.11.2026 wurde die neue Maschine erneut geprüft. Checkout und GitHub-`main` enthielten tatsächlich Commit `836feb6` und Version 3.1.0; die Portal- und PostgreSQL-Dateien sind vorhanden. Die nun injizierten Verwaltungs-API-Schlüssel funktionieren. Es wurden nur Bindungsstatus und notwendige API-Metadaten ausgegeben.
+
+Der bisherige öffentliche Dienst antwortet auf `/health` mit **API v2**, `notification-ninja-leaderboard` und `open-v2`. Mit zugelassenem Origin antwortet `/api/v3/health` dort mit **404**. Er ist somit weiterhin kein Account-Backend und wurde nicht ersetzt.
+
+Ein bereits vorhandener separater Render-Accountdienst wurde im **Free-Plan** bestätigt. Im vorhandenen Neon-Free-Projekt wurde eine eigene Datenbank `notification_ninja` mit eigener App-Rolle eingerichtet; `neondb` und bestehende Daten bleiben erhalten. Die PostgreSQL-Verbindungsadresse wurde ausschließlich im Arbeitsspeicher verarbeitet und direkt als geheime Render-Laufzeitvariable gesetzt. Sie steht weder in Dateien noch im öffentlichen Frontend.
+
+Render meldet das Deployment von `836feb6` für **https://notification-ninja-accounts.onrender.com** als **live**. Das ist ein Anbieterstatus, noch kein abgeschlossener Zwei-Konten-Nachweis. Der direkte Zugriff aus der Cloud-Umgebung scheitert aktuell weiterhin mit CONNECT403, weil diese zusätzliche Hostname-Freigabe noch nicht auf die Maschine angewendet ist. Die erforderliche Domain wurde unter Erhalt der vorhandenen Freigaben im neuen Entwurf ergänzt. Vor erfolgreichen Live-Tests bleibt die öffentliche Account-Konfiguration deaktiviert.
+
 ## Externe Blocker und nächste Schritte
 
-`RENDER_API_KEY`, `NEON_API_KEY` und eine produktive `DATABASE_URL` sind in der aktuellen Maschine nicht vorhanden; auch die Cloud-Metadaten melden keine Secret-Bindungen. Es wurden keine Werte ausgegeben oder im Repository gespeichert. Secret-Anforderungen für die beiden Verwaltungs-APIs wurden im Umgebungsentwurf gespeichert.
+Bei der **ersten Implementierung** waren `RENDER_API_KEY`, `NEON_API_KEY` und eine produktive `DATABASE_URL` noch nicht vorhanden; die damaligen Cloud-Metadaten meldeten keine Secret-Bindungen. Dieser historische Blocker ist durch die oben dokumentierte Fortsetzung teilweise behoben. Es wurden keine Werte ausgegeben oder im Repository gespeichert. Secret-Anforderungen für die beiden Verwaltungs-APIs wurden im Umgebungsentwurf gespeichert.
 
 Die erzwungene Netzwerkpolicy hatte keine Freigabe für `api.render.com`, `console.neon.tech`, `notification-ninja-ranking.onrender.com` oder `brukevfh.github.io`. Die tatsächlichen Anfragen scheiterten mit **CONNECT 403**. Deshalb konnte der aktuelle Inhalt/Betriebszustand des entfernten Ranglistenservers und der öffentlichen Seite **nicht geprüft** werden. Der letzte dokumentierte alte Ranglistenserver ist kein nachgewiesenes Account-Backend.
 

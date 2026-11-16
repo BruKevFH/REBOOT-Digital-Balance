@@ -20,6 +20,9 @@ on:
       - 'notification-ninja/ninja-feedback-v7.css'
       - 'notification-ninja/ninja-mint-ui-v9.css'
       - 'notification-ninja/ninja-mint-home-v9.css'
+      - 'notification-ninja/indie-theme.css'
+      - 'notification-ninja/assets/indie-*.png'
+      - 'notification-ninja/assets/fonts/**'
       - 'notification-ninja/assets/ninja-mint-*-v9.svg'
       - 'notification-ninja/assets/dojo-*-v5.svg'
       - 'notification-ninja/assets/overworld-landscape-v4.svg'
@@ -60,7 +63,8 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add notification-ninja/dist/ninja.js notification-ninja/dist/home.js notification-ninja/dist/build.json
-          git add notification-ninja/downloads/Notification-Ninja-3.9.0.zip notification-ninja/downloads/Notification-Ninja-3.9.0.zip.sha256
+          ninja_version="$(node -p "JSON.parse(require('fs').readFileSync('notification-ninja/dist/build.json')).version")"
+          git add "notification-ninja/downloads/Notification-Ninja-${ninja_version}.zip" "notification-ninja/downloads/Notification-Ninja-${ninja_version}.zip.sha256"
           if git diff --cached --quiet; then
             echo "Generated files are already up to date."
           else
@@ -78,20 +82,21 @@ jobs:
           # Explicitly publish the generated dist/ and ZIP revision.
           gh api -X POST "repos/${{ github.repository }}/pages/builds"
 
-      - name: Verify public 3.9.0 assets after Pages rebuild
+      - name: Verify public illustrated assets after Pages rebuild
         if: success()
         continue-on-error: true
         shell: bash
         run: |
           site="https://brukevfh.github.io/REBOOT-Digital-Balance/notification-ninja"
+          ninja_version="$(node -p "JSON.parse(require('fs').readFileSync('notification-ninja/dist/build.json')).version")"
           for attempt in {1..10}; do
             live="$(curl -fsSL --max-time 10 -H 'Cache-Control: no-cache' "$site/dist/build.json?release=${GITHUB_RUN_ID}-${attempt}" | jq -r '.version // empty' || true)"
-            if [ "$live" = "3.9.0" ]; then
-              curl -fsSL --max-time 10 "$site/ninja-mint-ui-v9.css?release=${GITHUB_RUN_ID}" -o "$RUNNER_TEMP/nn-v9.css"
-              grep -q 'nn-mint-world-grid' "$RUNNER_TEMP/nn-v5.css"
-              curl -fsSL --max-time 10 "$site/assets/ninja-mint-boss-v9.svg?release=${GITHUB_RUN_ID}" -o "$RUNNER_TEMP/nn-v9.svg"
-              grep -q 'illustrated adventure' "$RUNNER_TEMP/nn-v5.svg"
-              echo "PUBLIC VISUAL RELEASE 3.9.0 CONFIRMED"
+            if [ "$live" = "$ninja_version" ]; then
+              curl -fsSL --max-time 10 "$site/indie-theme.css?release=${GITHUB_RUN_ID}" -o "$RUNNER_TEMP/nn-indie.css"
+              grep -q 'indie-world-grid' "$RUNNER_TEMP/nn-indie.css"
+              curl -fsSL --max-time 10 "$site/assets/indie-wordmark.png?release=${GITHUB_RUN_ID}" -o "$RUNNER_TEMP/nn-wordmark.png"
+              test -s "$RUNNER_TEMP/nn-wordmark.png"
+              echo "PUBLIC VISUAL RELEASE ${ninja_version} CONFIRMED"
               exit 0
             fi
             echo "Pages still serves version: ${live:-unknown} (attempt ${attempt})"

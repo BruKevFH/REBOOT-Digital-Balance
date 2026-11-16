@@ -1,44 +1,41 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
-
 const read=name=>readFileSync('notification-ninja/'+name,'utf8');
-const index=read('index.html');
-const css=read('mobile-navigation-v6.css');
-const ui=read('src/main.js');
-const legacy=read('legend-ui.css');
-const sw=read('sw.js');
-const packaging=readFileSync('scripts/package_ninja.py','utf8');
-const routes=['worlds','dojos','campaign','modes','bazaar','leaderboard'];
+const index=read('index.html'),css=read('indie-theme.css'),ui=read('src/main.js');
+const routes=['home','play','campaign','bazaar','leaderboard'];
 
-test('mobile dock exposes all six main routes, including Bazaar',()=>{
- const main=index.match(/<nav class="dojo-tabs"[^>]*>([\s\S]*?)<\/nav>/)?.[1];
- const mobile=index.match(/<nav class="nn-mobile-nav"[^>]*>([\s\S]*?)<\/nav>/)?.[1];
- assert(main&&mobile,'Both responsive navigation variants must exist');
- for(const html of [main,mobile]){
-  assert.equal((html.match(/data-game-route="/g)||[]).length,6,'Exactly six destinations');
-  for(const route of routes)assert(html.includes('data-game-route="'+route+'"'),route+' should be accessible');
- }
- assert.match(mobile,/href="#bazaar"[^>]*data-game-route="bazaar"/);
- assert.doesNotMatch(legacy,/data-game-route\s*=\s*['"]?bazaar['"]?\]\s*\{\s*display\s*:\s*none/i);
+test('one responsive dock exposes exactly five destinations with modes and worlds unified in Play',()=>{
+ const nav=index.match(/<nav[^>]*id="indie-bottom-nav"[^>]*>([\s\S]*?)<\/nav>/)?.[1];
+ assert(nav,'One global navigation dock exists');
+ assert.equal((nav.match(/data-game-route="/g)||[]).length,5);
+ for(const route of routes)assert(nav.includes('data-game-route="'+route+'"'),route);
+ assert(!index.includes('class="nn-mobile-nav"'),'No competing six-destination mobile dock');
+ assert(!nav.includes('data-game-route="dojos"'));
+ assert(!nav.includes('data-game-route="modes"'));
+ assert(nav.includes('href="#play"'));
+ assert(nav.includes('href="#bazaar"'));
+ assert(index.indexOf('id="indie-bottom-nav"')>index.indexOf('</main>',index.indexOf('id="home"')),'Navigation stays outside the hidden home view');
 });
 
-test('mobile dock works in menus, but is hidden in gameplay and MFA',()=>{
- assert.match(css,/repeat\(6,minmax\(0,1fr\)\)/);
- assert.match(css,/body\.nn-menu-context \.nn-mobile-nav/);
- assert.match(css,/body:has\(\.account-shade\) \.nn-mobile-nav\s*\{\s*display:none/);
- assert.match(css,/safe-area-inset-bottom/);
- assert.match(css,/\.modal-shade:not\(\.account-shade\)/);
- assert.match(ui,/classList\.toggle\('nn-menu-context'/);
- assert.match(ui,/\['home','modes','dojos','world','career','shop','leaderboard'/);
- assert.match(css,/\.nn-mobile-nav a:focus-visible/);
+test('the dock preserves touch, keyboard and safe-area access across menu pages',()=>{
+ assert(css.includes('grid-template-columns:repeat(5,minmax(0,1fr))'));
+ assert(css.includes('safe-area-inset-bottom'));
+ assert(css.includes('min-height:59px')||css.includes('min-height:58px'));
+ assert(css.includes('[aria-current=page]'));
+ assert(read('styles.css').includes(':focus-visible'));
+ assert(ui.includes("navigation.hidden=!localLoggedIn"));
+ assert(ui.includes("'home',...menuKinds,'practice'"));
+ assert(ui.includes("installModalAccessibility(document)"),'Account and MFA dialogs retain their focus boundary');
+ assert(read('src/account-ui.js').includes('aria-modal="true"'));
 });
 
-test('mobile navigation and short copy ship in both the online and offline version',()=>{
- assert(index.includes('href="./mobile-navigation-v6.css"'));
- assert(sw.includes("'./mobile-navigation-v6.css'"));
- assert(packaging.includes("'mobile-navigation-v6.css'"));
- assert(index.includes('Spielwelten, Karriere und Basar sind im Menü.'));
- assert(read('src/ninja-legend-ui.js').includes('Levelzahl: starten. Titel: Details.'));
- assert(css.includes('.nn-home-guide,.dojo-stamp,.home-footer{display:none!important}'));
+test('unified navigation assets and current styles ship online and offline',()=>{
+ const sw=read('sw.js'),packaging=readFileSync('scripts/package_ninja.py','utf8');
+ assert(index.includes('href="./indie-theme.css"'));
+ assert(sw.includes("'./indie-theme.css'"));
+ assert(packaging.includes("'indie-theme.css'"));
+ assert(ui.includes('class="indie-mode-card"'));
+ assert(ui.includes('class="indie-world-card '));
+ assert(ui.includes("dojos:'modes'")||ui.includes("dojos:'play'")||ui.includes('function dojosMenu(){modesMenu();}'),'Legacy worlds route reaches the unified view');
 });

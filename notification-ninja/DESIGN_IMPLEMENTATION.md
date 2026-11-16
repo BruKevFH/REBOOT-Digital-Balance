@@ -1,0 +1,40 @@
+# Notification Ninja 3.10.0 – Umsetzung der Designreferenz
+
+Stand: 16.11.2026. Die vom Nutzer beigefügte japanische Indie-Spieloberfläche ist die visuelle Vorgabe. Der [vollständige Masterprompt](DESIGN_MASTERPROMPT.md) ist als wiederverwendbare Bauvorgabe gespeichert.
+
+## Tatsächlich umgesetzt
+
+- Ein gemeinsamer Bereich **Spielen** enthält vier illustrierte Modusbanner und vier Weltkarten. Die fünf Hauptziele heißen Übersicht, Spielen, Karriere, Basar und Rangliste. Profil, Konto, MFA und Einstellungen bleiben über den Header erreichbar. Bestehende Hashes und Weltverweise bleiben nutzbar.
+- Sakura-/Fuji-/Ninja-Kopfbereich, freigestellte Wortmarke, cremefarbene Flächen, dunkle Konturen, Mint-Rahmen und erhabene Buttons folgen derselben Gestaltung auf Homepage, Anmeldung, Hub, Welt-/Modusauswahl, Karriere, Basar, Rangliste, Einstellungen, Briefings, Spiel-HUD, Pause, Reflexion und Ergebnis.
+- Vier eigens erstellte Banner und vier Dojo-Illustrationen liegen lokal in optimierten Bildatlanten. Derselbe Weltatlas wird im echten Canvas-Spiel verwendet; keine Oberfläche besteht aus einem unbeweglichen Screenshot. Texte, Navigation und Buttons bleiben echtes übersetzbares HTML/SVG.
+- Die bestehenden Skins bleiben animiert, einschließlich der neueren Fokusfuchs-/Nachtwächter-Meisterschaftsoutfits. Kosmetische Umgebungsreaktionen und angekündigte Bossphasen sind erhalten. Das mobile SUPER bleibt ein echtes Touchziel; reduzierte Animationen werden respektiert.
+- Die vorhandenen Darstellungsoptionen Relaxed, Dark und Noir bleiben lokale Einstellungen. Nunito ist mit ihrer Open-Font-Lizenz lokal enthalten; keine Laufzeitabfrage eines Schrift-CDNs nötig.
+- Gast-Downloads erhalten eine deaktivierte Account-Konfiguration, unabhängig von der bestehenden öffentlichen Konfiguration. Alle anderen Runtime-Dateien im ZIP werden auf Identität geprüft; Bilder, Styles und Schriften sind im Offline-Cache enthalten.
+
+## Erhalt des aktuellen Entwicklungsstands
+
+Der anfangs wiederhergestellte lokale Entwurf basierte noch auf Commit `836feb6`. Vor dem Push wurde tatsächlich festgestellt, dass GitHub bereits `7ce85f6` mit Release 3.9.0 enthielt. Vor dem Zusammenführen wurden ein vollständiger Git-Stash sowie zusätzliche Patch-/Dateiarchive außerhalb des Checkouts angelegt.
+
+Das Update basiert auf diesem neueren `main`. MFA, Reflexionsaufgaben und deren Siegel/Löschfunktion, neue Münzbelohnungen, Meisterschaftsskins, Welt-Lerntexte, Ranglistenfilter und bestehende Kontoverträge bleiben erhalten. Die öffentliche Account-Konfiguration des aktuellen `main` wurde nicht zurückgesetzt oder in diesem Designauftrag neu aktiviert. Es wurden keine produktiven Datenbanken verändert und keine alte Cloud-Umgebung gelöscht.
+
+Neue Spielregeln oder ein Zurücksetzen von Spielständen waren für das Design nicht erforderlich. Kosten, Freischaltungen, Open-Run-Regeln und serverseitige Prüfung bleiben maßgeblich; gesperrte Welten erhalten keine kostenlose Vollfreischaltung. Die vorhandenen drei kurzen Alltagsrunden bleiben kostenlos erreichbar.
+
+## Abnahme
+
+Die Abnahme bezieht sich auf den zusammengeführten 3.10.0-Build, nicht auf frühere Entwürfe:
+
+- Gesamte Testsuite mit echtem lokalem PostgreSQL 17: **463 bestanden, keine Fehler, keine übersprungenen Tests**. SQLite bleibt ebenfalls durch die Service- und Migrationstests abgedeckt. Der vollständige Schlusslauf bestand mit 463/463, einschließlich des neuen Tests für englische Missionsbeschriftungen. Die abschließenden Korrekturen an der getrennt übersetzbaren NIM-Zitatfläche und nativen alten Hash-Links wurden mit den 29 betroffenen Sprach-, Navigations-, Karriere- und Offline-Prüfungen sowie der vollständigen Browserabnahme geprüft. Der ausschließlich hierfür erstellte lokale PostgreSQL-Testcontainer wurde anschließend entfernt.
+- Chromium-Portal bei **360, 768, 941 und 1280 px**: echte Registrierung, Passwortbestätigung und Datenschutzsperre, Login, Erhalt des Gastprofils, 18 Hauptmissionen und Bosszugänge, Basarfilter, Daily-/Boss-Rush-Start sowie Deutsch/Englisch bestanden. Der MFA-Durchlauf prüfte echte TOTP-Einrichtung, Passwortanmeldung ohne vorzeitig erstellte Sitzung, einmaligen Wiederherstellungscode mit anschließend neun verbleibenden Codes und Abschaltung mit einem anderen unbenutzten Code.
+- Spiel-/Einstellungs-/Übungsprüfung bei **360, 768, 941 und 1280 px** bestanden: echte Maus-/Touch-Eingaben in den Dojos, Rückkehr ins Menü, kein JavaScript-Fehler und keine fehlende Übersetzung. SUPER wurde auf dem Handyformat tatsächlich betätigt; Ladung und Effekt änderten sich. Ein tatsächlich beendeter Open Run führte durch beide Reflexionsschritte zum Fokus-Siegel, ohne Münzbelohnung.
+- Die Master-Weltvorschau ist ein gefülltes Canvas und unterscheidet sich von der Schulwelt. Die vorhandenen Darstellungspräferenzen Relaxed, Dark und Noir bleiben auswählbar. Die Sichtprüfung umfasst Homepage, Hub, Spielen, Karriere, Basar, Einstellungen und Reflexion.
+- Alle von den Portaltests erstellten Konten wurden gelöscht; in der eigens angelegten lokalen Testdatenbank blieben **0 Konten**. Bestehende Arbeitsverzeichnis-Datenbanken wurden nicht verwendet.
+
+Der Build ist warnungsfrei. Das abschließende ZIP wurde zweimal mit identischem Ergebnis erzeugt: **16.888.876 Bytes**, SHA-256 `6ae75a62ab2176f3638d2698cf5db02d937e3ef2cf79680057b014e5fa770825`. CRC, vollständige Laufzeitidentität und die ausschließlich für den Gastdownload deaktivierte Account-Konfiguration wurden dabei geprüft.
+
+**Abschließende Menü-/Geometrieprüfung bestanden:** bei allen vier Breiten jeweils acht Ansichten in Deutsch und Englisch, alle acht Welt-/Moduskarten, Open Run mit drei Herzen, native alte `#worlds`-/`#modes`-Links und Browser-Zurück. Keine JavaScript-Fehler, fehlenden Übersetzungen, horizontalen Überläufe oder zu kleinen geprüften Touchziele. Menünutzung und ungespielte Kartenstarts erhalten den Gastfortschritt. Karriere und Rangliste wurden nach dem Entfernen der alten Stylepakete ausdrücklich für ihre echten aktuellen HTML-Klassen gestaltet. Die Mobilprüfungen sind Chromium-Emulationen mit Touch, keine Tests auf physischen Geräten.
+
+## Öffentlicher Betrieb und Grenzen
+
+Am 16.11.2026 lieferte die öffentliche Homepage vor dem Push noch Version 3.9.0. Der historische Ranglistenserver antwortete tatsächlich mit `notification-ninja-leaderboard`, API 2 und `open-v2`. Die separate Account-Domain wurde bei einer erneuten HTTPS-Abfrage bereits am CONNECT-Tunnel dieser Cloud-Umgebung mit HTTP 403 blockiert. Das ist kein Nachweis eines Ausfalls des entfernten Dienstes. Eine neue öffentliche Zwei-Konten-/Serverneustart-Abnahme wurde in diesem Designauftrag deshalb nicht behauptet; die bereits aktive Konfiguration des neueren `main` bleibt erhalten.
+
+Die GitHub-Actions-API war aus der Cloud ebenfalls mit Forbidden blockiert. Lokale Prüfergebnisse sind dokumentiert; ein erfolgreicher entfernter CI-Lauf darf daraus nicht abgeleitet werden. Es wurden keine neuen Anbieterressourcen, Kosten oder Änderungen an produktiven Datenbanken ausgelöst.

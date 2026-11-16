@@ -52,7 +52,8 @@ test('illustrated backgrounds, accessible meaning and real success animation are
  const index=read('index.html'),sw=read('sw.js'),packageScript=readFileSync('scripts/package_ninja.py','utf8');
  const css=read('illustrated-adventure-v4.css'),map=read('assets/overworld-landscape-v4.svg');
  assert(existsSync(root+'assets/overworld-landscape-v4.svg'));
- assert(index.includes('href="./illustrated-adventure-v4.css"'));
+ assert(index.includes('href="./indie-theme.css"'));
+ assert(read('indie-theme.css').includes('.nn-celebration'),'Current presentation styles the existing celebration system');
  assert(index.includes('id="nn-celebration-root"'));
  assert(index.includes('class="nn-hud-meaning"'));
  for(const file of ['illustrated-adventure-v4.css','assets/overworld-landscape-v4.svg','dojo-worlds-v5.css',...['study','gaming','sleep'].map(id=>'assets/dojo-'+id+'-v5.svg')]){

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#12283a">
+<meta name="theme-color" content="#fff3df">
 <meta name="description" content="Notification Ninja: kurze Spielrunden über Lernen, Gaming und Schlaf. Erkenne Ablenkungen, entscheide bewusst und finde deinen Fokus. Kostenlos auf Deutsch und Englisch.">
 <title>Notification Ninja</title>
 <link rel="icon" href="./favicon.svg" type="image/svg+xml">
@@ -33,73 +33,32 @@
 @media(max-width:370px){.logo-brand{width:132px;height:61px}.hero h1{font-size:48px}.village-sign{font-size:11px;padding:5px}.village-preview{margin-top:18px}}
 .project-info{margin:0 0 30px;padding:0 23px;border:1px solid #c8b599;border-radius:17px;background:#fbf0d8}.project-info summary{display:flex;align-items:center;min-height:54px;cursor:pointer;font-weight:850;font-size:13px}.project-info details[open]{padding-bottom:16px}.project-info h2{font-size:22px;line-height:1.3;margin:11px 0 15px}.project-info p{font-size:12px;line-height:1.8;color:#78695f}.nav-links{gap:16px}.nav-actions{gap:18px}@media(max-width:760px){.hero-actions .button{min-height:53px}.hero-actions .button.secondary{font-size:13px;padding:12px 15px}.nav-actions .language-picker{flex-shrink:0}}
 </style>
-<link rel="stylesheet" href="./focus-home.css">
-<link rel="stylesheet" href="./legend-home.css">
-<link rel="stylesheet" href="./ninja-mint-home-v9.css">
+<link rel="preload" href="./assets/fonts/nunito-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="./indie-theme.css">
 </head>
-<body>
+<body class="indie-website">
 <div class="shell">
 <nav class="top-nav" aria-label="Hauptnavigation">
-  <a href="./home.html" class="brand logo-brand" aria-label="Notification Ninja Startseite"><img src="./assets/ninja-mint-logo-v9.svg" alt="Notification Ninja" width="180" height="82"></a>
-  <div class="nav-actions"><div class="nav-links"><a href="#start">Start</a><a href="#welten">Spielwelten</a><a href="#spielprinzip">So geht’s</a><a href="./index.html#login">Anmelden</a><a href="./index.html#register">Konto erstellen →</a><a href="./index.html#guest">Als Gast ins Dojo</a></div><div class="language-picker" role="group" aria-label="Sprache wählen"><button type="button" data-language="de" aria-label="Deutsch wählen" aria-pressed="true">DE</button><button type="button" data-language="en" aria-label="Englisch wählen" aria-pressed="false">EN</button></div></div>
+  <a href="./home.html" class="brand logo-brand" aria-label="Notification Ninja Startseite"><img src="./assets/indie-wordmark.png" alt="Notification Ninja" width="180" height="82"></a>
+  <div class="nav-actions"><div class="nav-links"><a href="#start">Start</a><a href="#welten">Spielwelten</a><a href="#spielprinzip">So geht’s</a><a href="./index.html#login">Anmelden</a><a href="./index.html#register">Konto erstellen →</a><a href="./index.html#guest">Als Gast ins Dojo</a></div><button type="button" class="indie-theme-cycle" data-theme-cycle aria-label="Design wechseln"><svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a9 9 0 1 0 0 18V3Z" fill="currentColor"/><circle cx="12" cy="12" r="9"/></svg><span data-theme-label>Relaxed</span></button><div class="language-picker" role="group" aria-label="Sprache wählen"><button type="button" data-language="de" aria-label="Deutsch wählen" aria-pressed="true">DE</button><button type="button" data-language="en" aria-label="Englisch wählen" aria-pressed="false">EN</button></div></div>
 </nav>
 <header class="hero" id="start">
   <div class="hero-content">
-    <img class="nn-hero-logo" src="./assets/ninja-mint-logo-v9.svg" alt="Notification Ninja" width="500" height="206">
     <span class="eyebrow">DEIN MOMENT. DEINE ENTSCHEIDUNG.</span>
     <h1><span>Notification</span><span>Ninja</span></h1>
     <p class="hero-copy">Erkenne Ablenkungen. Behalte, was gerade wichtig ist. Dein Ninja begleitet dich durch Lernen, Gaming und Schlaf – eine Entscheidung nach der anderen.</p>
     <div class="hero-actions access-choices" aria-label="Zugang zum Dojo"><a class="button large" href="./index.html#login">Anmelden <span aria-hidden="true">→</span></a><a class="button secondary" href="./index.html#register">Konto erstellen</a><a class="guest-home-link" href="./index.html#guest">Als Gast ins Dojo →</a></div>
     <p class="hero-note"><strong>Diese Seite informiert nur über das Spiel.</strong><br>Nach Anmeldung, Registrierung oder Auswahl des Gastmodus gelangst du zuerst in dein Dojo. Dort entscheidest du selbst, welchen Modus du spielen möchtest. Ein Konto synchronisiert deinen Fortschritt.</p>
   </div>
-  <div class="hero-art" role="img" aria-label="Ein freundlicher mintgrüner Ninja sitzt in einem gemütlichen Dojo mit Büchern, Pflanze und Mondlampe.">
-    <svg viewBox="0 0 680 540" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <defs><linearGradient id="wall" x2="0" y2="1"><stop stop-color="#f8dfab"/><stop offset="1" stop-color="#f1d4a7"/></linearGradient><linearGradient id="sun" x2="0" y2="1"><stop stop-color="#ffebbb"/><stop offset="1" stop-color="#fff8d9"/></linearGradient><linearGradient id="floor" x2="1" y2="1"><stop stop-color="#dfb68c"/><stop offset="1" stop-color="#cfa17e"/></linearGradient><radialGradient id="light"><stop stop-color="#fff4cd" stop-opacity=".95"/><stop offset="1" stop-color="#fff4cd" stop-opacity="0"/></radialGradient></defs>
-      <path d="M77 76Q104 28 211 37L563 55Q627 62 632 115L638 416Q629 469 571 483L119 487Q48 472 49 420L57 139Q58 100 77 76Z" fill="url(#wall)" stroke="#b08c6e" stroke-width="3"/>
-      <path d="M50 388 637 388 638 429Q628 469 571 483L119 487Q54 476 49 425Z" fill="url(#floor)"/>
-      <path d="M53 387h582M86 419h518M104 455h482M168 390l-31 94m142-94-12 94m130-94 17 94m104-94 36 88" fill="none" stroke="#b88d70" stroke-width="2" opacity=".65"/>
-      <path d="M82 78 596 87v18L80 98Z" fill="#ba8b65" stroke="#9a745e" stroke-width="2"/><path d="M82 103v283m507-280v280" stroke="#bc8c65" stroke-width="18"/><path d="M87 105v279m506-276v275" stroke="#ecc398" stroke-width="4"/>
-      <rect x="106" y="124" width="211" height="215" rx="5" fill="#d8b085" stroke="#aa805f" stroke-width="5"/><rect x="117" y="135" width="189" height="193" rx="2" fill="url(#sun)"/>
-      <path d="M119 277q55-53 98-29t89-11v90H119Z" fill="#bdcba0"/><path d="M119 301q60-28 98-7t89-10v43H119Z" fill="#97b898"/>
-      <circle cx="259" cy="185" r="27" fill="#f7d180"/><path d="M211 136v190M119 219h186" stroke="#dcb88c" stroke-width="9"/>
-      <path d="m145 181 14 10 20-3m-20 3 8 14m-20 13 14-27m30 37-18-10m-28-26 8-22" fill="none" stroke="#af937b" stroke-width="3" stroke-linecap="round"/><g fill="#f0c5b7"><circle cx="149" cy="179" r="7"/><circle cx="169" cy="181" r="6"/><circle cx="181" cy="190" r="8"/><circle cx="166" cy="204" r="6"/><circle cx="149" cy="220" r="6"/></g>
-      <ellipse cx="246" cy="274" rx="131" ry="126" fill="url(#light)" opacity=".8"/>
-      <path d="M354 132v131m0-128 63-15 61 15v128H354" fill="#f0d5ad" stroke="#b58f6a" stroke-width="3"/><path d="m365 145 43 88m49-88-39 88m-46-46h79" stroke="#cbb28e" stroke-width="4" opacity=".7"/><path d="M348 263h136" stroke="#b38e6c" stroke-width="7" stroke-linecap="round"/>
-      <path d="M535 169v75m-31-44h61" stroke="#b49a79" stroke-width="3"/><path d="M502 182q0-31 34-31t33 31v42q-1 32-33 32t-34-32Z" fill="#ffedb5" stroke="#bd9972" stroke-width="3"/><path d="M514 159v88m14-94v99m15-98v98m14-92v86" stroke="#e3c08c" stroke-width="2"/><path d="M520 148h31m-31 110h31" stroke="#b49a79" stroke-width="5" stroke-linecap="round"/>
-      <path d="M503 324h87v65h-87z" fill="#ba8d6c" stroke="#93725e" stroke-width="3"/><path d="M505 335h82M540 338v48m-29-36h20m18 0h30" stroke="#e7b88e" stroke-width="3"/><circle cx="531" cy="360" r="3" fill="#856957"/><circle cx="551" cy="360" r="3" fill="#856957"/>
-      <path d="M556 302c-35-13-31-47-15-59-6 21 4 37 15 37-3-24 14-38 33-37-19 13-19 33-13 45 17-17 30-17 41-8-21 1-29 12-35 27Z" fill="#7da283" stroke="#60836d" stroke-width="2"/><path d="m551 302 7 25h28l7-25Z" fill="#cc9475" stroke="#a87c65" stroke-width="2"/>
-      <path d="M105 352h83v15h-83z" fill="#a6c49e" stroke="#6f8f75" stroke-width="2"/><path d="M111 367h83v14h-83z" fill="#f0b27e" stroke="#ba8968" stroke-width="2"/><path d="M103 381h87v13h-87z" fill="#97b7c6" stroke="#7795a7" stroke-width="2"/><path d="M112 359h64m-56 15h61m-70 14h65" stroke="#fff5d7" stroke-width="3" stroke-linecap="round"/>
-      <path d="M165 361c8-40 9-80-2-111m2 54c-28-7-42-20-35-36 22 4 35 19 35 36Zm3-24c26-12 41-31 33-45-25 10-34 26-33 45Zm-4 49c-32-2-47-17-44-35 24 4 39 18 44 35Z" fill="#81a17e" stroke="#5e8164" stroke-width="2.5"/><path d="M144 340h45l-7 27h-30z" fill="#d1a28a" stroke="#ac816e" stroke-width="2.5"/>
-      <ellipse cx="373" cy="435" rx="180" ry="38" fill="#a8a0bf" stroke="#8b839f" stroke-width="3"/><ellipse cx="373" cy="432" rx="159" ry="27" fill="#c2b5d3"/>
-      <path d="M292 356q-57 22-73 64 47 21 108-6m74-58q66 20 83 64-58 20-115-7" fill="#70b69f" stroke="#39374b" stroke-width="6" stroke-linejoin="round"/>
-      <path d="M290 263q-37 27-18 103c31 40 112 42 145 1 16-66 2-97-34-105Z" fill="#69bea2" stroke="#39374b" stroke-width="6"/>
-      <path d="M294 333q57 23 110-2" fill="none" stroke="#f4cf80" stroke-width="12"/>
-      <path d="M285 294q-60-16-67-66m183 66q55-22 63-67" fill="none" stroke="#39374b" stroke-width="27" stroke-linecap="round"/>
-      <path d="M285 294q-60-16-67-66m183 66q55-22 63-67" fill="none" stroke="#77c6ac" stroke-width="18" stroke-linecap="round"/>
-      <circle cx="216" cy="220" r="17" fill="#fff0cf" stroke="#39374b" stroke-width="5"/><circle cx="467" cy="220" r="17" fill="#fff0cf" stroke="#39374b" stroke-width="5"/>
-      <path d="M269 207c-13-79 30-116 77-116 70-1 100 47 85 121l-16 49c-47 17-94 16-137-1Z" fill="#72c6ab" stroke="#39374b" stroke-width="7" stroke-linejoin="round"/>
-      <path d="M270 198q33-22 75-10 45-16 87 9l-8 44q-80 27-146-1Z" fill="#fff2d1" stroke="#39374b" stroke-width="6"/>
-      <path d="M302 214q10-13 24 0m42-1q11-13 24 0" fill="none" stroke="#39374b" stroke-width="6" stroke-linecap="round"/>
-      <path d="m396 115 69-2-17 27 28 17-63 7-19-25Z" fill="#f29480" stroke="#39374b" stroke-width="5" stroke-linejoin="round"/>
-      <path d="m346 109 7 14 16 2-12 11 3 16-14-8-14 8 3-16-12-11 16-2 7-14Z" fill="#f8d581" stroke="#39374b" stroke-width="3"/>
-      <path d="m389 387 52 40-74 8-63-7 24-29Z" fill="#63a991" stroke="#39374b" stroke-width="5" stroke-linejoin="round"/>
-      <path d="M204 359h109l17 70H218l-14-70Z" fill="#98a5b9" stroke="#39374b" stroke-width="5" stroke-linejoin="round"/><path d="m257 380 4 8 9 2-7 6 1 10-8-5-8 4 2-9-7-6 9-1 5-9Z" fill="#f8d789" stroke="#596174" stroke-width="2"/><path d="M211 432h122" stroke="#39374b" stroke-width="6" stroke-linecap="round"/>
-      <path d="M505 413h49c14 0 28 39 15 44-9 4-16-13-25-13h-31c-9 0-18 16-25 11-10-8 4-42 17-42Z" fill="#9e91b7" stroke="#494256" stroke-width="4"/><path d="M508 425v14m-7-7h14" stroke="#494256" stroke-width="4" stroke-linecap="round"/><circle cx="548" cy="427" r="3" fill="#edab8e"/><circle cx="555" cy="436" r="3" fill="#e9d49d"/>
-      <path d="M587 364a28 28 0 0 1-26-39 29 29 0 1 0 26 39Z" fill="#f3d28d" stroke="#c09a6a" stroke-width="2"/>
-      <g fill="#f8d889" stroke="#88744d" stroke-width="2"><path d="m243 128 4 10 11 2-8 7 1 11-8-6-10 5 3-10-7-8 10-1Z"/><path d="m461 168 3 7 8 1-6 6 1 8-6-4-7 4 2-8-6-6 8-1Z"/></g>
-      <path d="m214 167-8-8m32 5-2-11m244 103 11-7m-3 24 11-1" stroke="#e8bf78" stroke-width="4" stroke-linecap="round"/>
-    </svg>
-    <span class="art-tag">Ein kleiner Moment für deinen Fokus.</span>
-  </div>
+  <div class="hero-art indie-home-hero" aria-hidden="true"><span class="indie-home-zen"></span><span class="art-tag">Ein kleiner Moment für deinen Fokus.</span></div>
 </header>
 <main>
 <section class="section" id="welten" aria-labelledby="situations-title">
   <div class="section-heading"><div><span class="eyebrow">EIN SPIEL · DREI WELTEN</span><h2 id="situations-title">Entdecke die drei Dojos.</h2><p>Hier lernst du die Welten kennen. Gespielt wird erst nach der Wahl „Anmelden“, „Konto erstellen“ oder „Als Gast ins Dojo“ – direkt aus deinem persönlichen Dojo.</p></div></div>
-  <div class="village-preview" aria-hidden="true"><img src="./assets/ninja-mint-day-v9.svg" alt="" decoding="async"><span class="village-sign sign-study">Lernen</span><span class="village-sign sign-gaming">Gaming</span><span class="village-sign sign-sleep">Schlafen</span></div>
   <div class="situation-grid">
-    <article class="situation-card"><div class="situation-head"><svg class="situation-art" viewBox="0 0 70 70" fill="none" aria-hidden="true"><path d="m10 15 23-4 25 5v40l-25-5-23 5V15Z" fill="#fff8df" stroke="#3e6857" stroke-width="3" stroke-linejoin="round"/><path d="M33 11v40M17 24l10-2m-10 10 10-2m13-7 11 3m-11 5 11 3m-11 5 11 3" stroke="#83ab8b" stroke-width="2.5" stroke-linecap="round"/><path d="m57 46 8-27 4 2-8 26-5 6 1-7Z" fill="#f4ce82" stroke="#887154" stroke-width="2"/></svg><h3>Lernen</h3></div><p>Bleib bei deiner Aufgabe. Lernhefte und Pausen helfen; endlose Clips können warten.</p><span class="context-cta"><span>Spielwelt-Vorschau · im Dojo spielbar</span><span aria-hidden="true">✦</span></span></article>
-    <article class="situation-card"><div class="situation-head"><svg class="situation-art" viewBox="0 0 70 70" fill="none" aria-hidden="true"><path d="M23 21h25c11 0 23 36 13 39-8 3-14-12-21-12H30c-7 0-13 14-20 11-10-4 2-38 13-38Z" fill="#b2a3ca" stroke="#54485e" stroke-width="3"/><path d="M24 29v14m-7-7h14" stroke="#54485e" stroke-width="3.5" stroke-linecap="round"/><circle cx="48" cy="31" r="4" fill="#f9d68b" stroke="#766178" stroke-width="1.5"/><circle cx="55" cy="40" r="4" fill="#e79d8d" stroke="#766178" stroke-width="1.5"/><path d="M29 18V9h12" stroke="#b59681" stroke-width="3" stroke-linecap="round"/></svg><h3>Gaming</h3></div><p>Dein Team darf bleiben. Spiele bewusst und entscheide selbst, wann deine Runde endet.</p><span class="context-cta"><span>Spielwelt-Vorschau · im Dojo spielbar</span><span aria-hidden="true">✦</span></span></article>
-    <article class="situation-card"><div class="situation-head"><svg class="situation-art" viewBox="0 0 70 70" fill="none" aria-hidden="true"><path d="M48 11a27 27 0 1 0 13 38A28 28 0 0 1 48 11Z" fill="#f3d183" stroke="#75638b" stroke-width="3"/><path d="m51 14 2 6 7 1-5 4 1 6-5-3-6 3 2-6-5-4 7-1 2-6Z" fill="#f8e2a9" stroke="#a091b1" stroke-width="1.5"/><path d="m57 40 2 3 4 1-3 2v4l-3-2-4 1 1-4-2-3 4 1 1-3Z" fill="#c5afd7"/></svg><h3>Schlafen</h3></div><p>Schütze deine Ruhe. Lass passende Signale durch und finde ein gutes Ende für deinen Tag.</p><span class="context-cta"><span>Spielwelt-Vorschau · im Dojo spielbar</span><span aria-hidden="true">✦</span></span></article>
+    <article class="situation-card" data-world="study"><div class="situation-head"><svg class="situation-art" viewBox="0 0 70 70" fill="none" aria-hidden="true"><path d="m10 15 23-4 25 5v40l-25-5-23 5V15Z" fill="#fff8df" stroke="#3e6857" stroke-width="3" stroke-linejoin="round"/><path d="M33 11v40M17 24l10-2m-10 10 10-2m13-7 11 3m-11 5 11 3m-11 5 11 3" stroke="#83ab8b" stroke-width="2.5" stroke-linecap="round"/><path d="m57 46 8-27 4 2-8 26-5 6 1-7Z" fill="#f4ce82" stroke="#887154" stroke-width="2"/></svg><h3>Lernen</h3></div><p>Bleib bei deiner Aufgabe. Lernhefte und Pausen helfen; endlose Clips können warten.</p><span class="context-cta"><span>Spielwelt-Vorschau · im Dojo spielbar</span><span aria-hidden="true">✦</span></span></article>
+    <article class="situation-card" data-world="gaming"><div class="situation-head"><svg class="situation-art" viewBox="0 0 70 70" fill="none" aria-hidden="true"><path d="M23 21h25c11 0 23 36 13 39-8 3-14-12-21-12H30c-7 0-13 14-20 11-10-4 2-38 13-38Z" fill="#b2a3ca" stroke="#54485e" stroke-width="3"/><path d="M24 29v14m-7-7h14" stroke="#54485e" stroke-width="3.5" stroke-linecap="round"/><circle cx="48" cy="31" r="4" fill="#f9d68b" stroke="#766178" stroke-width="1.5"/><circle cx="55" cy="40" r="4" fill="#e79d8d" stroke="#766178" stroke-width="1.5"/><path d="M29 18V9h12" stroke="#b59681" stroke-width="3" stroke-linecap="round"/></svg><h3>Gaming</h3></div><p>Dein Team darf bleiben. Spiele bewusst und entscheide selbst, wann deine Runde endet.</p><span class="context-cta"><span>Spielwelt-Vorschau · im Dojo spielbar</span><span aria-hidden="true">✦</span></span></article>
+    <article class="situation-card" data-world="sleep"><div class="situation-head"><svg class="situation-art" viewBox="0 0 70 70" fill="none" aria-hidden="true"><path d="M48 11a27 27 0 1 0 13 38A28 28 0 0 1 48 11Z" fill="#f3d183" stroke="#75638b" stroke-width="3"/><path d="m51 14 2 6 7 1-5 4 1 6-5-3-6 3 2-6-5-4 7-1 2-6Z" fill="#f8e2a9" stroke="#a091b1" stroke-width="1.5"/><path d="m57 40 2 3 4 1-3 2v4l-3-2-4 1 1-4-2-3 4 1 1-3Z" fill="#c5afd7"/></svg><h3>Schlafen</h3></div><p>Schütze deine Ruhe. Lass passende Signale durch und finde ein gutes Ende für deinen Tag.</p><span class="context-cta"><span>Spielwelt-Vorschau · im Dojo spielbar</span><span aria-hidden="true">✦</span></span></article>
   </div>
   <p class="small-note">Alle drei Situationen sind Teil des Spiels. Diese Karten sind eine Vorschau und starten keine Runde.</p>
 </section>

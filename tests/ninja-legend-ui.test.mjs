@@ -33,6 +33,7 @@ test('rendered campaign has all 18 genuine main missions on connected paths',()=
 test('three boss nodes and all optional challenges use existing mission IDs',()=>{
  const html=legendaryCareer({missions:fixture});
  assert.equal((html.match(/class="nn-career-boss is-/g)||[]).length,3);
+ assert.doesNotMatch(html,/Mission undefined|>undefined</,'Optional mission labels have a real displayed ordinal');
  assert.equal((html.split('class="nn-career-bonus-grid"')[1]?.match(/class="nn-career-node is-/g)||[]).length,5);
  for(const boss of fixture.filter(m=>m.bossId))assert(html.includes('data-mission-inspect="'+boss.id+'"'));
  for(const extra of fixture.filter(m=>m.section!=='main'&&!m.bossId))assert(html.includes('data-mission-inspect="'+extra.id+'"'));

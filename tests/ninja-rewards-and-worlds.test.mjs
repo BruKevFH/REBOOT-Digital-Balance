@@ -48,14 +48,16 @@ test('two decision mastery skins unlock at cumulative 60/180 correct, once each,
 
 test('mobile SUPER remains a real touch button, scenes and rewards ship in online and offline builds',()=>{
  const read=f=>readFileSync('notification-ninja/'+f,'utf8');
- const styles=read('ninja-feedback-v7.css'),ui=read('src/main.js'),render=read('src/renderer.js');
+ const styles=read('styles.css')+'\n'+read('indie-theme.css'),ui=read('src/main.js'),render=read('src/renderer.js');
  const pkg=readFileSync('scripts/package_ninja.py','utf8');
  assert.match(styles,/touch-action:manipulation/);
  assert.match(styles,/body\.is-playing:not\(\.is-paused\) \.super-dock/);
  assert.match(ui,/\$\('super-button'\)\.onclick=activateSuper/);
- for(const name of ['study','gaming','sleep'])assert(render.includes('dojo-'+name+'-v5.svg'));
+ assert(render.includes('indie-worlds.png'),'The three quick rounds use the current painted atlas');
+ for(const name of ['study','gaming','sleep','master'])assert(new RegExp(name+':\\[').test(render),'Separate painted region: '+name);
  assert(ui.includes('nn-round-reward')&&ui.includes('nn-reward-progress'));
- assert(read('index.html').includes('ninja-feedback-v7.css'));
+ assert(read('index.html').includes('indie-theme.css'));
+ assert(styles.includes('.nn-round-reward')&&styles.includes('.nn-reward-progress'),'Current CSS displays confirmed coin and skin progression');
  assert(pkg.includes('ninja-feedback-v7.css'));
  assert(read('sw.js').includes('ninja-feedback-v7.css'));
 });

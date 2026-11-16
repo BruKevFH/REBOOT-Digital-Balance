@@ -111,6 +111,8 @@ export const EN_LEGEND=Object.freeze({
   "Geprüften Run veröffentlichen":"Publish verified run",
   "Zum Konto anmelden":"Sign in to your account",
   "Meine Rekorde ansehen":"View my records",
+  "Meine Rekorde ansehen →":"View my records →",
+  "✦ Wähle ein leuchtendes Level.":"✦ Choose a glowing level.",
   "Freundeslisten sind derzeit nicht verfügbar. Es werden keine erfundenen Spieler oder Ergebnisse angezeigt.":"Friends lists are not available yet. No fake players or scores are shown.",
   "Pkt.":"pts",
   "Punkte":"points",
@@ -135,6 +137,9 @@ export const EN_LEGEND=Object.freeze({
   "Beitritt":"Join"
 });
 export const LEGEND_PATTERNS=[
+  [/^Mission (\d+): (.+), (Geschafft|Spielbar|Gesperrt)$/u,'Mission $1: $2, $3','authored'],
+  [/^Details zu Mission (.+) ansehen$/u,'View details for mission $1','authored'],
+  [/^✦ \+(\d+) Münzen$/u,'✦ +$1 coins','authored'],
   [/^(\d+)\s*\/\s*(\d+) Missionen geschafft$/u,'$1 / $2 missions completed','authored'],
   [/^(\d+) Missionen geschafft$/u,'$1 missions completed','authored'],
   [/^(\d+) Belohnung(?:en)? bereit$/u,'$1 rewards ready','authored'],

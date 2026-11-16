@@ -25,32 +25,22 @@ test('four very different illustrated worlds preserve existing three quick round
  for(const id of ['study','gaming','sleep'])assert(legendaryWorldDetail(id).includes('data-quick-context="'+id+'"'));
 });
 
-test('new source, logo, posters, styles, homepage and offline release agree',()=>{
- const index=read('index.html'),home=read('home.html'),sw=read('sw.js'),css=read('ninja-mint-ui-v9.css');
+test('the current indie artwork is active while authored upstream illustrations remain available offline',()=>{
+ const index=read('index.html'),home=read('home.html'),sw=read('sw.js');
  const zip=readFileSync('scripts/package_ninja.py','utf8');
- const workflow=readFileSync('.github/workflows/notification-ninja-assets.yml','utf8');
- const main=read('src/main.js');
- assert(index.includes('ninja-mint-ui-v9.css'));
- assert(home.includes('ninja-mint-home-v9.css'));
- assert(home.includes('ninja-mint-logo-v9.svg'));
- assert(main.includes('class="nn-panel-crest"'));
- for(const style of ['ninja-mint-ui-v9.css','ninja-mint-home-v9.css']){
-  assert(sw.includes("'./"+style+"'"));assert(zip.includes("'"+style+"'"));assert(workflow.includes(style));
+ assert(index.includes('href="./indie-theme.css"'));assert(home.includes('href="./indie-theme.css"'));
+ for(const asset of ['indie-theme.css','assets/indie-modes.png','assets/indie-worlds.png','assets/indie-masthead.png','assets/indie-wordmark.png']){
+  assert(existsSync('notification-ninja/'+asset),asset);
+  assert(sw.includes("'./"+asset+"'"),'Service worker: '+asset);
+  assert(zip.includes("'"+asset+"'"),'Offline package: '+asset);
  }
  for(const id of minted){
-  const path='assets/ninja-mint-'+id+'-v9.svg';
-  assert(existsSync('notification-ninja/'+path),path);
-  const svg=read(path);
+  const asset='assets/ninja-mint-'+id+'-v9.svg',svg=read(asset);
   assert(svg.startsWith('<svg')&&svg.endsWith('</svg>'));
   assert(!/<script\b|<foreignObject\b/i.test(svg));
-  assert(sw.includes("'./"+path+"'"),'service worker '+path);
-  assert(zip.includes("'"+path+"'"),'offline package '+path);
+  assert(sw.includes("'./"+asset+"'"));assert(zip.includes("'"+asset+"'"));
  }
- assert(css.includes('@media(max-width:760px)'));
- assert(css.includes('prefers-reduced-motion:reduce'));
- assert(css.includes('.nn-mint-world-grid'));
- assert(css.includes('.arcade-mode-quest .nn-quest-scene'));
- assert(main.includes('dataset.ninjaRoom'));
+ assert(read('src/main.js').includes('dataset.ninjaRoom'));
 });
 
 test('branding does not replace user state, scoring or server validation',()=>{
@@ -61,16 +51,19 @@ test('branding does not replace user state, scoring or server validation',()=>{
  const game=read('src/game.js');
  assert(game.includes("startQuickRound(context,options={})"));
  const render=read('src/renderer.js');
- for(const id of ['study','gaming','sleep'])assert(render.includes('dojo-'+id+'-v5.svg'));
+ assert(render.includes("indie-worlds.png"),'The authored atlas is used by the live renderer');
+ for(const id of ['study','gaming','sleep','master'])assert(new RegExp(id+':\\[').test(render),'Distinct world region: '+id);
+ assert(render.includes('ROOM_ART_REGIONS[balance?\'master\':mode]'),'Mixed Balance Master uses its own fourth quadrant');
 });
 
-test('cartoon world posters override former absolutely positioned houses at desktop and preserve phone 2×2 layout',()=>{
- const css=read('ninja-mint-ui-v9.css');
- assert(css.includes('display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important'));
- assert(css.includes('.nn-mint-world-grid .nn-village-gate'));
- assert(css.includes('position:relative!important;top:auto!important;left:auto!important'));
- assert(css.includes('@media(max-width:375px)'));
+test('the active Play screen uses a responsive two-column world grid with functional detail buttons',()=>{
+ const css=read('indie-theme.css'),main=read('src/main.js');
+ assert(css.includes('.indie-world-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))'));
+ assert(css.includes('.indie-world-card{position:relative'));
+ assert(css.includes('@media(max-width:600px)'));
+ assert(main.includes('data-world-inspect="${world.id}"'));
+ assert(main.includes('data-quick-context="${id}"'));
  const browser=readFileSync('scripts/check_ninja_portal.cjs','utf8');
- assert(browser.includes("'grid','Desktop uses the four-poster mint world selector'"));
- assert(browser.includes("'Four illustrated world posters'"));
+ assert(browser.includes('Four illustrated world posters'));
+ assert(browser.includes('Unified Play cards fit the phone'));
 });

@@ -1,6 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {readFileSync,existsSync} from 'node:fs';
+import {readFileSync,existsSync,mkdtempSync,mkdirSync,copyFileSync,writeFileSync,rmSync} from 'node:fs';
+import {tmpdir} from 'node:os';
+import path from 'node:path';
+import {execFileSync} from 'node:child_process';
+import {publicAccountsConfigured} from '../scripts/build_ninja.mjs';
 import vm from 'node:vm';
 
 const root='notification-ninja/';
@@ -21,14 +25,17 @@ function worker({fetch=async()=>{throw Error('offline');}}={}){
   return {handlers,scope,assets,puts,request};
 }
 
-test('worker precaches every locally bundled dependency including the public account config',async()=>{
+test('worker precaches all dependencies and the public configuration matches its build metadata',async()=>{
   const w=worker();let pending;w.handlers.get('install')({waitUntil:p=>pending=p});await pending;
   for(const file of w.assets)assert(existsSync(root+(file==='./'?'index.html':file.slice(2))),file);
   for(const file of ['./dist/ninja.js','./dist/home.js','./accounts-config.json','./assets/dojo-study.png','./assets/dojo-gaming.svg','./branding/Notification-Ninja-Logo.png'])assert(w.assets.includes(file));
-  const accountConfig=JSON.parse(readFileSync(root+'accounts-config.json','utf8'));
-  assert.equal(accountConfig.enabled,true);
-  assert.equal(accountConfig.apiVersion,3);
-  assert.equal(accountConfig.endpoint,'https://notification-ninja-accounts.onrender.com/api/v3');
+  const accounts=JSON.parse(readFileSync(root+'accounts-config.json','utf8')),metadata=JSON.parse(readFileSync(root+'dist/build.json','utf8'));
+  assert.equal(accounts.enabled,true,'The already connected public backend remains active');
+  assert.equal(accounts.apiVersion,3);
+  assert.equal(accounts.endpoint,'https://notification-ninja-accounts.onrender.com/api/v3');
+  assert.equal(metadata.publicAccountsConfigured,publicAccountsConfigured(accounts));
+  for(const file of ['./indie-theme.css','./assets/indie-modes.png','./assets/indie-worlds.png','./assets/indie-wordmark.png','./assets/fonts/nunito-latin-wght-normal.woff2'])assert(w.assets.includes(file),'Offline presentation: '+file);
+
   assert(!w.assets.some(file=>file.startsWith('./src/')));
 });
 
@@ -44,19 +51,19 @@ test('offline worker preserves distinct homepage/game/query routes and never int
 test('game JS, CSS and configuration update from network instead of a stale previous release',async()=>{
   const online={ok:true,clone:()=>({copy:true})},calls=[];
   const w=worker({fetch:async (request,options)=>{calls.push({url:request.url,cache:options?.cache});return online;}});
-  for(const path of ['accounts-config.json','dist/ninja.js','illustrated-adventure-v4.css','assets/overworld-landscape-v4.svg']){
+  for(const path of ['accounts-config.json','dist/ninja.js','illustrated-adventure-v4.css','assets/overworld-landscape-v4.svg','indie-theme.css']){
     assert.equal(await w.request(path),online,'Fresh online response for '+path);
   }
   // Unchanged large images stay cached rather than downloading every time.
   assert.equal((await w.request('assets/dojo-study.png')).cachedUrl,w.scope+'assets/dojo-study.png');
-  assert.equal(calls.length,4);
-  assert.equal(w.puts.length,4,'Fresh responses replace the offline copies');
+  assert.equal(calls.length,5);
+  assert.equal(w.puts.length,5,'Fresh responses replace the offline copies');
   assert(calls.every(call=>call.cache==='no-store'),'Do not use a stale browser HTTP cache');
 });
 
-test('3.5 offline assets retain a usable fallback when internet access fails',async()=>{
+test('retained and current presentation assets retain a usable fallback when internet access fails',async()=>{
   const w=worker();
-  for(const path of ['dist/ninja.js','illustrated-adventure-v4.css','assets/overworld-landscape-v4.svg']){
+  for(const path of ['dist/ninja.js','illustrated-adventure-v4.css','assets/overworld-landscape-v4.svg','indie-theme.css']){
     assert.equal((await w.request(path)).cachedUrl,w.scope+path);
   }
   const sw=readFileSync(root+'sw.js','utf8');
@@ -70,4 +77,48 @@ test('the cyber dojo is an original self-contained vector without external conte
   assert.match(svg,/<svg[^>]+viewBox="0 0 1600 900"/);assert.match(svg,/<title[^>]*>Cyber Ninja Dojo<\/title>/);
   assert.doesNotMatch(svg,/<script|<foreignObject|https?:\/\/(?!www\.w3\.org\/2000\/svg)/i);
   assert.doesNotMatch(svg,/(?:href|src)="[^#]/);
+});
+
+
+test('public builds reject unsafe enabled account endpoints and derive the explicit switch',()=>{
+  assert.equal(publicAccountsConfigured({enabled:false,apiVersion:3}),false);
+  assert.equal(publicAccountsConfigured({enabled:true,apiVersion:3,endpoint:'https://accounts.example.test/api/v3'}),true);
+  for(const endpoint of ['http://accounts.example.test/api/v3','/api/v3','https://user:password@accounts.example.test/api/v3','https://accounts.example.test/api/v3?secret=x','https://accounts.example.test/api/v3#fragment','https://accounts.example.test/api/v2'])assert.throws(()=>publicAccountsConfigured({enabled:true,apiVersion:3,endpoint}));
+  for(const config of [{enabled:'true',apiVersion:3},{enabled:true,apiVersion:2,endpoint:'https://accounts.example.test/api/v3'},null])assert.throws(()=>publicAccountsConfigured(config));
+});
+
+test('an enabled public fixture packages a disabled guest edition without changing source files',async()=>{
+  const directory=mkdtempSync(path.join(tmpdir(),'ninja-guest-package-'));
+  try{
+    const w=worker();let installed;w.handlers.get('install')({waitUntil:promise=>installed=promise});await installed;
+    const files=[...new Set(['sw.js',...w.assets.map(file=>file==='./'?'index.html':file.slice(2))])];
+    for(const file of files){const target=path.join(directory,file);mkdirSync(path.dirname(target),{recursive:true});copyFileSync(root+file,target);}
+    const enabled={enabled:true,apiVersion:3,endpoint:'https://accounts.example.test/api/v3'};
+    writeFileSync(path.join(directory,'accounts-config.json'),JSON.stringify(enabled)+'\n');
+    const metadata=JSON.parse(readFileSync(path.join(directory,'dist/build.json'),'utf8'));metadata.publicAccountsConfigured=publicAccountsConfigured(enabled);
+    writeFileSync(path.join(directory,'dist/build.json'),JSON.stringify(metadata)+'\n');
+    const before=Object.fromEntries(files.map(file=>[file,readFileSync(path.join(directory,file)).toString('base64')]));
+    execFileSync('python3',['scripts/package_ninja.py','--root',directory],{encoding:'utf8'});
+    const report=JSON.parse(execFileSync('python3',['-c',`
+import json,sys,hashlib
+from pathlib import Path
+from zipfile import ZipFile
+root=Path(sys.argv[1]); archive=next((root/'downloads').glob('*.zip'))
+with ZipFile(archive) as zipped:
+    prefix=next(name.rsplit('/dist/build.json',1)[0] for name in zipped.namelist() if name.endswith('/dist/build.json'))+'/'
+    accounts=json.loads(zipped.read(prefix+'accounts-config.json'))
+    metadata=json.loads(zipped.read(prefix+'dist/build.json'))
+    for name in zipped.namelist():
+        relative=name[len(prefix):]
+        if relative not in ['accounts-config.json','dist/build.json','START-HIER.txt']:
+            assert zipped.read(name)==(root/relative).read_bytes(),relative
+    assert zipped.testzip() is None
+    digest=hashlib.sha256(archive.read_bytes()).hexdigest()
+    assert archive.with_suffix('.zip.sha256').read_text().split()[0]==digest
+    print(json.dumps({'accounts':accounts,'metadata':metadata,'members':len(zipped.namelist())}))
+`,directory],{encoding:'utf8'}));
+    assert.equal(report.accounts.enabled,false);assert.equal(report.accounts.apiVersion,3);assert.equal('endpoint' in report.accounts,false);
+    assert.deepEqual(report.metadata,{...metadata,publicAccountsConfigured:false});assert.equal(report.members,files.length+1);
+    for(const file of files)assert.equal(readFileSync(path.join(directory,file)).toString('base64'),before[file],`Source fixture changed: ${file}`);
+  }finally{rmSync(directory,{recursive:true,force:true});}
 });

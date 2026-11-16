@@ -12,7 +12,7 @@ const WEB_ROOT=path.resolve(HERE,'../notification-ninja');
 const PREFIX='/api/v3';
 const fail=(status,code,message)=>Object.assign(new Error(message),{status,code});
 const loopback=host=>['localhost','127.0.0.1','[::1]'].includes(host);
-const MIME={'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'text/javascript; charset=utf-8','.json':'application/json; charset=utf-8','.webmanifest':'application/manifest+json','.svg':'image/svg+xml','.png':'image/png','.pdf':'application/pdf','.zip':'application/zip','.txt':'text/plain; charset=utf-8'};
+const MIME={'.woff2':'font/woff2','.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'text/javascript; charset=utf-8','.json':'application/json; charset=utf-8','.webmanifest':'application/manifest+json','.svg':'image/svg+xml','.png':'image/png','.pdf':'application/pdf','.zip':'application/zip','.txt':'text/plain; charset=utf-8'};
 
 export function validateNinjaOrigins(values=[]){
   const origins=new Set();

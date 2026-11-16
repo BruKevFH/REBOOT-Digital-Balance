@@ -1,5 +1,7 @@
 # Notification Ninja
 
+> **Design-Update 3.10.0:** Die vom Nutzer gelieferte japanische Indie-Referenz wird als gemeinsames Designsystem umgesetzt. Spielmodi und Welten liegen unter **Spielen**, mit fünf Hauptnavigationseinträgen, neu illustrierten Karten/Dojo-Hintergründen, lokaler Schrift und überarbeiteten Oberflächen. [Masterprompt](notification-ninja/DESIGN_MASTERPROMPT.md) · [Design-Abnahme](notification-ninja/DESIGN_IMPLEMENTATION.md). Die bestehende Account-/MFA-Anbindung des aktuellen main bleibt erhalten; der Designauftrag aktiviert keine neue Backend-Konfiguration.
+
 > **Entwicklungsstand 3.1.0 (07.11.2026):** PostgreSQL-/SQLite-Accountdienst, neues Registrierungsportal und Ninja-Hub, Boss Rush, UTC-Tages-Challenge und unterschiedliche Bossmechaniken. Die öffentliche Account-Anbindung bleibt bis zur tatsächlichen Render-/Neon-Abnahme deaktiviert. Nachweise und offene Deployment-Blocker: [ULTIMATE_STATUS.md](notification-ninja/ULTIMATE_STATUS.md). Lokaler Betrieb: [Backendanleitung](server/README_NINJA_APP.md).
 
 Eigenständiges Wischspiel über digitale Alltagsentscheidungen, auf **Deutsch und Englisch**, mit eigenen illustrierten Dojos. Kostenfreier Gaststart, drei kurze Alltagssituationen und NIM-Training. Ausbau 3.0 ergänzt echte optionale Accounts, 18 Hauptmissionen, acht zusätzliche Herausforderungen, separate Audio-/Bewegungseinstellungen und eine serverseitig nachgespielte Open-Run-Rangliste.

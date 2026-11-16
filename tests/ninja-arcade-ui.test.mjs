@@ -46,18 +46,16 @@ test('Relaxed/Dark/Noir remain device-only and never pollute account or game pre
  assert(themePicker().includes('data-ninja-theme="noir"'));
  assert(!JSON.stringify(getPreferences(storage)).includes('theme'));
 });
-test('home and modal navigation distinguish Overview from thematic Game Worlds',()=>{
- const home=read('index.html'),main=read('src/main.js');
- assert.match(home,/<span>Übersicht<\/span><\/a><a href="#dojos"/);
- assert.match(home,/<span>Spielwelten<\/span><\/a><a href="#campaign"/);
- assert(main.includes("dojos:'SPIELWELTEN'"));
- assert(main.includes("modes:'SPIELMODI'"));
- assert(main.includes('class="panel-header arcade-sticky-header"'));
- assert(!main.includes('class="arcade-theme-cycle"'),'No appearance toggle in every dialog');
- assert(main.includes('class="panel-header arcade-sticky-header"'));
- assert(!main.includes('aria-label="Zur Dojo-Übersicht"'));
- assert(main.includes("applyTheme();"));
- assert(read('legend-ui.css').includes('position:sticky!important'));
+test('Overview stays distinct from the unified modes and worlds screen',()=>{
+ const index=read('index.html'),main=read('src/main.js');
+ assert(index.includes('href="#overview" data-game-route="home"'));
+ assert(index.includes('href="#play" data-game-route="play"'));
+ assert(!index.includes('href="#dojos" data-game-route="dojos"'));
+ assert(main.includes('class="indie-mode-list"'));
+ assert(main.includes('class="indie-world-grid"'));
+ assert(main.includes('data-world-inspect='));
+ assert(main.includes('data-action="nav-back"'));
+ assert(main.includes('applyTheme();'),'Relaxed/Dark/Noir retain their existing storage and application flow');
 });
 test('actual dojo assets exist and the map shows a progress-aware character',()=>{
  for(const file of ['assets/focus-village.png','assets/dojo-study.png','assets/dojo-gaming.svg','assets/dojo-sleep.png'])assert(existsSync('notification-ninja/'+file),file);
@@ -76,14 +74,11 @@ test('theme and new labels have explicit English localization',()=>{
  for(const source of ['Übersicht','Spielwelten','Ninja-Karriere','Dein Abenteuer beginnt hier','Mehr Herausforderungen','Darstellung wählen','Spielwelten erkunden'])assert.notEqual(tr(source),source);
  setLanguage('de');
 });
-test('reduced-motion and theme styles are bundled as local presentation without remote dependencies',()=>{
- const css=read('legend-ui.css'),publicCss=read('legend-home.css'),main=read('src/main.js'),home=read('src/home.js');
- for(const id of THEMES)assert(css.includes('html[data-ninja-theme='+id+']'));
- assert(css.includes('@media(prefers-reduced-motion:reduce)'));
- assert(css.includes('.calm-view .arcade-scene-cloud'));
- assert(css.includes('.legend-chapter-gaming .legend-trail-track'));
- for(const id of ['relaxed','noir'])assert(publicCss.includes('html[data-ninja-theme='+id+']'));
- assert(home.includes('cycleTheme()'));
- assert(main.includes("import {applyTheme,setTheme,cycleTheme,getTheme}"));
- assert(!css.includes('https://'));
+test('current theme and reduced-motion presentation stay local and preserve all theme options',()=>{
+ const css=read('indie-theme.css'),main=read('src/main.js'),settings=read('src/settings-ui.js');
+ for(const id of ['dark','noir'])assert(css.includes('html[data-ninja-theme='+id+']'),'Current theme: '+id);
+ assert(css.includes('prefers-reduced-motion:reduce'));
+ assert(settings.includes('themePicker()'));
+ assert(main.includes('applyTheme'));
+ assert(!/https?:\/\//.test(css),'No runtime asset CDN');
 });

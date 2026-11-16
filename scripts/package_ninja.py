@@ -2,11 +2,13 @@
 from pathlib import Path
 from zipfile import ZipFile, ZipInfo, ZIP_DEFLATED
 from hashlib import sha256
+import argparse
+import json
 
 ROOT=Path(__file__).resolve().parents[1]/'notification-ninja'
-NAME='Notification-Ninja-3.9.0'
-FILES=['index.html','home.html','styles.css','focus-ui.css','focus-home.css','legend-ui.css','worlds-v2.css','ux-v2.css','ui-navigation-v3.css','illustrated-adventure-v4.css','dojo-worlds-v5.css','mobile-navigation-v6.css','ninja-feedback-v7.css','ninja-mint-ui-v9.css','ninja-mint-home-v9.css','legend-home.css','sw.js','manifest.webmanifest','favicon.svg','dist/ninja.js','dist/home.js','dist/build.json','leaderboard-config.json','accounts-config.json','assets/dojo-study.png','assets/dojo-gaming.svg','assets/dojo-gaming.png','assets/dojo-sleep.png','assets/focus-village.png','assets/overworld-landscape-v4.svg','assets/dojo-study-v5.svg','assets/dojo-gaming-v5.svg','assets/dojo-sleep-v5.svg','assets/ninja-mint-logo-v9.svg','assets/ninja-mint-boss-v9.svg','assets/ninja-mint-daily-v9.svg','assets/ninja-mint-zen-v9.svg','assets/ninja-mint-weekly-v9.svg','assets/ninja-mint-day-v9.svg','assets/ninja-mint-open-v9.svg','assets/ninja-mint-balance-v9.svg','assets/dojo-study-v2.svg','assets/dojo-gaming-v2.svg','assets/dojo-sleep-v2.svg','branding/Notification-Ninja-Logo.png']
-INSTRUCTIONS='''NOTIFICATION NINJA — 3.9.0
+NAME='Notification-Ninja-3.10.0'
+FILES=['index.html', 'home.html', 'styles.css', 'focus-ui.css', 'focus-home.css', 'legend-ui.css', 'worlds-v2.css', 'ux-v2.css', 'ui-navigation-v3.css', 'illustrated-adventure-v4.css', 'dojo-worlds-v5.css', 'mobile-navigation-v6.css', 'ninja-feedback-v7.css', 'ninja-mint-ui-v9.css', 'ninja-mint-home-v9.css', 'legend-home.css', 'sw.js', 'manifest.webmanifest', 'favicon.svg', 'dist/ninja.js', 'dist/home.js', 'dist/build.json', 'leaderboard-config.json', 'accounts-config.json', 'assets/dojo-study.png', 'assets/dojo-gaming.svg', 'assets/dojo-gaming.png', 'assets/dojo-sleep.png', 'assets/focus-village.png', 'assets/overworld-landscape-v4.svg', 'assets/dojo-study-v5.svg', 'assets/dojo-gaming-v5.svg', 'assets/dojo-sleep-v5.svg', 'assets/ninja-mint-logo-v9.svg', 'assets/ninja-mint-boss-v9.svg', 'assets/ninja-mint-daily-v9.svg', 'assets/ninja-mint-zen-v9.svg', 'assets/ninja-mint-weekly-v9.svg', 'assets/ninja-mint-day-v9.svg', 'assets/ninja-mint-open-v9.svg', 'assets/ninja-mint-balance-v9.svg', 'assets/dojo-study-v2.svg', 'assets/dojo-gaming-v2.svg', 'assets/dojo-sleep-v2.svg', 'branding/Notification-Ninja-Logo.png', 'assets/indie-wordmark.png', 'indie-theme.css', 'assets/indie-modes.png', 'assets/indie-worlds.png', 'assets/indie-masthead.png', 'assets/indie-masthead.svg', 'assets/fonts/nunito-latin-wght-normal.woff2', 'assets/fonts/nunito-latin-ext-wght-normal.woff2', 'assets/fonts/OFL-Nunito.txt']
+INSTRUCTIONS='''NOTIFICATION NINJA — 3.10.0
 DEUTSCH / ENGLISH
 
 DEUTSCH
@@ -75,17 +77,41 @@ unranked. The old free Render demo is not durable account hosting.
 
 https://brukevfh.github.io/REBOOT-Digital-Balance/notification-ninja/home.html
 '''
-for name in FILES:
-    if not (ROOT/name).is_file():raise SystemExit(f'Missing runtime file: {name}')
-output=ROOT/'downloads'/f'{NAME}.zip'
-output.parent.mkdir(exist_ok=True)
-with ZipFile(output,'w',ZIP_DEFLATED) as z:
-    for name in FILES+['START-HIER.txt']:
-        info=ZipInfo(f'{NAME}/{name}',(2026,11,7,0,0,0));info.compress_type=ZIP_DEFLATED;info.external_attr=0o100644<<16
-        z.writestr(info,INSTRUCTIONS.encode() if name=='START-HIER.txt' else (ROOT/name).read_bytes())
-with ZipFile(output) as z:
-    assert z.testzip() is None
-    for name in FILES:assert z.read(f'{NAME}/{name}')==(ROOT/name).read_bytes()
-digest=sha256(output.read_bytes()).hexdigest()
-output.with_suffix('.zip.sha256').write_text(f'{digest}  {output.name}\n')
-print(f'Packaged {output.name}: {output.stat().st_size:,} bytes; runtime identity and CRC verified; SHA256 {digest}')
+# The downloadable guest game must never inherit a newly enabled public endpoint.
+# These two overlays are deliberate; every other bundled runtime file stays identical.
+GUEST_ACCOUNTS={"enabled":False,"apiVersion":3,"message":"Offline guest edition: accounts are available only on the public website."}
+
+def package_runtime(root=ROOT):
+    root=Path(root).resolve()
+    for name in FILES:
+        if not (root/name).is_file():raise SystemExit(f'Missing runtime file: {name}')
+    metadata=json.loads((root/'dist/build.json').read_text())
+    metadata['publicAccountsConfigured']=False
+    overrides={
+        'accounts-config.json':(json.dumps(GUEST_ACCOUNTS,indent=2)+'\n').encode(),
+        'dist/build.json':(json.dumps(metadata,ensure_ascii=False,indent=2)+'\n').encode(),
+    }
+    output=root/'downloads'/f'{NAME}.zip'
+    output.parent.mkdir(exist_ok=True)
+    with ZipFile(output,'w',ZIP_DEFLATED) as z:
+        for name in FILES+['START-HIER.txt']:
+            info=ZipInfo(f'{NAME}/{name}',(2026,11,16,0,0,0));info.compress_type=ZIP_DEFLATED;info.external_attr=0o100644<<16
+            payload=INSTRUCTIONS.encode() if name=='START-HIER.txt' else overrides[name] if name in overrides else (root/name).read_bytes()
+            z.writestr(info,payload)
+    with ZipFile(output) as z:
+        assert z.testzip() is None
+        for name in FILES:
+            expected=overrides[name] if name in overrides else (root/name).read_bytes()
+            assert z.read(f'{NAME}/{name}')==expected,f'Bundled file differs: {name}'
+        accounts=json.loads(z.read(f'{NAME}/accounts-config.json'))
+        assert accounts['enabled'] is False and 'endpoint' not in accounts
+        assert json.loads(z.read(f'{NAME}/dist/build.json'))['publicAccountsConfigured'] is False
+    digest=sha256(output.read_bytes()).hexdigest()
+    output.with_suffix('.zip.sha256').write_text(f'{digest}  {output.name}\n')
+    print(f'Packaged {output.name}: {output.stat().st_size:,} bytes; guest-only configuration, runtime identity and CRC verified; SHA256 {digest}')
+    return output
+
+if __name__=='__main__':
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--root',type=Path,default=ROOT,help='Runtime directory; defaults to the repository Notification Ninja folder.')
+    package_runtime(parser.parse_args().root)

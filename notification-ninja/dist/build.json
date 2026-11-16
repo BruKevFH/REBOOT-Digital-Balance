@@ -1,11 +1,13 @@
 {
   "name": "Notification Ninja",
-  "version": "3.9.0",
+  "version": "3.10.0",
   "engine": "Canvas 2D / Web Audio",
-  "style": "Illustrated animated ninja world",
+  "style": "Sakura indie dojo",
+  "sharedPlayMenu": true,
+  "illustrationAtlas": true,
   "illustratedRoomArt": true,
   "villageMap": true,
-  "logo": "branding/Notification-Ninja-Logo.png",
+  "logo": "assets/indie-wordmark.png",
   "languages": [
     "de",
     "en"
@@ -45,7 +47,7 @@
   "hudLayout": "compact-sidebar-super-dock",
   "largeHearts": true,
   "ninjaRanks": 5,
-  "skins": 10,
+  "skins": 12,
   "dailyChallenges": 3,
   "careerMissions": 26,
   "mainMissions": 18,

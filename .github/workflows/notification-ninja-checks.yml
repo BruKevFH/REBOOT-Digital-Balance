@@ -7,6 +7,11 @@ on:
       - 'tests/ninja*.mjs'
       - 'scripts/build_ninja.mjs'
       - 'scripts/package_ninja.py'
+      - 'scripts/check_ninja_portal.cjs'
+      - 'scripts/check_ninja_browser.cjs'
+      - 'scripts/check_ninja_live.mjs'
+      - 'scripts/check_ninja_indie.cjs'
+      - 'render.yaml'
       - 'package.json'
       - 'package-lock.json'
       - '.github/workflows/notification-ninja-checks.yml'
@@ -19,6 +24,11 @@ on:
       - 'tests/ninja*.mjs'
       - 'scripts/build_ninja.mjs'
       - 'scripts/package_ninja.py'
+      - 'scripts/check_ninja_portal.cjs'
+      - 'scripts/check_ninja_browser.cjs'
+      - 'scripts/check_ninja_live.mjs'
+      - 'scripts/check_ninja_indie.cjs'
+      - 'render.yaml'
       - 'package.json'
       - 'package-lock.json'
       - '.github/workflows/notification-ninja-checks.yml'
@@ -58,6 +68,7 @@ jobs:
           NINJA_BASE_URL: http://127.0.0.1:8083/notification-ninja/
         run: |
           export DATA_DIR="$(mktemp -d)"
+          export NINJA_MFA_KEY="$(node -e 'process.stdout.write(require("node:crypto").randomBytes(32).toString("hex"))')"
           npm run serve:ninja > "$RUNNER_TEMP/ninja-server.log" 2>&1 &
           ninja_pid=$!
           trap 'kill "$ninja_pid" 2>/dev/null || true' EXIT
@@ -67,6 +78,7 @@ jobs:
           done
           curl -fsS http://127.0.0.1:8083/api/v3/health
           node scripts/check_ninja_portal.cjs
+          node scripts/check_ninja_indie.cjs
           npm run test:ninja:browser
       - run: npm run package:ninja
       - name: Verify bundled entry and offline homepage routes

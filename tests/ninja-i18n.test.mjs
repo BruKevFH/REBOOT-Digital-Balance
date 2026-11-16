@@ -84,3 +84,14 @@ test('English account feedback covers network throttling, wallet rejection and f
   for(const source of ['Dafür fehlen Münzen.','Zu viele Anfragen. Bitte versuche es später erneut.','Diese Runde ist abgelaufen. Dein lokales Übungsergebnis bleibt erhalten.','Dieses Ergebnis konnte nicht geprüft werden.','Der Dienst konnte die Anfrage gerade nicht bearbeiten. Bitte versuche es erneut.'])assert.notEqual(tr(source),source);
   setLanguage('de');
 });
+
+
+test('career mission labels, rewards and record links translate with their authored titles',()=>{
+  setLanguage('en');
+  assert.equal(tr('Mission 3: Platz für Wichtiges, Gesperrt'),'Mission 3: Room for what matters, Locked');
+  assert.equal(tr('Details zu Mission Deine ruhige Serie ansehen'),'View details for mission Your calm streak');
+  assert.equal(tr('✦ +3 Münzen'),'✦ +3 coins');
+  assert.equal(tr('✦ Wähle ein leuchtendes Level.'),'✦ Choose a glowing level.');
+  assert.equal(tr('Meine Rekorde ansehen →'),'View my records →');
+  setLanguage('de');
+});

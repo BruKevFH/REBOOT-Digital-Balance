@@ -5,44 +5,37 @@ import {readFileSync} from 'node:fs';
 const root='notification-ninja/';
 const read=name=>readFileSync(root+name,'utf8');
 
-test('focus-first styles are bundled into online and offline entry points',()=>{
+test('the current indie design is active online and packaged with retained legacy assets',()=>{
  const index=read('index.html'),home=read('home.html'),sw=read('sw.js');
  const packageScript=readFileSync('scripts/package_ninja.py','utf8');
- assert.match(index,/href="\.\/focus-ui\.css"/);
- assert.match(index,/href="\.\/legend-ui\.css"/);
- assert.match(home,/href="\.\/focus-home\.css"/);
- assert.match(home,/href="\.\/legend-home\.css"/);
- for(const asset of ['focus-ui.css','focus-home.css','legend-ui.css','legend-home.css']){
-   assert(read(asset).length>3500);
-   assert(sw.includes("'./"+asset+"'"),'Missing service worker asset: '+asset);
-   assert(packageScript.includes("'"+asset+"'"),'Missing download package asset: '+asset);
+ assert(index.includes('href="./indie-theme.css"'));assert(home.includes('href="./indie-theme.css"'));
+ for(const asset of ['indie-theme.css','focus-ui.css','focus-home.css','legend-ui.css','legend-home.css']){
+  assert(read(asset).length>3500);
+  assert(sw.includes("'./"+asset+"'"),'Offline asset: '+asset);
+  assert(packageScript.includes("'"+asset+"'"),'Download asset: '+asset);
  }
 });
 
-test('hub offers one primary mission and three unambiguous secondary choices',()=>{
- const index=read('index.html');
- assert.match(index,/id="ninja-hub"/);
- assert.doesNotMatch(index,/id="hub-paths"/);
- assert.equal((index.match(/class="hub-path-card"/g)||[]).length,0);
- assert.match(index,/data-game-route="campaign"/);
- assert.doesNotMatch(index,/data-hub-shortcut="open"/);
- assert.match(index,/data-game-route="dojos"/);
- assert.match(index,/class="nn-home-guide"/);
- assert.match(index,/<details id="adventure-details"/);
- assert.doesNotMatch(index,/<details id="adventure-details"[^>]*open/);
+test('the hub has one Play destination and preserves the player collection without duplicate navigation cards',()=>{
+ const index=read('index.html'),main=read('src/main.js');
+ assert(index.includes('id="ninja-hub"'));
+ assert(!index.includes('id="hub-paths"'));
+ assert(!index.includes('class="hub-path-card"'));
+ assert(main.includes('class="btn primary hub-play" data-game-route="play"'));
+ assert(!index.includes('data-hub-shortcut="open"'));
+ assert(index.includes('id="profile-button"'),'Existing player profile stays accessible');
+ assert(index.includes('id="adventure-details"'),'Existing collection data is retained');
+ assert(!/<details id="adventure-details"[^>]*open/.test(index));
 });
 
-test('navigation has six destinations including dojos; account remains available in header',()=>{
+test('five main destinations keep account management outside the primary dock',()=>{
  const index=read('index.html');
- const nav=index.match(/<nav class="dojo-tabs"[^>]*>([\s\S]*?)<\/nav>/)?.[1];
- assert(nav);
- assert.equal((nav.match(/data-game-route="/g)||[]).length,6);
- for(const route of ['worlds','dojos','campaign','modes','bazaar','leaderboard']){
-   assert(nav.includes('data-game-route="'+route+'"'));
- }
- assert(!nav.includes('account-nav-link'));
- assert(!index.includes('class="access-bazaar"'),'No duplicate Bazaar next to account');
+ const nav=index.match(/<nav[^>]*id="indie-bottom-nav"[^>]*>([\s\S]*?)<\/nav>/)?.[1];
+ assert(nav);assert.equal((nav.match(/data-game-route="/g)||[]).length,5);
+ for(const route of ['home','play','campaign','bazaar','leaderboard'])assert(nav.includes('data-game-route="'+route+'"'));
+ assert(!nav.includes('account-nav-link'));assert(!nav.includes('data-account-view'));
  assert(index.includes('id="profile-button"'));
+ assert(read('src/main.js').includes('data-account-view="profile"'));
 });
 
 test('shortcut uses the existing Open Run rules and does not modify backend contracts',()=>{
