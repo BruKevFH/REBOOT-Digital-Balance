@@ -58,7 +58,7 @@ async function revealSignedInLanding(){
     const access=document.querySelector('.access-choices');
     if(!access)return;
     const entry=document.createElement('a');
-    entry.href='./index.html#worlds';entry.className='button large';entry.textContent='Zum persönlichen Dojo →';
+    entry.href='./index.html#overview';entry.className='button large';entry.textContent='Zum persönlichen Dojo →';
     const logout=document.createElement('button');
     logout.type='button';logout.className='button secondary';logout.textContent='Abmelden';
     const note=document.createElement('p');note.className='home-auth-state';note.setAttribute('role','status');
@@ -66,7 +66,7 @@ async function revealSignedInLanding(){
     access.replaceChildren(entry,logout,note);
     for(const link of document.querySelectorAll('a[href="./index.html#login"],a[href="./index.html#register"],a[href="./index.html#guest"]')){
       if(access.contains(link))continue;
-      link.href='./index.html#worlds';link.textContent='Zum persönlichen Dojo';
+      link.href='./index.html#overview';link.textContent='Zum persönlichen Dojo';
     }
     logout.addEventListener('click',async()=>{
       logout.disabled=true;

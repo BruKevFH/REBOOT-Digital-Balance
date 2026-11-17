@@ -1,0 +1,152 @@
+/* Painted scenes and paper objects extend the approved Play screen to each destination.
+   Play's own layout, buttons and artwork deliberately keep their original selectors. */
+.adventure-scene{position:absolute;inset:0;display:block;width:100%;height:100%;overflow:hidden;pointer-events:none}
+.adventure-scene image{image-rendering:auto}
+:is(.shop-awning,.nn-career-intro,.legend-rank-hero,.adventure-settings-scene){position:relative;isolation:isolate;overflow:hidden;border:3px solid #153c42;border-radius:22px;box-shadow:0 5px 0 #4d8e79,inset 0 0 0 3px #fff9e5}
+:is(.shop-awning,.nn-career-intro,.legend-rank-hero)::after{content:"";position:absolute;z-index:0;inset:0;pointer-events:none;background:linear-gradient(90deg,#082d3ee8,#092f4b7a 56%,transparent)}
+:is(.shop-awning,.nn-career-intro,.legend-rank-hero)>:not(.adventure-scene){position:relative;z-index:1}
+:is(.shop-awning,.nn-career-intro,.legend-rank-hero) :is(h3,p,small,.legend-kicker,.nn-career-eyebrow){color:#fff8df;text-shadow:0 2px 2px #082b3a;font-weight:850}
+/* The bazaar opens with its actual market, then the collection immediately follows. */
+.shop-panel .shop-awning{min-height:190px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:12px;padding:24px;margin:8px 0 16px;background:#153c42}
+.shop-panel .shop-awning:before{display:none}
+.shop-panel .shop-awning>span{background:#ffe4a9;border:2px solid #133c43;border-radius:8px;color:#133c43;font-size:10px;letter-spacing:1.1px;padding:6px 10px;box-shadow:0 3px 0 #133c4350}
+.shop-panel .shop-awning>strong{max-width:64%;padding:0;border:0;border-radius:0;box-shadow:none;background:none;color:#fff9e5;text-shadow:0 3px 0 #092d3b,2px 0 #092d3b,-2px 0 #092d3b;font-size:clamp(26px,3.6vw,39px);line-height:1.12;transform:none;text-align:left}
+.shop-panel .shop-wallet{padding:12px 16px;margin:0 0 14px;border:2px solid #264e47;border-radius:13px;background:#ffedb6;box-shadow:0 3px 0 #aa8a44;color:#123b3b;gap:12px}
+.shop-panel .shop-wallet>strong{font-size:20px;color:#173e3c}.shop-panel .shop-wallet>span{font-size:11px;color:#4c6759}
+.shop-panel .shop-tabs{margin:0 0 12px;gap:10px;padding:0;border:0}.shop-panel .shop-tabs .btn{min-height:47px;font-size:14px;transform:none;border-radius:12px}
+.shop-panel .shop-tabs .is-active{background:#96dfba;border-color:#153e42;color:#12383e;box-shadow:0 4px 0 #296a5a,inset 0 0 0 2px #eaf9d7}
+.shop-panel .shop-filters{margin:0 0 19px;gap:8px;padding:0}.shop-panel .shop-filters .btn{min-height:44px;padding:8px 12px;font-size:12px;border-radius:11px;background:#fff6dc}
+.shop-panel .shop-filters [aria-pressed=true]{background:#d0ebbf;box-shadow:0 3px 0 #5d8965,inset 0 0 0 2px #fff9df;border-color:#1f6656}
+.shop-panel .shop-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;margin:0}
+.shop-panel .shop-card{overflow:hidden;border:3px solid #214a47;border-radius:22px;background:#fff7e3;box-shadow:0 5px 0 #5e9b7d,inset 0 0 0 2px #fffdf1}
+.shop-panel .shop-card.is-locked{border-style:solid;opacity:1;filter:none}
+.shop-panel .shop-preview{height:200px;min-height:0;border-radius:0;overflow:hidden;border:0;border-bottom:3px solid #28554a;background:#143d48}
+.shop-panel .shop-preview>canvas{display:block;width:100%;height:100%}
+.shop-panel .shop-skin-preview{height:235px;background:radial-gradient(ellipse at 50% 80%,#9cdbbb55,transparent 60%),#ffedbb}
+.shop-panel .shop-info{padding:18px;display:flex;flex-direction:column;gap:9px}
+.shop-panel .shop-info h3{margin:0;font-size:25px;line-height:1.12;color:#153e42}
+.shop-panel .shop-info>p{margin:0;font-size:13px;line-height:1.6;color:#4c685c;min-height:40px}
+.shop-panel .shop-price{align-self:flex-start;display:inline-flex;padding:7px 13px;border:1.5px solid #9d813b;border-radius:10px;background:#ffecb4;color:#644a21;font-size:15px;box-shadow:inset 0 0 0 2px #fff9e1}
+.shop-panel .shop-actions{margin-top:4px}.shop-panel .shop-actions>.btn{width:100%;min-height:48px;font-size:13px}
+.shop-panel .shop-status{right:10px;bottom:10px;padding:6px 10px;border:1.5px solid #254c44;border-radius:8px;background:#fff4d9;color:#224d43;font-size:10px;font-weight:950}
+/* Career titles sit on the landscape, rather than consuming a second text screen. */
+.nn-career .nn-career-intro{min-height:133px;margin:8px 0 28px;padding:22px 24px;display:flex;align-items:center;gap:20px;background:#224b48}
+.nn-career .nn-career-intro h3{font-size:35px;margin:6px 0;color:#fff9e5;line-height:1.1}
+.nn-career .nn-career-intro p{font-size:12px;margin:0}.nn-career .nn-career-eyebrow{font-size:10px;letter-spacing:1px}
+.nn-career .nn-career-overall{flex-shrink:0;padding:12px 15px;border:2px solid #163e43;border-radius:14px;background:#fff1bf;color:#173e43;box-shadow:0 4px 0 #0c313b66;text-align:center}
+.nn-career .nn-career-overall :is(strong,small){color:#153e43;text-shadow:none}.nn-career .nn-career-overall strong{font-size:30px}
+.nn-career .nn-career-chapter{position:relative;margin-bottom:24px}
+.nn-career .nn-career-chapter-cover{position:absolute;top:14px;left:14px;right:auto;max-width:calc(100% - 28px);min-height:77px;padding:10px 15px;margin:0;border:2px solid #173f43;border-radius:15px;background:#fff7e9ed;box-shadow:0 4px 0 #173e4370;backdrop-filter:blur(3px)}
+.nn-career .nn-career-chapter-label h4{margin:4px 0;font-size:26px;line-height:1.08}.nn-career .nn-career-chapter-label>span{font-size:9px}
+.nn-career .nn-career-chapter-trail{height:470px;border-color:#143b40;border-radius:22px;box-shadow:0 5px 0 #5a9377}
+.nn-career .nn-career-node-copy{background:#fff6db;box-shadow:0 4px 0 #163f4380,inset 0 0 0 2px #fffdf0;border-color:#214f49;border-radius:13px;font-size:13px;min-height:57px}
+.nn-career .nn-career-node.is-locked .nn-career-node-copy{background:#eaf0d5;color:#3d5e58}.nn-career .nn-career-node-copy small{font-size:10px}
+.nn-career .nn-career-direct-start{background:#ffdb75;border:3px solid #153f43;box-shadow:0 0 0 4px #fff1bc,0 5px 0 #194943}
+.nn-career .nn-career-node-locked{background:#d3e6c6;color:#37615a;border:3px solid #28564e;box-shadow:0 4px 0 #173f4388}
+.nn-career .nn-career-node-locked svg{width:25px;height:25px}
+.nn-career .nn-career-bosses{background:linear-gradient(120deg,#132e43f0,#342548ed),url('./assets/indie-modes.png') center top/100% 400%;border-color:#153b44;box-shadow:0 5px 0 #71619a}
+.nn-career .nn-career-boss{background:#fff0d817;border-color:#c6ccad}.nn-career .nn-career-boss>strong{color:#fff5d6}
+.nn-career .nn-career-detail{background:#fff4d4;border:3px solid #285a50;border-radius:21px;box-shadow:0 5px 0 #6a9c78,inset 0 0 0 3px #fff9e8}
+/* A shrine-backed hall and crafted medals replace empty dashboard towers. */
+.legend-leaderboard .legend-rank-hero{min-height:205px;padding:25px;display:flex;flex-direction:column;justify-content:center;gap:10px;background:#173c46;margin:8px 0 18px}
+.legend-leaderboard .legend-rank-hero h3{max-width:70%;font-size:clamp(28px,3.8vw,40px);line-height:1.1;margin:0;color:#fff7df;text-shadow:0 3px 0 #153440}
+.legend-leaderboard .legend-rank-hero p{max-width:57%;margin:0;font-size:13px;line-height:1.6}.legend-leaderboard .legend-kicker{font-size:10px;letter-spacing:1.2px}
+.legend-leaderboard .legend-trophy{position:absolute;right:25px;top:26px;width:62px;height:62px;padding:10px;background:#fff2c8;border:3px solid #173d42;border-radius:18px;color:#c78c23;font-size:34px;box-shadow:0 4px 0 #204b4b99}
+.legend-leaderboard .legend-rank-tabs{gap:9px;margin:0 0 12px}.legend-leaderboard .legend-rank-tabs>button{border:2px solid #204b47;border-radius:11px;min-height:46px;background:#fff5dc;box-shadow:0 3px 0 #7ca17c;font-size:13px}
+.legend-leaderboard .legend-rank-tabs>[aria-pressed=true]{background:#a3e0ba;box-shadow:0 4px 0 #2d715c,inset 0 0 0 2px #eff9d4}
+.legend-leaderboard .legend-podium{gap:13px;margin:19px 0 22px;padding:12px 6px;align-items:end}
+.legend-leaderboard .legend-podium-step{min-height:160px;border:2px solid #355d50;border-radius:17px 17px 12px 12px;background:linear-gradient(#fff7df,#e6e9bd);box-shadow:0 5px 0 #6f9271,inset 0 0 0 3px #fffbea;overflow:hidden}
+.legend-leaderboard .legend-podium-1{min-height:188px;background:linear-gradient(#fff4c7,#ffe2a0);border-color:#8c7138;box-shadow:0 5px 0 #a88b45,inset 0 0 0 3px #fffbea}
+.legend-leaderboard .legend-podium-medal{height:52px;width:52px;margin:0 auto 7px}.legend-leaderboard .legend-podium-medal svg{width:100%;height:100%}
+.legend-leaderboard .legend-podium-name{font-size:13px}.legend-leaderboard .legend-podium-step small{font-size:10px}
+.legend-leaderboard .legend-podium-base{margin:11px 0 0;background:#a6c8a4;border:0;padding:8px}.legend-leaderboard .legend-podium-1 .legend-podium-base{background:#edc96c}
+.legend-leaderboard .legend-ranking-row{padding:12px;border:2px solid #699377;border-radius:13px;background:#fff7e1;box-shadow:0 3px 0 #abc09a}
+.legend-leaderboard .legend-rank-publish,.legend-leaderboard .legend-local-score{border:2px solid #537d60;border-radius:18px;background:#fff3d0;box-shadow:0 4px 0 #8fa77d;padding:21px}
+.legend-leaderboard .legend-rank-publish h4{font-size:24px;margin:0 0 10px;line-height:1.15}.legend-leaderboard .legend-rank-publish p{font-size:13px;margin:0 0 16px}
+/* The settings room has a compact illustrated entrance and a readable equipment-like grid. */
+.adventure-settings-layout{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;margin-top:10px}
+.adventure-settings-scene{grid-column:1/-1;height:180px;background:#365e50}
+.adventure-settings-layout .settings-section{margin:0;padding:21px;border:2px solid #3b6b57;border-radius:19px;background:#fff6df;box-shadow:0 4px 0 #88a77e,inset 0 0 0 2px #fffdf0}
+.adventure-settings-layout .settings-section h3{font-size:25px;margin:0 0 12px}
+.adventure-settings-layout .settings-section p{font-size:13px;color:#49665a;line-height:1.65}
+.adventure-settings-layout>.settings-privacy,.adventure-settings-layout>.exit-settings-button{grid-column:1/-1}.adventure-settings-layout .calm-toggle{background:#e6edcd;border-color:#86a681;border-radius:13px;padding:13px}
+.adventure-settings-layout .practice-actions{flex-wrap:wrap}.adventure-settings-layout .practice-actions>.btn{flex:1 0 100%;font-size:13px}
+/* A framed full-width arena with a compact lower ribbon replaces the full-height rail. */
+body.is-playing{--game-sidebar:0px;--game-bottom:116px;background:#fff1d7}
+body.is-playing .arena{left:14px;right:14px;bottom:calc(var(--game-bottom) + env(safe-area-inset-bottom));border:3px solid #153d42;border-radius:21px;box-shadow:0 5px 0 #3c7868;opacity:1;filter:none}
+body.is-playing .hud-top{border:0;background:linear-gradient(#fff8e7,#f8e9c5);box-shadow:inset 0 4px 0 #4e8d77,inset 0 7px 0 #c9e9c5;padding-inline:18px}
+body.is-playing .hud-top .score-block,body.is-playing .hud-top .combo-block,body.is-playing .hud-top .lives-block{border:2px solid #315a4d;border-radius:13px;background:#fff8df;box-shadow:0 3px 0 #80a580;padding:6px 9px}
+body.is-playing .hud-top .scoreboard{gap:10px}.hud-top .combo-block strong{color:#b47b27}
+body.is-playing .hud-sidebar{position:absolute;top:auto;left:auto;right:22px;bottom:calc(19px + env(safe-area-inset-bottom));width:min(710px,calc(100% - 265px));height:79px;display:grid;grid-template-columns:82px 150px minmax(130px,1fr) 44px;align-items:center;gap:12px;padding:10px 12px;border:2px solid #254d48;border-radius:18px;background:#fff5dc;box-shadow:0 4px 0 #4b8069,inset 0 0 0 2px #fffdf0;overflow:visible;pointer-events:none;touch-action:auto}
+body.is-playing .hud-sidebar>.sidebar-title{display:none}
+body.is-playing .hud-sidebar .time-block{grid-column:1;grid-row:1;padding:5px 7px;background:#ffe8a6;border:1.5px solid #94763b;box-shadow:inset 0 0 0 2px #fff8d5;border-radius:11px}
+body.is-playing .hud-sidebar .time-block>span{font-size:9px;margin:0;color:#624e2e}body.is-playing .hud-sidebar .time-block>strong{font-size:24px;color:#153d42;letter-spacing:-.6px}
+body.is-playing .hud-sidebar .round-extras{grid-column:2;grid-row:1;display:grid;grid-template-columns:1fr 1fr;gap:7px;align-items:center;margin:0}
+body.is-playing .run-wallet{padding:5px;border:1.5px solid #aaa05e;border-radius:10px;background:#fff0b9;color:#665121;gap:2px;min-width:0}
+body.is-playing .run-wallet>strong{font-size:20px}.run-wallet>small{font-size:9px}
+body.is-playing .speed-badge{min-width:0;padding:6px 4px;gap:3px;background:#e9dfef;border:1.5px solid #9d87aa;border-radius:10px;font-size:9px;color:#5a426b}
+body.is-playing .speed-badge strong{font-size:16px;line-height:1.2}
+body.is-playing .hud-sidebar .meter-cluster{grid-column:3;grid-row:1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;padding:0;border:0}
+body.is-playing .meter-block>span{font-size:10px;line-height:1.2;margin-bottom:5px;gap:3px}.meter-block i{font-style:normal}
+body.is-playing .meter-track{height:7px;border:1px solid #526e56;border-radius:5px;background:#e3dfbd;overflow:hidden}
+body.is-playing .nn-hud-meaning{grid-column:4;grid-row:1;pointer-events:auto;position:relative}
+body.is-playing .nn-hud-meaning summary{width:44px;min-height:44px;font-size:0;padding:0;border:2px solid #54735e;border-radius:50%;background:#d5e8be;box-shadow:0 3px 0 #72956f}
+body.is-playing .nn-hud-meaning summary::before{content:'?';font-size:22px;font-weight:1000;color:#284f47}
+body.is-playing .nn-hud-meaning>p{right:0;bottom:56px;width:min(270px,calc(100vw - 34px));font-size:12px;z-index:25}
+body.is-playing #stop-button{position:absolute;right:0;bottom:calc(100% + 12px);width:155px;min-height:44px;padding:8px;pointer-events:auto;background:#fff1c2;border:2px solid #25534b;border-radius:12px;box-shadow:0 4px 0 #416f5f;font-size:11px}
+body.is-playing .hud-sidebar>.effect-chips{position:absolute;bottom:calc(100% + 12px);left:0;max-width:150px;display:flex;flex-wrap:wrap;gap:4px;pointer-events:none}
+body.is-playing .super-dock{left:22px;bottom:calc(21px + env(safe-area-inset-bottom));width:210px}
+body.is-playing .super-button{border:2px solid #1a4e4b;background:linear-gradient(140deg,#b8ebca,#79cba9);box-shadow:0 5px 0 #2a6e61,inset 0 0 0 3px #effbd8;border-radius:18px;min-height:78px}
+body.is-playing .combo-pop,body.is-playing .toast-root{left:50%}
+@media(max-width:760px){
+  .shop-panel .shop-awning{min-height:166px;margin-top:7px;padding:19px;gap:10px}.shop-panel .shop-awning>strong{max-width:83%;font-size:29px}.shop-panel .shop-awning>span{font-size:8px;padding:5px 7px}
+  .shop-panel .shop-wallet{padding:10px 12px;gap:6px;flex-wrap:wrap}.shop-panel .shop-wallet>strong{font-size:18px}.shop-panel .shop-wallet>span{font-size:10px}
+  .shop-panel .shop-filters{gap:6px;margin-bottom:16px}.shop-panel .shop-filters .btn{padding:7px 9px;font-size:10px}.shop-panel .shop-tabs .btn{font-size:12px}
+  .shop-panel .shop-grid{grid-template-columns:1fr;gap:19px}.shop-panel .shop-preview{height:205px}.shop-panel .shop-skin-preview{height:240px}.shop-panel .shop-info{padding:16px}.shop-panel .shop-info>p{min-height:0}
+  .nn-career .nn-career-intro{min-height:138px;margin-bottom:20px;padding:17px;gap:12px}.nn-career .nn-career-intro h3{font-size:28px}.nn-career .nn-career-intro p{font-size:10px}.nn-career .nn-career-overall{padding:10px;max-width:79px}.nn-career .nn-career-overall strong{font-size:26px}
+  .nn-career .nn-career-chapter-cover{top:12px;left:12px;padding:9px 12px;gap:9px;min-height:70px}.nn-career .nn-career-chapter-label h4{font-size:24px}.nn-career .nn-career-chapter-label>span{font-size:8px}
+  .nn-career .nn-career-chapter-trail{height:auto;padding-top:110px;gap:19px 14px}.nn-career .nn-career-node-copy{font-size:12px;min-height:60px}
+  .legend-leaderboard .legend-rank-hero{min-height:190px;padding:19px}.legend-leaderboard .legend-rank-hero h3{font-size:29px;max-width:80%}.legend-leaderboard .legend-rank-hero p{max-width:82%;font-size:12px}.legend-leaderboard .legend-trophy{right:13px;top:14px;width:45px;height:45px;padding:6px;border-radius:13px;font-size:26px}
+  .legend-leaderboard .legend-podium{gap:9px;padding:12px 0}.legend-leaderboard .legend-podium-step{min-height:154px}.legend-leaderboard .legend-podium-1{min-height:183px}.legend-leaderboard .legend-podium-name{font-size:11px}.legend-leaderboard .legend-podium-step small{font-size:9px}
+  .legend-leaderboard .legend-rank-publish{padding:17px}.legend-leaderboard .legend-rank-publish h4{font-size:24px}
+  .adventure-settings-layout{grid-template-columns:1fr;gap:18px}.adventure-settings-scene{height:166px}.adventure-settings-layout .settings-section{padding:18px}
+  body.is-playing{--game-bottom:132px}body.is-playing .arena{left:9px;right:9px;border-radius:16px}
+  body.is-playing .hud-top{padding-inline:9px}body.is-playing .hud-top .score-block,body.is-playing .hud-top .combo-block{padding:4px 7px;border-radius:9px}
+  body.is-playing .hud-sidebar{right:10px;bottom:calc(17px + env(safe-area-inset-bottom));width:calc(100% - 116px);height:104px;grid-template-columns:58px minmax(0,1fr) 44px;grid-template-rows:52px 24px;gap:6px 7px;padding:9px;border-radius:16px}
+  body.is-playing .hud-sidebar .time-block{padding:4px 3px}.is-playing .hud-sidebar .time-block>strong{font-size:21px!important}
+  body.is-playing .hud-sidebar .round-extras{gap:4px}.is-playing .run-wallet{padding:4px 2px}.is-playing .run-wallet>strong{font-size:17px}.is-playing .run-wallet>small{font-size:8px}
+  body.is-playing .speed-badge{padding:4px 2px;font-size:8px}.is-playing .speed-badge strong{font-size:13px}.is-playing .speed-badge svg{display:none}
+  body.is-playing .hud-sidebar .meter-cluster{grid-column:1/-1;grid-row:2;gap:8px}.is-playing .meter-block>span{font-size:9px!important;margin-bottom:3px}.is-playing .meter-track{height:6px}
+  body.is-playing .nn-hud-meaning{grid-column:3;grid-row:1}.is-playing .nn-hud-meaning summary{width:44px;min-height:44px}
+  body.is-playing .super-dock{left:10px;bottom:calc(24px + env(safe-area-inset-bottom));width:84px}.is-playing .super-button{border-radius:23px}
+}
+@media(max-width:600px){.nn-career .nn-career-chapter-trail{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-height:600px) and (orientation:landscape){body.is-playing{--game-bottom:94px;--game-top:62px}body.is-playing .hud-sidebar{height:70px;grid-template-rows:1fr;bottom:12px;grid-template-columns:58px 90px minmax(100px,1fr) 44px;width:calc(100% - 128px)}body.is-playing .hud-sidebar .meter-cluster{grid-column:3;grid-row:1}body.is-playing .nn-hud-meaning{grid-column:4}body.is-playing .super-dock{bottom:13px}}
+html:is([data-ninja-theme=dark],[data-ninja-theme=noir]) :is(.shop-card,.shop-wallet,.shop-filters .btn,.nn-career-chapter-cover,.nn-career-node-copy,.nn-career-detail,.legend-podium-step,.legend-rank-publish,.adventure-settings-layout .settings-section){background:var(--iv-surface);color:var(--iv-ink);border-color:var(--iv-stroke)}
+html:is([data-ninja-theme=dark],[data-ninja-theme=noir]) :is(.shop-info h3,.shop-info p,.nn-career-chapter-label h4,.nn-career-chapter-label small,.legend-podium-name,.legend-podium-step small){color:var(--iv-ink)}
+@media(prefers-reduced-motion:reduce){.adventure-scene{animation:none}}
+
+/* The overview and direct game entry use the same Sakura/Fuji entrance as Play. */
+.hub-masthead{display:grid;place-items:center;height:145px;margin:0 -10px;background:url('./assets/indie-masthead.png') center 57%/cover no-repeat;border-bottom:2px solid #a8c8a8}.hub-masthead>a{display:block;width:270px;height:125px;min-height:44px}.hub-masthead img{width:100%;height:100%;object-fit:contain}
+body[data-ui=home] .home-header{display:grid;grid-template-columns:minmax(0,1fr) auto;min-height:72px;padding:10px 0;gap:10px;border:0}body[data-ui=home] .home-header>.logo-brand{display:none}body[data-ui=home] .home-content{padding-top:14px}
+.indie-page:not(.indie-play-panel)>.panel-header{position:relative;top:auto}
+.landing .landing-hero{gap:25px}.landing .landing-copy{position:relative;padding:24px;border:2px solid #28574e;border-radius:23px;background:#fff6df;box-shadow:0 5px 0 #68987a}
+.landing .landing-art{position:relative;isolation:isolate;overflow:hidden;border:3px solid #214c49;border-radius:25px;background:#659e8c;box-shadow:0 6px 0 #4b8c70;min-height:440px}
+.landing-art>.adventure-scene{z-index:-2}.landing .landing-ninja,.landing .landing-spark{display:none}.landing .landing-nim-note{position:absolute;bottom:25px;left:18px;right:18px;z-index:2;padding:16px;border:2px solid #3c6c55;border-radius:13px;background:#fff5d7f2;box-shadow:0 4px 0 #4b8a6b;color:#244d40}
+.landing .landing-art-label{display:none}.landing .landing-features article{background:#fff1cc;border:2px solid #426a53;border-radius:18px;box-shadow:0 4px 0 #90ad7f}.landing .feature-number{color:#82621e;background:#ffdc86;border:2px solid #546f4c;border-radius:10px;padding:6px 10px}
+@media(max-width:760px){.hub-masthead{height:111px;margin:0 -16px;background-size:100% auto}.hub-masthead>a{width:185px;height:98px}body[data-ui=home] .home-header{grid-template-columns:minmax(0,1fr) auto;min-height:68px;padding:9px 0;gap:7px}body[data-ui=home] .home-profile-tools{gap:6px;min-width:0}body[data-ui=home] .player-chip{width:104px;min-width:0;padding:6px;gap:5px}body[data-ui=home] .player-chip-avatar{width:26px;flex:0 0 26px}body[data-ui=home] .player-chip-copy{max-width:52px}body[data-ui=home] .player-chip-arrow{display:none}body[data-ui=home] .home-access-tools{gap:6px;padding:0}body[data-ui=home] .home-access-tools .access-settings{width:44px;min-width:44px;padding:9px;font-size:0}body[data-ui=home] .home-access-tools .language-switch button{min-width:44px;width:44px;font-size:11px}body[data-ui=home] .home-content{padding-top:14px}body[data-ui=home] .hub-village{min-height:280px}.landing .landing-art{min-height:310px}.landing .landing-copy{padding:20px}.nn-career .nn-career-chapter-trail{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));padding-top:112px}.nn-career .nn-career-node{position:relative;left:auto;top:auto;transform:none;width:100%;margin:0}.nn-career .nn-career-trail-path,.nn-career .nn-career-path-mascot,.nn-career .nn-career-chapter-next{display:none}}
+body[data-ui=home] .home-header>.home-profile-tools{grid-column:1;grid-row:1;justify-self:start}body[data-ui=home] .home-header>.home-access-tools{grid-column:2;grid-row:1;justify-self:end}
+.nn-career .nn-career-overall strong{display:flex;align-items:baseline;justify-content:center;gap:3px;white-space:nowrap}.nn-career .nn-career-overall strong>span{font-size:16px;white-space:nowrap}.nn-career .nn-career-overall small{font-size:9px;line-height:1.3}
+@media(max-width:760px){
+  body.is-playing{--game-top:116px}
+  body.is-playing .hud-top{grid-template-columns:minmax(0,1fr) 142px;grid-template-rows:40px 46px;align-content:start;gap:6px 8px;padding:7px 9px}
+  body.is-playing .hud-top .context-block{grid-column:1;grid-row:1;align-self:start;min-width:0}
+  body.is-playing .context-block>strong{font-size:16px;line-height:1.15}.is-playing .context-block .level-label{font-size:8px}.is-playing .context-block .legend{font-size:9px;line-height:1.3;max-height:13px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+  body.is-playing .hud-top .lives-block{grid-column:1;grid-row:2;align-self:center;justify-self:start;max-width:100%;padding:4px 6px;min-width:0}
+  body.is-playing .hud-top .scoreboard{grid-column:2;grid-row:2;align-self:center;justify-self:end;gap:5px;max-width:142px}
+  body.is-playing .hud-top .score-block{min-width:80px;padding:4px 6px}.is-playing .hud-top .score-block>strong{font-size:18px;letter-spacing:-.7px}
+  body.is-playing .hud-top .combo-block{min-width:46px;padding:4px}.is-playing .hud-top .combo-block>strong{font-size:18px}
+  body.is-playing .hud-top .score-block>span,.is-playing .hud-top .combo-block>span{font-size:8px;line-height:1.1}
+  body.is-playing .heart-icon{width:22px;height:22px}body.is-playing #lives-value{gap:2px}.is-playing .lives-title{font-size:8px}
+}
+.shop-panel .shop-filters .btn{min-width:44px}

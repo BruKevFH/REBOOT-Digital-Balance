@@ -4,6 +4,7 @@ Die neuen Illustrationen wurden eigens für Notification Ninja anhand der vom Nu
 
 - `indie-modes.png`: 1536 × 1024; vier gleich hohe Banner, oben nach unten Boss Rush, Tages-Challenge, Zen-Training, Wochenziele. CSS verwendet denselben Atlas ohne zusätzliche Karten-Downloads.
 - `indie-worlds.png`: 1536 × 1024; 2 × 2 Dojos: Gaming/Schule, Schlaf/Balance. Derselbe Atlas wird für Weltkarten und die echten Canvas-Spielhintergründe verwendet; das Verhältnis der Motive bleibt beim Cover-Cropping erhalten.
+- `indie-scenes.png`: 1536 × 1024; vier neue gemalte Schauplätze (Dorfhof, Laternenbasar, Willkommen im Dojo mit Fuchs-Sensei, Belohnungsschrein). Inline-SVGs verwenden echte Ausschnitt-Koordinaten und `preserveAspectRatio`, damit die Szenen auf allen Formaten unverzerrt bleiben.
 - `indie-masthead.png`: Sakura, Ninja, Fuji und Sonne als wiederverwendbare Kopfillustration.
 - `indie-wordmark.png`: freigestellte Wortmarke ohne eingebrannten Seitenhintergrund.
 - `indie-masthead.svg`: eigenständige lokale Vektorillustration als ergänzendes Dekor.

@@ -1,70 +1,63 @@
 const ANIMATIONS = new Set(['wave', 'swipe', 'keep', 'coins', 'super', 'unlock', 'achievement', 'profile']);
 
 const NINJA = `<svg viewBox="0 0 180 200" aria-hidden="true" focusable="false">
-  <ellipse cx="91" cy="187" rx="55" ry="8" fill="#293c38" opacity=".16"/>
-  <g class="nim-charm nim-charm-one" fill="none" stroke-linecap="round" stroke-linejoin="round">
-    <path d="m146 37 14 4-2 23-15-3 2-10-2-3Z" fill="#fff0b9" stroke="#ac813d" stroke-width="2"/>
-    <path d="m151 42 4 1m-5 4 5 1m-6 5 5 1m-7 4 4 1" stroke="#8d6e42" stroke-width="1.7"/>
-    <path d="m151 37 5-6 3 2" stroke="#d8a74f" stroke-width="2"/>
+  <ellipse cx="91" cy="188" rx="52" ry="8" fill="#092b35" opacity=".16"/>
+  <g class="nim-charm nim-charm-one" stroke-linecap="round" stroke-linejoin="round">
+    <path d="m148 37 14 4-2 23-15-3 2-10-2-3Z" fill="#fff0b9" stroke="#a87836" stroke-width="2"/>
+    <path d="m153 44 4 1m-5 5 5 1m-6 5 4 1" stroke="#c39b53" stroke-width="1.8"/>
   </g>
-  <g class="nim-charm nim-charm-two" stroke-linecap="round" stroke-linejoin="round">
-    <path d="m17 63 13-6 9 20-12 7-2-7-4-1Z" fill="#fdf3cf" stroke="#bc985e" stroke-width="2"/>
-    <path d="m24 65 4 7 4-2m-3 7 4-2" fill="none" stroke="#8a9c77" stroke-width="2"/>
-    <circle cx="21" cy="48" r="2.5" fill="#d7b15e" stroke="none"/>
+  <g class="nim-charm nim-charm-two" fill="#ffd66b" stroke="#bd8b38" stroke-width="1.5">
+    <path d="m22 59 3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1Z"/>
+    <circle cx="20" cy="44" r="2.5" stroke="none"/>
   </g>
-  <g class="nim-body" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M111 140q42 23 48-14 18 38-8 53-30 17-48-15Z" fill="#f0dbb4" stroke="#384b42" stroke-width="3.7"/>
-    <path d="M148 168q18-13 11-42 13 21 6 35l-8-5 1 8-9-2Z" fill="#fff8e6"/>
-    <path d="M58 100q-21 10-26 44l17 13 11 4q26-9 49 0l26-9 10-15-29-38Z" fill="#2f6258" stroke="#293f37" stroke-width="4"/>
-    <path d="M59 109q-20 18-15 34l19 8 22-39Z" fill="#3e7f6b"/>
-    <path d="M115 108q22 20 22 33l-21 11-25-36Z" fill="#244d47"/>
-    <path class="nim-cape-edge" d="m38 144 14 9 10 2m55 0 15-7 9-12" fill="none" stroke="#e8be67" stroke-width="3.5"/>
-    <path d="m69 154-6 25 7 8 14-3 5-24m12-1 1 25 14 3 6-7-8-28" fill="#39483f" stroke="#2b3932" stroke-width="3.5"/>
-    <path d="M64 178q8 5 20-1l-1 9q-21 10-23-2Zm38 0q8 3 16 0l5 8q-12 8-22 0Z" fill="#e4c59a" stroke="#685d47" stroke-width="2.4"/>
-    <path d="M68 110q21-9 42 1l8 47q-29 17-58-1Z" fill="#f0e5c4" stroke="#4c6956" stroke-width="3.7"/>
-    <path d="m72 116 25 28 11-27-15 42-21-5Z" fill="#d7d9ac"/>
-    <path d="m70 117 21 22 16-24" fill="none" stroke="#729a76" stroke-width="5"/>
-    <path d="m63 146 52-2 2 10q-29 9-55 0Z" fill="#d4a34f" stroke="#8a6b3e" stroke-width="2.6"/>
-    <path d="m88 144 9 5-8 8-7-6Z" fill="#f8d685" stroke="#8f6d39" stroke-width="2"/>
-    <path d="m70 115-14 11-14 8-8-13 25-22" fill="#467c65" stroke="#314d40" stroke-width="3.5"/>
-    <path d="m27 182 6-66q-5-12 0-19 5-5 10-1 7 8-2 12" fill="none" stroke="#6c5e3d" stroke-width="6"/>
-    <path d="m28 176 6-57m0-15q6 1 7-5" fill="none" stroke="#c4ac67" stroke-width="2.4"/>
-    <path d="M34 119q-7-3-10 2-4 8 3 13 6 4 13-1l4-9-7-2-4 6" fill="#f7e7c9" stroke="#7b765a" stroke-width="2.5"/>
-    <path d="m32 119 7 1" fill="none" stroke="#e3bd85" stroke-width="2.4"/>
-    <path d="m109 111 29 16 13-15-30-20" fill="#487e67" stroke="#314d40" stroke-width="3.5"/>
-
-    <path d="M48 60 35 20Q31 3 43 9l35 29m27 0 29-28q14-11 11 7l-9 45" fill="#f4e4c5" stroke="#384b42" stroke-width="3.8"/>
-    <path d="m48 45-7-25 24 19m54 1 18-21-4 28" fill="#cb9c86" stroke="#d7bba0" stroke-width="2.5"/>
-    <path d="M45 53q12-22 37-20l8-9 7 9q31-1 42 24l7 12-10 1 12 14-14 1 8 11-18 6q-14 15-34 15-21 0-35-14l-19-7 7-11-15-1 13-14-9-2Z" fill="#f5e6c7" stroke="#384b42" stroke-width="3.8"/>
-    <path d="M49 58q11-13 28-12l14 12 12-12q20 1 28 15l-13 22-27 9-28-10Z" fill="#cfc7a5"/>
-    <path d="M43 73q6 4 11 0 7 23 36 22 29 1 37-22 6 5 12 1l-6 15-11 7-8 9q-22 16-47-1l-8-8-12-6Z" fill="#fff9e8"/>
-    <path d="m77 39 6-8 7 4 8-5 5 12-14-3-8 6Z" fill="#fff9e6"/>
+  <g class="nim-body" stroke="#092b35" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M111 145q32 12 39-22 25 23 9 49-14 24-49 2Z" fill="#ed8a43"/>
+    <path d="M146 168q15-15 4-45 23 20 9 43l-8-3 1 10-9-3-5 9-6-6Z" fill="#fff1cd" stroke="none"/>
+    <path d="M114 163q16 13 30 3" fill="none" stroke="#ffbd70" stroke-width="4"/>
+    <path d="m63 151-7 25q-3 11 13 12 13 1 16-13l6-17 7 20q5 12 18 9 13-3 9-13l-12-27Z" fill="#173f40"/>
+    <path d="M57 178q12 5 25-1l-1 9q-21 8-26-2m47-6q12 4 22-1l5 8q-16 9-27 0Z" fill="#f7c078"/>
+    <path d="M60 109q30-17 57 1l15 38q-2 19-41 23-40-3-43-23Z" fill="#267f6c"/>
+    <path d="M61 115q-7 22-5 34 11 12 35 14l-5-45Z" fill="#3dac89" stroke="none"/>
+    <path d="M75 111q16-5 30 1l10 42q-25 10-47-1Z" fill="#fff0cf"/>
+    <path d="m73 119 17 16 17-17m-17 17v18" fill="none" stroke="#87c5a3" stroke-width="5"/>
+    <path class="nim-cape-edge" d="m52 147 11 11m54-2 11-9" fill="none" stroke="#f4cf78" stroke-width="3"/>
+    <path d="M61 148q30 7 59-1v11q-29 11-59 1Z" fill="#123d3d"/>
+    <rect x="81" y="150" width="19" height="14" rx="4" fill="#f4cb70"/>
+    <path d="m87 155 7-1" stroke="#fff0bb" stroke-width="3"/>
+    <path d="M62 116q-18 0-25 20l14 10 19-19m46-12 17 14 13-15-15-10-11 8" fill="#3daf8c"/>
+    <path d="m29 182 5-64q-5-12 0-20 6-5 10-1 6 8-3 11" fill="none" stroke="#6b5339" stroke-width="6"/>
+    <path d="m30 178 5-58m0-15 5-4" fill="none" stroke="#c9a873" stroke-width="2.5"/>
+    <path d="M35 126q-11-8-14 2-2 11 10 13 9-1 12-10" fill="#f8c47b" stroke-width="3"/>
+    <path d="m25 129 7 1m-5 4 6 1" stroke="#dd9452" stroke-width="2"/>
+    <path d="M46 60 35 17q-3-12 7-6l32 25m36-1 28-25q11-7 9 7l-9 46Z" fill="#ed8a43"/>
+    <path d="m47 43-5-22 20 19m61 0 17-20-4 25" fill="#f6baa0" stroke="#b9603e" stroke-width="2.5"/>
+    <path d="M39 61q10-27 50-28 39 0 51 28l10 14-12 2 11 14-18 4-8 15q-31 24-65-1l-9-14-19-4 11-14-11-2Z" fill="#ed8a43"/>
+    <path d="M45 62q9-20 33-22-14 9-20 24Z" fill="#ffc176" stroke="none"/>
+    <path d="M37 77q14-1 26 11l27 13 27-13q11-12 25-12l-9 19-13 6-9 12q-22 13-44 0l-9-12-14-6Z" fill="#fff1cf" stroke-width="2.5"/>
+    <path d="M44 53q45-15 94 0l-2 15q-45-14-90 0Z" fill="#25bd97"/>
+    <path d="M52 53q38-11 77-1" fill="none" stroke="#b9f2c9" stroke-width="3"/>
+    <path d="m137 53 14-10-1 17 12 8-25-3" fill="#25bd97"/>
+    <path d="m91 39 4 8 9 1-7 7 2 9-8-5-8 5 2-9-7-7 9-1Z" fill="#ffd46d" stroke-width="2.8"/>
+    <path d="m91 44 2 6 5 1-4 3 1 5-4-3Z" fill="#fff0b3" stroke="none"/>
     <g class="nim-eyes">
-      <path d="M54 64q13-14 28 0-6 17-21 11Z" fill="#fffdf0" stroke="#4e5c48" stroke-width="2.4"/>
-      <path d="M100 64q14-13 27 0-7 17-22 11Z" fill="#fffdf0" stroke="#4e5c48" stroke-width="2.4"/>
-      <ellipse cx="70" cy="66" rx="6.5" ry="9" fill="#d4a246"/>
-      <ellipse cx="112" cy="66" rx="6.5" ry="9" fill="#67b4ad"/>
-      <ellipse cx="71" cy="67" rx="2.8" ry="5.8" fill="#293d35"/>
-      <ellipse cx="111" cy="67" rx="2.8" ry="5.8" fill="#293d35"/>
-      <circle cx="68" cy="62" r="2.2" fill="#fff"/><circle cx="109" cy="62" r="2.2" fill="#fff"/>
+      <path d="M55 77q9-11 18-1m33 0q9-10 18 1" fill="none" stroke-width="4.5"/>
+      <path d="m51 85 9 2m64-2 8-2" fill="none" stroke="#d87755" stroke-width="3"/>
     </g>
-    <path d="m52 57 11-10 18 9-16-2Zm47-1 19-10 11 12-13-4Z" fill="#fff9e7" stroke="#b6b292" stroke-width="1.5"/>
-    <path d="M73 82q5-8 17-5 13-3 19 5l-4 11-15 9-16-10Z" fill="#fffdf0"/>
-    <path d="m83 80 8-2 8 2-8 7Z" fill="#415148"/>
-    <g class="nim-mouth"><path d="M91 87v5m-11-3q4 7 11 3 7 4 14-2" fill="none" stroke="#68735b" stroke-width="2.3"/></g>
-    <path d="m53 81 8 3m-9 5 9 1m60-6 8-3m-8 9 9-1" fill="none" stroke="#d7b894" stroke-width="2"/>
-    <path d="M75 106q16 5 33 0l-4 12-13 7-14-8Z" fill="#315b4c" stroke="#294438" stroke-width="2.7"/>
-    <g class="nim-leaf"><path d="M91 106q-12 5-11 14 14 2 22-11-6 2-11-3Z" fill="#e9c46d" stroke="#987e42" stroke-width="1.8"/><path d="m82 120 13-10m-8 7-1-5m5 1 5 1" fill="none" stroke="#b18b45" stroke-width="1.4"/></g>
-    <g transform="translate(14 8)">
+    <path d="M72 91q6-10 18-6 12-4 20 6l-6 13-14 8-14-9Z" fill="#fff9e8" stroke="none"/>
+    <path d="m83 88 8-2 8 2-8 7Z" fill="#173f40" stroke-width="2"/>
+    <g class="nim-mouth"><path d="M91 95v5m-11-2q4 7 11 3 7 4 13-3" fill="none" stroke-width="2.5"/></g>
+    <path d="m50 94 11 3m-8 4 10 1m57-5 11-3m-12 8 10-1" fill="none" stroke="#d7ad7d" stroke-width="1.8"/>
+    <path d="M63 112q28 9 53-1l2 13q-27 15-57 0Z" fill="#e96b42" stroke-width="3"/>
+    <path d="m71 119 18 4 19-4" fill="none" stroke="#ffcf83" stroke-width="3"/>
+    <path class="nim-cape-edge" d="M112 117q20 6 32-10l-2 17 15 9q-26 9-45-3Z" fill="#ef7a42" stroke-width="3"/>
+    <g class="nim-leaf"><path d="m89 129 7 5-7 9-7-7Z" fill="#ffd46d" stroke="#a77738" stroke-width="2"/><path d="m86 136 4-3" stroke="#fff0b5" stroke-width="2"/></g>
     <g class="nim-wave">
-      <path d="M125 111q-7-4-9-12l-3-9q0-6 5-3l5 9-1-18q2-7 6-2l3 15 2-20q4-5 7 1v21l5-12q5-3 6 3l-8 22-6 8Z" fill="#fff2d7" stroke="#6c7356" stroke-width="2.8"/>
-      <path d="m126 100 9-2 4 5-7 5Z" fill="#dba986"/>
-      <path d="m119 94 3 4m4-15 1 9m9-13v12m8-5-3 10" fill="none" stroke="#dfc9a2" stroke-width="1.6"/>
+      <path d="M131 120q-14-8-12-18l-3-9q0-5 5-2l5 8-1-17q2-6 6-2l3 15 3-17q4-4 6 2l-1 17 5-9q5-1 5 4l-8 21-7 8Z" fill="#f6bc75" stroke-width="3"/>
+      <path d="m128 103 8-2 5 6-8 6Z" fill="#e68a53" stroke="none"/>
+      <path d="m125 94 2 5m4-12 1 9m8-10-1 10" fill="none" stroke="#ffdca0" stroke-width="2"/>
     </g>
-    </g>
-    <path d="m105 122 9 11m-47 8 4-9m33 28 2 10" fill="none" stroke="#7c9b77" stroke-width="2"/>
   </g>
-  <g class="nim-charm nim-charm-three" fill="#e6be68"><path d="m153 90 2 5 5 2-5 2-2 5-2-5-5-2 5-2Z"/><circle cx="15" cy="105" r="2"/></g>
+  <g class="nim-charm nim-charm-three" fill="#ffd46d"><path d="m157 83 2 5 5 2-5 2-2 5-2-5-5-2 5-2Z"/><circle cx="17" cy="103" r="2"/></g>
 </svg>`;
 
 const ICONS = {

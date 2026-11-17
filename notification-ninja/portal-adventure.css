@@ -1,0 +1,259 @@
+/* Illustrated entrances to the same Ninja world. Gameplay and the Play board keep their own layout. */
+.indie-website *, .indie-website *::before, .indie-website *::after { box-sizing:border-box; }
+.indie-website { margin:0; overflow-x:hidden; font:650 16px/1.65 var(--indie-font); background:var(--paper); color:#092b35; }
+.indie-website a { color:inherit; text-decoration:none; }
+.indie-website button { font:inherit; cursor:pointer; }
+.indie-website .shell { width:min(1060px,calc(100% - 36px)); margin:auto; }
+.indie-website .portal-masthead { display:grid; place-items:center; height:166px; margin:0 -18px; background:url('./assets/indie-masthead.png') center 57%/cover no-repeat; border-bottom:2px solid #9fc6b3; }
+.indie-website .portal-masthead .brand { display:block; width:284px; height:132px; min-height:44px; border-radius:0; }
+.indie-website .portal-masthead .brand img { display:block; width:100%; height:100%; object-fit:contain; }
+.indie-website .top-nav { display:flex; align-items:center; justify-content:space-between; min-height:78px; padding:14px 0; border:0; gap:15px; }
+.indie-website .nav-actions { display:flex; align-items:center; justify-content:space-between; gap:15px; width:100%; }
+.indie-website .nav-links { display:flex; flex-wrap:wrap; align-items:center; gap:5px 20px; margin-right:auto; font-size:12px; font-weight:950; }
+.indie-website .nav-links a { display:inline-flex; align-items:center; justify-content:center; min-width:44px; min-height:44px; color:#143f43; }
+.indie-website .nav-links a[aria-current=location] { color:#087d70; text-decoration:underline; text-decoration-thickness:3px; text-underline-offset:8px; }
+.indie-website .portal-nav-label { display:none; font-size:25px; font-weight:1000; letter-spacing:-.04em; }
+.indie-website .indie-theme-cycle { flex:0 0 44px; margin-left:auto; }
+.indie-website .language-picker { display:flex; flex:0 0 auto; }
+.indie-website .hero { position:relative; display:grid; grid-template-columns:minmax(0,1.03fr) minmax(0,1fr); align-items:stretch; gap:0; min-height:570px; padding:0; margin:5px 0 42px; border:3px solid #103e43; border-radius:28px; background:#fff4dc; box-shadow:0 7px 0 #367d6a,inset 0 0 0 3px #fffbed; isolation:isolate; overflow:hidden; }
+.indie-website .hero-content { position:relative; z-index:2; padding:33px 30px 30px; min-width:0; background:linear-gradient(100deg,#fff5de 80%,#fff5dee8); border-right:2px solid #528875; box-shadow:inset 0 0 0 3px #fffdf0; }
+.indie-website .hero-content::before { content:''; position:absolute; left:27px; right:27px; top:12px; height:5px; border-radius:8px; background:linear-gradient(90deg,transparent,#2bad90 20%,#2bad90 80%,transparent); }
+.indie-website .eyebrow { display:block; margin:0; color:#2a7568; font-size:10px; font-weight:1000; line-height:1.6; letter-spacing:1.6px; text-transform:uppercase; }
+.indie-website .hero h1 { margin:14px 0 17px; color:#103c41; font-size:clamp(43px,5.25vw,68px); line-height:1.01; letter-spacing:-.065em; font-weight:1000; text-shadow:none; }
+.indie-website .hero h1>span { display:block; color:#103c41; -webkit-text-stroke:0; text-shadow:none; }
+.indie-website .hero h1>span+span { margin-top:2px; color:#13a185; text-shadow:0 3px 0 #c8dfba; }
+.indie-website .hero-copy { max-width:none; margin:0; color:#385f5b; font-size:14px; line-height:1.75; }
+.indie-website .hero-actions { display:grid; grid-template-columns:1fr 1fr; align-items:stretch; gap:12px; margin:24px 0 17px; }
+.indie-website .hero-actions .button { display:flex; align-items:center; justify-content:center; gap:10px; min-height:55px; padding:12px 10px; border-radius:14px; font-size:15px; }
+.indie-website .hero-actions .button.large { font-size:16px; }
+.indie-website .hero-actions .button span[aria-hidden] { font-size:22px; }
+.indie-website .hero-actions .guest-home-link { display:flex; align-items:center; justify-content:center; grid-column:1/-1; min-height:48px; padding:8px 10px; border:2px solid #39776a; border-radius:13px; background:#fff9e8; box-shadow:0 3px 0 #8fab88,inset 0 0 0 2px #fffdf0; font-size:13px; font-weight:950; text-decoration:none; }
+.indie-website .hero-actions .home-auth-state { grid-column:1/-1; color:#2e6a58; font-size:12px; }
+.indie-website .hero-note { margin:0; padding-top:16px; border-top:1px dashed #a3bca0; color:#537268; font-size:10px; line-height:1.75; }
+.indie-website .hero-note strong { color:#315a50; font-weight:950; }
+.indie-website .hero-art.portal-home-scene { position:relative; width:auto; height:auto; min-height:570px; margin:0; border:0; border-radius:0; box-shadow:none; overflow:hidden; background:#8ac9b4; }
+.indie-website .hero-art.portal-home-scene::after { content:''; position:absolute; inset:0; border:3px solid #fffae8; box-shadow:inset 0 -130px 90px -70px #043f44bb; pointer-events:none; }
+.portal-scene-light { position:absolute; z-index:1; width:75%; aspect-ratio:1; top:-30%; right:-35%; background:radial-gradient(circle,#fff6bd66,transparent 68%); pointer-events:none; animation:portal-light 9s ease-in-out infinite alternate; }
+.portal-scene-petals { position:absolute; z-index:1; left:14%; top:14%; width:9px; height:5px; border-radius:90% 0 90% 0; background:#ff9cbb; box-shadow:105px 50px 0 #ffd4df,170px -35px 0 #ff8eb1,45px 220px 0 #ffccdd; opacity:.75; animation:portal-petals 9s ease-in-out infinite; pointer-events:none; }
+.indie-website .portal-home-scene .art-tag { position:absolute; z-index:3; left:22px; right:22px; bottom:25px; padding:13px 16px; border:2px solid #14474a; border-radius:14px; background:#fff3ceef; box-shadow:0 4px 0 #497c62,inset 0 0 0 2px #fffbed; color:#154b43; font-size:12px; font-weight:950; text-align:center; transform:rotate(-2deg); }
+.indie-website .section { padding:14px 0 38px; }
+.indie-website .section-heading { display:flex; justify-content:space-between; align-items:flex-end; gap:24px; margin-bottom:24px; }
+.indie-website .section h2 { margin:7px 0 13px; color:#0c3740; font-size:clamp(29px,3.8vw,42px); line-height:1.1; letter-spacing:-.04em; font-weight:1000; }
+.indie-website .section-heading p, .indie-website .section-lead { max-width:760px; margin:0; color:#4a6c63; font-size:14px; line-height:1.8; }
+.indie-website .situation-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:19px; margin-top:25px; }
+.indie-website .situation-card[data-world] { position:relative; display:flex; flex-direction:column; justify-content:flex-end; min-width:0; min-height:390px; padding:24px 20px 20px; border:3px solid #15484c; border-radius:23px; background:#164a4a; color:#fffbed; box-shadow:0 6px 0 #397d69,inset 0 0 0 3px #fff7e8; isolation:isolate; overflow:hidden; }
+.indie-website .situation-card[data-world]::before { content:''; position:absolute; inset:0; width:100%; height:100%; min-height:0; margin:0; aspect-ratio:auto; background-image:url('./assets/indie-worlds.png'); background-size:auto 200%; background-position:right top; z-index:-2; }
+.indie-website .situation-card[data-world=gaming]::before { background-position:left top; }
+.indie-website .situation-card[data-world=sleep]::before { background-position:left bottom; }
+.indie-website .situation-card[data-world]::after { content:''; position:absolute; inset:0; border:3px solid #fff6e0; border-radius:20px; background:linear-gradient(180deg,transparent 20%,#052a3b80 43%,#042e3bea 76%,#032e3a 100%); z-index:-1; }
+.indie-website .situation-head { display:flex; align-items:center; gap:11px; margin:0 0 14px; }
+.indie-website .situation-art { display:block; width:45px; height:45px; flex:0 0 45px; padding:6px; border:2px solid #183f42; border-radius:13px; background:#fff0c9; box-shadow:0 3px 0 #073743,inset 0 0 0 2px #fff9e2; }
+.indie-website .situation-card h3 { margin:0; color:#fffbed; font-size:27px; line-height:1.1; letter-spacing:-.025em; text-shadow:0 3px 0 #073340; }
+.indie-website .situation-card p { min-height:0; margin:0 0 18px; color:#fff9e9; font-size:12px; line-height:1.7; text-shadow:0 1px 2px #052d37; }
+.indie-website .context-cta { display:flex; align-items:center; justify-content:space-between; gap:10px; min-height:45px; margin:0; padding:10px 0 0; border-top:1px solid #b6e5ca77; color:#c5edce; font-size:10px; font-weight:950; line-height:1.45; }
+.indie-website .context-cta>span:last-child { display:grid; place-items:center; width:31px; height:31px; flex:0 0 31px; border:1.5px solid #dbf4ca; border-radius:50%; background:#31816f; color:#fff0ba; font-size:20px; }
+.indie-website .small-note { margin:18px 0 0; color:#4e7265; font-size:11px; }
+.indie-website .how-section { margin:5px 0 25px; padding:28px; border:2px solid #397a68; border-radius:24px; background:#fff4d9; box-shadow:0 5px 0 #7da68a,inset 0 0 0 3px #fffbee; }
+.indie-website .steps { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:23px; margin-top:27px; }
+.indie-website .step { display:block; min-width:0; }
+.indie-website .step-number { display:grid; place-items:center; width:47px; height:47px; margin-bottom:14px; border:2px solid #174f4b; border-radius:15px; background:#a4e1bd; box-shadow:0 3px 0 #427c65,inset 0 0 0 2px #f4f8d5; color:#12413e; font-size:22px; font-weight:1000; }
+.indie-website .step h3 { margin:0 0 9px; color:#123f43; font-size:18px; line-height:1.35; letter-spacing:-.025em; }
+.indie-website .step p { margin:0; color:#4c6c5f; font-size:12px; line-height:1.8; }
+.indie-website .balance-note { display:grid; grid-template-columns:57px minmax(0,1fr); align-items:center; gap:18px; margin-top:28px; padding:18px 20px; border:2px solid #80a286; border-radius:17px; background:#e1ebc8; box-shadow:inset 0 0 0 2px #fff8e3; }
+.indie-website .balance-note svg { width:57px; height:57px; }
+.indie-website .balance-note p { margin:0; color:#40634f; font-size:12px; line-height:1.8; }
+.indie-website .access-strip { display:flex; flex-wrap:wrap; justify-content:center; gap:12px 26px; margin:20px 0 30px; padding:16px 0; border:0; color:#426e5c; font-size:11px; font-weight:900; }
+.indie-website .access-strip span { display:inline-flex; align-items:center; gap:7px; }
+.indie-website .access-strip b { color:#1b8b73; font-size:17px; }
+.indie-website .callout { position:relative; display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:30px; margin:15px 0 36px; padding:36px 32px; border:3px solid #19494c; border-radius:23px; background:#113e45; color:#fff8e1; box-shadow:0 5px 0 #377a64; isolation:isolate; overflow:hidden; }
+.indie-website .callout::before { content:''; position:absolute; inset:0; z-index:-2; background:url('./assets/indie-modes.png') center 33.333%/100% 400% no-repeat; }
+.indie-website .callout::after { content:''; position:absolute; inset:0; z-index:-1; background:linear-gradient(90deg,#06313bea,#06313bad 65%,#06313b55); box-shadow:inset 0 0 0 3px #fff9df; border-radius:20px; }
+.indie-website .callout .eyebrow { color:#c6f1cd; }
+.indie-website .callout h2 { max-width:550px; margin:10px 0 14px; color:#fff8e5; font-size:34px; line-height:1.12; letter-spacing:-.035em; text-shadow:0 3px 0 #06353a; }
+.indie-website .callout p { max-width:600px; margin:0 0 11px; color:#f3f6dc; font-size:12px; line-height:1.8; }
+.indie-website .callout-actions { display:flex; flex-direction:column; gap:13px; min-width:180px; }
+.indie-website .callout-actions .button { display:flex; justify-content:center; align-items:center; gap:10px; min-height:52px; padding:12px 15px; font-size:14px; }
+.indie-website .project-info { margin:0 0 28px; padding:0 20px; border:2px solid #497c63; border-radius:17px; background:#fff2ce; box-shadow:0 3px 0 #8eaf86; }
+.indie-website .project-info summary { display:flex; align-items:center; min-height:58px; cursor:pointer; font-weight:950; font-size:13px; }
+.indie-website .project-info h2 { margin:4px 0 14px; font-size:23px; line-height:1.25; }
+.indie-website .project-info p { margin:0 0 15px; color:#496c5b; font-size:12px; line-height:1.8; }
+.indie-website footer { display:flex; align-items:center; justify-content:space-between; gap:18px; padding:14px 0 26px; border-top:1px solid #b8c9ac; color:#52725f; font-size:10px; }
+.indie-website .footer-links { display:flex; flex-wrap:wrap; gap:0 18px; }
+.indie-website .footer-links a { display:flex; align-items:center; min-width:44px; min-height:44px; text-decoration:underline; text-underline-offset:4px; }
+/* Account controls remain real forms; their frame becomes an illustrated gateway. */
+#account-root .portal-account-shade { position:fixed; inset:0; display:block; overflow:auto; padding:24px 20px 125px; background:radial-gradient(ellipse at 50% 5%,#295c58cc,#092c3aed 85%); backdrop-filter:blur(5px); }
+#account-root .portal-account-panel.account-panel { display:grid; grid-template-columns:minmax(245px,.8fr) minmax(0,1.2fr); align-items:start; width:min(1000px,100%); max-width:none; max-height:none; margin:0 auto; padding:0; overflow:visible; border:3px solid #153f45; border-radius:25px; background:#fff4df; box-shadow:0 8px 0 #2c685e,inset 0 0 0 3px #fffbed,0 30px 100px #031f3380; }
+#account-root .portal-account-panel>.panel-header { position:sticky; z-index:5; top:0; grid-column:1/-1; display:flex; align-items:center; justify-content:space-between; gap:12px; margin:0; min-height:75px; padding:13px 20px; border:0; border-bottom:2px solid #4c8f77; border-radius:21px 21px 0 0; background:#c4e7c5; box-shadow:inset 0 3px 0 #fff8dc,0 3px 0 #0c473331; }
+#account-root .portal-account-panel>.panel-header .panel-header-title { color:#2b655a; font-size:10px; letter-spacing:1.2px; text-align:center; }
+#account-root .portal-account-panel .panel-back, #account-root .portal-account-panel .panel-home { min-height:44px; min-width:44px; padding:10px 13px; border:2px solid #19484c; border-radius:12px; background:#fff4db; box-shadow:0 3px 0 #568b6a,inset 0 0 0 2px #fffdf1; color:#163e43; font-size:12px; }
+#account-root .portal-account-scene { position:sticky; top:74px; display:block; height:min(670px,calc(100svh - 135px)); min-height:380px; margin:20px 0 20px 20px; border:2px solid #2b5f54; border-radius:20px; background:#69a79a; box-shadow:0 4px 0 #7c9d73,inset 0 0 0 3px #fff8df; overflow:hidden; }
+#account-root .portal-account-scene::after { content:''; position:absolute; inset:0; z-index:1; border:3px solid #fff6dd; border-radius:17px; box-shadow:inset 0 -100px 70px -40px #06413e70; pointer-events:none; }
+#account-root .portal-account-seal { position:absolute; z-index:2; bottom:25px; left:50%; transform:translateX(-50%); display:grid; place-items:center; width:75px; height:82px; border:3px solid #173c40; border-radius:25px 25px 32px 32px; background:#f7d881; box-shadow:0 5px 0 #175149,inset 0 0 0 3px #fff3c6; color:#174a43; }
+#account-root .portal-account-seal svg { width:46px; height:46px; }
+#account-root .portal-account-content { min-width:0; padding:29px 30px 30px; }
+#account-root .portal-account-content>.eyebrow { color:#2f7b69; font-size:10px; letter-spacing:1.5px; }
+#account-root .portal-account-content h2 { margin:7px 0 18px; color:#0b3540; font-size:clamp(29px,3.6vw,41px); line-height:1.08; letter-spacing:-.04em; }
+#account-root .portal-account-content>p { color:#45665e; font-size:13px; line-height:1.75; margin:0 0 20px; }
+#account-root .portal-account-content form { display:grid; gap:17px; margin:23px 0; }
+#account-root .portal-account-content form[data-account-form=register] { grid-template-columns:repeat(2,minmax(0,1fr)); column-gap:17px; }
+#account-root .portal-account-content form[data-account-form=register]>.account-check, #account-root .portal-account-content form[data-account-form=register]>.account-submit { grid-column:1/-1; }
+#account-root .portal-account-content .account-field { display:flex; flex-direction:column; gap:8px; min-width:0; margin:0; color:#174a42; font-size:13px; font-weight:950; line-height:1.45; }
+#account-root .portal-account-content .account-field small { color:#597460; font-size:10px; font-weight:700; line-height:1.7; }
+#account-root .portal-account-content .account-field>input, #account-root .portal-account-content .account-field>textarea, #account-root .portal-account-content .password-control { width:100%; min-width:0; min-height:51px; padding:12px 13px; border:2px solid #336f5d; border-radius:12px; background:#fffbed; color:#113f43; font-size:14px; font-weight:800; box-shadow:inset 0 3px 0 #ece2bf; }
+#account-root .portal-account-content .password-control { display:flex; padding:0; overflow:hidden; }
+#account-root .portal-account-content .password-control>input { flex:1; width:0; min-width:0; padding:12px 13px; border:0; background:transparent; font:inherit; color:inherit; outline-offset:-5px; }
+#account-root .portal-account-content .password-control>button { min-width:77px; min-height:47px; padding:7px 9px; border:0; border-left:2px solid #bfd2ac; background:#e8efcb; color:#285b4c; font-size:10px; font-weight:950; }
+#account-root .portal-account-content .account-submit { min-height:54px; font-size:16px; border-radius:14px; }
+#account-root .portal-account-content .account-check { display:flex; align-items:flex-start; gap:11px; min-height:48px; padding:12px 13px; border:1.5px solid #a7bc96; border-radius:12px; background:#eef0d1; color:#315c4d; font-size:10px; line-height:1.8; }
+#account-root .portal-account-content .account-check>input { flex:0 0 21px; width:21px; height:21px; margin:3px 0 0; accent-color:#168a74; }
+#account-root .portal-account-content .account-check a { display:inline-flex; align-items:center; min-height:44px; text-decoration:underline; text-underline-offset:3px; font-weight:950; }
+#account-root .portal-account-content .account-links { display:flex; gap:11px; flex-wrap:wrap; margin:14px 0 20px; }
+#account-root .portal-account-content .account-links>.btn { flex:1; min-width:120px; min-height:47px; font-size:11px; }
+#account-root .portal-account-content .account-guest-note { position:relative; padding:19px 20px 17px; margin-top:23px; border:2px solid #b2b587; border-radius:15px; background:#f6e8ba; box-shadow:inset 0 0 0 2px #fff5d7; }
+#account-root .portal-account-content .account-guest-note>strong { color:#496b4b; font-size:15px; }
+#account-root .portal-account-content .account-guest-note p { margin:8px 0 0; color:#566c4d; font-size:10px; line-height:1.8; }
+#account-root .portal-account-content .account-service-note { padding:17px; border:2px solid #b79f65; border-radius:14px; background:#fff0c2; color:#52674d; }
+#account-root .portal-account-content .account-service-note>strong { color:#4c593f; font-size:13px; }
+#account-root .portal-account-content .account-service-note p { font-size:11px; line-height:1.7; }
+#account-root .portal-account-content .account-service-note .btn { min-height:45px; font-size:11px; }
+#account-root #account-error:empty, #account-root #account-working:empty { display:none; }
+#account-root .portal-account-content #account-error { padding:12px 14px; border:2px solid #b75a54; border-radius:12px; background:#ffded0; color:#783d3e; font-size:12px; }
+#account-root .portal-account-content .account-identity { gap:16px; padding:17px; border:2px solid #619470; border-radius:18px; background:#dcebc7; }
+#account-root .portal-account-content .account-avatar { width:88px; height:105px; flex:0 0 88px; }
+#account-root .portal-account-content .account-details, #account-root .portal-account-content .account-mfa-security, #account-root .portal-account-content .account-import { border:2px solid #91ac7d; border-radius:15px; background:#f4edce; padding:17px; margin:20px 0; }
+#account-root .portal-account-content .account-details summary { display:flex; align-items:center; min-height:47px; cursor:pointer; font-size:13px; font-weight:950; }
+#account-root .portal-account-content .account-details h3, #account-root .portal-account-content .account-mfa-security h3, #account-root .portal-account-content .account-import h3 { font-size:21px; margin:0 0 12px; }
+#account-root .portal-account-content .account-details p, #account-root .portal-account-content .account-mfa-security p, #account-root .portal-account-content .account-import p { font-size:11px; line-height:1.8; }
+#account-root .portal-account-content .account-danger { border-color:#c68e6c; background:#f7e4c9; }
+#account-root .portal-account-content .mfa-qr-wrap { background:white; }
+@keyframes portal-light { to { opacity:.45; transform:translate(-8%,8%); } }
+@keyframes portal-petals { 50% { transform:translate(18px,26px) rotate(20deg); } }
+@media(max-width:1000px) {
+ .indie-website .nav-links { gap:0 13px; font-size:10px; }
+ .indie-website .hero-content { padding:29px 24px; }
+ .indie-website .hero { min-height:550px; }
+ .indie-website .hero-art.portal-home-scene { min-height:550px; }
+ .indie-website .hero h1 { font-size:clamp(42px,5.4vw,60px); }
+ .indie-website .hero-copy { font-size:13px; }
+ .indie-website .hero-actions .button { font-size:12px; }
+ .indie-website .situation-card[data-world] { min-height:370px; padding:21px 16px 18px; }
+ .indie-website .situation-card h3 { font-size:23px; }
+ .indie-website .situation-head { gap:9px; }
+ .indie-website .situation-art { width:40px; height:40px; flex-basis:40px; }
+ #account-root .portal-account-panel.account-panel { grid-template-columns:minmax(230px,.7fr) minmax(0,1.3fr); }
+ #account-root .portal-account-content { padding:25px; }
+}
+@media(max-width:760px) {
+ .indie-website .shell { width:calc(100% - 28px); }
+ .indie-website .portal-masthead { margin:0 -14px; height:126px; background-size:auto 210px; background-position:center 56%; }
+ .indie-website .portal-masthead .brand { width:205px; height:103px; }
+ .indie-website .top-nav { min-height:72px; padding:11px 0 14px; }
+ .indie-website .nav-actions { gap:9px; justify-content:flex-end; width:auto; }
+ .indie-website .nav-links { display:none; }
+ .indie-website .portal-nav-label { display:block; }
+ .indie-website .hero { display:flex; flex-direction:column; gap:0; margin-top:0; min-height:0; border-radius:23px; }
+ .indie-website .hero-art.portal-home-scene { order:-1; width:100%; height:207px; min-height:207px; border:0; border-bottom:2px solid #367766; border-radius:0; }
+ .indie-website .hero-art.portal-home-scene::after { border-radius:20px 20px 0 0; }
+ .indie-website .portal-home-scene .art-tag { left:17px; right:17px; bottom:15px; padding:9px 12px; font-size:10px; }
+ .indie-website .hero-content { width:100%; padding:26px 23px 23px; border:0; background:#fff4dd; }
+ .indie-website .hero-content::before { left:23px; right:23px; top:12px; height:4px; }
+ .indie-website .hero .eyebrow { font-size:8px; letter-spacing:1.3px; }
+ .indie-website .hero h1 { margin:11px 0 15px; font-size:49px; line-height:.98; }
+ .indie-website .hero h1>span { display:inline; }
+ .indie-website .hero h1>span+span { margin-left:7px; }
+ .indie-website .hero-copy { font-size:12px; line-height:1.8; }
+ .indie-website .hero-actions { margin:19px 0 16px; gap:11px; }
+ .indie-website .hero-actions .button { min-height:52px; font-size:12px; padding:11px 8px; }
+ .indie-website .hero-actions .button.large { font-size:13px; }
+ .indie-website .hero-actions .guest-home-link { min-height:47px; font-size:11px; }
+ .indie-website .hero-note { padding-top:13px; font-size:9px; }
+ .indie-website .section { padding-bottom:30px; }
+ .indie-website .section-heading { display:block; margin-bottom:20px; }
+ .indie-website .section h2 { font-size:31px; }
+ .indie-website .section-heading p, .indie-website .section-lead { font-size:12px; line-height:1.8; }
+ .indie-website .situation-grid { grid-template-columns:1fr; gap:19px; margin-top:22px; }
+ .indie-website .situation-card[data-world] { min-height:290px; padding:22px 20px 19px; }
+ .indie-website .situation-card[data-world]::before { background-size:200% auto; }
+ .indie-website .situation-head { margin:0 0 10px; }
+ .indie-website .situation-card h3 { font-size:28px; }
+ .indie-website .situation-card p { max-width:265px; margin:0 0 13px; font-size:12px; }
+ .indie-website .context-cta { min-height:39px; font-size:10px; }
+ .indie-website .how-section { padding:24px 20px; border-radius:21px; }
+ .indie-website .steps { grid-template-columns:1fr; gap:24px; }
+ .indie-website .step { display:grid; grid-template-columns:43px minmax(0,1fr); gap:15px; }
+ .indie-website .step-number { width:43px; height:44px; margin:0; border-radius:13px; font-size:20px; }
+ .indie-website .step h3 { font-size:17px; }
+ .indie-website .step p { font-size:11px; }
+ .indie-website .balance-note { grid-template-columns:40px minmax(0,1fr); padding:15px 12px; gap:11px; }
+ .indie-website .balance-note svg { width:40px; height:46px; }
+ .indie-website .balance-note p { font-size:10px; }
+ .indie-website .access-strip { justify-content:flex-start; gap:8px 15px; font-size:10px; }
+ .indie-website .callout { grid-template-columns:1fr; gap:15px; padding:27px 23px; }
+ .indie-website .callout h2 { font-size:29px; }
+ .indie-website .callout p { font-size:11px; }
+ .indie-website .callout-actions { display:grid; grid-template-columns:1fr 1fr; min-width:0; gap:11px; }
+ .indie-website .callout-actions .button { min-height:49px; font-size:11px; padding:10px; }
+ .indie-website .project-info { padding:0 16px; }
+ .indie-website footer { display:block; font-size:10px; }
+ .indie-website .footer-links { margin-top:11px; gap:0 16px; }
+ #account-root .portal-account-shade { padding:12px 10px 120px; }
+ #account-root .portal-account-panel.account-panel { display:block; border-radius:22px; }
+ #account-root .portal-account-panel>.panel-header { top:0; min-height:66px; padding:10px 11px; border-radius:19px 19px 0 0; gap:8px; }
+ #account-root .portal-account-panel>.panel-header .panel-header-title { font-size:8px; letter-spacing:.7px; }
+ #account-root .portal-account-panel .panel-back, #account-root .portal-account-panel .panel-home { font-size:10px; padding:9px 10px; }
+ #account-root .portal-account-scene { position:relative; top:auto; height:149px; min-height:149px; margin:0; border:0; border-bottom:2px solid #52846b; border-radius:0; box-shadow:none; }
+ #account-root .portal-account-scene::after { border-radius:0; border-width:2px; }
+ #account-root .portal-account-seal { width:49px; height:53px; left:auto; right:18px; bottom:16px; transform:none; border-radius:16px 16px 21px 21px; }
+ #account-root .portal-account-seal svg { width:31px; height:31px; }
+ #account-root .portal-account-content { padding:24px 20px 23px; }
+ #account-root .portal-account-content h2 { font-size:31px; margin:8px 0 16px; }
+ #account-root .portal-account-content>.eyebrow { font-size:8px; letter-spacing:1.3px; }
+ #account-root .portal-account-content>p { font-size:12px; }
+ #account-root .portal-account-content form[data-account-form=register] { grid-template-columns:1fr; }
+ #account-root .portal-account-content form { margin:20px 0; gap:17px; }
+ #account-root .portal-account-content .account-field { font-size:12px; }
+ #account-root .portal-account-content .account-field small { font-size:10px; }
+ #account-root .portal-account-content .account-check { padding:11px; font-size:10px; }
+ #account-root .portal-account-content .account-submit { min-height:52px; font-size:15px; }
+ #account-root .portal-account-content .account-guest-note { padding:15px; }
+ #account-root .portal-account-content .account-links { gap:10px; }
+ #account-root .portal-account-content .account-links>.btn { min-width:110px; font-size:11px; }
+ #account-root .portal-account-content .account-identity { gap:13px; padding:14px; }
+ #account-root .portal-account-content .account-avatar { width:68px; height:85px; flex-basis:68px; }
+ #account-root .portal-account-content .account-identity h3 { font-size:24px; }
+}
+@media(max-width:370px) {
+ .indie-website .hero-content { padding-inline:19px; }
+ .indie-website .hero h1 { font-size:45px; }
+ .indie-website .hero-actions .button { font-size:11px; }
+ .indie-website .hero-actions .button.large { font-size:12px; }
+ .indie-website .hero-art.portal-home-scene { height:185px; min-height:185px; }
+ #account-root .portal-account-content { padding-inline:17px; }
+ #account-root .portal-account-content h2 { font-size:29px; }
+ #account-root .portal-account-panel>.panel-header .panel-header-title { display:none; }
+}
+html:is([data-ninja-theme=dark],[data-ninja-theme=noir]) .indie-website :is(.hero-content,.how-section,.project-info) { background:var(--iv-panel); border-color:var(--iv-stroke); box-shadow:0 4px 0 var(--iv-shadow); }
+html:is([data-ninja-theme=dark],[data-ninja-theme=noir]) .indie-website :is(.hero h1>span,.step h3,.portal-nav-label) { color:var(--iv-ink); }
+html:is([data-ninja-theme=dark],[data-ninja-theme=noir]) .indie-website :is(.hero-copy,.hero-note,.section-heading p,.section-lead,.step p,.project-info p,.small-note,footer,.access-strip) { color:var(--iv-muted); }
+html:is([data-ninja-theme=dark],[data-ninja-theme=noir]) .indie-website .balance-note { background:var(--iv-surface); border-color:var(--iv-stroke); }
+html:is([data-ninja-theme=dark],[data-ninja-theme=noir]) .indie-website .balance-note p { color:var(--iv-muted); }
+html:is([data-ninja-theme=dark],[data-ninja-theme=noir]) #account-root :is(.portal-account-panel,.portal-account-content,.portal-account-panel>.panel-header) { background:var(--iv-panel); color:var(--iv-ink); border-color:var(--iv-stroke); }
+html:is([data-ninja-theme=dark],[data-ninja-theme=noir]) #account-root .portal-account-content :is(.account-field>input,.account-field>textarea,.password-control,.account-check,.account-guest-note,.account-identity,.account-details,.account-mfa-security,.account-import,.account-service-note) { background:var(--iv-surface); color:var(--iv-ink); border-color:var(--iv-stroke); box-shadow:inset 0 0 0 1px var(--iv-panel); }
+html:is([data-ninja-theme=dark],[data-ninja-theme=noir]) #account-root .portal-account-content :is(h2,h3,.account-field,.account-field small,.account-check,.account-check span,.account-guest-note strong,.account-guest-note p) { color:var(--iv-ink); }
+html:is([data-ninja-theme=dark],[data-ninja-theme=noir]) #account-root .portal-account-content .password-control>button { background:var(--iv-panel); color:var(--iv-ink); border-color:var(--iv-stroke); }
+@media(prefers-reduced-motion:reduce) { .portal-scene-light,.portal-scene-petals { animation:none; } }
+body.calm-view .portal-scene-light, body.calm-view .portal-scene-petals, body[data-calm=true] .portal-scene-light, body[data-calm=true] .portal-scene-petals { animation:none; }
+
+.indie-website .portal-home-scene>.adventure-scene,#account-root .portal-account-scene>.adventure-scene{position:absolute;inset:0;display:block;width:100%;height:100%;pointer-events:none}
+
+.indie-website .situation-card[data-world]::before,.indie-website .callout::before{display:none}
+.indie-website .portal-world-scene,.indie-website .portal-callout-scene{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:-2;pointer-events:none}
+html:has(#account-root .portal-account-panel){overflow:hidden}
+body:has(#account-root .portal-account-panel){height:100svh;max-height:100svh;overflow:hidden}
+#account-root .portal-account-shade{overscroll-behavior:contain}
+@media(max-width:760px){.indie-website .hero h1{font-size:42px}.indie-website .hero h1>span{display:block}.indie-website .hero h1>span+span{margin:3px 0 0}}
+.indie-website .nav-links a:is([href="./index.html#worlds"],[href="./index.html#overview"])~a:is([href="./index.html#worlds"],[href="./index.html#overview"]),.indie-website .footer-links a:is([href="./index.html#worlds"],[href="./index.html#overview"])~a:is([href="./index.html#worlds"],[href="./index.html#overview"]){display:none}
+/* Remove background menu layout while this full-screen account gateway owns focus. */
+body:has(#account-root .portal-account-panel)>:is(#landing,#home,#overlay-root){display:none}
+html:is([data-ninja-theme=dark],[data-ninja-theme=noir]) .indie-website :is(.nav-links a,.hero-note strong){color:var(--iv-ink)}
+html:is([data-ninja-theme=dark],[data-ninja-theme=noir]) #account-root .portal-account-content :is(.account-service-note strong,.account-service-note p,.account-connected){color:var(--iv-ink)}
