@@ -34,3 +34,11 @@ Der Download wurde zweimal identisch erzeugt. CRC und Laufzeitidentität wurden 
 Die bestehende aktivierte öffentliche Account-Konfiguration bleibt erhalten. Die separate Account-Domain war im vorigen Auftrag aus dieser Cloud am CONNECT-Tunnel gesperrt. Ein neuer öffentlicher Zwei-Konten-/Neustartnachweis wird daraus nicht behauptet. Dieses Designupdate bestellt keine Anbieterressourcen, verursacht keine neuen Hostingtarife und löscht keine alte Cloud-Umgebung.
 
 Download: `Notification-Ninja-3.11.0.zip`, 20.307.353 Bytes, SHA-256 `d66f35465408095c3e90631da5579c6a211f35a4a97121642ccac67997501b49`.
+
+## Öffentliche Veröffentlichung
+
+Design-Commit `7acd63e` ist auf `main` veröffentlicht. GitHub Pages liefert Version **3.11.0** aus. Homepage, Index, Metadaten, beide Bundles, alle drei neuen Stylesheets, Szenenatlas, Service Worker und die vollständige ZIP stimmen per SHA-256 mit dem geprüften Commit überein.
+
+Der öffentliche Gastweg **Homepage → Hub → Spielen → Basar** wurde bei 360 px nativ betätigt: ein zentraler Spielen-Button, acht Welt-/Moduskarten, richtige Marktszene, keine fehlenden Übersetzungen, kein horizontaler Überlauf und keine JavaScript-Fehler. Der frische Chromium-Kontext benötigte nur für das Zertifikat des Cloud-Proxys eine Testausnahme; die Dateivergleiche liefen mit dem System-Truststore. Kontodaten wurden dabei nicht eingegeben.
+
+Der [GitHub-Prüflauf für 7acd63e](https://github.com/BruKevFH/REBOOT-Digital-Balance/actions/runs/43997057655) ist **erfolgreich abgeschlossen**, einschließlich PostgreSQL, Portal/MFA, kompletter Menü-/Spielabnahme und Download-/Offline-Prüfung. Diese nachträgliche Dokumentationsaktualisierung verändert keine Laufzeitdateien.
