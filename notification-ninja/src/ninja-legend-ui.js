@@ -1,4 +1,5 @@
 import {sceneArt} from './scene-art.js';
+import {ninjaPortrait} from './mentor.js';
 
 /**
  * Notification Ninja: Legendary Dojo visual layer.
@@ -73,7 +74,7 @@ export const WORLD_DETAILS=Object.freeze({
   start:'Schlafrunde starten'}
 });
 
-const ninjaMascot="<svg class=\"nn-nim-svg\" viewBox=\"0 0 130 154\" aria-hidden=\"true\" focusable=\"false\"><path d=\"M35 111Q17 101 17 90L7 95Q9 121 29 127\" fill=\"#f5a064\" stroke=\"#23374d\" stroke-width=\"6\" stroke-linejoin=\"round\"/><path d=\"M87 44q31 1 37 16-18-4-23 7l-12-11Z\" fill=\"#ff957b\" stroke=\"#23374d\" stroke-width=\"6\"/><rect x=\"33\" y=\"42\" width=\"64\" height=\"66\" rx=\"27\" fill=\"#37bea8\" stroke=\"#23374d\" stroke-width=\"7\"/><rect x=\"37\" y=\"61\" width=\"58\" height=\"29\" rx=\"14\" fill=\"#fff4e2\" stroke=\"#23374d\" stroke-width=\"6\"/><path d=\"M52 75q8-8 15 0M73 75q8-8 14 0\" fill=\"none\" stroke=\"#23374d\" stroke-width=\"4\" stroke-linecap=\"round\"/><path d=\"M53 96q12 9 26 0\" fill=\"none\" stroke=\"#e8d58b\" stroke-width=\"5\"/><path d=\"M40 105l-7 30 18 4 10-24M81 114l8 23 16-6-10-31\" fill=\"#46bda2\" stroke=\"#23374d\" stroke-width=\"7\" stroke-linejoin=\"round\"/><path d=\"M33 107l-17 6 5 15 23-5M93 107l14-16 10 10-17 25\" fill=\"#46bda2\" stroke=\"#23374d\" stroke-width=\"7\" stroke-linejoin=\"round\"/><path d=\"M57 42 64 17l8 25\" fill=\"#35bca3\" stroke=\"#23374d\" stroke-width=\"7\"/><path d=\"m65 27 3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z\" fill=\"#ffcf64\" stroke=\"#23374d\" stroke-width=\"2\"/></svg>";
+const ninjaMascot=ninjaPortrait().replace('<svg ','<svg class="nn-nim-svg" ');
 const villageParticles='<span class="nn-landscape-petal petal-one" aria-hidden="true">✿</span><span class="nn-landscape-petal petal-two" aria-hidden="true">✿</span><span class="nn-landscape-petal petal-three" aria-hidden="true">✿</span><span class="nn-landscape-petal petal-four" aria-hidden="true">✿</span><span class="nn-landscape-firefly f-one" aria-hidden="true">✦</span><span class="nn-landscape-firefly f-two" aria-hidden="true">✦</span><span class="nn-landscape-firefly f-three" aria-hidden="true">✦</span>';
 
 
@@ -185,11 +186,17 @@ function campaignOverworld(missions){
 }
 
 
+const journeyRegions=Object.freeze({study:'0 0 768 512',gaming:'768 0 768 512',sleep:'0 512 768 512'});
+function journeyArtwork(context){
+ return `<svg class="nn-career-journey-scene" viewBox="${journeyRegions[context]||journeyRegions.study}" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"><image href="./assets/indie-journeys.png" width="1536" height="1024"/></svg>`;
+}
+
 /** Adventure progress comes only from real getCareerMissions() data. */
 export function legendaryCareer({missions=[],selectedId=null}={}){
  const main=missions.filter(m=>m.section==='main');
  const selected=missions.find(m=>m.id===selectedId)||main.find(m=>m.available&&!m.completed)||main[0];
  const completed=main.filter(m=>m.completed).length;
+ const nextMission=main.find(m=>m.available&&!m.completed);
  const bosses=missions.filter(m=>m.bossId);
  const extras=missions.filter(m=>m.section!=='main'&&!m.bossId);
  const ready=missions.filter(m=>m.completed&&!m.claimed).length;
@@ -215,7 +222,7 @@ export function legendaryCareer({missions=[],selectedId=null}={}){
      <div class="nn-career-chapter-label"><span>WELT ${String(i+1).padStart(2,'0')} · ${esc(c.subtitle)}</span><h4 id="nn-chapter-${id}">${esc(c.title)}</h4><small>${done} von ${group.length} Missionen</small></div>
    </div>
    <div class="nn-career-chapter-trail" aria-label="Missionspfad ${esc(c.title)}">
-    <img class="nn-career-illustrated-landscape" src="${c.art}" alt="" loading="lazy">
+    ${journeyArtwork(id)}
     <span class="nn-career-region-emblem" aria-hidden="true">${c.symbol}</span>
     <svg class="nn-career-trail-path" viewBox="0 0 1000 500" preserveAspectRatio="none" aria-hidden="true"><path class="nn-path-shadow" d="M90 375 C145 375 200 240 250 260 S355 377 420 350 S505 170 570 190 S665 360 740 310 S823 130 880 145"/><path class="nn-path-road" d="M90 375 C145 375 200 240 250 260 S355 377 420 350 S505 170 570 190 S665 360 740 310 S823 130 880 145"/></svg>
     <span class="nn-career-path-mascot" aria-hidden="true">${ninjaMascot}</span>
@@ -245,6 +252,7 @@ export function legendaryCareer({missions=[],selectedId=null}={}){
    <div><span class="nn-career-eyebrow">DEINE NINJA-REISE · DREI REGIONEN</span><h3>Karrierekarte</h3><p>Levelzahl: starten. Titel: Details.</p></div>
    <div class="nn-career-overall"><strong>${completed}<span> / ${main.length}</span></strong><small>Missionen geschafft</small></div>
   </header>
+  <nav class="career-chapter-nav" aria-label="Reiseabschnitte">${worldNames.map((id,index)=>`<button type="button" data-career-chapter="${id}"><b aria-hidden="true">${String(index+1).padStart(2,'0')}</b>${esc(WORLD_DETAILS[id].title)}</button>`).join('')}${nextMission?`<button type="button" class="career-next-mission" data-career-next="${esc(nextMission.id)}">Nächste Mission zeigen <span aria-hidden="true">↓</span></button>`:''}</nav>
   <div class="nn-career-layout">
    <div class="nn-career-worlds">${chapters}
     <section class="nn-career-bosses" aria-labelledby="nn-boss-title">

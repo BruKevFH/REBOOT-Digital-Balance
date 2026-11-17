@@ -1,0 +1,34 @@
+/* Real chapter landscapes and a mission sheet that stays next to the chosen step. */
+.nn-career .career-chapter-nav{display:flex;flex-wrap:wrap;gap:9px;margin:0 0 23px}
+.nn-career .career-chapter-nav button{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-width:44px;min-height:47px;padding:9px 13px;border:2px solid #2a5c50;border-radius:12px;background:#fff5d8;box-shadow:0 3px 0 #77a282,inset 0 0 0 2px #fffdf0;color:#153d40;font:900 13px var(--indie-font);cursor:pointer}
+.nn-career .career-chapter-nav button:hover{background:#d0edc8}.nn-career .career-chapter-nav button:focus-visible{outline:3px solid #148d80;outline-offset:4px}
+.nn-career .career-chapter-nav .career-next-mission{margin-left:auto;background:#a9e5bf;border-color:#215d4f;box-shadow:0 4px 0 #3e866b,inset 0 0 0 2px #edffdc}
+.nn-career .career-chapter-nav b{display:grid;place-items:center;width:25px;height:25px;border:1.5px solid #356151;border-radius:8px;background:#ffe4a1;font-size:12px}
+.nn-career .nn-career-chapter-trail{background:#275d52;isolation:isolate}
+.nn-career .nn-career-journey-scene{position:absolute;inset:0;z-index:-2;width:100%;height:100%;display:block;overflow:hidden;pointer-events:none}
+.nn-career .nn-career-chapter-trail::before{content:'';position:absolute;z-index:-1;inset:0;background:linear-gradient(180deg,#0b3c4924,transparent 42%,#092b4652);pointer-events:none}
+.nn-career .nn-career-path-mascot{filter:drop-shadow(0 4px 0 #173f3b55)}
+.nn-career .nn-career-inspect{transition:transform .15s,background-color .15s}.nn-career .nn-career-inspect:hover{background:#ffe9a5;transform:translateY(-2px)}
+.career-mission-sheet{position:fixed;inset:auto 12px max(12px,env(safe-area-inset-bottom));width:calc(100% - 24px);max-width:620px;max-height:calc(100svh - 28px - env(safe-area-inset-bottom));padding:0;border:3px solid #153e43;border-radius:24px;background:#fff4da;color:#153d40;box-shadow:0 7px 0 #275e53,0 20px 80px #082d4766;overflow:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#7bb597 #fff4da}
+.career-mission-sheet::backdrop{background:#082a42b8;backdrop-filter:blur(3px)}
+.career-sheet-header{position:sticky;z-index:5;top:0;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 15px;border-bottom:2px solid #649a80;background:#cce8c5;box-shadow:inset 0 3px 0 #fffbe3}
+.career-sheet-header>.career-sheet-heading{margin:0;font-size:23px;line-height:1.1;color:#123d42;letter-spacing:-.035em}
+.career-sheet-close{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-width:44px;min-height:44px;padding:8px 11px;border:2px solid #1c5049;border-radius:12px;background:#fff7df;box-shadow:0 3px 0 #5c8e73;color:#204c42;font:900 11px var(--indie-font);cursor:pointer;white-space:nowrap}
+.career-sheet-close>span:first-child{font-size:24px;line-height:1}.career-sheet-close:hover{background:#ffe5a8}.career-sheet-close:focus-visible{outline:3px solid #128f83;outline-offset:3px}
+.career-mission-sheet-body{padding:15px 15px 20px}
+.career-mission-sheet .nn-career-detail{margin:0;border:0;border-radius:15px;padding:17px;background:#fff1cb;box-shadow:inset 0 0 0 2px #fffbea;display:flex;flex-direction:column;gap:13px}
+.career-mission-sheet .nn-career-detail h4{color:#173f42;font-size:29px;margin:0;line-height:1.13}
+.career-mission-sheet .nn-career-detail p{color:#3f6153;line-height:1.65;font-size:14px;margin:0}
+.career-mission-sheet .nn-career-start,.career-mission-sheet [data-career-claim]{min-height:50px;width:100%;margin-top:5px;font-size:15px}
+.career-mission-sheet .nn-career-detail-hero{justify-content:space-between}.career-mission-sheet .nn-career-detail-mascot{width:59px;height:69px}
+.career-mission-sheet .nn-career-progress{font-size:13px}.career-mission-sheet .nn-career-prerequisites{padding:12px;border:1px dashed #8ea276;border-radius:11px;background:#fff8df;font-size:12px;line-height:1.6}
+@media(max-width:760px){.nn-career .career-chapter-nav{gap:7px;margin-bottom:20px}.nn-career .career-chapter-nav button{flex:1 1 calc(33.333% - 7px);font-size:11px;padding:8px 6px;gap:5px}.nn-career .career-chapter-nav .career-next-mission{flex:1 1 100%;margin:0;min-height:47px}.nn-career .career-chapter-nav b{width:21px;height:23px;font-size:10px}.nn-career .nn-career-sidebar{scroll-margin-top:18px}.career-sheet-header>.career-sheet-heading{font-size:21px}.career-sheet-close{max-width:155px}.career-mission-sheet .nn-career-detail{padding:15px}}
+@media(min-width:1200px){.nn-career .nn-career-sidebar{position:sticky;top:20px;align-self:start;max-height:calc(100svh - 125px);overflow:auto;scrollbar-width:thin;padding-bottom:6px}}
+html:is([data-ninja-theme=dark],[data-ninja-theme=noir]) .nn-career .career-chapter-nav button{background:var(--iv-surface);color:var(--iv-ink);border-color:var(--iv-stroke)}
+html:is([data-ninja-theme=dark],[data-ninja-theme=noir]) .nn-career .career-chapter-nav .career-next-mission{background:var(--iv-accent);color:#123d42}
+html:is([data-ninja-theme=dark],[data-ninja-theme=noir]) :is(.career-mission-sheet,.career-mission-sheet .nn-career-detail,.career-sheet-header,.career-sheet-close,.career-mission-sheet .nn-career-prerequisites){background:var(--iv-panel);color:var(--iv-ink);border-color:var(--iv-stroke)}
+html:is([data-ninja-theme=dark],[data-ninja-theme=noir]) :is(.career-sheet-header>.career-sheet-heading,.career-mission-sheet .nn-career-detail h4,.career-mission-sheet .nn-career-detail p){color:var(--iv-ink)}
+@media(prefers-reduced-motion:reduce){.nn-career .nn-career-inspect{transition:none}}
+
+@media(min-width:900px){.nn-career .nn-career-layout{grid-template-columns:minmax(0,1fr) 280px;gap:22px}.nn-career .nn-career-sidebar{position:sticky;top:20px;align-self:start;max-height:calc(100svh - 125px);overflow:auto;scrollbar-width:thin;padding-bottom:6px}.nn-career .nn-career-chapter-trail .nn-career-node{width:104px;left:clamp(58px,var(--nx),calc(100% - 58px))}.nn-career .nn-career-node-copy strong{font-size:11px}}
+@media(max-width:420px){.career-sheet-close{width:44px;flex:0 0 44px;padding:6px}.career-sheet-close>span:last-child{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}.career-sheet-header>.career-sheet-heading{font-size:23px}}

@@ -11,6 +11,7 @@ on:
       - 'scripts/check_ninja_browser.cjs'
       - 'scripts/check_ninja_live.mjs'
       - 'scripts/check_ninja_indie.cjs'
+      - 'scripts/check_ninja_experience.cjs'
       - 'render.yaml'
       - 'package.json'
       - 'package-lock.json'
@@ -28,6 +29,7 @@ on:
       - 'scripts/check_ninja_browser.cjs'
       - 'scripts/check_ninja_live.mjs'
       - 'scripts/check_ninja_indie.cjs'
+      - 'scripts/check_ninja_experience.cjs'
       - 'render.yaml'
       - 'package.json'
       - 'package-lock.json'
@@ -77,7 +79,7 @@ jobs:
             sleep 1
           done
           curl -fsS http://127.0.0.1:8083/api/v3/health
-          for ninja_check in check_ninja_portal check_ninja_indie check_ninja_browser; do
+          for ninja_check in check_ninja_portal check_ninja_indie check_ninja_browser check_ninja_experience; do
             ninja_log="$RUNNER_TEMP/${ninja_check}.log"
             if node "scripts/${ninja_check}.cjs" > "$ninja_log" 2>&1; then
               cat "$ninja_log"

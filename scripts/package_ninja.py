@@ -6,9 +6,9 @@ import argparse
 import json
 
 ROOT=Path(__file__).resolve().parents[1]/'notification-ninja'
-NAME='Notification-Ninja-3.11.0'
-FILES=['index.html', 'home.html', 'styles.css', 'focus-ui.css', 'focus-home.css', 'legend-ui.css', 'worlds-v2.css', 'ux-v2.css', 'ui-navigation-v3.css', 'illustrated-adventure-v4.css', 'dojo-worlds-v5.css', 'mobile-navigation-v6.css', 'ninja-feedback-v7.css', 'ninja-mint-ui-v9.css', 'ninja-mint-home-v9.css', 'legend-home.css', 'sw.js', 'manifest.webmanifest', 'favicon.svg', 'dist/ninja.js', 'dist/home.js', 'dist/build.json', 'leaderboard-config.json', 'accounts-config.json', 'assets/dojo-study.png', 'assets/dojo-gaming.svg', 'assets/dojo-gaming.png', 'assets/dojo-sleep.png', 'assets/focus-village.png', 'assets/overworld-landscape-v4.svg', 'assets/dojo-study-v5.svg', 'assets/dojo-gaming-v5.svg', 'assets/dojo-sleep-v5.svg', 'assets/ninja-mint-logo-v9.svg', 'assets/ninja-mint-boss-v9.svg', 'assets/ninja-mint-daily-v9.svg', 'assets/ninja-mint-zen-v9.svg', 'assets/ninja-mint-weekly-v9.svg', 'assets/ninja-mint-day-v9.svg', 'assets/ninja-mint-open-v9.svg', 'assets/ninja-mint-balance-v9.svg', 'assets/dojo-study-v2.svg', 'assets/dojo-gaming-v2.svg', 'assets/dojo-sleep-v2.svg', 'branding/Notification-Ninja-Logo.png', 'assets/indie-wordmark.png', 'indie-theme.css', 'adventure-surfaces.css', 'hub-adventure.css', 'portal-adventure.css', 'assets/indie-scenes.png', 'assets/indie-modes.png', 'assets/indie-worlds.png', 'assets/indie-masthead.png', 'assets/indie-masthead.svg', 'assets/fonts/nunito-latin-wght-normal.woff2', 'assets/fonts/nunito-latin-ext-wght-normal.woff2', 'assets/fonts/OFL-Nunito.txt']
-INSTRUCTIONS='''NOTIFICATION NINJA — 3.11.0
+NAME='Notification-Ninja-3.12.0'
+FILES=['index.html', 'home.html', 'styles.css', 'focus-ui.css', 'focus-home.css', 'legend-ui.css', 'worlds-v2.css', 'ux-v2.css', 'ui-navigation-v3.css', 'illustrated-adventure-v4.css', 'dojo-worlds-v5.css', 'mobile-navigation-v6.css', 'ninja-feedback-v7.css', 'ninja-mint-ui-v9.css', 'ninja-mint-home-v9.css', 'legend-home.css', 'sw.js', 'manifest.webmanifest', 'favicon.svg', 'dist/ninja.js', 'dist/home.js', 'dist/build.json', 'leaderboard-config.json', 'accounts-config.json', 'assets/dojo-study.png', 'assets/dojo-gaming.svg', 'assets/dojo-gaming.png', 'assets/dojo-sleep.png', 'assets/focus-village.png', 'assets/overworld-landscape-v4.svg', 'assets/dojo-study-v5.svg', 'assets/dojo-gaming-v5.svg', 'assets/dojo-sleep-v5.svg', 'assets/ninja-mint-logo-v9.svg', 'assets/ninja-mint-boss-v9.svg', 'assets/ninja-mint-daily-v9.svg', 'assets/ninja-mint-zen-v9.svg', 'assets/ninja-mint-weekly-v9.svg', 'assets/ninja-mint-day-v9.svg', 'assets/ninja-mint-open-v9.svg', 'assets/ninja-mint-balance-v9.svg', 'assets/dojo-study-v2.svg', 'assets/dojo-gaming-v2.svg', 'assets/dojo-sleep-v2.svg', 'branding/Notification-Ninja-Logo.png', 'assets/indie-wordmark.png', 'indie-theme.css', 'adventure-surfaces.css', 'learning-adventure.css', 'career-experience.css', 'dressing-room.css', 'experience-comfort.css', 'experience-shell.css', 'assets/indie-journeys.png', 'hub-adventure.css', 'portal-adventure.css', 'assets/indie-scenes.png', 'assets/indie-modes.png', 'assets/indie-worlds.png', 'assets/indie-masthead.png', 'assets/indie-masthead.svg', 'assets/fonts/nunito-latin-wght-normal.woff2', 'assets/fonts/nunito-latin-ext-wght-normal.woff2', 'assets/fonts/OFL-Nunito.txt']
+INSTRUCTIONS='''NOTIFICATION NINJA — 3.12.0
 DEUTSCH / ENGLISH
 
 DEUTSCH
@@ -21,6 +21,12 @@ Mit gedrückter Maustaste oder Finger durch Ablenkungen wischen; hilfreiche
 Dinge durchlassen. Die Einführung erklärt den aktuellen Kontext.
 Drei kurze Alltagsrunden: Lernen, Gaming, Schlafen. NIM erklärt das Training.
 Die Hilfe bietet zusätzlich ein ungewertetes Tastentraining ohne Zeitdruck.
+NIMs Fokuspfad enthält zwölf interaktive Alltagssituationen. Das Symbollexikon
+erklärt die echten Spielregeln; die Garderobe zeigt alle zwölf Ninja-Looks,
+ohne etwas zu kaufen oder auszurüsten. Der Lernstand bleibt auf diesem Gerät.
+Karrierekarten zeigen drei illustrierte Welten und mobile Missionsdetails.
+Der Rundenrückblick schlägt anhand echter Entscheidungen passende Übungen vor.
+Handbedienung und freiwillige Vibration lassen sich lokal einstellen.
 Pause und bewusstes Beenden bleiben jederzeit erreichbar.
 
 18 Hauptmissionen (sechs pro Welt), acht zusätzliche Herausforderungen,
@@ -59,6 +65,12 @@ items pass. Read each context briefing. Study, Gaming and Sleep short rounds,
 18 main campaign missions, eight extra challenges, three distinct bosses, Boss Rush, the daily challenge,
 daily/weekly tasks, 24 achievements, nine skills and cosmetic outfits.
 NIM introduces the rules. Help also offers untimed unranked button practice.
+NIM's focus path offers twelve interactive everyday situations. The symbol
+codex explains the real game rules; the dressing room previews all twelve
+outfits without buying or equipping them. Learning stays on this device.
+Career maps show three illustrated worlds and mobile mission details.
+The round review suggests practice based on real decisions. Handedness and
+optional vibration can be changed in the local comfort settings.
 Pause or deliberately end a round at any time. Reflections are optional.
 Open Run: three hearts, no time limit, gentle continuous acceleration.
 Purchased skills and Supers do not affect Open Run.
@@ -95,7 +107,7 @@ def package_runtime(root=ROOT):
     output.parent.mkdir(exist_ok=True)
     with ZipFile(output,'w',ZIP_DEFLATED) as z:
         for name in FILES+['START-HIER.txt']:
-            info=ZipInfo(f'{NAME}/{name}',(2026,11,16,0,0,0));info.compress_type=ZIP_DEFLATED;info.external_attr=0o100644<<16
+            info=ZipInfo(f'{NAME}/{name}',(2026,11,17,0,0,0));info.compress_type=ZIP_DEFLATED;info.external_attr=0o100644<<16
             payload=INSTRUCTIONS.encode() if name=='START-HIER.txt' else overrides[name] if name in overrides else (root/name).read_bytes()
             z.writestr(info,payload)
     with ZipFile(output) as z:

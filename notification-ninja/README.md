@@ -1,5 +1,9 @@
 # Notification Ninja
 
+**Aktueller Entwicklungsstand 3.12.0:** Eigene Landschaftskarten und mobile Missionsdetails, NIMs Fokuspfad mit zwölf Alltagssituationen, ein Symbollexikon aus den echten Spielregeln, animierte Vorschauen aller zwölf Looks, faktenbasiertes Rundenfeedback sowie lokale Einstellungen für Bedienhand und freiwillige Haptik. Spielwelten und Modi bleiben gemeinsam unter Spielen; vorhandene Spielstände und die fünf Hauptziele bleiben erhalten. [Ausführlicher Masterprompt](ULTIMATE_EXPERIENCE_MASTERPROMPT.md) · [Implementierung, Prüfstand und Grenzen](EXPERIENCE_RELEASE.md).
+
+Die folgende 3.1.0-Notiz dokumentiert die frühere Backend-Freischaltung. Ein erneuter direkter Produktionsnachweis ist in der aktuellen Cloud-Umgebung durch CONNECT 403 blockiert; lokale Tests und öffentliche Gasttests werden im aktuellen Releasebericht gesondert dokumentiert.
+
 **Entwicklungsstand 3.1.0:** PostgreSQL neben lokalem SQLite, neues Kontoportal und Hub, Boss Rush und serverseitige UTC-Tages-Challenge. Die öffentliche Kontenanbindung über Render und Neon PostgreSQL wurde am 07.11.2026 nach erfolgreichem read-only Live-Preflight sowie vom Betreiber bestätigtem Neustart-/Persistenztest aktiviert. Siehe [historische Abnahme vor der Freischaltung](ULTIMATE_STATUS.md) und [Cloud-Einrichtung](../server/NINJA_ULTIMATE_CLOUD_SETUP.md).
 
 Ein eigenständiges Browser-Wischspiel auf **Deutsch und Englisch** für Jugendliche ab etwa 13 Jahren. Ablenkungen schneiden, hilfreiche Inhalte durchlassen: Das aktuelle Ziel entscheidet. Lernen, Gaming und Schlafen haben eigene illustrierte Dojos und unterschiedliche Regeln. Die finale Wortmarke hat keinen zusätzlichen Slogan.

@@ -88,6 +88,8 @@ test('English account feedback covers network throttling, wallet rejection and f
 
 test('career mission labels, rewards and record links translate with their authored titles',()=>{
   setLanguage('en');
+  assert.equal(tr('Zuerst abschließen: Ein klarer Anfang'),'Complete first: A clear beginning');
+  assert.equal(tr('Zuerst abschließen: Ein klarer Anfang · Deine ruhige Serie'),'Complete first: A clear beginning · Your calm streak');
   assert.equal(tr('Mission 3: Platz für Wichtiges, Gesperrt'),'Mission 3: Room for what matters, Locked');
   assert.equal(tr('Details zu Mission Deine ruhige Serie ansehen'),'View details for mission Your calm streak');
   assert.equal(tr('✦ +3 Münzen'),'✦ +3 coins');

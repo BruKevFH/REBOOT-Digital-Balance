@@ -1,6 +1,8 @@
 # Notification Ninja
 
-**Development release 3.1.0:** PostgreSQL alongside local SQLite, a new account portal and Ninja hub, distinct bosses, Boss Rush and server-issued UTC daily runs. Public accounts remain disabled pending actual Render/Neon verification. See [validation and blockers](ULTIMATE_STATUS.md) and [server setup](../server/README_NINJA_APP.md).
+**Current development release 3.12.0:** Original landscape maps and mobile mission details, NIM’s twelve everyday learning scenarios, a codex drawn from actual game rules, animated previews of all twelve outfits, factual round coaching, and local playing-hand and optional haptics settings. Modes and worlds remain together under Play; existing saves and the five main navigation destinations are preserved. [Detailed master prompt, German](ULTIMATE_EXPERIENCE_MASTERPROMPT.md) · [Implementation, verification status and limitations, German](EXPERIENCE_RELEASE.md).
+
+**Historical development release 3.1.0:** PostgreSQL alongside local SQLite, a new account portal and Ninja hub, distinct bosses, Boss Rush and server-issued UTC daily runs. Accounts were initially disabled pending verification. Public accounts were subsequently enabled following the documented live preflight and operator-confirmed restart/persistence test on 7 November 2026. Direct re-verification of the production account service is currently blocked by CONNECT 403 in this cloud environment; local checks and public guest checks are separate evidence. See [historical validation](ULTIMATE_STATUS.md), [server setup](../server/README_NINJA_APP.md) and the current release report above.
 
 An illustrated browser arcade game in **English and German**. Slice distractions and let helpful items pass. Study, Gaming and Sleep use distinct dojo scenes and context rules. No extra brand name or slogan.
 

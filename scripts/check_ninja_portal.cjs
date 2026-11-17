@@ -10,8 +10,12 @@ const output=path.resolve(process.env.NINJA_TEST_OUTPUT||'test-results/ninja-por
 const version=JSON.parse(fs.readFileSync(path.join(__dirname,'../notification-ninja/dist/build.json'))).version;
 const read=p=>p.evaluate(()=>window.__NOTIFICATION_NINJA__.getSnapshot());
 async function ready(p){try{await p.waitForFunction(v=>window.__NOTIFICATION_NINJA__?.getSnapshot().version===v,version,{timeout:15000});}catch(error){const diagnosis=await p.evaluate(()=>({url:location.href,loading:document.readyState,error:document.querySelector('#loading-status')?.textContent,snapshot:Boolean(window.__NOTIFICATION_NINJA__),scripts:[...document.scripts].map(script=>script.src)}));console.error('NINJA_BOOT_DIAGNOSTIC',JSON.stringify(diagnosis));throw error;}}
+async function closeCareerSheet(p){
+ const sheet=p.locator('dialog.career-mission-sheet[open]');
+ if(await sheet.count()){await sheet.locator('[data-career-sheet-close]').click();await p.waitForFunction(()=>!document.querySelector('dialog.career-mission-sheet[open]'));}
+}
 async function goHome(p){
- await acknowledge(p);
+ await acknowledge(p);await closeCareerSheet(p);
  const close=p.locator('#account-root [data-account="close"]').first();if(await close.isVisible())await close.click();
  const tab=p.locator('.indie-bottom-nav [data-game-route="home"]');
  if(await tab.isVisible())await tab.click();else await p.locator('[data-action="home"]:visible').first().click();
@@ -41,6 +45,7 @@ async function checkCareer(p){
  assert.equal(await p.locator('.nn-career-detail [data-mission-start="study-02"]').isDisabled(),true,'Inspecting a locked mission cannot bypass its prerequisite');
  assert.equal(await p.locator('.nn-career-chapter-study .nn-career-direct-start').count(),1,'Only the first unlocked stone can launch');
  assert.equal(await p.locator('.nn-career-chapter-sleep .nn-career-direct-start').count(),0,'A locked chapter has no launch shortcut');
+ await closeCareerSheet(p);
  await p.locator('.nn-career-chapter-study .nn-career-direct-start').first().click();
  await p.waitForFunction(()=>window.__NOTIFICATION_NINJA__?.getSnapshot().ui==='briefing');
  assert.equal((await read(p)).state.missionId,'study-01','The map launches the actual mission');

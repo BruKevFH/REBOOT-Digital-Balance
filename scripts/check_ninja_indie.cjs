@@ -44,6 +44,8 @@ async function checkGeometry(page,label){
 }
 
 async function home(page){
+  const sheet=page.locator('dialog.career-mission-sheet[open]');
+  if(await sheet.count()){await sheet.locator('[data-career-sheet-close]').click();await page.waitForFunction(()=>!document.querySelector('dialog.career-mission-sheet[open]'));}
   const close=page.locator('#account-root [data-account="close"]').first();if(await close.isVisible())await close.click();
   const current=await read(page);
   if(current.ui==='home')return;
