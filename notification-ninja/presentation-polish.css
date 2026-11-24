@@ -151,3 +151,30 @@ html:is([data-ninja-theme=dark],[data-ninja-theme=noir]) .refined-bazaar .shop-f
 .refined-bazaar .shop-awning>div>span{color:#476b43!important;text-shadow:none}html[data-ninja-theme] .refined-bazaar .shop-awning>div>p{color:#294f47!important;text-shadow:none}
 @media(max-width:600px){.refined-bazaar .shop-awning>div{padding:17px}.refined-bazaar .shop-awning>div>strong{font-size:28px}}
 .shop-rarity-filter{display:grid;gap:8px;max-width:330px;margin:0 0 22px;color:var(--iv-ink,#234f45);font-size:13px;font-weight:900}.shop-rarity-filter select{width:100%;min-height:46px;padding:10px 13px;border:2px solid var(--iv-stroke,#5b8c6d);border-radius:13px;background:var(--iv-panel,#fff8e5);color:var(--iv-ink,#234f45);font:inherit}
+/* Counters keep their complete values instead of ellipses, including long runs. */
+body.is-playing .hud-top .scoreboard{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);width:190px;max-width:100%;gap:7px;text-align:center}
+body.is-playing .hud-top .score-block,body.is-playing .hud-top .combo-block{min-width:0!important;width:auto;padding:4px 6px!important}
+body.is-playing .hud-top .score-block>strong,body.is-playing .hud-top .combo-block>strong{min-width:0;max-width:100%;overflow:visible;text-overflow:clip;white-space:nowrap;font-size:25px;line-height:1.12;letter-spacing:0;font-variant-numeric:tabular-nums}
+body.is-playing .hud-top .score-block>strong{color:#103f43!important}body.is-playing .hud-top .combo-block>strong{color:#805215!important}
+body.is-playing .hud-top .score-block>span,body.is-playing .hud-top .combo-block>span{color:#435a52!important}
+@media(min-width:761px){body.is-playing .hud-top{grid-template-columns:minmax(105px,1fr) 190px 190px 100px;gap:12px}}
+@media(max-width:760px){body.is-playing .hud-top .scoreboard{width:142px;max-width:142px;gap:5px}body.is-playing .hud-top .score-block>strong,body.is-playing .hud-top .combo-block>strong{font-size:21px}body.is-playing .hud-top .score-block,body.is-playing .hud-top .combo-block{padding:4px!important}}
+@media(orientation:landscape) and (max-height:520px) and (min-width:761px){body.is-playing .hud-top{grid-template-columns:minmax(105px,1fr) 162px 166px 98px;gap:8px}body.is-playing .hud-top .scoreboard{width:162px}}
+/* Optional explanations stay discoverable without filling every first view. */
+.indie-world-learning>summary,.briefing-how>summary,.result-coaching>summary{display:flex;align-items:center;min-height:48px;cursor:pointer;font-weight:950;gap:10px;color:var(--iv-ink,#204e46)}
+.indie-world-learning>summary::before,.briefing-how>summary::before,.result-coaching>summary::before{content:'+';font-size:22px}.indie-world-learning[open]>summary::before,.briefing-how[open]>summary::before,.result-coaching[open]>summary::before{content:'−'}
+.briefing-how,.result-coaching{margin-block:14px;padding:8px 16px;border:2px solid var(--iv-stroke,#709a7a);border-radius:15px;background:var(--iv-panel,#fff8e8);color:var(--iv-ink,#204e46)}
+.briefing-how p,.result-coaching p{line-height:1.65}.open-ranking-note{font-size:12px;line-height:1.5;padding:10px 12px;border-radius:12px;background:var(--iv-surface,#e5f0d8);color:var(--iv-ink,#204e46)}
+html[data-ninja-theme] .refined-bazaar .shop-skill-description[hidden]{display:none!important}
+/* The painted arena keeps a parchment HUD in every theme, with matching ink. */
+html[data-ninja-theme] body.is-playing .hud-top .context-block>strong,
+html[data-ninja-theme] body.is-playing .hud-sidebar .speed-badge strong,
+html[data-ninja-theme] body.is-playing .hud-sidebar .run-wallet strong,
+html[data-ninja-theme] body.is-playing .hud-sidebar .time-block>strong{color:#103f43!important}
+html[data-ninja-theme] body.is-playing .hud-top .context-block :is(.level-label,.legend,.context-goal),
+html[data-ninja-theme] body.is-playing .hud-sidebar :is(.speed-badge,.run-wallet small,.time-block>span,.meter-block>span){color:#36554b!important}
+html[data-ninja-theme] body.is-playing .global-nav :is(button,a){color:#103f43!important;background:#fff5da!important}
+html[data-ninja-theme] body.is-playing .global-nav #pause-button{background:#b0e6c3!important}
+html[data-ninja-theme] body.is-playing .global-nav svg{color:inherit!important}
+html:is([data-ninja-theme=dark],[data-ninja-theme=noir]) .mission-briefing-goal{background:var(--iv-surface)!important;border-color:var(--iv-stroke)}
+html:is([data-ninja-theme=dark],[data-ninja-theme=noir]) .mission-briefing-goal :is(p,strong){color:var(--iv-ink)!important}

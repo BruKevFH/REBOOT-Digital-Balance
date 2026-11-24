@@ -1,3 +1,4 @@
+import {getLocale} from './i18n.js';
 import {sceneArt,worldArt} from './scene-art.js';
 import {ninjaPortrait} from './mentor.js';
 
@@ -7,7 +8,7 @@ import {ninjaPortrait} from './mentor.js';
  * validated game/server state. No mock players, scores or progression.
  */
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const num=value=>Number.isFinite(Number(value))?Number(value).toLocaleString('de-DE'):'0';
+const num=value=>Number.isFinite(Number(value))?Number(value).toLocaleString(getLocale()):'0';
 const chapters={
   study:{name:'Lern-Dojo',subtitle:'Tal der Konzentration',art:'./assets/dojo-study-v5.svg',label:'FOKUS',symbol:'文',text:'Schütze deine Gedanken und erkenne echte Prioritäten.',hint:'Jede Entscheidung beginnt mit einem klaren Ziel.'},
   gaming:{name:'Gaming-Dojo',subtitle:'Neonviertel der Balance',art:'./assets/dojo-gaming-v5.svg',label:'BALANCE',symbol:'遊',text:'Meistere dein Team und setze deinem Abenteuer Grenzen.',hint:'Spiele bewusst. Nicht der Autoplay-Loop entscheidet.'},
@@ -301,13 +302,13 @@ export function legendaryLeaderboard({message='',entries=[],own=null,filter='all
  const rows=rest.map(e=>`<li class="legend-ranking-row ${e.mine?'is-mine':''}"><span class="legend-ranking-rank">#${num(e.rank)}</span><span class="legend-ranking-avatar" aria-hidden="true">忍</span><strong class="legend-ranking-name" data-user-text>${esc(e.username||'Ninja')}</strong><strong class="legend-ranking-score">${num(e.score)} <small>Pkt.</small></strong></li>`).join('');
  const tabs=[['all','Gesamt'],['today','Heute'],['week','Woche'],['local','Lokal']];
  return `<div class="legend-leaderboard">
-  <div class="legend-rank-hero">${sceneArt('rewards')}<span class="legend-kicker">DIE HALLE DER LEGENDEN</span><div class="legend-trophy" aria-hidden="true">🏆</div><h3>Open Run Rangliste</h3><p>Drei Herzen. Ein Regelwerk. Dein Name erscheint nur, wenn du einen geprüften Run selbst veröffentlichst.</p></div>
+  <div class="legend-rank-hero">${sceneArt('rewards')}<span class="legend-kicker">DIE HALLE DER LEGENDEN</span><div class="legend-trophy" aria-hidden="true">🏆</div><h3>Open Run Rangliste</h3><p>Drei Herzen. Ein Regelwerk. Neue geprüfte Kontorunden erscheinen automatisch mit deinem Ninja-Namen.</p></div>
   <div class="legend-rank-tabs" role="group" aria-label="Rangliste filtern">${tabs.map(([id,label])=>`<button type="button" data-leaderboard-filter="${id}" aria-pressed="${valid===id}">${label}</button>`).join('')}</div>
   <p class="legend-rank-hint" role="status">${esc(message)} ${valid==='today'||valid==='week'?(period===valid?'Servergeprüfte Rangfolge für diesen UTC-Zeitraum.':'Zeitfilter aus den geladenen globalen Top 100 (UTC); keine separate Tages-/Wochenwertung.'):''}</p>
   ${valid==='local'?`<div class="legend-local-score"><span class="legend-local-icon" aria-hidden="true">忍</span><div><strong>Dein persönlicher Open-Run-Rekord</strong><p>Auf deinem Profil gespeicherter Bestwert</p></div><b>${num(localScore)} <small>Pkt.</small></b></div>`:`<div class="legend-podium" aria-label="Die ersten drei Einträge der aktuellen Auswahl">${podium}</div>${rows?`<ol class="legend-ranking-list">${rows}</ol>`:''}${!selection.length?'<p class="legend-empty-score">Hier sind noch keine passenden veröffentlichten Runs zu sehen. Der erste Platz wartet!</p>':''}`}
   ${own?`<div class="legend-own-score">${valid==='week'?'Dein Wochenplatz:':valid==='today'?'Dein Tagesplatz:':'Dein veröffentlichter Gesamtplatz:'} <strong>#${num(own.rank)}</strong> · <strong>${num(own.score)} Punkte</strong></div>`:''}
-  <section class="legend-rank-publish"><h4>Dein Ergebnis. Deine Entscheidung.</h4><p>Veröffentlicht werden ausschließlich servergeprüfte Open Runs, die mit dem Verlust aller drei Herzen enden. Keine gekauften Kräfte oder Supers.</p>
-    ${account?`<div class="legend-rank-actions"><button class="legend-button legend-button-subtle" data-action="refresh-leaderboard">Aktualisieren</button><button class="legend-button legend-button-primary" data-action="submit-score" ${canPublish&&!busy?'':'disabled'}>${published?'Bereits veröffentlicht ✓':'Geprüften Run veröffentlichen'}</button></div>`:`<button class="legend-button legend-button-primary" data-account-view="login">Zum Konto anmelden</button>`}
+  <section class="legend-rank-publish"><h4>Dein Run. Dein Rang.</h4><p>Neue geprüfte Open Runs werden automatisch eingetragen. Vorzeitige Stopps und Admin-Tests bleiben ungewertet.</p>
+    ${account?`<div class="legend-rank-actions"><button class="legend-button legend-button-subtle" data-action="refresh-leaderboard">Aktualisieren</button><button class="legend-button legend-button-primary" data-action="submit-score" ${canPublish&&!busy?'':'disabled'}>${published?'Automatisch eingetragen ✓':'Eintrag erneut versuchen'}</button></div>`:`<button class="legend-button legend-button-primary" data-account-view="login">Zum Konto anmelden</button>`}
     <div class="legend-rank-actions"><button class="legend-button legend-button-subtle" data-action="highscores">Meine Rekorde ansehen →</button></div>
   </section><p class="legend-fair-note">Freundeslisten sind derzeit nicht verfügbar. Es werden keine erfundenen Spieler oder Ergebnisse angezeigt.</p>
  </div>`;

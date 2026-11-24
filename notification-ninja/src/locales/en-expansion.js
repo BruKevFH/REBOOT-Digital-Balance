@@ -1,5 +1,33 @@
 /** Authored copy for the extended techniques and collection goals. Stable IDs stay untranslated. */
 export const EN_EXPANSION={
+  'Dein Dojo hat eine eigene Adresse':'Your dojo has its own address',
+  'Neues Dojo öffnen':'Open the new dojo',
+  'Gastspielstand mitnehmen':'Bring my guest profile',
+  'Die Münzen sind jetzt auf deinem Gerät gespeichert.':'Your coins are now saved on this device.',
+  'Wird geprüft …':'Verifying …',
+  '● Kontobelohnung wartet auf Prüfung':'● Account reward awaiting verification',
+  'Kontobelohnungen stehen bis zur Prüfung noch nicht zur Verfügung.':'Account rewards are unavailable until verification finishes.',
+  'Bestätigte Münzen sind in deinem Konto gespeichert.':'Verified coins are saved in your account.',
+
+  'Neue geprüfte Open Runs werden mit deinem Ninja-Namen automatisch in die gemeinsame Rangliste eingetragen. Vorzeitige Stopps und Admin-Tests bleiben ungewertet. Du kannst dein Konto in den Kontoeinstellungen löschen.': 'New verified Open Runs are automatically added to the shared leaderboard under your ninja name. Early exits and admin tests stay unranked. You can delete your account in account settings.',
+  'Drei Herzen. Ein Regelwerk. Neue geprüfte Kontorunden erscheinen automatisch mit deinem Ninja-Namen.': 'Three hearts. One ruleset. New verified account runs appear automatically under your ninja name.',
+
+  'Dein Run. Dein Rang.':'Your run. Your rank.',
+  'Neue geprüfte Open Runs werden automatisch eingetragen. Vorzeitige Stopps und Admin-Tests bleiben ungewertet.':'New verified Open Runs are ranked automatically. Early exits and admin tests stay unranked.',
+  'Automatisch eingetragen ✓':'Automatically ranked ✓',
+  'Eintrag erneut versuchen':'Retry ranking',
+  'Der Ranglisteneintrag wartet. Bitte versuche es erneut.':'Your ranking is pending. Please try again.',
+  '✓ Automatisch in der Rangliste eingetragen':'✓ Automatically added to the leaderboard',
+  'Ranglisteneintrag wird gesichert …':'Saving your leaderboard entry …',
+  'Ranglisteneintrag wartet auf Verbindung.':'Your leaderboard entry is waiting for a connection.',
+
+  'Mehr über dieses Dojo':'More about this dojo',
+  'Spielregeln':'Game rules',
+  'Rückblick & Lerntipp':'Review & learning tip',
+  'Dein geprüfter Open Run wird automatisch mit deinem Ninja-Namen eingetragen.':'Your verified Open Run is automatically ranked under your ninja name.',
+  'Admin-Testkonto: ohne Ranglisteneintrag.':'Admin test account: excluded from rankings.',
+  'Gastspiel: Für die gemeinsame Rangliste anmelden.':'Guest game: sign in to join the shared leaderboard.',
+
   'Dein Lernweg':'Your learning journey',
   'Für deine Entscheidungen':'For your decisions',
   'Für eine passende Entscheidung mit guter Begründung erhältst du einmalig ein Erkenntnis-Siegel. Die Siegel sind reine Lernabzeichen, keine zusätzlichen Münzen oder Ranglistenpunkte. Sie bleiben auf diesem Gerät und werden nicht mit dem Konto synchronisiert.':'A suitable decision with a good explanation earns a one-time insight seal. Seals are learning badges, without extra coins or ranking points. They stay on this device and do not sync with your account.',

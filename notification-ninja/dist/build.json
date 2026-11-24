@@ -1,6 +1,6 @@
 {
   "name": "Notification Ninja",
-  "version": "3.13.0",
+  "version": "3.13.1",
   "engine": "Canvas 2D / Web Audio",
   "style": "Sakura indie dojo",
   "sharedPlayMenu": true,
@@ -121,5 +121,5 @@
   "adminTestAccounts": "server-only",
   "openRuleset": "open-v2",
   "openHearts": 3,
-  "leaderboard": "server-replay-explicit-publication"
+  "leaderboard": "server-replay-automatic-new-account-runs"
 }

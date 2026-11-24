@@ -26,10 +26,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
-      NINJA_LIVE_STATE: ${{ runner.temp }}/ninja-live-acceptance-${{ github.run_id }}-${{ github.run_attempt }}.json
       NINJA_EXPECTED_REVISION: ${{ github.sha }}
     steps:
       - uses: actions/checkout@v4
+      - name: Initialize the private acceptance state path
+        run: |
+          printf 'NINJA_LIVE_STATE=%s/ninja-live-acceptance-%s-%s.json\n' "$RUNNER_TEMP" "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" >> "$GITHUB_ENV"
       - uses: actions/setup-node@v4
         with:
           node-version: '24'

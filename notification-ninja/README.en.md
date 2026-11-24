@@ -1,5 +1,7 @@
 # Notification Ninja
 
+Current update: [3.13.1 – automatic rankings, readable counters and more compact views](PATCH_3_13_1.md).
+
 **Development candidate 3.13.0, not yet published:** Refined worlds and Gaming views, an Abilities tab in the Bazaar, 18 skills including six Supers, 36 achievements, and twelve outfits with five cosmetic rarity levels. An original 20-second animated ninja story introduces the game. Device-only active playtime and optional break reminders join the settings. A server-managed UTC weekly podium awards 100/60/30 coins. [Scope, migration and pending release checks, German](EXPANSION_3_13.md).
 
 **Published baseline 3.12.0:** Original landscape maps, mobile mission details, NIM’s twelve everyday learning scenarios, the codex, animated outfit previews and factual round coaching are retained. Modes and worlds remain together under Play. [Detailed master prompt, German](ULTIMATE_EXPERIENCE_MASTERPROMPT.md) · [Previous release report, German](EXPERIENCE_RELEASE.md).

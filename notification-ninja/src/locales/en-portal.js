@@ -193,6 +193,15 @@ export const EN_PORTAL={
 };
 
 export const PORTAL_PATTERNS=[
+  [/^1 Münze pro richtiger Entscheidung · max\. ([\d.,]+)$/u,'1 coin per correct decision · max. $1'],
+
+  [/^Mission (.+) erneut direkt starten$/u,'Replay mission $1 now','authored'],
+  [/^Bestwert: ([\d.,]+) Punkte · ([\d.,]+) richtige Entscheidungen$/u,'Best: $1 points · $2 correct decisions'],
+
+  [/^(\d+)× Flow · (\d+)× Super · (.+)$/u,'$1× Flow · $2× Super · $3','authored'],
+  [/^(.+) Hol dir deine ([\d.,]+) Münzen bei den erreichten Erfolgen ab\.$/u,'$1 Claim your $2 coins in completed achievements.','authored'],
+  [/^(.+) Rüste diese Super im Basar unter Fähigkeiten aus\. Gute Entscheidungen laden sie auf; bei 100 % tippe auf die Super-Taste\.$/u,'$1 Equip this Super in Bazaar → Abilities. Good decisions charge it; at 100%, tap the Super button.','authored'],
+
   [/^Spielort (.+) erforderlich\.$/u,'Game world $1 required.','authored'],
   [/^Voraussetzungen für Mission (.+) ansehen$/u,'View requirements for mission $1','authored'],
   [/^Wochenplatz #([\d.,]+)$/u,'Weekly rank #$1'],

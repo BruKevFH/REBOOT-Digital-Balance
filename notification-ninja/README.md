@@ -1,5 +1,7 @@
 # Notification Ninja
 
+Aktuelle Ergänzung: [3.13.1 – automatische Rangliste, lesbare Zähler und kompaktere Ansichten](PATCH_3_13_1.md).
+
 **Entwicklungskandidat 3.13.0, noch nicht veröffentlicht:** Verfeinerte Welten und Gaming-Ansichten, der Basar mit eigenem Fähigkeiten-Reiter, 18 Fähigkeiten einschließlich sechs Supers, 36 Erfolge und zwölf Looks mit fünf kosmetischen Seltenheitsstufen. Eine eigene 20-sekündige animierte Geschichte aus Ninja-Perspektive führt ins Spiel; lokale aktive Spielzeit und freiwillige Pausenerinnerungen ergänzen die Einstellungen. Das neue serverseitige UTC-Wochenpodium vergibt 100/60/30 Münzen. [Umfang, Migration und ausstehende Freigaben](EXPANSION_3_13.md).
 
 **Veröffentlichte Ausgangsversion 3.12.0:** Eigene Landschaftskarten und mobile Missionsdetails, NIMs Fokuspfad mit zwölf Alltagssituationen, Symbollexikon, animierte Outfit-Vorschauen und Rundenfeedback bleiben erhalten. Spielwelten und Modi liegen unter Spielen. [Ausführlicher Masterprompt](ULTIMATE_EXPERIENCE_MASTERPROMPT.md) · [Bisheriger Releasebericht](EXPERIENCE_RELEASE.md).

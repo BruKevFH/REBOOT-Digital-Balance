@@ -26,7 +26,7 @@ async function inspect(p,label,out,entry,{screenshot=true}={}){
  assert(geometry.scrollWidth<=geometry.width+1,label+': horizontal page overflow');assert.deepEqual(geometry.small,[],label+': 44px controls');assert.deepEqual(geometry.images,[],label+': image loading');
  assert(geometry.parchmentContrast.every(sample=>sample.ratio>=4.5),label+': readable Bazaar parchment text '+JSON.stringify(geometry.parchmentContrast));
  if(await p.evaluate(()=>Boolean(window.__NOTIFICATION_NINJA__)))assert.deepEqual((await snapshot(p)).translation.missing,[],label+': translation coverage');
- if(screenshot)await p.screenshot({path:path.join(out,label.replace(/[^a-z0-9_-]/gi,'-')+'.png'),fullPage:true});
+ if(screenshot&&process.env.NINJA_CAPTURE_SCREENSHOTS!=='0')await p.screenshot({path:path.join(out,label.replace(/[^a-z0-9_-]/gi,'-')+'.png'),fullPage:true});
  return geometry;
 }
 async function route(p,url,id,version){await p.goto(url+'#'+id);await ready(p,version);await dismiss(p);}
@@ -82,8 +82,59 @@ async function guestMatrix(browser,options,report){
 }
 async function coldPaint(browser,options,report){
  const {base,out}=options,c=await browser.newContext({serviceWorkers:'block',viewport:{width:360,height:844}}),p=await c.newPage();
- let release;const delay=new Promise(resolve=>release=resolve);await c.route('**/*.css',async route=>{await delay;await route.continue();});
- try{await p.goto(new URL('index.html',base).href,{waitUntil:'commit'});await p.waitForSelector('body',{state:'attached'});await p.waitForTimeout(100);const result=await p.evaluate(()=>({loadingHidden:document.querySelector('#loading')?.hidden,bodyVisibility:getComputedStyle(document.body).visibility,images:[...document.images].map(el=>({src:el.getAttribute('src'),width:el.getBoundingClientRect().width,height:el.getBoundingClientRect().height})),theme:document.documentElement.dataset.ninjaTheme}));const session=await c.newCDPSession(p),shot=await session.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});fs.writeFileSync(path.join(out,'cold-css-delayed.png'),Buffer.from(shot.data,'base64'));await session.detach();assert(result.images.every(image=>image.width<=360),'Cold HTML never paints a giant logo');report.coldPaint=result;release();await p.waitForLoadState('domcontentloaded');}finally{release();await c.close();}
+ let release;const delay=new Promise(resolve=>release=resolve);
+ // Unresolved render-blocking stylesheets also block Chromium layout queries.
+ // Empty external sheets and a held main bundle expose the real inline-only
+ // first paint without letting boot hide the loader before it is inspected.
+ await c.route('**/*.css',route=>route.fulfill({status:200,contentType:'text/css',body:''}));await c.route('**/dist/ninja.js',async route=>{await delay;await route.continue();});
+ try{await p.goto(new URL('index.html',base).href,{waitUntil:'commit'});await p.waitForSelector('body',{state:'attached'});await p.waitForTimeout(100);const result=await p.evaluate(()=>({mode:'External styles unavailable; main bundle delayed; actual inline-only first paint',loadingHidden:document.querySelector('#loading')?.hidden,bodyVisibility:getComputedStyle(document.body).visibility,images:[...document.images].map(el=>({src:el.getAttribute('src'),width:el.getBoundingClientRect().width,height:el.getBoundingClientRect().height})),theme:document.documentElement.dataset.ninjaTheme}));const session=await c.newCDPSession(p),shot=await session.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});fs.writeFileSync(path.join(out,'cold-inline-only.png'),Buffer.from(shot.data,'base64'));await session.detach();assert.equal(result.loadingHidden,false,'The actual loading frame remains visible before boot');assert(result.images.every(image=>image.width<=360),'Cold HTML never paints a giant logo');report.coldPaint=result;release();await p.waitForLoadState('domcontentloaded');}finally{release();await c.close();}
+}
+async function hudStress(browser,options,report){
+ const result={kind:'Presentation fixture: actual HUD markup, styles, loaded fonts and paintHudNumber; values are display-only, no game bridge or save mutations',cases:[],issues:[]};
+ const sourceContext=await browser.newContext({serviceWorkers:'block',viewport:{width:1280,height:960}}),source=await sourceContext.newPage(),sources={};
+ const fixtureContext=await browser.newContext({serviceWorkers:'block'}),fixture=await fixtureContext.newPage();let stage='capture actual HUD';
+ try{
+  const gameURL=new URL('index.html',options.base).href;await source.goto(gameURL+'#guest');await ready(source,options.version);await dismiss(source);
+  for(const language of ['de','en']){
+   await route(source,gameURL,'settings',options.version);await click(source,`[data-settings-language=${language}]`);await route(source,gameURL,'play',options.version);await click(source,'[data-world-inspect=study]');await click(source,'.indie-world-detail-panel [data-quick-context=study]');await dismiss(source);await click(source,'[data-action=next]');await dismiss(source);await source.waitForFunction(()=>window.__NOTIFICATION_NINJA__.getSnapshot().ui==='playing'&&!window.__NOTIFICATION_NINJA__.getSnapshot().mentor.open);
+   sources[language]=await source.evaluate(()=>({styles:[...document.querySelectorAll('link[rel=stylesheet]')].map(el=>el.href),inline:document.querySelector('#ninja-first-paint')?.textContent||'',bodyClass:document.body.className,hud:document.querySelector('#hud').outerHTML,nav:document.querySelector('.global-nav').outerHTML}));
+   await click(source,'#pause-button');await dismiss(source);await click(source,'[data-action=finish-round]');await dismiss(source);
+  }
+  await sourceContext.close();
+  const bundled=await require('esbuild').build({entryPoints:[path.join(root,'notification-ninja/src/hud-numbers.js')],bundle:true,write:false,format:'iife',globalName:'NinjaHUD',logLevel:'silent'});
+  const fixtureURL=new URL('__ninja_hud_presentation_fixture__',options.base).href;
+  for(const language of ['de','en']){
+   const src=sources[language],html=`<!doctype html><html lang="${language}" data-ninja-theme="relaxed"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><base href="${options.base}"><style>${src.inline}</style>${src.styles.map(href=>`<link rel="stylesheet" href="${href}">`).join('')}</head><body class="${src.bodyClass}"><div id="arena" class="arena"><canvas id="world"></canvas></div>${src.nav}${src.hud}</body></html>`;
+   await fixture.route(fixtureURL,route=>route.fulfill({status:200,contentType:'text/html; charset=utf-8',body:html}));await fixture.goto(fixtureURL);await fixture.addScriptTag({content:bundled.outputFiles[0].text});await fixture.evaluate(()=>document.fonts.ready);assert.equal(await fixture.evaluate(()=>Boolean(window.__NOTIFICATION_NINJA__)),false,'The fixture has no game bridge');
+   for(const viewport of [{width:360,height:844},{width:390,height:844},{width:768,height:1024},{width:1280,height:960},{width:1920,height:1080},{width:844,height:390}])for(const theme of ['relaxed','dark','noir']){
+    await fixture.setViewportSize(viewport);await fixture.evaluate(theme=>document.documentElement.dataset.ninjaTheme=theme,theme);
+    for(const score of [4600,999999,100000000])for(const combo of [100,12345]){
+     stage=`HUD ${viewport.width}×${viewport.height} ${language} ${theme} ${score}/${combo}`;
+     const actual=await fixture.evaluate(({score,combo,locale})=>{
+      const scoreEl=document.getElementById('score-value'),comboEl=document.getElementById('combo-value');NinjaHUD.paintHudNumber(scoreEl,score,locale);NinjaHUD.paintHudNumber(comboEl,combo,locale,{series:true});
+      const rect=el=>{const r=el.getBoundingClientRect();return {left:r.left,right:r.right,top:r.top,bottom:r.bottom,width:r.width,height:r.height};};
+      const rgba=value=>value.match(/[\d.]+/g).map(Number),luminance=rgb=>rgb.slice(0,3).map(v=>v/255).map(v=>v<=.04045?v/12.92:((v+.055)/1.055)**2.4).reduce((a,v,i)=>a+v*[.2126,.7152,.0722][i],0);
+      const contrast=el=>{let backgrounds=[[255,255,255]];const ancestors=[];for(let node=el;node;node=node.parentElement)ancestors.push(node);const over=(fg,bg)=>{const alpha=fg[3]??1;return bg.map((value,i)=>fg[i]*alpha+value*(1-alpha));};for(const node of ancestors.reverse()){const style=getComputedStyle(node);backgrounds=backgrounds.map(bg=>over(rgba(style.backgroundColor),bg));const gradient=!style.backgroundImage.includes('url(')&&style.backgroundImage.match(/rgba?\([^)]*\)/g);if(gradient?.length)backgrounds=backgrounds.flatMap(bg=>gradient.map(color=>over(rgba(color),bg)));}const a=luminance(rgba(getComputedStyle(el).color));return Math.min(...backgrounds.map(rgb=>{const b=luminance(rgb);return(Math.max(a,b)+.05)/(Math.min(a,b)+.05);}));};
+      const counters=[scoreEl,comboEl].map(el=>{const style=getComputedStyle(el),range=document.createRange();range.selectNodeContents(el);return {id:el.id,text:el.textContent,title:el.title,label:el.getAttribute('aria-label'),fontSize:parseFloat(style.fontSize),textOverflow:style.textOverflow,box:rect(el),card:rect(el.parentElement),textBox:rect({getBoundingClientRect:()=>range.getBoundingClientRect()}),contrast:contrast(el)};});
+      const fields=[...document.querySelectorAll('.context-block>strong,.context-block .level-label,.context-block .context-goal,.hud-sidebar .speed-badge,.hud-sidebar .speed-badge strong,.hud-sidebar .run-wallet strong,.hud-sidebar .time-block>strong,.hud-sidebar .time-block>span,.hud-top :is(.score-block,.combo-block)>span,.hud-sidebar .meter-block>span,.lives-title,.global-nav :is(button,a)')].filter(el=>el.checkVisibility({checkOpacity:true,checkVisibilityCSS:true})).map(el=>({id:el.id||el.className,text:(el.getAttribute('aria-label')||el.textContent).trim().slice(0,80),color:getComputedStyle(el).color,ratio:contrast(el),minimum:el.closest('.global-nav')?3:4.5}));
+      return {width:innerWidth,height:innerHeight,scrollWidth:document.documentElement.scrollWidth,fontStatus:document.fonts.status,counters,fields};
+     },{score,combo,locale:language==='en'?'en-GB':'de-DE'});
+     const entry={...viewport,language,theme,score,combo,...actual};result.cases.push(entry);
+     try{
+      assert(actual.scrollWidth<=viewport.width+1,'HUD cannot create horizontal viewport overflow');
+      for(const field of actual.fields)assert(field.ratio>=field.minimum,'Visible HUD label or control contrast: '+JSON.stringify(field));
+      for(const [index,counter]of actual.counters.entries()){
+       const full=(index?'×':'')+(index?combo:score).toLocaleString(language==='en'?'en-GB':'de-DE');assert.equal(counter.title,full);assert.equal(counter.label,full);assert(!/[.…]{2,}|…/.test(counter.text),'Counters cannot use an ellipsis');assert.notEqual(counter.textOverflow,'ellipsis');assert(counter.fontSize>=10,'Fitting keeps legible minimum font size');assert(counter.textBox.width<=counter.box.width+.6,'Every rendered digit fits the allocated counter');assert(counter.textBox.left>=counter.card.left-.6&&counter.textBox.right<=counter.card.right+.6,'Digits stay within their actual card');assert(counter.card.left>=-.6&&counter.card.right<=viewport.width+.6,'Counter cards stay inside the viewport');assert(counter.contrast>=4.5,'Counter contrast must remain at least4.5:1');
+      }
+     }catch(error){result.issues.push({stage,error:error.message,actual});}
+    }
+    if(viewport.width===360||viewport.width===844)await fixture.screenshot({path:path.join(options.out,`hud-fixture-${language}-${theme}-${viewport.width}x${viewport.height}.png`)});
+   }
+   await fixture.unroute(fixtureURL);
+  }
+  assert.deepEqual(result.issues,[],'Every HUD presentation fixture fits and stays readable');result.ok=true;
+ }catch(error){result.ok=false;result.stage=stage;result.failure=error.message;report.issues.push({probe:'hud-presentation',stage,error:error.message});console.error('NINJA_313_HUD_FINDING',stage,error.message);}
+ finally{await sourceContext.close().catch(()=>{});await fixtureContext.close();report.hudPresentation=result;fs.writeFileSync(path.join(options.out,'hud-report.json'),JSON.stringify(result,null,2));}
 }
 async function guestTransfer(browser,options,report){
  const oldOrigin='https://brukevfh.github.io',oldPath='/REBOOT-Digital-Balance/notification-ninja/',newOrigin='https://notification-ninja-accounts.onrender.com';
@@ -143,8 +194,8 @@ async function run(options={}){
  if(publicOnly){assert.equal(url.protocol,'https:');assert.equal(url.hostname,'notification-ninja-accounts.onrender.com');assert.equal(url.pathname,'/');assert.equal(url.port,'');assert.equal(url.username+url.password+url.search+url.hash,'');}
  else assert(['localhost','127.0.0.1','[::1]'].includes(url.hostname),'Integration checks require an isolated local service');
  const out=path.resolve(options.out||process.env.NINJA_TEST_OUTPUT||'test-results/ninja-313'),version=process.env.NINJA_EXPECTED_VERSION||JSON.parse(fs.readFileSync(path.join(root,'notification-ninja/dist/build.json'))).version,widths=(process.env.NINJA_TEST_WIDTHS||'360,1280').split(',').map(Number);fs.mkdirSync(out,{recursive:true});
- const browser=await chromium.launch({executablePath:process.env.NINJA_CHROMIUM||(fs.existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),headless:true,args:['--no-sandbox']}),report={version,base,kind:publicOnly?'Read-only public guest smoke':'Native 3.13 integration; no fabricated progression',viewports:[],issues:[]};
- try{const settings={base,out,version,widths,publicOnly},transferOnly=!publicOnly&&process.env.NINJA_313_TRANSFER_ONLY==='1';if(!transferOnly&&(publicOnly||process.env.NINJA_313_ADMIN_ONLY!=='1'))await guestMatrix(browser,settings,report);if(!publicOnly&&process.env.NINJA_313_ADMIN_ONLY!=='1'){if(!transferOnly)await coldPaint(browser,settings,report);await guestTransfer(browser,settings,report);}if(!transferOnly&&!publicOnly&&process.env.NINJA_TEST_ADMIN_FILE)await adminNative(browser,settings,report,process.env.NINJA_TEST_ADMIN_FILE);}finally{await browser.close();fs.writeFileSync(path.join(out,'report.json'),JSON.stringify(report,null,2));}
+ const browser=await chromium.launch({executablePath:process.env.NINJA_CHROMIUM||(fs.existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),headless:true,args:['--no-sandbox']}),report={version,base,kind:publicOnly?'Read-only public guest smoke':'Native 3.13 integration; no fabricated progression',screenshots:process.env.NINJA_CAPTURE_SCREENSHOTS!=='0',viewports:[],issues:[]};
+ try{const settings={base,out,version,widths,publicOnly},transferOnly=!publicOnly&&process.env.NINJA_313_TRANSFER_ONLY==='1',hudOnly=!publicOnly&&process.env.NINJA_313_HUD_ONLY==='1';if(!transferOnly&&!hudOnly&&(publicOnly||process.env.NINJA_313_ADMIN_ONLY!=='1'))await guestMatrix(browser,settings,report);if(!publicOnly&&process.env.NINJA_313_ADMIN_ONLY!=='1'){if(!transferOnly){if(!hudOnly)await coldPaint(browser,settings,report);await hudStress(browser,settings,report);}if(!hudOnly)await guestTransfer(browser,settings,report);}if(!transferOnly&&!hudOnly&&!publicOnly&&process.env.NINJA_TEST_ADMIN_FILE)await adminNative(browser,settings,report,process.env.NINJA_TEST_ADMIN_FILE);}finally{await browser.close();fs.writeFileSync(path.join(out,'report.json'),JSON.stringify(report,null,2));}
  assert.deepEqual(report.issues,[],'All native 3.13 guest checks pass');return report;
 }
 module.exports={run};

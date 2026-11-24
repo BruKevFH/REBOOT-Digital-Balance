@@ -16,6 +16,7 @@ on:
       - 'scripts/check_ninja_all_pages.cjs'
       - 'scripts/check_ninja_account_audit.mjs'
       - 'scripts/check_ninja_313.cjs'
+      - 'scripts/check_ninja_auto_ranking.cjs'
       - 'render.yaml'
       - 'package.json'
       - 'package-lock.json'
@@ -38,15 +39,22 @@ on:
       - 'scripts/check_ninja_all_pages.cjs'
       - 'scripts/check_ninja_account_audit.mjs'
       - 'scripts/check_ninja_313.cjs'
+      - 'scripts/check_ninja_auto_ranking.cjs'
       - 'render.yaml'
       - 'package.json'
       - 'package-lock.json'
       - '.github/workflows/notification-ninja-checks.yml'
+concurrency:
+  group: ninja-checks-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test-and-build:
     runs-on: ubuntu-latest
+    timeout-minutes: 40
     permissions:
       contents: read
+      actions: write
     services:
       postgres:
         image: postgres:17-bookworm
@@ -69,6 +77,24 @@ jobs:
         with:
           node-version: '24'
           cache: npm
+      - name: Cancel superseded main checks
+        if: github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          node --input-type=module <<'NODE'
+          const base='https://api.github.com/repos/'+process.env.GITHUB_REPOSITORY;
+          const headers={Authorization:'Bearer '+process.env.GH_TOKEN,Accept:'application/vnd.github+json'};
+          const response=await fetch(base+'/actions/workflows/notification-ninja-checks.yml/runs?branch=main&per_page=20',{headers});
+          if(!response.ok)throw new Error('Could not inspect older Ninja checks: HTTP '+response.status);
+          const {workflow_runs:runs}=await response.json();
+          for(const run of runs){
+            if(String(run.id)===process.env.GITHUB_RUN_ID||run.event!=='push'||!['queued','in_progress','waiting'].includes(run.status)||run.run_number>=Number(process.env.GITHUB_RUN_NUMBER))continue;
+            const canceled=await fetch(base+'/actions/runs/'+run.id+'/cancel',{method:'POST',headers});
+            if(![202,409].includes(canceled.status))throw new Error('Could not stop superseded run '+run.id+': HTTP '+canceled.status);
+            console.log('Superseded Ninja check stopped: '+run.id);
+          }
+          NODE
       - run: npm ci --ignore-scripts
       - run: npm run build:ninja
       - run: npm run test:ninja
@@ -89,9 +115,9 @@ jobs:
             sleep 1
           done
           curl -fsS http://127.0.0.1:8083/api/v3/health
-          for ninja_check in check_ninja_portal check_ninja_indie check_ninja_browser check_ninja_experience check_ninja_crossflows check_ninja_all_pages check_ninja_313; do
+          for ninja_check in check_ninja_portal check_ninja_indie check_ninja_browser check_ninja_experience check_ninja_crossflows check_ninja_all_pages check_ninja_313 check_ninja_auto_ranking; do
             ninja_log="$RUNNER_TEMP/${ninja_check}.log"
-            if node "scripts/${ninja_check}.cjs" > "$ninja_log" 2>&1; then
+            if NINJA_CAPTURE_SCREENSHOTS=0 node "scripts/${ninja_check}.cjs" > "$ninja_log" 2>&1; then
               cat "$ninja_log"
             else
               cat "$ninja_log"
