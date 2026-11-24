@@ -1,4 +1,4 @@
-// Local UI acceptance: five destinations, one eight-card Play screen and saved gameplay.
+// Local UI acceptance: five destinations, the complete Play screen and saved gameplay.
 const {chromium}=require('playwright');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
@@ -11,7 +11,17 @@ const version=JSON.parse(fs.readFileSync(path.join(__dirname,'../notification-ni
 const widths=process.env.NINJA_TEST_WIDTHS?process.env.NINJA_TEST_WIDTHS.split(',').map(Number):[360,768,941,1280];
 if(widths.some(width=>!Number.isInteger(width)||width<320||width>2560))throw Error('Invalid viewport widths.');
 const read=page=>page.evaluate(()=>window.__NOTIFICATION_NINJA__.getSnapshot());
-async function acknowledge(page){for(let index=0;index<24&&(await read(page)).mentor.open;index++)await page.locator('#mentor-next').click();}
+async function acknowledge(page){
+ // The automatic intro opens on the next rendered frame after entering the hub.
+ for(let i=0;i<32;i++){
+  await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+  const current=await read(page);
+  if(current.experience?.intro?.active){await page.locator('[data-intro-action=skip]').click();continue;}
+  if(current.mentor.open){await page.locator('#mentor-next').click();continue;}
+  return;
+ }
+ throw Error('Intro or mentor did not close through its native controls');
+}
 async function ready(page){await page.waitForFunction(value=>window.__NOTIFICATION_NINJA__?.getSnapshot().version===value,version);await acknowledge(page);}
 const bottom=page=>page.locator('.indie-bottom-nav');
 
@@ -63,11 +73,14 @@ async function inspectCards(page,entry){
   await play(page);
   assert.equal(await page.locator('.indie-mode-card').count(),4);
   assert.equal(await page.locator('.indie-world-card').count(),4);
-  const cards=await page.locator('.indie-mode-card,.indie-world-card').evaluateAll(elements=>elements.map((element,index)=>({index,text:element.textContent.trim().replace(/\s+/g,' '),kind:element.classList.contains('indie-world-card')?'world':'mode'})));
+  assert.equal(await page.locator('.indie-feature-run').count(),2,'Open Run and Digital Day have illustrated launch cards');
+  assert.deepEqual(await page.locator('[data-feature-mode]').evaluateAll(cards=>cards.map(card=>card.dataset.featureMode)),['open','campaign']);
+  assert.equal(await page.locator('.indie-feature-run details,.indie-feature-run summary').count(),0,'Feature modes are directly available');
+  const cards=await page.locator('.indie-mode-card,.indie-world-card,.indie-feature-run').evaluateAll(elements=>elements.map((element,index)=>({index,text:element.textContent.trim().replace(/\s+/g,' '),kind:element.classList.contains('indie-world-card')?'world':'mode'})));
   entry.cards=[];
   for(const card of cards){
     await play(page);
-    const target=page.locator('.indie-mode-card,.indie-world-card').nth(card.index);
+    const target=page.locator('.indie-mode-card,.indie-world-card,.indie-feature-run').nth(card.index);
     const action=target.locator('button,a').first();
     const control=await action.count()?action:target;
     const data=await control.evaluate(element=>({disabled:element.matches(':disabled')||element.getAttribute('aria-disabled')==='true',...element.dataset}));
@@ -156,7 +169,7 @@ async function inspectCards(page,entry){
           await page.waitForFunction(()=>window.__NOTIFICATION_NINJA__.getSnapshot().ui==='modes'&&location.hash==='#play',{},{timeout:5000});
           assert.equal((await read(page)).ui,'modes',`legacy #${alias} opens the unified Play screen`);
           assert.equal(new URL(page.url()).hash,'#play');
-          assert.equal(await page.locator('.indie-mode-card,.indie-world-card').count(),8);
+          assert.equal(await page.locator('.indie-mode-card,.indie-world-card,.indie-feature-run').count(),10);
         }
         assert.deepEqual(preserved((await read(page)).profile),initial,'menu visits and unplayed cards preserve guest progress');
         assert.deepEqual(entry.errors,[]);entry.ok=true;

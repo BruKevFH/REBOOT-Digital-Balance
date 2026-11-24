@@ -150,3 +150,16 @@ body[data-ui=home] .home-header>.home-profile-tools{grid-column:1;grid-row:1;jus
   body.is-playing .heart-icon{width:22px;height:22px}body.is-playing #lives-value{gap:2px}.is-playing .lives-title{font-size:8px}
 }
 .shop-panel .shop-filters .btn{min-width:44px}
+/* The confirmation belongs above every menu, including a paused run's settings. */
+.exit-confirm-backdrop{position:fixed;inset:0;z-index:12000;display:grid;place-items:center;padding:20px;overflow:auto;background:rgba(5,31,40,.76);backdrop-filter:blur(7px)}
+.exit-confirm-card{position:relative;width:min(100%,540px);max-height:calc(100dvh - 40px);overflow:auto;margin:auto;padding:clamp(22px,4vw,36px);border:3px solid #123d40;border-radius:26px;background:#fff5df;color:#123d40;box-shadow:0 7px 0 #437e6b,0 22px 70px #031d3680,inset 0 0 0 3px #fffbed;text-align:center}
+.exit-confirm-card>span{display:inline-grid;place-items:center;width:68px;height:68px;border:2px solid #28584b;border-radius:21px;background:#a5dfb9;font-size:36px;box-shadow:0 4px 0 #7fac86}
+.exit-confirm-card h2{margin:22px 0 14px;font-size:clamp(26px,4vw,34px);line-height:1.15;letter-spacing:-.5px}
+.exit-confirm-card p{font-size:15px;line-height:1.65;color:#42665e}
+.exit-confirm-card>div{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
+.exit-confirm-card>div>.btn{flex:1;min-width:170px;min-height:48px;white-space:normal}
+.weekly-daily-board{margin-top:30px;padding-top:25px;border-top:2px dashed #86ab86}
+.weekly-daily-board>header{margin:0 0 18px}.weekly-daily-board>header h3{margin:7px 0;font-size:clamp(25px,4vw,31px);line-height:1.2}
+.weekly-daily-board>header p{max-width:70ch;font-size:14px;line-height:1.6}
+.achievements-panel .achievement-card>.btn{min-height:44px}
+.shop-legacy-archive>summary{min-height:44px;box-sizing:border-box;padding:10px 0;cursor:pointer}

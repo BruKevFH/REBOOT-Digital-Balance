@@ -23,13 +23,13 @@ test('difficulty contracts offer a slower five-heart start and progressively fas
 });
 
 test('the skill tree has three reachable branches with locked supers and no cycles', () => {
-  assert.equal(SKILLS.length,9);
-  assert.equal(new Set(SKILLS.map(skill=>skill.id)).size,9);
-  assert.deepEqual(SUPERS.map(skill=>skill.id),['slow-super','shield-super','sweep-super']);
+  assert.equal(SKILLS.length,18);
+  assert.equal(new Set(SKILLS.map(skill=>skill.id)).size,18);
+  assert.deepEqual(SUPERS.map(skill=>skill.id),['slow-super','zen-super','shield-super','lotus-super','sweep-super','star-super']);
   const reached=new Set();
   for(const branch of ['focus','guard','coins']) {
     const nodes=SKILLS.filter(skill=>skill.branch===branch);
-    assert.deepEqual(nodes.map(skill=>skill.cost),[35,90,180]);
+    assert.deepEqual(nodes.map(skill=>skill.cost),[35,90,180,240,360,480]);
     for(const node of nodes) {
       assert.ok(node.requires.every(parent=>reached.has(parent)));
       reached.add(node.id);
@@ -38,8 +38,8 @@ test('the skill tree has three reachable branches with locked supers and no cycl
   }
   assert.equal(getSkill('second-chance').effect,'revive');
   assert.equal(getSkill('missing'),null);
-  assert.equal(ACHIEVEMENTS.length,24);
-  assert.equal(new Set(ACHIEVEMENTS.map(item=>item.id)).size,24);
+  assert.equal(ACHIEVEMENTS.length,36);
+  assert.equal(new Set(ACHIEVEMENTS.map(item=>item.id)).size,36);
 });
 
 test('old saved profiles receive independent progression defaults without changing existing money or records', () => {
@@ -147,7 +147,7 @@ test('reward coins count toward lifetime earnings and reaching a milestone still
   assert.equal(profile.stats.coinsEarned,107);
 });
 
-test('all twenty-four rewards remain individually claimable once, including previously unlocked story achievements', () => {
+test('all thirty-six rewards remain individually claimable once, including previously unlocked story achievements', () => {
   const profile=makeProfile({achievements:ACHIEVEMENTS.map(item=>item.id)});
   let expected=0;
   for(const achievement of ACHIEVEMENTS) {
@@ -157,7 +157,7 @@ test('all twenty-four rewards remain individually claimable once, including prev
     assert.equal(profile.coins,expected);
     assert.equal(claimAchievement(profile,achievement.id).ok,false);
   }
-  assert.equal(profile.claimedAchievements.length,24);
+  assert.equal(profile.claimedAchievements.length,36);
   assert.equal(profile.stats.coinsEarned,expected);
 });
 
@@ -318,7 +318,7 @@ test('each of the twelve long-term milestones unlocks only at its actual counter
 });
 
 test('new milestone rewards stay modest compared with the full collection and never auto-claim one another', () => {
-  assert.equal(ACHIEVEMENTS.length,24);
+  assert.equal(ACHIEVEMENTS.length,36);
   assert.ok(ACHIEVEMENTS.every(item=>item.reward>=3&&item.reward<=20));
   const collection=SKILLS.reduce((sum,item)=>sum+item.cost,0)+WORLDS.reduce((sum,item)=>sum+item.cost,0)+BACKGROUNDS.reduce((sum,item)=>sum+item.cost,0);
   const rewards=ACHIEVEMENTS.reduce((sum,item)=>sum+item.reward,0);

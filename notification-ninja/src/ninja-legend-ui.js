@@ -1,4 +1,4 @@
-import {sceneArt} from './scene-art.js';
+import {sceneArt,worldArt} from './scene-art.js';
 import {ninjaPortrait} from './mentor.js';
 
 /**
@@ -191,6 +191,15 @@ function journeyArtwork(context){
  return `<svg class="nn-career-journey-scene" viewBox="${journeyRegions[context]||journeyRegions.study}" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"><image href="./assets/indie-journeys.png" width="1536" height="1024"/></svg>`;
 }
 
+/** Explain canonical gates without treating local UI state as an unlock. */
+export function missionUnlockReasons(mission,missions=[]){
+ if(!mission||mission.completed||mission.available)return [];
+ const names={study:'Schul-Dojo',gaming:'Gaming-Dojo',sleep:'Schlaf-Dojo',master:'Balance Master'},reasons=[];
+ if(mission.worldLocked&&names[mission.requiredWorld])reasons.push(`Spielort ${names[mission.requiredWorld]} erforderlich.`);
+ for(const id of mission.missingRequirements||[]){const prerequisite=missions.find(item=>item.id===id);if(prerequisite)reasons.push(`Zuerst abschließen: ${prerequisite.title}`);}
+ return reasons.length?reasons:['Schließe zuerst die vorherige Mission ab.'];
+}
+
 /** Adventure progress comes only from real getCareerMissions() data. */
 export function legendaryCareer({missions=[],selectedId=null}={}){
  const main=missions.filter(m=>m.section==='main');
@@ -209,7 +218,7 @@ export function legendaryCareer({missions=[],selectedId=null}={}){
    const style=mini?'':`style="--nx:${waypoints[i]?.[0]||50}%;--ny:${waypoints[i]?.[1]||50}%"`;
    const playable=m.available||m.completed;
    return `<div class="nn-career-node is-${state(m)} ${selected?.id===m.id?'is-selected':''} ${mini?'is-bonus':''}" ${style} role="group" aria-label="Mission ${order}: ${esc(m.title)}, ${stateLabel(m)}">
-     ${playable?`<button type="button" class="nn-career-node-number nn-career-direct-start" data-mission-start="${esc(m.id)}" aria-label="Mission ${esc(m.title)} ${m.completed?'erneut ':''}direkt starten"><span class="nn-node-count">${String(order).padStart(2,'0')}</span><span class="nn-node-play-symbol" aria-hidden="true">▶</span></button>`:`<span class="nn-career-node-number nn-career-node-locked" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10 14v-4a6 6 0 0 1 12 0v4"/><rect x="6" y="14" width="20" height="15" rx="4" fill="#fff2c8"/><path d="M16 20v4"/></svg></span>`}
+     ${playable?`<button type="button" class="nn-career-node-number nn-career-direct-start" data-mission-start="${esc(m.id)}" aria-label="Mission ${esc(m.title)} ${m.completed?'erneut ':''}direkt starten"><span class="nn-node-count">${String(order).padStart(2,'0')}</span><span class="nn-node-play-symbol" aria-hidden="true">▶</span></button>`:`<button type="button" class="nn-career-node-number nn-career-node-locked" data-mission-locked="${esc(m.id)}" aria-label="Voraussetzungen für Mission ${esc(m.title)} ansehen"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10 14v-4a6 6 0 0 1 12 0v4"/><rect x="6" y="14" width="20" height="15" rx="4" fill="#fff2c8"/><path d="M16 20v4"/></svg></button>`}
      <button type="button" class="nn-career-node-copy nn-career-inspect" data-mission-inspect="${esc(m.id)}" aria-pressed="${selected?.id===m.id}" aria-label="Details zu Mission ${esc(m.title)} ansehen"><strong>${esc(m.title)}</strong><small>${stateLabel(m)}${m.completed&&!m.claimed?' · Belohnung bereit':''}</small></button>
      <span class="nn-career-node-arrow" aria-hidden="true">✦</span>
    </div>`;
@@ -233,7 +242,8 @@ export function legendaryCareer({missions=[],selectedId=null}={}){
   </section>`;
  }).join('');
  const missing=(selected?.missingRequirements||[]).map(id=>missions.find(m=>m.id===id)?.title||id);
- const prereq=selected?.worldLocked?'Diese Welt ist noch gesperrt.':missing.length?'Zuerst abschließen: '+missing.join(' · '):'Alle Voraussetzungen erfüllt';
+ const unlockReasons=missionUnlockReasons(selected,missions);
+ const prereq=unlockReasons.length?unlockReasons.join(' · '):'Alle Voraussetzungen erfüllt';
  const current=Math.max(0,Number(selected?.current)||0),target=Math.max(1,Number(selected?.target)||1);
  const detail=selected?`<section class="nn-career-detail" aria-live="polite">
     <span class="nn-career-eyebrow">DEINE AUSGEWÄHLTE MISSION</span>
@@ -243,7 +253,7 @@ export function legendaryCareer({missions=[],selectedId=null}={}){
     <div class="nn-career-progress"><span>${num(current)} / ${num(target)} Fortschritt</span><strong>✦ +${num(selected.reward)} Münzen</strong></div>
     <div class="nn-career-meter" role="progressbar" aria-label="Missionsfortschritt" aria-valuemin="0" aria-valuemax="${target}" aria-valuenow="${Math.min(target,current)}"><span style="width:${Math.round(Math.min(current,target)/target*100)}%"></span></div>
     ${selected.best?`<small class="nn-career-best">Bestwert: ${num(selected.best.score)} Punkte · ${num(selected.best.correct)} richtige Entscheidungen</small>`:''}
-    <small class="nn-career-prerequisites">${esc(prereq)}</small>
+    <div class="nn-career-prerequisites" role="status">${unlockReasons.length?`<strong>So öffnest du diese Mission</strong><ul>${unlockReasons.map(reason=>`<li>${esc(reason)}</li>`).join('')}</ul>${selected.worldLocked&&['study','gaming','sleep','master'].includes(selected.requiredWorld)?`<button type="button" class="btn ghost" data-world-inspect="${selected.requiredWorld}">Spielwelt ansehen →</button>`:''}`:esc(prereq)}</div>
     <button type="button" class="legend-button legend-button-primary nn-career-start" data-mission-start="${esc(selected.id)}" ${selected.available||selected.completed?'':'disabled'}>${selected.completed?'Mission erneut spielen':'Mission starten'} <span aria-hidden="true">➜</span></button>
     ${selected.completed&&!selected.claimed?`<button type="button" class="legend-button legend-button-gold" data-career-claim="${esc(selected.id)}">✦ +${num(selected.reward)} Münzen abholen</button>`:''}
    </section>`:'';
@@ -259,7 +269,7 @@ export function legendaryCareer({missions=[],selectedId=null}={}){
      <span class="nn-career-eyebrow">DIE LETZTEN PRÜFUNGEN</span><h4 id="nn-boss-title">Schattenbosse</h4><p>Drei Bosse. Drei Herausforderungen.</p>
      <div class="nn-career-boss-grid">${bosses.map((m,i)=>`<button type="button" class="nn-career-boss is-${state(m)} ${selected?.id===m.id?'is-selected':''}" data-mission-inspect="${esc(m.id)}" aria-pressed="${selected?.id===m.id}"><span aria-hidden="true">${['鬼','将','龍'][i]||'鬼'}</span><strong>${esc(m.title)}</strong><small>${stateLabel(m)}</small></button>`).join('')}</div>
     </section>
-    ${extras.length?`<details class="nn-career-bonus"><summary>✦ Zusatzmissionen · ${extras.filter(m=>m.completed).length} / ${extras.length}</summary><div class="nn-career-bonus-grid">${extras.map((m,i)=>steps(m,i,true)).join('')}</div></details>`:''}
+    ${extras.length?`<details class="nn-career-bonus"><summary>✦ Zusatzmissionen · ${extras.filter(m=>m.completed).length} / ${extras.length}</summary><div class="nn-career-bonus-grid">${extras.map((m,i)=>{const reasons=missionUnlockReasons(m,missions),context=['study','gaming','sleep','master'].includes(m.requiredWorld)?m.requiredWorld:m.mode==='open'?'master':'study';return `<article class="nn-extra-card is-${state(m)} ${selected?.id===m.id?'is-selected':''}"><button type="button" class="nn-extra-inspect" data-mission-inspect="${esc(m.id)}" aria-pressed="${selected?.id===m.id}"><span class="nn-extra-scene">${worldArt(context)}<span class="nn-extra-order">${String(i+1).padStart(2,'0')}</span><span class="nn-extra-status">${stateLabel(m)}</span></span><span class="nn-extra-copy"><strong>${esc(m.title)}</strong><span>${esc(m.description)}</span><small>${reasons.length?esc(reasons[0]):m.completed?'Deine Leistung ist gesichert.':'Deine nächste besondere Prüfung.'}</small><b>${m.locked?'Voraussetzungen ansehen':'Mission ansehen'} →</b></span></button></article>`;}).join('')}</div></details>`:''}
    </div>
    <aside class="nn-career-sidebar" aria-label="Missionsdetails">
     ${detail}
@@ -281,21 +291,21 @@ function inPeriod(value,period){
  if(period==='week'){const start=Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate());const monday=start-((d.getUTCDay()+6)%7)*86400000;return date>=monday&&date<=now;}
  return true;
 }
-export function legendaryLeaderboard({message='',entries=[],own=null,filter='all',canPublish=false,account=false,published=false,busy=false,localScore=0}={}){
+export function legendaryLeaderboard({message='',entries=[],own=null,filter='all',canPublish=false,account=false,published=false,busy=false,localScore=0,period=null,admin=false}={}){
  const valid=['all','today','week','local'].includes(filter)?filter:'all';
- const selection=valid==='local'?[]:entries.filter(x=>valid==='all'||inPeriod(x.submittedAt,valid));
+ const selection=valid==='local'?[]:period===valid?entries:entries.filter(x=>valid==='all'||inPeriod(x.submittedAt,valid));
  const top=selection.slice(0,3),rest=selection.slice(3);
  const podium=[1,0,2].map((pos)=>{
-  const e=top[pos];return `<div class="legend-podium-step legend-podium-${pos+1} ${e?.mine?'is-mine':''}"><div class="legend-podium-medal" aria-hidden="true">${['🥇','🥈','🥉'][pos]}</div><div class="legend-podium-name" data-user-text>${e?esc(e.username||'Ninja'):'Noch frei'}</div><strong>${e?num(e.score):'—'}</strong><small>${e?'Gesamtplatz #'+num(e.rank):'Kein Eintrag'}</small><div class="legend-podium-base"><span>${pos+1}</span></div></div>`;
+  const e=top[pos];return `<div class="legend-podium-step legend-podium-${pos+1} ${e?.mine?'is-mine':''}"><div class="legend-podium-medal" aria-hidden="true">${['🥇','🥈','🥉'][pos]}</div><div class="legend-podium-name" data-user-text>${e?esc(e.username||'Ninja'):'Noch frei'}</div><strong>${e?num(e.score):'—'}</strong><small>${e?(valid==='week'?'Wochenplatz #':valid==='today'?'Tagesplatz #':'Gesamtplatz #')+num(e.rank):'Kein Eintrag'}</small><div class="legend-podium-base"><span>${pos+1}</span></div></div>`;
  }).join('');
  const rows=rest.map(e=>`<li class="legend-ranking-row ${e.mine?'is-mine':''}"><span class="legend-ranking-rank">#${num(e.rank)}</span><span class="legend-ranking-avatar" aria-hidden="true">忍</span><strong class="legend-ranking-name" data-user-text>${esc(e.username||'Ninja')}</strong><strong class="legend-ranking-score">${num(e.score)} <small>Pkt.</small></strong></li>`).join('');
  const tabs=[['all','Gesamt'],['today','Heute'],['week','Woche'],['local','Lokal']];
  return `<div class="legend-leaderboard">
   <div class="legend-rank-hero">${sceneArt('rewards')}<span class="legend-kicker">DIE HALLE DER LEGENDEN</span><div class="legend-trophy" aria-hidden="true">🏆</div><h3>Open Run Rangliste</h3><p>Drei Herzen. Ein Regelwerk. Dein Name erscheint nur, wenn du einen geprüften Run selbst veröffentlichst.</p></div>
   <div class="legend-rank-tabs" role="group" aria-label="Rangliste filtern">${tabs.map(([id,label])=>`<button type="button" data-leaderboard-filter="${id}" aria-pressed="${valid===id}">${label}</button>`).join('')}</div>
-  <p class="legend-rank-hint" role="status">${esc(message)} ${valid==='today'||valid==='week'?'Zeitfilter aus den geladenen globalen Top 100 (UTC); keine separate Tages-/Wochenwertung.':''}</p>
+  <p class="legend-rank-hint" role="status">${esc(message)} ${valid==='today'||valid==='week'?(period===valid?'Servergeprüfte Rangfolge für diesen UTC-Zeitraum.':'Zeitfilter aus den geladenen globalen Top 100 (UTC); keine separate Tages-/Wochenwertung.'):''}</p>
   ${valid==='local'?`<div class="legend-local-score"><span class="legend-local-icon" aria-hidden="true">忍</span><div><strong>Dein persönlicher Open-Run-Rekord</strong><p>Auf deinem Profil gespeicherter Bestwert</p></div><b>${num(localScore)} <small>Pkt.</small></b></div>`:`<div class="legend-podium" aria-label="Die ersten drei Einträge der aktuellen Auswahl">${podium}</div>${rows?`<ol class="legend-ranking-list">${rows}</ol>`:''}${!selection.length?'<p class="legend-empty-score">Hier sind noch keine passenden veröffentlichten Runs zu sehen. Der erste Platz wartet!</p>':''}`}
-  ${own?`<div class="legend-own-score">Dein veröffentlichter Gesamtplatz: <strong>#${num(own.rank)}</strong> · <strong>${num(own.score)} Punkte</strong></div>`:''}
+  ${own?`<div class="legend-own-score">${valid==='week'?'Dein Wochenplatz:':valid==='today'?'Dein Tagesplatz:':'Dein veröffentlichter Gesamtplatz:'} <strong>#${num(own.rank)}</strong> · <strong>${num(own.score)} Punkte</strong></div>`:''}
   <section class="legend-rank-publish"><h4>Dein Ergebnis. Deine Entscheidung.</h4><p>Veröffentlicht werden ausschließlich servergeprüfte Open Runs, die mit dem Verlust aller drei Herzen enden. Keine gekauften Kräfte oder Supers.</p>
     ${account?`<div class="legend-rank-actions"><button class="legend-button legend-button-subtle" data-action="refresh-leaderboard">Aktualisieren</button><button class="legend-button legend-button-primary" data-action="submit-score" ${canPublish&&!busy?'':'disabled'}>${published?'Bereits veröffentlicht ✓':'Geprüften Run veröffentlichen'}</button></div>`:`<button class="legend-button legend-button-primary" data-account-view="login">Zum Konto anmelden</button>`}
     <div class="legend-rank-actions"><button class="legend-button legend-button-subtle" data-action="highscores">Meine Rekorde ansehen →</button></div>

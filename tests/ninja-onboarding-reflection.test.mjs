@@ -3,6 +3,9 @@ import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {REFLECTION_CONTEXTS,reflectionQuest,renderReflectionQuest,readReflectionSeals,awardReflectionSeal,clearReflectionSeals} from '../notification-ninja/src/reflection-quest.js';
 import {tr,setLanguage} from '../notification-ninja/src/i18n.js';
+import {renderBazaar} from '../notification-ninja/src/bazaar-ui.js';
+import {SKILLS,WORLDS,BACKGROUNDS} from '../notification-ninja/src/progression.js';
+import {SKINS} from '../notification-ninja/src/skin-catalog.js';
 const read=file=>readFileSync('notification-ninja/'+file,'utf8');
 const storage=()=>{const m=new Map();return {getItem:id=>m.get(id)||null,setItem:(id,value)=>m.set(id,value),removeItem:id=>m.delete(id),raw:m};};
 
@@ -22,14 +25,24 @@ test('homepage is informational: all entry choices lead to the dojo gate and no 
  assert(!game.includes("if(route==='guest'){launchQuick"));
 });
 
-test('regular bazaar offers only matching play worlds and outfits, preserves legacy-owned cosmetics',()=>{
+test('bazaar offers worlds, outfits and every ability without the retired background archive',()=>{
  const main=read('src/main.js');
- assert(main.includes("shopTab=['worlds','skins'].includes(tab)?tab:'worlds'"));
- assert(main.includes("[['worlds','Spielorte'],['skins','Ninja-Designs']]"));
- assert(main.includes("const oldOwned=BACKGROUNDS.filter(background=>background.cost>0&&backgrounds.includes(background.id))"));
- assert(main.includes('shop-legacy-archive'));
- assert(main.includes('data-background-equip'));
- assert(!main.includes("[['worlds','Spielorte'],['backgrounds','Hintergründe']"));
+ assert(main.includes("function abilities(){shop('abilities');}"));
+ const profile={coins:1000,unlockedWorlds:['study'],unlockedSkins:['default','solar'],selectedSkin:'solar',unlockedSkills:['focus-root'],unlockedBackgrounds:BACKGROUNDS.map(item=>item.id)};
+ const before=structuredClone(profile),render=tab=>renderBazaar({profile,tab,worldAction:world=>`<button data-world-buy="${world.id}">Unlock</button>`,skillAction:skill=>`<button data-skill-buy="${skill.id}">Unlock</button>`});
+ for(const tab of ['worlds','skins','abilities']){
+  const html=render(tab);
+  for(const id of ['worlds','skins','abilities'])assert(html.includes(`data-shop-tab="${id}"`));
+  assert(!html.includes('shop-legacy-archive'));
+  assert(!html.includes('data-background-buy'));
+  assert(!html.includes('data-background-equip'));
+ }
+ for(const world of WORLDS)assert(render('worlds').includes(`data-world-buy="${world.id}"`));
+ for(const skin of SKINS)assert(render('skins').includes(`data-shop-skin="${skin.id}"`));
+ const abilities=render('abilities');
+ assert.equal((abilities.match(/data-shop-skill="/g)||[]).length,18);
+ for(const skill of SKILLS)assert(abilities.includes(`data-skill-buy="${skill.id}"`));
+ assert.deepEqual(profile,before,'Browsing preserves owned legacy cosmetics and every other profile field');
 });
 
 test('every reflective scenario has a meaningful contextual decision and an independent rationale',()=>{

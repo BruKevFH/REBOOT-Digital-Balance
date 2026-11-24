@@ -7,6 +7,17 @@ on:
     paths:
       - '.github/workflows/notification-ninja-live-smoke.yml'
       - 'scripts/verify_ninja_deployment.mjs'
+      - 'server/**'
+      - 'notification-ninja/src/game.js'
+      - 'notification-ninja/src/progression.js'
+      - 'notification-ninja/src/adventure.js'
+      - 'notification-ninja/src/journey.js'
+      - 'notification-ninja/src/player.js'
+      - 'notification-ninja/src/boss.js'
+      - 'notification-ninja/src/throwers.js'
+      - 'notification-ninja/src/daily-run.js'
+      - 'scripts/check_ninja_313.cjs'
+      - 'scripts/check_ninja_public_guest.cjs'
   workflow_dispatch:
 
 permissions:
@@ -19,16 +30,43 @@ concurrency:
 jobs:
   smoke:
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 18
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
       - name: Verify Render account API and Neon PostgreSQL (read-only)
-        run: npm run verify:ninja:deployment -- https://notification-ninja-accounts.onrender.com
+        env:
+          NINJA_EXPECTED_REVISION: ${{ github.sha }}
+        run: |
+          ninja_live_log="$RUNNER_TEMP/ninja-live-preflight.log"
+          for attempt in {1..18}; do
+            if npm run verify:ninja:deployment -- https://notification-ninja-accounts.onrender.com > "$ninja_live_log" 2>&1; then
+              cat "$ninja_live_log"
+              exit 0
+            fi
+            tail -8 "$ninja_live_log"
+            if [ "$attempt" -lt 18 ]; then sleep 20; fi
+          done
+          {
+            printf '### Production account deployment check failed\n\n```text\n'
+            tail -30 "$ninja_live_log"
+            printf '\n```\n'
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit 1
+      - run: npm ci --ignore-scripts
+      - run: npx playwright install --with-deps chromium
+      - name: Verify canonical homepage and game as a public guest
+        run: node scripts/check_ninja_public_guest.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ninja-public-guest-acceptance
+          path: test-results/ninja-public-guest
+          if-no-files-found: ignore
       - name: Explain scope of the test
         if: success()
         run: |
-          echo "Read-only checks passed: API v3, durable PostgreSQL flag, public leaderboard, account config, GitHub Pages CORS."
-          echo "Still required before public account enablement: real test accounts, verified progress, Render restart, persistent data, cleanup and privacy details."
+          echo "Read-only checks passed: expected source revision, API v3, durable PostgreSQL flag, public leaderboard, account config and GitHub Pages CORS."
+          echo "This does not replace account mutation or restart-persistence tests; it creates no production test data."

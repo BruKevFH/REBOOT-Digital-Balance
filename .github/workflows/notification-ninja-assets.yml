@@ -29,6 +29,10 @@ on:
       - 'notification-ninja/dressing-room.css'
       - 'notification-ninja/experience-comfort.css'
       - 'notification-ninja/experience-shell.css'
+      - 'notification-ninja/presentation-polish.css'
+      - 'notification-ninja/intro-experience.css'
+      - 'notification-ninja/playtime-experience.css'
+      - 'notification-ninja/theme-boot.js'
       - 'notification-ninja/assets/indie-*.png'
       - 'notification-ninja/assets/fonts/**'
       - 'notification-ninja/assets/ninja-mint-*-v9.svg'
@@ -38,6 +42,7 @@ on:
       - 'notification-ninja/sw.js'
       - 'scripts/build_ninja.mjs'
       - 'scripts/package_ninja.py'
+      - 'server/ninja-competition.mjs'
       - '.github/workflows/notification-ninja-assets.yml'
 
 permissions:

@@ -1,8 +1,12 @@
 # Notification Ninja
 
-**Aktueller Entwicklungsstand 3.12.0:** Eigene Landschaftskarten und mobile Missionsdetails, NIMs Fokuspfad mit zwölf Alltagssituationen, ein Symbollexikon aus den echten Spielregeln, animierte Vorschauen aller zwölf Looks, faktenbasiertes Rundenfeedback sowie lokale Einstellungen für Bedienhand und freiwillige Haptik. Spielwelten und Modi bleiben gemeinsam unter Spielen; vorhandene Spielstände und die fünf Hauptziele bleiben erhalten. [Ausführlicher Masterprompt](ULTIMATE_EXPERIENCE_MASTERPROMPT.md) · [Implementierung, Prüfstand und Grenzen](EXPERIENCE_RELEASE.md).
+**Entwicklungskandidat 3.13.0, noch nicht veröffentlicht:** Verfeinerte Welten und Gaming-Ansichten, der Basar mit eigenem Fähigkeiten-Reiter, 18 Fähigkeiten einschließlich sechs Supers, 36 Erfolge und zwölf Looks mit fünf kosmetischen Seltenheitsstufen. Eine eigene 20-sekündige animierte Geschichte aus Ninja-Perspektive führt ins Spiel; lokale aktive Spielzeit und freiwillige Pausenerinnerungen ergänzen die Einstellungen. Das neue serverseitige UTC-Wochenpodium vergibt 100/60/30 Münzen. [Umfang, Migration und ausstehende Freigaben](EXPANSION_3_13.md).
 
-Die folgende 3.1.0-Notiz dokumentiert die frühere Backend-Freischaltung. Ein erneuter direkter Produktionsnachweis ist in der aktuellen Cloud-Umgebung durch CONNECT 403 blockiert; lokale Tests und öffentliche Gasttests werden im aktuellen Releasebericht gesondert dokumentiert.
+**Veröffentlichte Ausgangsversion 3.12.0:** Eigene Landschaftskarten und mobile Missionsdetails, NIMs Fokuspfad mit zwölf Alltagssituationen, Symbollexikon, animierte Outfit-Vorschauen und Rundenfeedback bleiben erhalten. Spielwelten und Modi liegen unter Spielen. [Ausführlicher Masterprompt](ULTIMATE_EXPERIENCE_MASTERPROMPT.md) · [Bisheriger Releasebericht](EXPERIENCE_RELEASE.md).
+
+**Historische Spiel- und Seitenprüfung vom 17. November:** Die vollständige Hauptkarriere und die weiteren Modi wurden mit nativen Browser-Eingaben durchgespielt; die lokale Konto-/Wirtschaftsprüfung lief mit SQLite und PostgreSQL über echte Prozessneustarts. Der [damalige vollständige Prüfbericht](FULL_GAME_AUDIT.md) bleibt als Ausgangsnachweis erhalten. Die neue Abnahme der 3.13.0-Erweiterung steht gesondert aus.
+
+Die folgende 3.1.0-Notiz dokumentiert die frühere Backend-Freischaltung. Der Prüfbericht vom 17. November dokumentiert auch eine damalige CONNECT-403-Sperre beim direkten Produktionszugriff. Ein neuer Produktionsnachweis für 3.13.0 steht noch aus; lokale Ergebnisse und historische Online-Belege werden getrennt geführt.
 
 **Entwicklungsstand 3.1.0:** PostgreSQL neben lokalem SQLite, neues Kontoportal und Hub, Boss Rush und serverseitige UTC-Tages-Challenge. Die öffentliche Kontenanbindung über Render und Neon PostgreSQL wurde am 07.11.2026 nach erfolgreichem read-only Live-Preflight sowie vom Betreiber bestätigtem Neustart-/Persistenztest aktiviert. Siehe [historische Abnahme vor der Freischaltung](ULTIMATE_STATUS.md) und [Cloud-Einrichtung](../server/NINJA_ULTIMATE_CLOUD_SETUP.md).
 
@@ -20,9 +24,9 @@ npm run build:ninja
 npm run serve:ninja
 ```
 
-Im Browser **http://127.0.0.1:8083/notification-ninja/home.html** öffnen. Dieser eine Prozess liefert Frontend und API aus und erstellt automatisch `server/data/ninja.sqlite`. Es ist kein separater Datenbankprozess und kein externer Zugangsschlüssel nötig. Server beenden und erneut starten erhält Konten, Sitzungen, Wallet, Besitz, Missionen und veröffentlichte Ergebnisse, solange derselbe Datenordner besteht.
+Im Browser **http://127.0.0.1:8083/** öffnen. Dieser eine Prozess liefert Frontend und API aus und erstellt automatisch `server/data/ninja.sqlite`. Es ist kein separater Datenbankprozess und kein externer Zugangsschlüssel nötig. Server beenden und erneut starten erhält Konten, Sitzungen, Wallet, Besitz, Missionen und veröffentlichte Ergebnisse, solange derselbe Datenordner besteht.
 
-Alternativ nur den Gastmodus als statische Seite starten: `npm run serve`, dann `http://127.0.0.1:8000/notification-ninja/home.html`. Die statische Konfiguration aktiviert keine Online-Konten. Ein Browserdownload enthält das vollständige Gastspiel; ein reines GitHub-Pages-Hosting kann das Backend nicht ausführen.
+Alternativ die statische Seite starten: `npm run serve`, dann `http://127.0.0.1:8000/notification-ninja/home.html`. Dieser Prozess liefert selbst keine Konto-API; die Website-Konfiguration kann den öffentlichen Backend-Dienst ansprechen. Der Browserdownload enthält das vollständige Gastspiel mit ausdrücklich deaktivierter Kontenanbindung. Ein reines GitHub-Pages-Hosting kann das Backend nicht ausführen.
 
 ## Spielen und Fortschritt
 
@@ -31,7 +35,7 @@ Alternativ nur den Gastmodus als statische Seite starten: `npm run serve`, dann 
 - **NIM:** Erklärt das Wischen, Durchlassen, Fehler, Pause und neue Freischaltungen. Trainingshinweise zeigen die passende Aktion; normale Runden verraten sie nicht. Die Hilfe bietet außerdem ein **ungewertetes Tastentraining** ohne Wischpräzision und Zeitdruck.
 - **Kampagne:** 18 Hauptmissionen, sechs je Welt, mit verschiedenen Zielen, kurzen Einführungen, Voraussetzungen, Bestleistungen und ausdrücklichen Belohnungen. Kapitel öffnen neue Welten. Acht frühere Herausforderungen und drei Autoplay-Bosse bleiben als Zusatz erhalten. Bereits gekaufte Räume bleiben nutzbar.
 - **Open Run:** Ein Modus, drei Herzen, zwei werfende Ninjas, kein Countdown. Sanfter Einstieg, kontinuierlich steigendes Tempo. Gekaufte Fähigkeiten und Supers sind deaktiviert; Skins sind kosmetisch. Frühes Beenden bleibt ungewertet.
-- **Sammlung:** 24 Erfolge, neun Fähigkeiten im Wurzelbaum, Basar, sichtbare Outfits, fünf Ninja-Ränge und drei wechselnde Tages-/Wochenaufgaben. Kaufen, Abholen und Ausrüsten sind eigene Aktionen; Freischalten rüstet nichts ungefragt aus. „Ansehen“ entfernt die einzelne ungelesene Nachricht, lässt ihre Münzbelohnung aber abholbar.
+- **Sammlung:** 36 Erfolge, 18 Fähigkeiten einschließlich sechs Supers in drei aufeinander aufbauenden Ästen und zwölf Looks mit fünf kosmetischen Seltenheitsstufen. Fähigkeiten werden unter **Basar → Fähigkeiten** freigeschaltet. Fünf Ninja-Ränge und drei wechselnde Tages-/Wochenaufgaben bleiben erhalten. Kaufen, Abholen und Ausrüsten sind eigene Aktionen; der erste gekaufte Super wird als Standard gewählt, weitere Supers werden bewusst gewechselt. „Ansehen“ entfernt die einzelne ungelesene Nachricht, lässt ihre Münzbelohnung aber abholbar.
 - **Ergebnis:** Echte Punkte, richtige Entscheidungen und Fehler sowie eine kurze freiwillige Reflexion. Reflexionsantworten werden nicht an die API übertragen. Neustart und Pause machen sind beide erreichbar.
 
 Normale Runden: ein Ninja auf Entspannt, zwei auf Normal, drei auf Profi. Der ausgerüstete Ninja wirft sichtbar aus seiner Hand. Falscher Schnitt und durchgelassene Ablenkung kosten je ein Herz, sofern kein vorher aktivierter Schild den Fehler abfängt. Bewertung erfolgt pro Objekt einmal.
@@ -44,17 +48,19 @@ Maßgeblich sind die gemeinsamen Kataloge `progression.js`, `adventure.js` und `
 
 | Quelle / Kauf | Münzen | Art / Grenze |
 |---|---:|---|
-| Gute Entscheidungen | 1 je 14; mit Münzgespür je 12 | Wiederholbarer Grundverdienst vor Schwierigkeits-/Bonusfaktoren |
-| Münzobjekt / volle 25er-Schnittcombo | jeweils 1 | Innerhalb derselben Abschnittsgrenze |
+| Gute Entscheidungen in normalen Standardrunden | 1 je 14; mit Münzgespür je 12 | Wiederholbarer Grundverdienst vor Schwierigkeits-/Bonusfaktoren |
+| Kurze Alltagsrunde | 1 je richtiger Entscheidung | Eigener begrenzter Beutel mit höchstens 24 Münzen vor Abschlussboni |
+| Münzobjekt / volle 25er-Schnittcombo | jeweils 1; Münzobjekt mit Doppelter Fund 2 | Grundmünzen vor Faktoren, innerhalb derselben Abschnittsgrenze |
 | Abschnittsbeutel | 8 / 10 / 12 | Grenze Entspannt / Normal / Profi; Goldener Lauf erhöht sie um 25 %, abgerundet |
 | Qualifizierter Abschluss | 2; bewusster Stopp zusätzlich 1 | Ab mindestens 12 richtigen Entscheidungen; kein Bonus für Herzverlust/sofortigen Abbruch |
 | Hauptmission | 3 / 4 / 6 | Einmalige ausdrücklich abzuholende Erstabschlussbelohnung je Mission; Wiederholung behält begrenzte Rundenmünzen |
-| Erfolg | 3–20 | 24 verschiedene einmalige Belohnungen, ausdrücklich abholen |
+| Erfolg | 3–20 | 36 verschiedene einmalige Belohnungen, ausdrücklich abholen |
 | Tages-/Wochenaufgaben | 2/3/4 täglich; 4/5/6 wöchentlich | Je Periodenaufgabe einmal; kein Anwesenheitsbonus |
-| Fähigkeit pro Aststufe | 35 / 90 / 180 | Jeweils Vorgänger nötig, einmaliger Besitz |
+| Fähigkeit pro Aststufe | 35 / 90 / 180 / 240 / 360 / 480 | Sechs Stufen je Ast, jeweils Vorgänger nötig, einmaliger Besitz |
 | Kaufbare Skins | 80 / 180 / 320 | Kosmetik; Rang-/Wochenlooks werden erspielt |
+| Wochenpodium | 100 / 60 / 30 | Drei unterschiedliche reguläre Konten, geprüfte und ausdrücklich veröffentlichte Open Runs; nach UTC-Wochenende einmal abholen |
 | Früher Raumzugang | 80 / 180 / 320 | Gaming / Schlafen / Master; Gaming und Schlafen alternativ durch Kapitelabschluss kostenlos |
-| Zusätzliche Kulissen | 160 / 220 / 280 | Passender Raum nötig, Kauf und Auswahl getrennt |
+| Historische Kulissenkäufe | 160 / 220 / 280 | Besitz und bestehende Auswahl bleiben erhalten; kein Archiv-Reiter im Basar |
 
 Runmünzen werden erst am Ende einmalig gesichert; bei Accounts erst nach erfolgreicher Serverprüfung. Erstabschluss- und Erfolgsbelohnungen werden getrennt abgeholt. Servertransaktionen und Idempotenz verhindern doppelte Auszahlung, auch bei parallelen Tabs.
 
@@ -64,9 +70,15 @@ Creme, Mint, Koralle, Gold und Lavendel, dunkle Konturen und drei eigens illustr
 
 Musik und Effekte sind separat regelbar, zusätzlich gibt es Stummschaltung, ruhige Effekte und eine unabhängige Einstellung für Bildschirmwackeln. Gewählte Standardwerte: Musik 40 %, Effekte 50 %, Ton aktiv, Wackeln aktiv; die Betriebssystemeinstellung für reduzierte Bewegung wird berücksichtigt. Ton startet erst nach der Browserfreigabe durch eine Nutzeraktion.
 
+Das Intro ist eine eigene Canvas-/SVG-Animation aus Ninja-Perspektive mit vier Szenen und insgesamt 20 Sekunden regulärer Laufzeit, keine MP4-Datei. Es lässt sich überspringen, pausieren und erneut ansehen; bei reduzierter Bewegung werden die Szenen mit „Weiter“ aufgerufen. Eine optionale Browser-Erzählstimme hängt von der Geräteunterstützung ab. Das anschließende Training bleibt getrennt.
+
+**Deine Zeit im Dojo** zählt seit Aktivierung nur aktive Runden auf diesem Gerät, getrennt je Gast-/Kontoprofil. Menüs, Pausen und verborgene Tabs zählen nicht. Gesamt-, Tages- und Sitzungszeit sind sichtbar. Pausenerinnerungen sind standardmäßig aktiv nach 15 Minuten aktiver Sitzungszeit; 10, 20 und 30 Minuten oder Abschalten sind wählbar. Die Erinnerung bietet Pause oder späteres Erinnern. Der Zähler verändert keine Belohnungen und wird nicht mit dem Konto synchronisiert.
+
 ## Daten, Migration und Sicherheit
 
 Gastspielstände bleiben unter `notification-ninja:save:v1` im localStorage. Neue Kapitel werden versioniert ergänzt; alte Missions-IDs, gekaufte Inhalte und bereits abgeholte Belohnungen bleiben erhalten. Geräteeinstellungen besitzen einen eigenen normalisierten Schlüssel. Beschädigte Daten fallen auf validierte Vorgaben zurück; blockierter Speicher wird nicht als erfolgreiche dauerhafte Speicherung ausgegeben.
+
+Die für 3.13.0 vorgesehene Hauptadresse ist **https://notification-ninja-accounts.onrender.com/** auf dem bestehenden Konto-Dienst. Das Deployment und die öffentliche Abnahme dieses Kandidaten stehen aus. Der bisherige GitHub-Pages-Ursprung und die neue Adresse haben getrennte Browserspeicher. „Gastspielstand mitnehmen“ startet deshalb eine ausdrückliche Übernahme im neuen Fenster mit erneuter Bestätigung; das Original bleibt erhalten. Nur das validierte Gastprofil wird übertragen, keine Kontositzung, laufende Runde oder gerätebezogene Spielzeit. Kontofortschritt bleibt serverseitig und ist nach erneutem Anmelden verfügbar. [Ablauf und technische Grenzen](EXPANSION_3_13.md#adresse-und-gastprofil-übernahme).
 
 Konten verwenden PostgreSQL über `DATABASE_URL` oder lokal weiterhin eine separate SQLite-Datei. Beide Adapter bieten Transaktionen, Fremdschlüssel, Constraints und Migrationen. Passwort-Hashes: scrypt mit zufälligem Salt, N=32768, r=8, p=1. Sitzungstokens und Wiederherstellungscodes haben 256 Bit Zufall; auf dem Server liegen nur ihre Hashes. Neue v3-Accounttokens werden im Browser nur in **sessionStorage** gehalten, niemals Passwörter gespeichert. Die historische v2-Gerätekennung kann unter `notification-ninja:leaderboard:v1` im localStorage erhalten bleiben, damit frühere eigene Demo-Einträge noch gelöscht werden können; sie ist kein v3-Kontotoken. Abmelden widerruft die Sitzung und kehrt zur Homepage zurück; bestätigte Kontolöschung verlangt das Passwort und entfernt verknüpfte Daten. Der Gastspielstand wird dabei nicht zum letzten Konto umgeschrieben.
 
@@ -80,7 +92,9 @@ Die **neue API v3** startet einen konto- und seedgebundenen Lauf und simuliert d
 
 Replay-Prüfung erschwert einfache Scorefälschung, ist aber kein Schutz gegen jedes automatisierte Spiel. Das Prüfprotokoll ist technisch auf 40.000 Befehle und 2 MiB begrenzt; ein darüber hinausgehender Run bleibt spielbar, wird aber als ungewertete Übung geführt. Eine Rangliste ohne Einträge bleibt leer. Gast-/Übungsruns und kontrollierte Abbrüche werden nicht als geprüft veröffentlicht.
 
-**Öffentliche v3-Konten sind konfiguriert:** GitHub Pages verwendet `https://notification-ninja-accounts.onrender.com/api/v3`; die API meldete im GitHub-Actions-Live-Preflight am 07.11.2026 PostgreSQL und dauerhafte Speicherung. Der Betreiber bestätigte einen erfolgreichen Neustart-/Persistenztest. Die frühere Render-v2-Demorangliste bleibt ein **separater, historischer Dienst**; deren Daten wurden nicht automatisch zu v3 migriert. Keine Zugangsdaten befinden sich in `accounts-config.json`. Vor öffentlicher Nutzung Datenschutz- und Betreiberinformationen prüfen. [Cloud-Betrieb und Tests](../server/NINJA_ULTIMATE_CLOUD_SETUP.md).
+Das neue Wochenpodium läuft Montag 00:00 UTC bis Montag 00:00 UTC. Ein Ergebnis muss in derselben Woche beendet und veröffentlicht werden; pro Konto zählt die beste Leistung. Nach dem Wochenwechsel wird das Ergebnis serverseitig eingefroren. Die drei unterschiedlichen Siegerkonten können 100, 60 beziehungsweise 30 Münzen ausdrücklich und genau einmal abholen. Admin-Testkonten sind serverseitig von Ranglisten und Wettbewerbsprämien ausgeschlossen. Einrichtung und Betriebsdetails stehen in [Admin-Testkonto und Wochenpodium](../server/NINJA_ADMIN_AND_PODIUM.md); private Zugangsdaten bleiben außerhalb des Repositorys. Die Einrichtung im öffentlichen Dienst ist noch ausstehend.
+
+**Öffentliche v3-Konten sind seit der früheren Freischaltung konfiguriert:** GitHub Pages verwendet `https://notification-ninja-accounts.onrender.com/api/v3`; die API meldete im GitHub-Actions-Live-Preflight am 07.11.2026 PostgreSQL und dauerhafte Speicherung. Der Betreiber bestätigte damals einen Neustart-/Persistenztest. Diese historischen Belege bestätigen kein Deployment von 3.13.0. Die neue Hauptadresse soll denselben Dienst und dieselbe Datenbank verwenden. Die frühere Render-v2-Demorangliste bleibt ein **separater, historischer Dienst**; deren Daten wurden nicht automatisch zu v3 migriert. Keine Zugangsdaten befinden sich in `accounts-config.json`. [Cloud-Betrieb und Tests](../server/NINJA_ULTIMATE_CLOUD_SETUP.md).
 
 ## Konfiguration
 
@@ -132,9 +146,9 @@ Bei einem Gastprofil mit historischem v2-Ranglisteneintrag wird zuerst dessen On
 Die öffentliche Homepage beschreibt 18 Hauptmissionen plus acht Zusatzherausforderungen; vorhandene Spielstände und Missions-IDs bleiben unverändert. Nach Änderungen an `src/` müssen `npm run build:ninja` und `npm run package:ninja` ausgeführt und die erzeugten Release-Dateien vor einer Pages-Veröffentlichung mit eingecheckt werden.
 
 
-### Version 3.1.0 – Release-Ablauf
+### Historisch: Version 3.1.0 – Release-Ablauf
 
-Build- und Service-Worker-Version sind **3.1.0**, damit vorhandene Offline-Installationen die aktualisierten Dateien beim nächsten regulären Update laden. In `notification-ninja/index.html` führen beide Downloadlinks zur ZIP-Datei `downloads/Notification-Ninja-3.1.0.zip`. Das Paket wird reproduzierbar durch `npm run package:ninja` erzeugt; ein ZIP ist keine Quelle für serverseitige Konten. Der alte Download 3.0.0 bleibt als historisches Archiv erhalten.
+Für die frühere Veröffentlichung wurden Build- und Service-Worker-Version auf **3.1.0** gesetzt und die Downloadlinks auf `downloads/Notification-Ninja-3.1.0.zip` umgestellt. Das beschreibt den damaligen Ablauf. Versionsstand, Paket und Freigaben des neuen Kandidaten werden im [3.13.0-Bericht](EXPANSION_3_13.md) nach tatsächlicher Prüfung festgehalten. Ein ZIP enthält keine serverseitigen Konten.
 
 ```bash
 npm ci

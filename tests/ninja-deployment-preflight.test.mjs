@@ -13,6 +13,7 @@ function backend({
   accountEnabled = true,
   preflight = 204,
   apiVersion = 3,
+  sourceRevision,
 } = {}) {
   const calls = [];
   const fetchImpl = async (url, options = {}) => {
@@ -25,7 +26,8 @@ function backend({
     let status = 200;
     if (path === '/api/v3/health') {
       body = {ok: true, service: 'notification-ninja', apiVersion,
-        durableStorage: persistent, storage, ruleset: 'open-v2'};
+        durableStorage: persistent, storage, ruleset: 'open-v2',
+        ...(sourceRevision !== undefined ? {sourceRevision} : {})};
     } else if (path === '/notification-ninja/accounts-config.json') {
       body = {enabled: accountEnabled, apiVersion: 3,
         durableStorage: persistent, endpoint: ORIGIN + '/api/v3'};
@@ -112,4 +114,36 @@ test('wrong pages origin and unreasonable timeouts are rejected', async () => {
   await assert.rejects(verifyNinjaDeployment(ORIGIN, {
     fetchImpl: backend().fetchImpl, timeoutMs: 0,
   }), /Timeout must be/);
+});
+
+test('an expected revision rejects an old or different backend before any further requests', async () => {
+  const expectedRevision = 'abcdef0123456789abcdef0123456789abcdef01';
+  for (const sourceRevision of [undefined, '1'.repeat(40), 'not-a-commit', null]) {
+    const fake = backend({sourceRevision});
+    await assert.rejects(verifyNinjaDeployment(ORIGIN, {
+      fetchImpl: fake.fetchImpl, expectedRevision,
+    }), /expected source revision/);
+    assert.deepEqual(fake.calls.map(call => call.path), ['/api/v3/health']);
+  }
+});
+
+test('a matching full source revision permits the read-only deployment proof', async () => {
+  const revision = 'abcdef0123456789abcdef0123456789abcdef01';
+  const fake = backend({sourceRevision: revision});
+  const result = await verifyNinjaDeployment(ORIGIN, {
+    fetchImpl: fake.fetchImpl, expectedRevision: revision.toUpperCase(),
+  });
+  assert.equal(result.sourceRevision, revision);
+  assert.equal(result.checks.length, 5);
+  assert.deepEqual(fake.calls.map(call => call.method), ['GET', 'GET', 'GET', 'OPTIONS']);
+});
+
+test('malformed expected revisions are rejected before contacting any service', async () => {
+  const fake = backend();
+  for (const expectedRevision of [null, 40, '', 'abcdef0', 'a'.repeat(41), 'private-value-not-a-git-commit', 'a'.repeat(40)+'\n']) {
+    await assert.rejects(verifyNinjaDeployment(ORIGIN, {
+      fetchImpl: fake.fetchImpl, expectedRevision,
+    }), /full 40-character Git commit/);
+  }
+  assert.equal(fake.calls.length, 0);
 });

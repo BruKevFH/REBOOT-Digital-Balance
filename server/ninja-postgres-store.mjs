@@ -1,6 +1,7 @@
 import {Pool,types} from 'pg';
 import {AsyncLocalStorage} from 'node:async_hooks';
 import {execute} from './ninja-operations.mjs';
+import {competitionSchema,utcWeekStart} from './ninja-competition.mjs';
 
 const MAX=Number.MAX_SAFE_INTEGER;
 const failure=(status,code,message)=>Object.assign(new Error(message),{status,code});
@@ -86,6 +87,7 @@ CREATE TABLE IF NOT EXISTS ninja_verified_scores(
  decisions BIGINT NOT NULL CHECK(decisions>0 AND decisions<=9007199254740991),submitted_at BIGINT NOT NULL
 );
 CREATE INDEX IF NOT EXISTS ninja_verified_score_order ON ninja_verified_scores(ruleset,score DESC,duration DESC,submitted_at);
+CREATE INDEX IF NOT EXISTS ninja_verified_score_time ON ninja_verified_scores(submitted_at);
 `;
 
 /** Async durable store; same business operations as SQLite, with isolated transactions. */
@@ -128,6 +130,9 @@ export async function createPostgresNinjaStore({databaseURL,now=()=>Date.now(),p
       const versions=(await client.query('SELECT version FROM ninja_auth_migrations')).rows.map(row=>row.version);
       if(versions.some(version=>version>3))throw new Error('Database schema is newer than this service.');
       await client.query(migration);
+      await client.query(competitionSchema('postgres'));
+      await client.query('INSERT INTO ninja_feature_migrations(version,applied_at) VALUES(1,$1) ON CONFLICT DO NOTHING',[timestamp()]);
+      await client.query('INSERT INTO ninja_competition_settings(name,value) VALUES($1,$2) ON CONFLICT DO NOTHING',['podium_start_week',String(utcWeekStart(timestamp()))]);
       if(!versions.includes(2))await client.query(`
         ALTER TABLE users ADD COLUMN IF NOT EXISTS email TEXT;
         ALTER TABLE users ADD COLUMN IF NOT EXISTS privacy_at BIGINT;
@@ -146,18 +151,20 @@ export async function createPostgresNinjaStore({databaseURL,now=()=>Date.now(),p
     }catch(error){await client.query('ROLLBACK');throw error;}finally{client.release();}
   }catch(error){if(!providedPool)await pool.end();throw error;}
   async function getUser(userId){
-    const user=await db.prepare('SELECT id,username,created_at FROM users WHERE id=?').get(userId);
+    const user=await db.prepare('SELECT u.id,u.username,u.created_at,EXISTS(SELECT 1 FROM ninja_admin_accounts a WHERE a.user_id=u.id) AS is_admin FROM users u WHERE u.id=?').get(userId);
     if(!user)throw failure(404,'ACCOUNT_NOT_FOUND','Dieses Konto ist nicht verfügbar.');
-    return {id:user.id,username:user.username,createdAt:user.created_at};
+    return {id:user.id,username:user.username,createdAt:user.created_at,role:user.is_admin?'admin':'player'};
   }
   async function lockUser(userId){if(context.getStore())await query('SELECT id FROM users WHERE id=$1 FOR UPDATE',[userId]);}
   async function getProfile(userId){
     await lockUser(userId);
-    const row=(await query(`SELECT u.username,u.created_at,p.data,p.revision,p.run_sequence,w.balance
+    const row=(await query(`SELECT u.username,u.created_at,p.data,p.revision,p.run_sequence,w.balance,EXISTS(SELECT 1 FROM ninja_admin_accounts a WHERE a.user_id=u.id) AS is_admin
       FROM profiles p JOIN users u ON u.id=p.user_id JOIN wallets w ON w.user_id=p.user_id WHERE p.user_id=$1${context.getStore()?' FOR UPDATE OF p,w':''}`,[userId])).rows[0];
     if(!row)throw failure(404,'ACCOUNT_NOT_FOUND','Dieses Konto ist nicht verfügbar.');
     let profile;try{profile=JSON.parse(row.data);if(!object(profile))throw Error();}catch{throw failure(500,'PROFILE_UNREADABLE','Dein gespeichertes Profil kann gerade nicht geladen werden.');}
     profile.coins=row.balance;profile.player={...(object(profile.player)?profile.player:{}),username:row.username,createdAt:row.created_at};delete profile.player.guest;
+    delete profile.role;delete profile.account;delete profile.unlimitedCoins;delete profile.podium;
+    if(row.is_admin)profile.adminSandbox=true;else delete profile.adminSandbox;
     return {profile,revision:row.revision,runSequence:row.run_sequence};
   }
   async function putProfile(userId,value){
@@ -165,6 +172,8 @@ export async function createPostgresNinjaStore({databaseURL,now=()=>Date.now(),p
     if(!object(value))throw new TypeError('A profile must be an object.');
     const previous=await getProfile(userId),profile=structuredClone(value);
     profile.coins=previous.profile.coins;profile.player={...(object(profile.player)?profile.player:{}),username:previous.profile.player.username,createdAt:previous.profile.player.createdAt};delete profile.player.guest;
+    delete profile.role;delete profile.account;delete profile.unlimitedCoins;delete profile.podium;
+    if(previous.profile.adminSandbox)profile.adminSandbox=true;else delete profile.adminSandbox;
     const json=JSON.stringify(profile);if(Buffer.byteLength(json)>524288)throw failure(413,'PROFILE_TOO_LARGE','Das Profil ist zu groß.');
     if(previous.revision>=MAX)throw failure(503,'PROFILE_REVISION_LIMIT','Dein Profil kann gerade nicht gespeichert werden.');
     const result=await db.prepare('UPDATE profiles SET data=?,revision=revision+1 WHERE user_id=? AND revision=?').run(json,userId,previous.revision);

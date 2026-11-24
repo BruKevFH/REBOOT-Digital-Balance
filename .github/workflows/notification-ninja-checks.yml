@@ -12,6 +12,10 @@ on:
       - 'scripts/check_ninja_live.mjs'
       - 'scripts/check_ninja_indie.cjs'
       - 'scripts/check_ninja_experience.cjs'
+      - 'scripts/check_ninja_crossflows.cjs'
+      - 'scripts/check_ninja_all_pages.cjs'
+      - 'scripts/check_ninja_account_audit.mjs'
+      - 'scripts/check_ninja_313.cjs'
       - 'render.yaml'
       - 'package.json'
       - 'package-lock.json'
@@ -30,6 +34,10 @@ on:
       - 'scripts/check_ninja_live.mjs'
       - 'scripts/check_ninja_indie.cjs'
       - 'scripts/check_ninja_experience.cjs'
+      - 'scripts/check_ninja_crossflows.cjs'
+      - 'scripts/check_ninja_all_pages.cjs'
+      - 'scripts/check_ninja_account_audit.mjs'
+      - 'scripts/check_ninja_313.cjs'
       - 'render.yaml'
       - 'package.json'
       - 'package-lock.json'
@@ -64,6 +72,8 @@ jobs:
       - run: npm ci --ignore-scripts
       - run: npm run build:ninja
       - run: npm run test:ninja
+      - name: Isolated account economy and process-restart audit
+        run: node scripts/check_ninja_account_audit.mjs
       - run: npx playwright install --with-deps chromium
       - name: Browser account portal and guest gameplay
         env:
@@ -79,7 +89,7 @@ jobs:
             sleep 1
           done
           curl -fsS http://127.0.0.1:8083/api/v3/health
-          for ninja_check in check_ninja_portal check_ninja_indie check_ninja_browser check_ninja_experience; do
+          for ninja_check in check_ninja_portal check_ninja_indie check_ninja_browser check_ninja_experience check_ninja_crossflows check_ninja_all_pages check_ninja_313; do
             ninja_log="$RUNNER_TEMP/${ninja_check}.log"
             if node "scripts/${ninja_check}.cjs" > "$ninja_log" 2>&1; then
               cat "$ninja_log"

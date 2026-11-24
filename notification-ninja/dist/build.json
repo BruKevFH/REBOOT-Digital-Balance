@@ -1,6 +1,6 @@
 {
   "name": "Notification Ninja",
-  "version": "3.12.0",
+  "version": "3.13.0",
   "engine": "Canvas 2D / Web Audio",
   "style": "Sakura indie dojo",
   "sharedPlayMenu": true,
@@ -33,14 +33,15 @@
   "offline": true,
   "levels": 4,
   "difficulties": 3,
-  "skills": 9,
-  "achievements": 24,
+  "skills": 18,
+  "supers": 6,
+  "achievements": 36,
   "worlds": 4,
   "backgrounds": 6,
   "localProfile": true,
   "ninjaGuide": true,
   "unlockInbox": 50,
-  "skillTree": "radial-roots",
+  "skillTree": "bazaar-abilities",
   "openRun": true,
   "animatedPlayer": true,
   "publicLanding": true,
@@ -55,12 +56,21 @@
   "largeHearts": true,
   "ninjaRanks": 5,
   "skins": 12,
+  "skinRarities": 5,
+  "rarityTiers": [
+    "common",
+    "uncommon",
+    "rare",
+    "epic",
+    "legendary"
+  ],
   "dailyChallenges": 3,
   "careerMissions": 26,
   "mainMissions": 18,
   "accountAPI": 3,
   "accountSync": true,
   "publicAccountsConfigured": true,
+  "canonicalOrigin": "https://notification-ninja-accounts.onrender.com",
   "backendRequiresPersistentDatabase": true,
   "databaseAdapters": [
     "postgresql",
@@ -84,6 +94,31 @@
   ],
   "dynamicWorld": true,
   "menuMusic": true,
+  "intro": "original-canvas-cinematic",
+  "introDurationSeconds": 20,
+  "devicePlaytime": true,
+  "playtimeReminders": {
+    "deviceOnly": true,
+    "enabledByDefault": true,
+    "defaultMinutes": 15,
+    "intervalsMinutes": [
+      10,
+      15,
+      20,
+      30
+    ]
+  },
+  "weeklyPodium": {
+    "calendar": "UTC",
+    "rewards": [
+      100,
+      60,
+      30
+    ],
+    "claims": "once-per-player-per-week",
+    "adminExcluded": true
+  },
+  "adminTestAccounts": "server-only",
   "openRuleset": "open-v2",
   "openHearts": 3,
   "leaderboard": "server-replay-explicit-publication"

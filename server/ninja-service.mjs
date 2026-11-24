@@ -1,3 +1,4 @@
+import {bootstrapNinjaAdminFromEnv} from './ninja-admin-bootstrap.mjs';
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -43,8 +44,9 @@ function readJSON(req,limit){
 }
 
 /** One local application: static client, password accounts and replay-validated runs. */
-export function createNinjaServer({databasePath=':memory:',store:providedStore,allowedOrigins=[],now=()=>Date.now(),requireHTTPS=false,trustProxy=false,durableStorage=databasePath!==':memory:',webRoot=WEB_ROOT,rateLimits={},maxRateBuckets=10000,logError=()=>{},mfaKey=process.env.NINJA_MFA_KEY}={}){
+export function createNinjaServer({databasePath=':memory:',store:providedStore,allowedOrigins=[],now=()=>Date.now(),requireHTTPS=false,trustProxy=false,durableStorage=databasePath!==':memory:',webRoot=WEB_ROOT,rateLimits={},maxRateBuckets=10000,logError=()=>{},mfaKey=process.env.NINJA_MFA_KEY,sourceRevision=process.env.RENDER_GIT_COMMIT}={}){
   const origins=validateNinjaOrigins(allowedOrigins);
+  const revision=typeof sourceRevision==='string'&&sourceRevision.length===40&&/^[a-f\d]{40}$/i.test(sourceRevision)?sourceRevision.toLowerCase():null;
   if(requireHTTPS&&!trustProxy)throw new TypeError('REQUIRE_HTTPS requires a controlled TLS proxy and TRUST_PROXY=1.');
   if(requireHTTPS&&providedStore?.dialect!=='postgres'&&(!durableStorage||databasePath===':memory:'||path.resolve(databasePath).startsWith('/tmp/')))throw new TypeError('Production accounts require durable DATA_DIR outside /tmp.');
   const defaults={auth:{limit:30,window:15*60*1000},reset:{limit:10,window:15*60*1000},api:{limit:240,window:60*1000},finish:{limit:12,window:60*1000}},limits={};
@@ -111,7 +113,7 @@ export function createNinjaServer({databasePath=':memory:',store:providedStore,a
       if(url.pathname===PREFIX+'/health'){
         if(req.method!=='GET')throw fail(405,'METHOD_NOT_ALLOWED','Diese Methode ist nicht erlaubt.');
         if(store.dialect==='postgres')await store.db.prepare('SELECT 1 AS ready').get();
-        return send(res,200,{ok:true,service:'notification-ninja',apiVersion:3,ruleset:'open-v2',durableStorage:persistent,...(store.dialect==='postgres'?{storage:'postgresql'}:{})});
+        return send(res,200,{ok:true,service:'notification-ninja',apiVersion:3,ruleset:'open-v2',durableStorage:persistent,...(store.dialect==='postgres'?{storage:'postgresql'}:{}),...(revision?{sourceRevision:revision}:{})});
       }
       if(url.pathname.startsWith(PREFIX+'/')){
         rate(req,'api');
@@ -153,13 +155,15 @@ export function createNinjaServer({databasePath=':memory:',store:providedStore,a
         throw fail(404,'NOT_FOUND','Dieser API-Endpunkt wurde nicht gefunden.');
       }
       if(!['GET','HEAD'].includes(req.method))throw fail(405,'METHOD_NOT_ALLOWED','Diese Methode ist nicht erlaubt.');
-      if(url.pathname==='/'||url.pathname==='/notification-ninja'){res.writeHead(302,{Location:'/notification-ninja/home.html','Cache-Control':'no-store'});return res.end();}
-      if(!url.pathname.startsWith('/notification-ninja/'))throw fail(404,'NOT_FOUND','Diese Seite wurde nicht gefunden.');
-      if(url.pathname==='/notification-ninja/accounts-config.json')return send(res,200,{enabled:true,endpoint:ownOrigin+PREFIX,apiVersion:3,durableStorage:persistent});
-      let relative;try{relative=decodeURIComponent(url.pathname.slice('/notification-ninja/'.length));}catch{throw fail(400,'INVALID_PATH','Ungültiger Pfad.');}
+      if(url.pathname==='/notification-ninja'){res.writeHead(302,{Location:'/notification-ninja/home.html','Cache-Control':'no-store'});return res.end();}
+      if(url.pathname==='/play'||url.pathname==='/play/'){res.writeHead(302,{Location:'/index.html#overview','Cache-Control':'no-store'});return res.end();}
+      const legacy=url.pathname.startsWith('/notification-ninja/');
+      if(url.pathname==='/accounts-config.json'||url.pathname==='/notification-ninja/accounts-config.json')return send(res,200,{enabled:true,endpoint:ownOrigin+PREFIX,apiVersion:3,durableStorage:persistent});
+      let relative;try{relative=decodeURIComponent(url.pathname.slice(legacy?'/notification-ninja/'.length:1));}catch{throw fail(400,'INVALID_PATH','Ungültiger Pfad.');}
+      if(url.pathname==='/')relative='home.html';
       if(!relative)relative='index.html';
       const filename=path.resolve(root,relative);
-      if(filename!==root&&!filename.startsWith(root+path.sep)||relative.includes('\0')||relative.split('/').some(part=>part.startsWith('.'))||relative.startsWith('src/'))throw fail(404,'NOT_FOUND','Diese Datei wurde nicht gefunden.');
+      if(filename!==root&&!filename.startsWith(root+path.sep)||relative.includes('\0')||relative.includes('\\')||relative.split('/').some(part=>part.startsWith('.'))||relative.startsWith('src/'))throw fail(404,'NOT_FOUND','Diese Datei wurde nicht gefunden.');
       let stat;try{stat=await fs.promises.stat(filename);const real=await fs.promises.realpath(filename);if(!real.startsWith(root+path.sep)||!stat.isFile())throw Error();}catch{throw fail(404,'NOT_FOUND','Diese Datei wurde nicht gefunden.');}
       res.writeHead(200,{'Content-Type':MIME[path.extname(filename)]||'application/octet-stream','Content-Length':stat.size,'Cache-Control':['.html','.json','.js'].includes(path.extname(filename))?'no-cache':'public, max-age=3600'});
       if(req.method==='HEAD')return res.end();
@@ -197,6 +201,10 @@ if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.ur
   const dataDir=path.resolve(process.env.DATA_DIR||path.join(HERE,'data'));
   const factory=process.env.DATABASE_URL?createPostgresNinjaServer:createNinjaServer;
   const server=await factory({databaseURL:process.env.DATABASE_URL,databasePath:path.join(dataDir,'ninja.sqlite'),allowedOrigins:configuredOrigins,requireHTTPS:production||process.env.REQUIRE_HTTPS==='1',trustProxy:process.env.TRUST_PROXY==='1',durableStorage:production?durable:true,logError:event=>process.stderr.write(JSON.stringify(event)+'\n')});
-  server.listen(port,host,()=>process.stdout.write(`Notification Ninja: http://${host}:${port}/notification-ninja/home.html\n`));
+  try{
+    const admin=await bootstrapNinjaAdminFromEnv({store:server.ninja.store,auth:server.ninja.auth,game:server.ninja.game});
+    if(admin.enabled)process.stdout.write(JSON.stringify({event:'admin_bootstrap',created:admin.created,username:admin.user?.username})+'\n');
+  }catch(error){await server.ninja.store.close();throw error;}
+  server.listen(port,host,()=>process.stdout.write(`Notification Ninja: http://${host}:${port}/\n`));
   for(const signal of ['SIGTERM','SIGINT'])process.on(signal,()=>server.close(async()=>{await server.ninja.storageClosed;process.exit(0);}));
 }

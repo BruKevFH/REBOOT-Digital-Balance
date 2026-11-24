@@ -62,7 +62,7 @@ export function createAccounts({fetchImpl=globalThis.fetch,sessionStorage,config
     start:input=>api('/runs/start',{method:'POST',body:input}),
     async finish(id,commands){const origin=identity();return applyState(await api(`/runs/${encodeURIComponent(id)}/finish`,{method:'POST',body:{commands}}),origin);},
     publish:id=>api(`/runs/${encodeURIComponent(id)}/publish`,{method:'POST',body:{}}),
-    async leaderboard({limit=25}={}){await init();if(!config)throw new AccountError(status.message,{code:'NOT_CONFIGURED',retryable:true});return request(config.endpoint+`/leaderboard?ruleset=open-v2&limit=${Math.max(1,Math.min(100,limit))}`,{authenticated:true});},
+    async leaderboard({limit=25,period='all'}={}){await init();if(!config)throw new AccountError(status.message,{code:'NOT_CONFIGURED',retryable:true});return request(config.endpoint+`/leaderboard?ruleset=open-v2&limit=${Math.max(1,Math.min(100,limit))}&period=${['all','today','week'].includes(period)?period:'all'}`,{authenticated:true});},
     forget,storage:sessionStorage
   };
 }

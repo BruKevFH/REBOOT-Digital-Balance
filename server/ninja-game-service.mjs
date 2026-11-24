@@ -1,4 +1,6 @@
 import {operation} from './ninja-operations.mjs';
+import {PODIUM_REWARDS,ADMIN_TEST_BUDGET,WEEK_MS,utcWeekStart,weekId,accountAccess} from './ninja-competition.mjs';
+import {unlockAchievements} from '../notification-ninja/src/progression.js';
 import {createHash,randomBytes,randomUUID} from 'node:crypto';
 import {NinjaGame,OPEN_RULESET} from '../notification-ninja/src/game.js';
 import {getPlayerProgress} from '../notification-ninja/src/player.js';
@@ -45,7 +47,7 @@ function profileModel(profile,stamp){
   const game=new NinjaGame({storage:memory(),now:()=>stamp});
   game.profile=clone(profile);
   game.profile.accountCalendar='utc';
-  normalizeJourney(game.profile,stamp);normalizeAdventure(game.profile,stamp);applyRankUnlocks(game.profile,stamp);
+  normalizeJourney(game.profile,stamp);normalizeAdventure(game.profile,stamp);applyRankUnlocks(game.profile,stamp);unlockAchievements(game.profile);
   game.profile.settings={...defaultSettings(),...(object(profile.settings)?settingsPatch(profile.settings):{})};
   return game;
 }
@@ -104,12 +106,60 @@ export function createNinjaGameService(store,{now=()=>Date.now(),maxCommands=GAM
         duration REAL NOT NULL CHECK(duration>0),decisions INTEGER NOT NULL CHECK(decisions>0),submitted_at INTEGER NOT NULL
       );
       CREATE INDEX IF NOT EXISTS ninja_verified_score_order ON ninja_verified_scores(ruleset,score DESC,duration DESC,submitted_at);
+      CREATE INDEX IF NOT EXISTS ninja_verified_score_time ON ninja_verified_scores(submitted_at);
     `);
     db.prepare('INSERT OR IGNORE INTO ninja_game_migrations(version,applied_at) VALUES(?,?)').run(1,clock());
   });
-  function* getState(userId){
-    const state=(yield store.getProfile(userId)),game=profileModel(state.profile,clock());
-    return {profile:clone(game.profile),revision:state.revision,serverNow:clock(),calendar:'utc'};
+  function* rankedRows(ruleset,period,stamp){
+    const start=period==='week'?utcWeekStart(stamp):period==='today'?Date.UTC(new Date(stamp).getUTCFullYear(),new Date(stamp).getUTCMonth(),new Date(stamp).getUTCDate()):null;
+    return yield* rowsForWindow(ruleset,start,start===null?null:period==='week'?start+WEEK_MS:start+86400000);
+  }
+  function* rowsForWindow(ruleset,start=null,end=null){
+    const window=start===null?'':' AND s.submitted_at>=? AND s.submitted_at<? AND r.finished_at>=? AND r.finished_at<?';
+    return yield db.prepare(`WITH best AS (
+      SELECT s.*,u.username,ROW_NUMBER() OVER(PARTITION BY s.user_id ORDER BY s.score DESC,s.duration DESC,s.submitted_at ASC,s.run_id ASC) AS personal
+      FROM ninja_verified_scores s JOIN users u ON u.id=s.user_id JOIN ninja_runs r ON r.id=s.run_id
+      LEFT JOIN ninja_admin_accounts a ON a.user_id=s.user_id WHERE s.ruleset=? AND a.user_id IS NULL${window}
+    ), ranked AS (
+      SELECT *,ROW_NUMBER() OVER(ORDER BY score DESC,duration DESC,submitted_at ASC,run_id ASC) AS rank FROM best WHERE personal=1
+    ) SELECT user_id,username,run_id,rank,score,duration,decisions,submitted_at FROM ranked ORDER BY rank`).all(...(start===null?[OPEN_RULESET]:[OPEN_RULESET,start,end,start,end]));
+  }
+  function* settlePodium(stamp){
+    // This is its own transaction, before any account wallet transaction begins.
+    // A serialized settings-row update makes simultaneous weekly settlements safe.
+    return yield store.transaction(function*(){
+      const setting=yield db.prepare('SELECT value FROM ninja_competition_settings WHERE name=?').get('podium_start_week');
+      const enabled=Number(setting?.value),current=utcWeekStart(stamp);
+      if(!Number.isSafeInteger(enabled)||enabled>=current)return;
+      const scores=yield db.prepare(`SELECT s.submitted_at FROM ninja_verified_scores s
+        WHERE s.submitted_at>=? AND s.submitted_at<? AND NOT EXISTS(
+          SELECT 1 FROM ninja_podium_weeks w WHERE s.submitted_at>=w.week_start AND s.submitted_at<w.week_start+?
+        )`).all(enabled,current,WEEK_MS);
+      const weeks=[...new Set(scores.map(row=>utcWeekStart(row.submitted_at)))].sort((a,b)=>a-b);
+      if(!weeks.length)return;
+      yield db.prepare('UPDATE ninja_competition_settings SET value=value WHERE name=?').run('podium_start_week');
+      for(const start of weeks){
+        if(yield db.prepare('SELECT week_start FROM ninja_podium_weeks WHERE week_start=?').get(start))continue;
+        const winners=yield* rowsForWindow(OPEN_RULESET,start,start+WEEK_MS);
+        yield db.prepare('INSERT INTO ninja_podium_weeks(week_start,settled_at,eligible_entries) VALUES(?,?,?)').run(start,stamp,winners.length);
+        for(const row of winners.slice(0,3))yield db.prepare('INSERT INTO ninja_podium_rewards(week_start,user_id,place,coins,run_id,score,duration,submitted_at) VALUES(?,?,?,?,?,?,?,?)').run(start,row.user_id,row.rank,PODIUM_REWARDS[row.rank-1],row.run_id,row.score,row.duration,row.submitted_at);
+      }
+    });
+  }
+  function* accessState(userId,stamp){
+    const account=accountAccess(yield store.getUser(userId)),start=utcWeekStart(stamp);
+    const rows=account.sandbox?[]:yield db.prepare('SELECT week_start,place,coins,claimed_at FROM ninja_podium_rewards WHERE user_id=? ORDER BY week_start DESC').all(userId);
+    return {account,podium:{currentWeek:weekId(start),startsAt:start,closesAt:start+WEEK_MS,rewards:[...PODIUM_REWARDS],available:rows.map(row=>({week:weekId(row.week_start),place:row.place,coins:row.coins,claimed:row.claimed_at!==null}))}};
+  }
+  function* stateInside(userId){
+    const stamp=clock(),state=(yield store.getProfile(userId)),game=profileModel(state.profile,stamp);
+    return {profile:clone(game.profile),revision:state.revision,serverNow:stamp,calendar:'utc',...(yield* accessState(userId,stamp))};
+  }
+  function* getState(userId){yield* settlePodium(clock());return yield* stateInside(userId);}
+  function* replenishAdmin(userId,reference,stamp){
+    if((yield store.getUser(userId)).role!=='admin')return;
+    const current=(yield store.getProfile(userId)).profile.coins;
+    if(current!==ADMIN_TEST_BUDGET)yield* walletDelta(userId,ADMIN_TEST_BUDGET-current,reference,'admin.test-budget',stamp);
   }
   function* walletDelta(userId,delta,reference,kind,stamp){
     if(!Number.isSafeInteger(delta))throw fail(500,'INVALID_WALLET_DELTA','Die Münzen konnten nicht berechnet werden.');
@@ -121,9 +171,10 @@ export function createNinjaGameService(store,{now=()=>Date.now(),maxCommands=GAM
   function* action(userId,body){
     if(!object(body)||typeof body.type!=='string'||typeof body.idempotencyKey!=='string'||!keyPattern.test(body.idempotencyKey)||Object.keys(body).some(key=>!['type','id','payload','idempotencyKey'].includes(key)))throw bad('Für diese Aktion fehlt eine gültige Wiederholungskennung.');
     const id=body.id,stamp=clock(),bodyHash=hash(stringify({type:body.type,id:id??null,payload:body.payload??null}));
+    yield* settlePodium(stamp);
     return store.transaction(function*(){
       const previous=(yield db.prepare('SELECT body_hash,response FROM ninja_actions WHERE user_id=? AND key=?').get(userId,body.idempotencyKey));
-      if(previous){if(previous.body_hash!==bodyHash)throw fail(409,'IDEMPOTENCY_CONFLICT','Diese Wiederholungskennung wurde bereits für eine andere Aktion verwendet.');return {...JSON.parse(previous.response),...(yield* getState(userId)),replayed:true};}
+      if(previous){if(previous.body_hash!==bodyHash)throw fail(409,'IDEMPOTENCY_CONFLICT','Diese Wiederholungskennung wurde bereits für eine andere Aktion verwendet.');return {...JSON.parse(previous.response),...(yield* stateInside(userId)),replayed:true};}
       const before=(yield store.getProfile(userId)).profile,game=profileModel(before,stamp);let result;
       const methods={
         'skin.buy':'buySkin','skin.equip':'selectSkin','world.buy':'buyWorld','background.buy':'buyBackground','background.equip':'selectBackground',
@@ -133,6 +184,17 @@ export function createNinjaGameService(store,{now=()=>Date.now(),maxCommands=GAM
       if(Object.hasOwn(methods,body.type)){
         if(body.type==='super.equip'&&id===null)result=game.selectSuper(null);
         else{if(typeof id!=='string'||!id||id.length>100)throw bad('Die Auswahl ist ungültig.');result=game[methods[body.type]](id);}
+      }else if(body.type==='podium.claim'){
+        if((yield store.getUser(userId)).role==='admin')throw fail(403,'ADMIN_TEST_ACCOUNT','Admin-Testkonten erhalten keine Wettbewerbsbelohnungen.');
+        if(typeof id!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(id))throw bad('Wähle eine gültige Wettbewerbswoche.');
+        const start=Date.parse(id+'T00:00:00.000Z');
+        if(!Number.isSafeInteger(start)||utcWeekStart(start)!==start||weekId(start)!==id)throw bad('Wähle eine gültige Wettbewerbswoche.');
+        const prize=yield db.prepare('SELECT place,coins,claimed_at FROM ninja_podium_rewards WHERE user_id=? AND week_start=?').get(userId,start);
+        if(!prize)throw fail(409,'PODIUM_NOT_READY','Für diese Woche ist keine Podiumsbelohnung verfügbar.');
+        if(prize.claimed_at!==null)throw fail(409,'PODIUM_ALREADY_CLAIMED','Diese Podiumsbelohnung wurde bereits abgeholt.');
+        const changed=yield db.prepare('UPDATE ninja_podium_rewards SET claimed_at=? WHERE user_id=? AND week_start=? AND claimed_at IS NULL').run(stamp,userId,start);
+        if(changed.changes!==1)throw fail(409,'PODIUM_ALREADY_CLAIMED','Diese Podiumsbelohnung wurde bereits abgeholt.');
+        game.profile.coins+=prize.coins;result={ok:true,reward:prize.coins,week:id,place:prize.place};
       }else if(body.type==='weekly.skin')result=game.claimWeeklySkin();
       else if(body.type==='notifications.read')result=game.markNotificationsRead();
       else if(body.type==='settings.update'){const patch=settingsPatch(body.payload);game.profile.settings={...game.profile.settings,...patch};result={ok:true,settings:clone(game.profile.settings)};}
@@ -149,7 +211,8 @@ export function createNinjaGameService(store,{now=()=>Date.now(),maxCommands=GAM
       checked(result);addNotifications(game,before,stamp);
       const delta=game.profile.coins-before.coins;
       (yield* walletDelta(userId,delta,`action:${body.idempotencyKey}`,body.type,stamp));
-      const state=(yield store.putProfile(userId,game.profile)),response={profile:state.profile,revision:state.revision,action:clone(result)};
+      yield* replenishAdmin(userId,`admin-budget:action:${body.idempotencyKey}`,stamp);
+      const state=(yield store.putProfile(userId,game.profile)),response={profile:state.profile,revision:state.revision,action:clone(result),...(yield* accessState(userId,stamp))};
       (yield db.prepare('INSERT INTO ninja_actions(user_id,key,body_hash,response,created_at) VALUES(?,?,?,?,?)').run(userId,body.idempotencyKey,bodyHash,stringify(response),stamp));
       return response;
     });
@@ -160,6 +223,7 @@ export function createNinjaGameService(store,{now=()=>Date.now(),maxCommands=GAM
     if(body.difficulty!==undefined&&!['easy','normal','hard'].includes(body.difficulty))throw bad('Wähle einen gültigen Schwierigkeitsgrad.');
     if(body.gamingLimit!==undefined&&![45,60,90].includes(body.gamingLimit))throw bad('Wähle eine gültige Gaming-Grenze.');
     if(body.tutorial!==undefined&&typeof body.tutorial!=='boolean'||body.forceTutorial!==undefined&&typeof body.forceTutorial!=='boolean')throw bad();
+    yield* settlePodium(stamp);
     return store.transaction(function*(){
       const current=(yield store.getProfile(userId)),game=profileModel(current.profile,stamp);
       game.seed=new NinjaGame({seed,storage:null}).seed;game.width=viewport.width;game.height=viewport.height;
@@ -183,10 +247,10 @@ export function createNinjaGameService(store,{now=()=>Date.now(),maxCommands=GAM
   function* finishRun(userId,id,body){
     if(!object(body)||!Array.isArray(body.commands)||Object.keys(body).some(key=>key!=='commands'))throw bad('Sende das vollständige Rundenprotokoll.');
     const json=stringify(body.commands);if(Buffer.byteLength(json)>maxLogBytes||body.commands.length>maxCommands)throw fail(413,'RUN_LOG_TOO_LARGE','Das Rundenprotokoll ist zu groß.');
-    const commandsHash=hash(json),stamp=clock(),row=(yield* ownedRun(userId,id));
+    const commandsHash=hash(json),stamp=clock();yield* settlePodium(stamp);const row=(yield* ownedRun(userId,id));
     if(row.status==='finished'){
       if(row.commands_hash!==commandsHash)throw fail(409,'RUN_FINISH_CONFLICT','Diese Runde wurde bereits mit einem anderen Protokoll abgeschlossen.');
-      const previous=JSON.parse(row.response);return {...previous,...(yield* getState(userId)),run:{...previous.run,published:row.published===1},replayed:true};
+      const previous=JSON.parse(row.response);return {...previous,...(yield* stateInside(userId)),run:{...previous.run,published:row.published===1},replayed:true};
     }
     if(row.status!=='active')throw fail(409,'RUN_SUPERSEDED','Diese Runde wurde durch einen neuen Start ersetzt.');
     if(stamp>row.expires_at)throw fail(410,'RUN_EXPIRED','Diese Runde ist abgelaufen. Dein lokales Übungsergebnis bleibt erhalten.');
@@ -208,7 +272,7 @@ export function createNinjaGameService(store,{now=()=>Date.now(),maxCommands=GAM
       const fresh=(yield* ownedRun(userId,id));
       if(fresh.status==='finished'){
         if(fresh.commands_hash!==commandsHash)throw fail(409,'RUN_FINISH_CONFLICT','Diese Runde wurde bereits anders abgeschlossen.');
-        return {...JSON.parse(fresh.response),...(yield* getState(userId)),replayed:true};
+        return {...JSON.parse(fresh.response),...(yield* stateInside(userId)),replayed:true};
       }
       if(fresh.status!=='active')throw fail(409,'RUN_SUPERSEDED','Diese Runde wurde durch einen neuen Start ersetzt.');
       const current=(yield store.getProfile(userId)),credited=profileModel(current.profile,stamp),before=clone(credited.profile);
@@ -220,15 +284,21 @@ export function createNinjaGameService(store,{now=()=>Date.now(),maxCommands=GAM
       credited._finishRun(game.state.result,[]);
       addNotifications(credited,before,stamp);
       (yield* walletDelta(userId,credited.profile.coins-before.coins,`run:${id}`,'run.reward',stamp));
+      yield* replenishAdmin(userId,`admin-budget:run:${id}`,stamp);
       const saved=(yield store.putProfile(userId,credited.profile)),state=credited.state;
       const run={id,result:state.result,score:state.score,decisions:state.metrics.correctDecisions,duration:state.elapsed,verified:true,published:false,mode:state.mode,ruleset:state.openRuleset||null,awardedCoins:state.awardedCoins};
-      const response={profile:saved.profile,revision:saved.revision,run};
+      const response={profile:saved.profile,revision:saved.revision,run,...(yield* accessState(userId,stamp))};
       (yield db.prepare("UPDATE ninja_runs SET status='finished',commands_hash=?,response=?,finished_at=? WHERE id=?").run(commandsHash,stringify(response),stamp,id));
       return response;
     });
   }
   function* publishRun(userId,id){
+    yield* settlePodium(clock());
     return store.transaction(function*(){
+      // Publication and rollover serialize on the same row. A publisher that
+      // waits past Monday receives Monday's server timestamp, not a stale date.
+      yield db.prepare('UPDATE ninja_competition_settings SET value=value WHERE name=?').run('podium_start_week');
+      if((yield store.getUser(userId)).role==='admin')throw fail(403,'ADMIN_TEST_ACCOUNT','Admin-Testkonten nehmen nicht an öffentlichen Ranglisten teil.');
       const row=(yield* ownedRun(userId,id));
       if(row.status!=='finished')throw fail(409,'RUN_NOT_VERIFIED','Beende und prüfe zuerst deinen Open Run.');
       const run=JSON.parse(row.response).run;
@@ -236,21 +306,19 @@ export function createNinjaGameService(store,{now=()=>Date.now(),maxCommands=GAM
       const stamp=clock();
       (yield db.prepare('INSERT OR IGNORE INTO ninja_verified_scores(run_id,user_id,ruleset,score,duration,decisions,submitted_at) VALUES(?,?,?,?,?,?,?)').run(id,userId,OPEN_RULESET,run.score,run.duration,run.decisions,stamp));
       (yield db.prepare('UPDATE ninja_runs SET published=1 WHERE id=?').run(id));
-      return {...(yield* getState(userId)),run:{...run,published:true},leaderboard:(yield* leaderboard(userId,{ruleset:OPEN_RULESET,limit:25}))};
+      return {...(yield* stateInside(userId)),run:{...run,published:true},leaderboard:(yield* leaderboardInside(userId,{ruleset:OPEN_RULESET,limit:25}))};
     });
   }
-  function* leaderboard(userId=null,{ruleset=OPEN_RULESET,limit=25}={}){
+  function* leaderboardInside(userId=null,{ruleset=OPEN_RULESET,limit=25,period='all'}={}){
     if(ruleset!==OPEN_RULESET)throw bad('Diese Ranglistenregeln sind nicht verfügbar.');
+    if(!['all','today','week'].includes(period))throw bad('Wähle einen gültigen Ranglistenzeitraum.');
     const requested=typeof limit==='string'&&/^\d{1,3}$/.test(limit)?Number(limit):limit;
     if(!Number.isInteger(requested)||requested<1||requested>100)throw bad('Wähle eine gültige Ranglistenlänge.');
-    const rows=(yield db.prepare(`WITH best AS (
-      SELECT s.*,u.username,ROW_NUMBER() OVER(PARTITION BY s.user_id ORDER BY s.score DESC,s.duration DESC,s.submitted_at ASC,s.run_id ASC) AS personal
-      FROM ninja_verified_scores s JOIN users u ON u.id=s.user_id WHERE s.ruleset=?
-    ), ranked AS (
-      SELECT *,ROW_NUMBER() OVER(ORDER BY score DESC,duration DESC,submitted_at ASC,run_id ASC) AS rank FROM best WHERE personal=1
-    ) SELECT user_id,username,rank,score,duration,decisions,submitted_at FROM ranked ORDER BY rank`).all(ruleset));
+    const stamp=clock(),rows=yield* rankedRows(ruleset,period,stamp);
     const publicRow=row=>({rank:row.rank,username:row.username,score:row.score,duration:row.duration,decisions:row.decisions,submittedAt:row.submitted_at,mine:row.user_id===userId});
-    return {ruleset,verified:true,entries:rows.slice(0,requested).map(publicRow),total:rows.length,own:rows.find(row=>row.user_id===userId)?publicRow(rows.find(row=>row.user_id===userId)):null};
+    const own=rows.find(row=>row.user_id===userId);
+    return {ruleset,verified:true,period,serverNow:stamp,entries:rows.slice(0,requested).map(publicRow),total:rows.length,own:own?publicRow(own):null,weekly:{week:weekId(utcWeekStart(stamp)),closesAt:utcWeekStart(stamp)+WEEK_MS,rewards:[...PODIUM_REWARDS]}};
   }
+  function* leaderboard(userId=null,options={}){yield* settlePodium(clock());return yield* leaderboardInside(userId,options);}
   return Object.fromEntries(Object.entries({getState,action,startRun,finishRun,publishRun,leaderboard}).map(([name,callback])=>[name,operation(callback)]));
 }

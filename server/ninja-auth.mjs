@@ -6,6 +6,7 @@ import {NinjaGame} from '../notification-ninja/src/game.js';
 import {validateUsername} from '../notification-ninja/src/player.js';
 import {normalizeJourney} from '../notification-ninja/src/journey.js';
 import {normalizeAdventure} from '../notification-ninja/src/adventure.js';
+import {accountAccess} from './ninja-competition.mjs';
 
 const scryptAsync=promisify(scrypt);
 export const AUTH_CONFIG=Object.freeze({passwordMinLength:10,passwordMaxLength:128,sessionTTL:12*60*60*1000,maxSessions:5,scryptN:32768,scryptR:8,scryptP:1,keyLength:64,saltLength:16});
@@ -54,6 +55,18 @@ export function validateRegistration({email,password,passwordConfirmation,privac
   return email.trim().normalize('NFKC').toLowerCase();
 }
 
+/** Internal account material, prepared before the owning database transaction. Never log this value. */
+export async function prepareNinjaAccount({username,password,email=null,recoveryKey,now=()=>Date.now()}={}){
+  const name=normalizedName(username);requirePassword(password);
+  if(recoveryKey!==undefined&&(typeof recoveryKey!=='string'||!recoveryPattern.test(recoveryKey)))throw new TypeError('Invalid account recovery key.');
+  recoveryKey??=`NNR-${randomBytes(32).toString('base64url')}`;
+  const passwordHash=await hashPassword(password),stamp=now();
+  if(!Number.isSafeInteger(stamp)||stamp<0)throw new TypeError('Account creation needs a valid server timestamp.');
+  const id=randomUUID(),model=new NinjaGame({storage:null,now:()=>stamp});
+  const profile=clone(model.profile);profile.accountCalendar='utc';normalizeJourney(profile,stamp);normalizeAdventure(profile,stamp);profile.player={...profile.player,username:name.username,createdAt:stamp};delete profile.player.guest;
+  return {id,name,passwordHash,recoveryKey,recoveryHash:digest(recoveryKey),stamp,email,profile};
+}
+
 /** Passwords and recovery keys are never stored or returned in plain text after creation. */
 export function createNinjaAuth(store,{now=()=>Date.now(),sessionTTL=AUTH_CONFIG.sessionTTL,maxSessions=AUTH_CONFIG.maxSessions,mfaKey=process.env.NINJA_MFA_KEY}={}){
   if(!store?.db||typeof store.transaction!=='function')throw new TypeError('A Ninja store is required.');
@@ -74,17 +87,14 @@ export function createNinjaAuth(store,{now=()=>Date.now(),sessionTTL=AUTH_CONFIG
     (yield db.prepare('DELETE FROM sessions WHERE user_id=? AND token_hash NOT IN (SELECT token_hash FROM sessions WHERE user_id=? ORDER BY created_at DESC,rowid DESC LIMIT ?)').run(userId,userId,maxSessions));
     return {token,expiresAt};
   }
-  function* response(userId,session,extra={}){const user=(yield store.getUser(userId)),state=(yield store.getProfile(userId));return {user:{id:user.id,username:user.username},...session,profile:state.profile,revision:state.revision,...extra};}
+  function* response(userId,session,extra={}){const user=(yield store.getUser(userId)),state=(yield store.getProfile(userId));return {user:{id:user.id,username:user.username},...session,profile:state.profile,revision:state.revision,...(user.role==='admin'?{account:accountAccess(user)}:{}),...extra};}
   const mfa=createNinjaMFA(store,{now,key:mfaKey,verifyPassword,issueSession,response});
   async function register(input={}){
     const {username,password}=input;
     const email=input.email===undefined?null:validateRegistration(input);
-    const name=normalizedName(username);requirePassword(password);
-    const passwordHash=await hashPassword(password),recoveryKey=`NNR-${randomBytes(32).toString('base64url')}`,stamp=clock(),id=randomUUID();
+    const {id,name,passwordHash,recoveryKey,recoveryHash,stamp,profile}=await prepareNinjaAccount({username,password,email,now:clock});
     try{return await store.transaction(function*(){
-      const model=new NinjaGame({storage:null,now:()=>stamp});
-      const profile=clone(model.profile);profile.accountCalendar='utc';normalizeJourney(profile,stamp);normalizeAdventure(profile,stamp);profile.player={...profile.player,username:name.username,createdAt:stamp};delete profile.player.guest;
-      (yield db.prepare('INSERT INTO users(id,username,username_key,password_hash,recovery_hash,created_at,email,privacy_at) VALUES(?,?,?,?,?,?,?,?)').run(id,name.username,name.key,passwordHash,digest(recoveryKey),stamp,email,email?stamp:null));
+      (yield db.prepare('INSERT INTO users(id,username,username_key,password_hash,recovery_hash,created_at,email,privacy_at) VALUES(?,?,?,?,?,?,?,?)').run(id,name.username,name.key,passwordHash,recoveryHash,stamp,email,email?stamp:null));
       (yield db.prepare('INSERT INTO profiles(user_id,data,revision,run_sequence) VALUES(?,?,0,0)').run(id,JSON.stringify(profile)));
       (yield db.prepare('INSERT INTO wallets(user_id,balance) VALUES(?,0)').run(id));
       return (yield* response(id,(yield* issueSession(id,stamp)),{recoveryKey}));
@@ -108,7 +118,8 @@ export function createNinjaAuth(store,{now=()=>Date.now(),sessionTTL=AUTH_CONFIG
     const valid=typeof token==='string'&&tokenPattern.test(token),supplied=digest(valid?token:'invalid-session-token');
     const row=valid?(yield sessionQuery.get(supplied)):undefined;
     if(!sameHash(supplied,row?.token_hash||'0'.repeat(64))||!row||row.expires_at<=clock())throw authError();
-    return {id:row.id,username:row.username,createdAt:row.created_at};
+    const user=yield store.getUser(row.id);
+    return {id:row.id,username:row.username,createdAt:row.created_at,...(user.role==='admin'?{role:'admin'}:{})};
   }
   function* logout(token){if(typeof token==='string'&&tokenPattern.test(token))(yield db.prepare('DELETE FROM sessions WHERE token_hash=?').run(digest(token)));return {ok:true};}
   async function resetPassword({username,recoveryKey,password,newPassword,mfaCode}={}){

@@ -748,7 +748,7 @@ export const UI_PATTERNS = Object.freeze([
   [/^\+([\d.,]+) Münzen abholen$/u, 'Claim +$1 coins'],
   [/^\+([\d.,]+) Münzen gesichert!$/u, '+$1 coins saved!'],
   [/^\+([\d.,]+) Münzen abgeholt!$/u, '+$1 coins claimed!'],
-  [/^\+([\d.,]+) Münzen$/u, '+$1 coins'],
+  [/^\+\s*([\d.,]+) Münzen$/u, '+$1 coins'],
   [/^([\d.,]+) Münzen$/u, '$1 coins'],
   [/^● ([\d.,]+) Münzen$/u, '● $1 coins'],
   [/^Tagesmission: \+([\d.,]+) Münzen!$/u, 'Daily mission: +$1 coins!'],

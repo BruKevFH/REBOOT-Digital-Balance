@@ -10,3 +10,8 @@ export function journeyArt(kind='study'){
  const region=JOURNEYS[kind]||JOURNEYS.study;
  return `<svg class="adventure-scene" viewBox="${region}" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"><image href="./assets/indie-journeys.png" width="1536" height="1024"/></svg>`;
 }
+
+const WORLD_REGIONS={gaming:'0 0 768 512',study:'768 0 768 512',sleep:'0 512 768 512',master:'768 512 768 512'};
+export function worldArt(kind='study'){
+ return `<svg class="adventure-scene world-atlas-scene" viewBox="${WORLD_REGIONS[kind]||WORLD_REGIONS.study}" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"><image href="./assets/indie-worlds.png" width="1536" height="1024"/></svg>`;
+}

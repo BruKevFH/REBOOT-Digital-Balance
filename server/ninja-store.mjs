@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {DatabaseSync} from 'node:sqlite';
 import {execute} from './ninja-operations.mjs';
+import {competitionSchema,utcWeekStart} from './ninja-competition.mjs';
 
 const MAX=Number.MAX_SAFE_INTEGER;
 const object=value=>value!==null&&typeof value==='object'&&!Array.isArray(value);
@@ -97,17 +98,20 @@ CREATE INDEX IF NOT EXISTS ninja_mfa_challenge_user ON ninja_mfa_challenges(user
       db.prepare('INSERT OR IGNORE INTO ninja_auth_migrations(version,applied_at) VALUES(?,?)').run(1,timestamp());
       db.prepare('INSERT OR IGNORE INTO ninja_auth_migrations(version,applied_at) VALUES(?,?)').run(2,timestamp());
       db.prepare('INSERT OR IGNORE INTO ninja_auth_migrations(version,applied_at) VALUES(?,?)').run(3,timestamp());
+      db.exec(competitionSchema());
+      db.prepare('INSERT OR IGNORE INTO ninja_feature_migrations(version,applied_at) VALUES(1,?)').run(timestamp());
+      db.prepare('INSERT OR IGNORE INTO ninja_competition_settings(name,value) VALUES(?,?)').run('podium_start_week',String(utcWeekStart(timestamp())));
     });
   }catch(error){db.close();throw error;}
 
-  const selectUser=db.prepare('SELECT id,username,created_at FROM users WHERE id=?');
-  const selectProfile=db.prepare(`SELECT u.username,u.created_at,p.data,p.revision,p.run_sequence,w.balance
+  const selectUser=db.prepare('SELECT u.id,u.username,u.created_at,EXISTS(SELECT 1 FROM ninja_admin_accounts a WHERE a.user_id=u.id) AS is_admin FROM users u WHERE u.id=?');
+  const selectProfile=db.prepare(`SELECT u.username,u.created_at,p.data,p.revision,p.run_sequence,w.balance,EXISTS(SELECT 1 FROM ninja_admin_accounts a WHERE a.user_id=u.id) AS is_admin
     FROM profiles p JOIN users u ON u.id=p.user_id JOIN wallets w ON w.user_id=p.user_id WHERE p.user_id=?`);
   const saveProfile=db.prepare('UPDATE profiles SET data=?,revision=revision+1 WHERE user_id=? AND revision<?');
   function getUser(userId){
     const user=selectUser.get(userId);
     if(!user)throw failure(404,'ACCOUNT_NOT_FOUND','Dieses Konto ist nicht verfügbar.');
-    return {id:user.id,username:user.username,createdAt:user.created_at};
+    return {id:user.id,username:user.username,createdAt:user.created_at,role:user.is_admin?'admin':'player'};
   }
   function getProfile(userId){
     const row=selectProfile.get(userId);
@@ -116,6 +120,8 @@ CREATE INDEX IF NOT EXISTS ninja_mfa_challenge_user ON ninja_mfa_challenges(user
     try{profile=JSON.parse(row.data);if(!object(profile))throw new Error();}
     catch{throw failure(500,'PROFILE_UNREADABLE','Dein gespeichertes Profil kann gerade nicht geladen werden.');}
     profile.coins=row.balance;
+    delete profile.role;delete profile.account;delete profile.unlimitedCoins;delete profile.podium;
+    if(row.is_admin)profile.adminSandbox=true;else delete profile.adminSandbox;
     profile.player={...(object(profile.player)?profile.player:{}),username:row.username,createdAt:row.created_at};
     delete profile.player.guest;
     return {profile,revision:row.revision,runSequence:row.run_sequence};
@@ -124,6 +130,8 @@ CREATE INDEX IF NOT EXISTS ninja_mfa_challenge_user ON ninja_mfa_challenges(user
     if(!object(value))throw new TypeError('A profile must be an object.');
     const previous=getProfile(userId),profile=clone(value);
     profile.coins=previous.profile.coins;
+    delete profile.role;delete profile.account;delete profile.unlimitedCoins;delete profile.podium;
+    if(previous.profile.adminSandbox)profile.adminSandbox=true;else delete profile.adminSandbox;
     profile.player={...(object(profile.player)?profile.player:{}),username:previous.profile.player.username,createdAt:previous.profile.player.createdAt};
     delete profile.player.guest;
     const json=JSON.stringify(profile);

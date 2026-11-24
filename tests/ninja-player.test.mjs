@@ -114,7 +114,7 @@ test('legacy progression migrates without resetting coins, skins, skills, worlds
   const saved=JSON.parse(storage.getItem(STORAGE_KEY));delete saved.profile.player;storage.setItem(STORAGE_KEY,JSON.stringify(saved));
   const expected=structuredClone(saved.profile),restored=new NinjaGame({storage});
   assert.equal(restored.storageFailed,false);
-  assert.deepEqual(restored.profile,{...expected,unlockedSkins:[...expected.unlockedSkins,'dawn'],journey:{...expected.journey,seenRanks:['dawn']},player:{username:'',createdAt:0,guideSeen:[],notifications:[]}});
+  assert.deepEqual(restored.profile,{...expected,achievements:[...expected.achievements,'first-super'],unlockedSkins:[...expected.unlockedSkins,'dawn'],journey:{...expected.journey,seenRanks:['dawn']},player:{username:'',createdAt:0,guideSeen:[],notifications:[]}});
   const xp=getPlayerProgress(restored.profile);
   assert.equal(xp.xp,123*5+4*10+8*25);
   restored.setUsername('Veteran');

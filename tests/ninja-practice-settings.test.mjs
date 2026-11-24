@@ -8,6 +8,30 @@ import {tr,setLanguage} from '../notification-ninja/src/i18n.js';
 
 const storage=()=>{const values=new Map();return {values,getItem:key=>values.get(key)??null,setItem:(key,value)=>values.set(key,value)};};
 
+test('practice history restores the actual context, choices and feedback without trusting claimed scores',()=>{
+  const original=createPracticeModel('gaming');
+  original.choose('slice');original.next();original.choose('slice');
+  const before=original.getState();assert.equal(before.correct,1);assert.equal(before.answered,true);
+  const restored=createPracticeModel(before.context,{history:before.history,correct:999,index:99});
+  assert.deepEqual(restored.getState(),before);
+  const detached=restored.getState();detached.history[0].action='keep';
+  assert.deepEqual(restored.getState(),before,'History snapshots cannot change the live exercise');
+  restored.next();assert.equal(restored.getState().index,2);assert.equal(restored.getState().correct,1);
+  assert.equal(restored.getState().ranked,false);assert.equal(restored.getState().rewards,false);
+});
+
+test('practice rejects oversized and invalid restoration choices and recomputes completion canonically',()=>{
+  for(const history of [null,{},Array.from({length:10},()=>({action:'keep',advanced:true})),[{action:'grant-coins',advanced:true}],[{action:'keep',advanced:'yes'}]]){
+    const model=createPracticeModel('sleep',{history});assert.equal(model.getState().index,0);assert.equal(model.getState().correct,0);
+  }
+  const model=createPracticeModel('sleep');
+  while(!model.getState().finished){model.choose(model.getState().item.kind==='distraction'?'slice':'keep');model.next();}
+  const restored=createPracticeModel('sleep',{history:model.getState().history});
+  assert.equal(restored.getState().finished,true);assert.equal(restored.getState().correct,9);
+  assert.equal(restored.next(),false);assert.equal(restored.choose('keep').ok,false);
+  restored.setContext('study');assert.equal(restored.getState().history.length,0);assert.equal(restored.getState().correct,0);
+});
+
 test('old language and calm preferences migrate with independent sound and shake defaults',()=>{
   const store=storage();store.setItem(PREFERENCES_KEY,JSON.stringify({language:'en',calmEffects:true}));
   assert.deepEqual(getPreferences(store),{language:'en',calmEffects:true,musicVolume:.4,effectsVolume:.5,muted:false,screenShake:true});

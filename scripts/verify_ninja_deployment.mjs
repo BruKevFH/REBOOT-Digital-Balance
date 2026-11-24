@@ -49,8 +49,14 @@ export async function verifyNinjaDeployment(value, {
   fetchImpl = globalThis.fetch,
   pagesOrigin = PAGES_ORIGIN,
   timeoutMs = 110000,
+  expectedRevision,
 } = {}) {
   const origin = normalizePublicOrigin(value);
+  if (expectedRevision !== undefined &&
+      (typeof expectedRevision !== 'string' || expectedRevision.length !== 40 || !/^[a-f\d]{40}$/i.test(expectedRevision))) {
+    throw new TypeError('Expected source revision must be a full 40-character Git commit.');
+  }
+  const revision = expectedRevision?.toLowerCase();
   const pages = new URL(pagesOrigin);
   insist(pages.origin === pagesOrigin && pages.protocol === 'https:',
     'The GitHub Pages origin must be an exact HTTPS origin.');
@@ -73,6 +79,12 @@ export async function verifyNinjaDeployment(value, {
   insist(health.ruleset === 'open-v2',
     'Unexpected game ruleset; public results would not be comparable.');
   checks.push('v3 health, PostgreSQL, durable storage, ruleset and CORS');
+  if (revision !== undefined) {
+    insist(typeof health.sourceRevision === 'string' && health.sourceRevision.length === 40 &&
+      /^[a-f\d]{40}$/i.test(health.sourceRevision) && health.sourceRevision.toLowerCase() === revision,
+    'The backend is not running the expected source revision.');
+    checks.push('Deployed source revision ' + revision);
+  }
 
   const configResponse = await request(fetchImpl, origin,
     '/notification-ninja/accounts-config.json', {timeoutMs});
@@ -108,7 +120,8 @@ export async function verifyNinjaDeployment(value, {
   'Registration CORS preflight is not configured for GitHub Pages.');
   checks.push('Registration CORS preflight');
 
-  return {ok: true, origin, checks, configuredEndpoint: origin + '/api/v3'};
+  return {ok: true, origin, checks, configuredEndpoint: origin + '/api/v3',
+    ...(revision !== undefined ? {sourceRevision: revision} : {})};
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
@@ -118,7 +131,9 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
     process.exitCode = 2;
   } else {
     try {
-      const result = await verifyNinjaDeployment(candidate);
+      const result = await verifyNinjaDeployment(candidate, {
+        expectedRevision: process.env.NINJA_EXPECTED_REVISION,
+      });
       process.stdout.write(result.checks.map(item => 'PASS ' + item).join('\n') + '\n');
       process.stdout.write('Public backend preflight passed: ' + result.origin + '\n');
       process.stdout.write('Next: manually test two accounts, restart Render, confirm Neon persistence and delete test data.\n');

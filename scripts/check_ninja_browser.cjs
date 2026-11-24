@@ -8,7 +8,17 @@ if(!['127.0.0.1','localhost','[::1]'].includes(parsed.hostname))throw new Error(
 fs.mkdirSync(out,{recursive:true});
 const executablePath=process.env.NINJA_CHROMIUM||(fs.existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined);
 const snap=p=>p.evaluate(()=>window.__NOTIFICATION_NINJA__.getSnapshot());
-async function ack(p){for(let n=0;n<20&&(await snap(p)).mentor.open;n++)await p.locator('#mentor-next').click();}
+async function ack(p){
+ // The automatic intro opens on the next rendered frame after entering the hub.
+ for(let i=0;i<32;i++){
+  await p.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+  const current=await snap(p);
+  if(current.experience?.intro?.active){await p.locator('[data-intro-action=skip]').click();continue;}
+  if(current.mentor.open){await p.locator('#mentor-next').click();continue;}
+  return;
+ }
+ throw Error('Intro or mentor did not close through its native controls');
+}
 async function ready(p){const expected=JSON.parse(fs.readFileSync(path.resolve(__dirname,'../notification-ninja/dist/build.json'),'utf8')).version;try{await p.waitForFunction(version=>window.__NOTIFICATION_NINJA__?.getSnapshot().version===version,expected,{timeout:15000});}catch(error){console.error('NINJA_BOOT_DIAGNOSTIC',JSON.stringify(await p.evaluate(()=>({url:location.href,loading:document.readyState,error:document.querySelector('#loading-status')?.textContent,snapshot:Boolean(window.__NOTIFICATION_NINJA__),scripts:[...document.scripts].map(script=>script.src)}))));throw error;}await ack(p);}
 async function click(p,locator,touch=false){await locator.scrollIntoViewIfNeeded();if(touch)await locator.tap();else await locator.click();await p.waitForTimeout(35);}
 // Scrolling must expose the real button and keep the sticky Back control visible.

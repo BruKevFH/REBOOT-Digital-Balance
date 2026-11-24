@@ -13,7 +13,7 @@ export function applyTheme(theme=getTheme()){
  const doc=globalThis.document;
  if(!doc?.documentElement)return current;
  doc.documentElement.dataset.ninjaTheme=current;
- for(const b of doc.querySelectorAll('[data-ninja-theme]')){
+ for(const b of doc.querySelectorAll('button[data-ninja-theme]')){
    const selected=b.dataset.ninjaTheme===current;
    b.setAttribute('aria-pressed',String(selected));
    b.classList.toggle('is-chosen',selected);

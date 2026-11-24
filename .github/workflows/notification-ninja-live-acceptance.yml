@@ -1,0 +1,100 @@
+name: Notification Ninja controlled live acceptance
+
+# This creates two temporary production accounts. Run deliberately, then have
+# the operator restart the existing Free service during the named waiting step.
+# The workflow cannot itself prove a restart: retain the provider's separate
+# restart evidence alongside the persistence verification result.
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ninja-controlled-live-acceptance
+  cancel-in-progress: false
+
+jobs:
+  acceptance:
+    if: >-
+      github.ref == 'refs/heads/main' &&
+      (github.event_name == 'workflow_dispatch' ||
+       contains(github.event.head_commit.message, '[live acceptance]'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      NINJA_LIVE_STATE: ${{ runner.temp }}/ninja-live-acceptance-${{ github.run_id }}-${{ github.run_attempt }}.json
+      NINJA_EXPECTED_REVISION: ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Wait for the exact production revision (read-only)
+        run: |
+          ninja_live_log="$RUNNER_TEMP/ninja-controlled-preflight.log"
+          for attempt in {1..18}; do
+            if npm run verify:ninja:deployment -- https://notification-ninja-accounts.onrender.com > "$ninja_live_log" 2>&1; then
+              cat "$ninja_live_log"
+              exit 0
+            fi
+            tail -8 "$ninja_live_log"
+            if [ "$attempt" -lt 18 ]; then sleep 20; fi
+          done
+          echo "The expected durable production revision is not ready; no test accounts were requested."
+          exit 1
+      - name: Prepare two temporary accounts and earned progress
+        id: prepare
+        run: node scripts/check_ninja_live.mjs prepare --state "$NINJA_LIVE_STATE"
+      - name: Wait for controlled production restart
+        id: restart_window
+        run: |
+          echo "Both temporary accounts are prepared. The operator must now restart the existing Free Render account service."
+          echo "No provider credentials are available to this workflow. A waiting step alone is not restart evidence."
+          echo "The operator must retain the provider restart identifier and timestamps separately."
+          for remaining in {10..1}; do
+            printf 'Controlled restart window: %s seconds remaining.\n' "$((remaining * 30))"
+            sleep 30
+          done
+      - name: Verify account and ranking persistence after the operator restart
+        id: verify
+        run: node scripts/check_ninja_live.mjs verify --state "$NINJA_LIVE_STATE"
+      - name: Remove temporary accounts and revoke their sessions
+        id: cleanup
+        if: always()
+        run: |
+          if [ ! -f "$NINJA_LIVE_STATE" ]; then
+            echo "No private acceptance state exists; account preparation was not started."
+            exit 0
+          fi
+          for attempt in {1..3}; do
+            if node scripts/check_ninja_live.mjs cleanup --state "$NINJA_LIVE_STATE"; then
+              rm -- "$NINJA_LIVE_STATE"
+              echo "The two temporary accounts and their published ranking entries were removed."
+              exit 0
+            fi
+            if [ "$attempt" -lt 3 ]; then sleep 15; fi
+          done
+          echo "Temporary-account cleanup could not be confirmed. Operator follow-up is required."
+          exit 1
+      - name: Record the sanitized acceptance result
+        if: always()
+        env:
+          PREPARE_OUTCOME: ${{ steps.prepare.outcome }}
+          VERIFY_OUTCOME: ${{ steps.verify.outcome }}
+          CLEANUP_OUTCOME: ${{ steps.cleanup.outcome }}
+        run: |
+          {
+            printf '### Controlled production account acceptance\n\n'
+            printf '| Check | Result |\n|---|---|\n'
+            printf '| Two temporary accounts; earned progress, purchase and explicit ranking publication | %s |\n' "$PREPARE_OUTCOME"
+            printf '| Profile, wallet, inventory, progress, ranking, email login and logout verification | %s |\n' "$VERIFY_OUTCOME"
+            printf '| Temporary account, session and ranking cleanup | %s |\n' "$CLEANUP_OUTCOME"
+            printf '\nRestart occurrence must be established by the separate operator/provider evidence. This workflow does not infer a restart from waiting or unchanged data.\n'
+            printf '\nPrivate account state is never uploaded, printed or included in this summary.\n'
+          } >> "$GITHUB_STEP_SUMMARY"

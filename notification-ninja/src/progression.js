@@ -1,3 +1,6 @@
+import {CAREER_MISSIONS,MAIN_MISSIONS} from './adventure.js';
+import {SKINS} from './skin-catalog.js';
+
 /** Local, deterministic progression. Currency is earned through play; no network or storage is used here. */
 const freezeRows = rows => Object.freeze(rows.map(row => Object.freeze({
   ...row,
@@ -16,12 +19,21 @@ export const SKILLS = freezeRows([
   {id:'focus-root',name:'Klarer Kopf',description:'Jede richtige Entscheidung lädt deinen Super um 2 zusätzliche Punkte auf.',cost:35,branch:'focus',requires:[],type:'passive',effect:'charge-boost',icon:'◉'},
   {id:'slow-super',name:'Zeitzauber',description:'Super: Alle Gegenstände bewegen sich 8 Sekunden lang langsamer. Die Rundenuhr läuft normal weiter.',cost:90,branch:'focus',requires:['focus-root'],type:'super',effect:'slow',icon:'◷'},
   {id:'flow-boost',name:'Flow-Meister',description:'Dein Focus Flow hält 2 Sekunden länger an.',cost:180,branch:'focus',requires:['slow-super'],type:'passive',effect:'flow-duration',icon:'✦'},
+  {id:'clear-current',name:'Klarer Strom',description:'Hilfreiche Signale, die du durchlässt, laden deine Super um 3 zusätzliche Punkte auf.',cost:240,branch:'focus',requires:['flow-boost'],type:'passive',effect:'keep-charge',icon:'≈'},
+  {id:'zen-super',name:'Zen-Zeit',description:'Super: 6 Sekunden Zeitlupe und Focus Flow zugleich. Die Rundenuhr läuft normal weiter.',cost:360,branch:'focus',requires:['clear-current'],type:'super',effect:'zen',icon:'☯'},
+  {id:'focus-reserve',name:'Fokus-Vorrat',description:'Beginne jede neue normale Runde mit 20 Prozent Superladung. Das Training bleibt unverändert.',cost:480,branch:'focus',requires:['zen-super'],type:'passive',effect:'start-charge',icon:'◔'},
   {id:'guard-root',name:'Gut vorbereitet',description:'Du beginnst jede neue Runde mit einem Schild gegen genau einen Fehler.',cost:35,branch:'guard',requires:[],type:'passive',effect:'start-shield',icon:'⬡'},
   {id:'shield-super',name:'Rettungsschirm',description:'Super: Erhalte einen Schild, der genau einen Fehler abfängt.',cost:90,branch:'guard',requires:['guard-root'],type:'super',effect:'shield',icon:'☂'},
   {id:'second-chance',name:'Zweite Chance',description:'Einmal pro Runde erhältst du beim letzten verlorenen Herz ein neues Herz.',cost:180,branch:'guard',requires:['shield-super'],type:'passive',effect:'revive',icon:'♥'},
+  {id:'gentle-blade',name:'Sanfte Klinge',description:'Hilfreiche Signale haben eine um 20 Prozent kleinere Schnitt-Trefferzone. Ablenkungen bleiben gleich gut erreichbar.',cost:240,branch:'guard',requires:['second-chance'],type:'passive',effect:'useful-precision',icon:'❧'},
+  {id:'lotus-super',name:'Lotus-Wache',description:'Super: Erhalte drei Schildladungen. Jede Ladung fängt genau einen Fehler ab.',cost:360,branch:'guard',requires:['gentle-blade'],type:'super',effect:'lotus',icon:'❀'},
+  {id:'stage-shield',name:'Etappenschild',description:'Beginne jede neue Etappe einer normalen Runde mit einem Schild. Ein vorhandener Schild wird nicht gestapelt.',cost:480,branch:'guard',requires:['lotus-super'],type:'passive',effect:'stage-shield',icon:'⬢'},
   {id:'coin-root',name:'Münzgespür',description:'Verdiene für je 12 richtige Entscheidungen eine Münze statt für je 14.',cost:35,branch:'coins',requires:[],type:'passive',effect:'coin-frequency',icon:'●'},
   {id:'sweep-super',name:'Aufräum-Wirbel',description:'Super: Räume alle Ablenkungen auf einmal ab. Sinnvolle Dinge bleiben unberührt.',cost:90,branch:'coins',requires:['coin-root'],type:'super',effect:'sweep',icon:'↻'},
-  {id:'coin-boost',name:'Goldener Lauf',description:'Verdiene beim Spielen 25 % mehr Münzen.',cost:180,branch:'coins',requires:['sweep-super'],type:'passive',effect:'coin-multiplier',icon:'★'}
+  {id:'coin-boost',name:'Goldener Lauf',description:'Verdiene beim Spielen 25 % mehr Münzen.',cost:180,branch:'coins',requires:['sweep-super'],type:'passive',effect:'coin-multiplier',icon:'★'},
+  {id:'coin-pouch',name:'Doppelter Fund',description:'Münz-Boni geben zwei Grundmünzen statt einer. Die Münzgrenze der Etappe bleibt bestehen.',cost:240,branch:'coins',requires:['coin-boost'],type:'passive',effect:'coin-pickup',icon:'◉'},
+  {id:'star-super',name:'Sternensturm',description:'Super: 12 Sekunden doppelte Arcade-Punkte. Münzbelohnungen werden nicht verdoppelt.',cost:360,branch:'coins',requires:['coin-pouch'],type:'super',effect:'stars',icon:'✹'},
+  {id:'coin-drift',name:'Goldene Geduld',description:'Münz-Boni fliegen 25 Prozent langsamer. Die Rundenuhr und normale Signale bleiben unverändert.',cost:480,branch:'coins',requires:['star-super'],type:'passive',effect:'coin-flight',icon:'◌'}
 ]);
 
 export const SUPERS = Object.freeze(SKILLS.filter(skill => skill.type === 'super'));
@@ -66,7 +78,19 @@ export const ACHIEVEMENTS = freezeRows([
   {id:'hard-5',name:'Profi-Serie',description:'Schließe 5 Runden auf Profi ab.',reward:10,icon:'★',stat:'hardClears',target:5},
   {id:'hard-20',name:'Profi-Legende',description:'Schließe 20 Runden auf Profi ab.',reward:20,icon:'★',stat:'hardClears',target:20},
   {id:'coins-500',name:'Goldener Vorrat',description:'Verdiene insgesamt 500 Münzen. Ausgeben ist erlaubt.',reward:10,icon:'●',stat:'coinsEarned',target:500},
-  {id:'coins-1500',name:'Goldene Legende',description:'Verdiene insgesamt 1.500 Münzen. Ausgeben ist erlaubt.',reward:20,icon:'●',stat:'coinsEarned',target:1500}
+  {id:'coins-1500',name:'Goldene Legende',description:'Verdiene insgesamt 1.500 Münzen. Ausgeben ist erlaubt.',reward:20,icon:'●',stat:'coinsEarned',target:1500},
+  {id:'career-first',name:'Der Weg beginnt',description:'Schließe deine erste Hauptmission ab.',reward:4,icon:'道',stat:'mainMissions',target:1},
+  {id:'career-six',name:'Ein Kapitel Klarheit',description:'Schließe sechs Hauptmissionen ab.',reward:6,icon:'六',stat:'mainMissions',target:6},
+  {id:'career-twelve',name:'Zwei Welten weiter',description:'Schließe zwölf Hauptmissionen ab.',reward:8,icon:'路',stat:'mainMissions',target:12},
+  {id:'career-complete',name:'Dein ganzer Weg',description:'Schließe alle 18 Hauptmissionen ab.',reward:12,icon:'門',stat:'mainMissions',target:18},
+  {id:'boss-first',name:'Die erste Prüfung',description:'Besiege deinen ersten Karriere-Boss.',reward:6,icon:'鬼',stat:'careerBosses',target:1},
+  {id:'boss-trinity',name:'Drei Schatten weniger',description:'Besiege alle drei unterschiedlichen Karriere-Bosse.',reward:12,icon:'三',stat:'careerBosses',target:3},
+  {id:'skills-six',name:'Deine Techniken',description:'Schalte sechs Fähigkeiten oder Supers frei.',reward:6,icon:'技',stat:'unlockedSkills',target:6},
+  {id:'skills-twelve',name:'Ein eigener Stil',description:'Schalte zwölf Fähigkeiten oder Supers frei.',reward:10,icon:'印',stat:'unlockedSkills',target:12},
+  {id:'super-collection',name:'Sechs besondere Kräfte',description:'Schalte alle sechs Supers frei.',reward:12,icon:'⚡',stat:'ownedSupers',target:6},
+  {id:'wardrobe-six',name:'Sechs Gesichter',description:'Sammle sechs unterschiedliche Ninja-Looks.',reward:6,icon:'装',stat:'ownedSkins',target:6},
+  {id:'world-collection',name:'Zu Hause in jeder Welt',description:'Schalte alle vier Spielwelten frei.',reward:8,icon:'界',stat:'unlockedWorlds',target:4},
+  {id:'all-paths',name:'Jeder Pfad gemeistert',description:'Schließe alle 18 Hauptmissionen und acht Zusatzherausforderungen ab.',reward:15,icon:'極',stat:'careerMissions',target:26}
 ]);
 
 const MAX = Number.MAX_SAFE_INTEGER;
@@ -75,6 +99,8 @@ const worldMap = new Map(WORLDS.map(world => [world.id,world]));
 const backgroundMap = new Map(BACKGROUNDS.map(background => [background.id,background]));
 const baseBackgrounds = {study:'classroom',gaming:'game-room',sleep:'bedroom'};
 const achievementMap = new Map(ACHIEVEMENTS.map(item => [item.id,item]));
+const skinIds=new Set(SKINS.map(item=>item.id));
+const mainMissionIds=new Set(MAIN_MISSIONS.map(item=>item.id));
 const statKeys = ['correct','coinsEarned','superUses','bestCombo','hardClears'];
 const object = value => value !== null && typeof value === 'object' && !Array.isArray(value);
 const count = value => typeof value === 'number' && Number.isFinite(value) ? Math.max(0,Math.min(MAX,Math.trunc(value))) : 0;
@@ -105,6 +131,23 @@ export function getOpenSpeedFactor(_id,elapsed=0) {
 export const getSkill = id => skillMap.get(id) || null;
 export const getWorld = id => worldMap.get(id) || null;
 export const getBackground = id => backgroundMap.get(id) || null;
+
+/** Derive collection goals from known, reachable identities; no editable progress counter is trusted. */
+function achievementValue(profile,progress,stat){
+  if(stat==='unlockedSkills')return progress.unlockedSkills.length;
+  if(stat==='totalRuns')return count(profile?.totalRuns);
+  if(stat==='ownedSupers')return progress.unlockedSkills.filter(id=>skillMap.get(id)?.type==='super').length;
+  if(stat==='unlockedWorlds')return progress.unlockedWorlds.length;
+  if(stat==='ownedSkins')return new Set((Array.isArray(profile?.unlockedSkins)?profile.unlockedSkins:[]).filter(id=>skinIds.has(id))).size;
+  if(['mainMissions','careerBosses','careerMissions'].includes(stat)){
+    const requested=new Set(Array.isArray(profile?.adventure?.completed)?profile.adventure.completed:[]),completed=new Set();
+    for(const mission of CAREER_MISSIONS)if(requested.has(mission.id)&&mission.requires.every(id=>completed.has(id)))completed.add(mission.id);
+    if(stat==='mainMissions')return [...completed].filter(id=>mainMissionIds.has(id)).length;
+    if(stat==='careerBosses')return CAREER_MISSIONS.filter(mission=>mission.bossId&&completed.has(mission.id)).length;
+    return completed.size;
+  }
+  return progress.stats[stat]||0;
+}
 
 /** Read and validate new fields without changing old saved profiles or retaining mutable references. */
 export function sanitizeProgress(profile) {
@@ -139,7 +182,7 @@ export function unlockAchievements(profile) {
   const progress = sanitizeProgress(profile);
   const existing = validAchievements(profile.achievements);
   const eligible = ACHIEVEMENTS.filter(item=>item.stat!=='unlocked').map(item=>{
-    const value=item.stat==='unlockedSkills'?progress.unlockedSkills.length:item.stat==='totalRuns'?count(profile.totalRuns):progress.stats[item.stat];
+    const value=achievementValue(profile,progress,item.stat);
     return [item.id,value>=item.target];
   });
   const added = eligible.filter(([id,ready]) => ready && !existing.includes(id)).map(([id]) => id);
@@ -154,8 +197,7 @@ export function getAchievementProgress(profile,id) {
   const progress = sanitizeProgress(profile);
   const unlocked = validAchievements(profile?.achievements).includes(id);
   const raw = achievement.stat === 'unlocked' ? Number(unlocked)
-    : achievement.stat === 'unlockedSkills' ? progress.unlockedSkills.length
-    : achievement.stat === 'totalRuns' ? count(profile?.totalRuns) : progress.stats[achievement.stat];
+    : achievementValue(profile,progress,achievement.stat);
   return {current:Math.min(achievement.target,count(raw)),target:achievement.target,unlocked,claimed:progress.claimedAchievements.includes(id)};
 }
 

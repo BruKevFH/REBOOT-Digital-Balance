@@ -16,7 +16,17 @@ if(widths.some(x=>!Number.isInteger(x)||x<320||x>2560))throw Error('Invalid view
 const load=name=>import(pathToFileURL(path.join(root,'notification-ninja/src',name)).href);
 const snap=p=>p.evaluate(()=>window.__NOTIFICATION_NINJA__.getSnapshot());
 const profile=s=>Object.fromEntries(['coins','totalRuns','stats','unlockedSkills','unlockedWorlds','unlockedSkins','selectedSkin','achievements','claimedAchievements','highScores'].map(key=>[key,s.profile[key]]));
-async function ack(p){for(let i=0;i<24&&(await snap(p)).mentor.open;i++)await p.locator('#mentor-next').click();}
+async function ack(p){
+ // The automatic intro opens on the next rendered frame after entering the hub.
+ for(let i=0;i<32;i++){
+  await p.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+  const current=await snap(p);
+  if(current.experience?.intro?.active){await p.locator('[data-intro-action=skip]').click();continue;}
+  if(current.mentor.open){await p.locator('#mentor-next').click();continue;}
+  return;
+ }
+ throw Error('Intro or mentor did not close through its native controls');
+}
 async function ready(p){await p.waitForFunction(v=>window.__NOTIFICATION_NINJA__?.getSnapshot().version===v,version);await ack(p);await p.evaluate(()=>document.fonts.ready);}
 async function state(p,key){return (await snap(p)).experience?.[key];}
 async function click(p,target,touch=false){
@@ -202,7 +212,7 @@ async function offlineExperience(browser,report,save,scenarios){
  try{for(const width of widths){const c=await browser.newContext({serviceWorkers:'block',viewport:{width,height:width<768?844:960},hasTouch:width<768,reducedMotion:'no-preference'});await seed(c,save);const p=await c.newPage();const entry={width,learning:[],codex:[],dressing:[],career:[],comfort:[],errors:[]};p.on('pageerror',e=>entry.errors.push(e.message));
   try{await p.goto(base);await ready(p);assert.equal((await snap(p)).ui,'home');const initial=profile(await snap(p));for(const language of (debriefOnly?[]:['de','en'])){await selectLanguage(p,language,width<768);await learning(p,entry,language,scenarios);await codex(p,entry,language);await dressing(p,entry,language);await career(p,entry,language);await comfortUI(p,entry,language);assert.deepEqual(profile(await snap(p)),initial,'Experience menus cannot alter wallet, inventory or saved gameplay');}if(width===360)await debrief(p,entry);assert.deepEqual(entry.errors,[]);entry.ok=true;
   }catch(e){entry.ok=false;entry.failure=e.stack;report.issues.push({width,error:e.message});await p.screenshot({path:path.join(out,`FAIL-${width}.png`),fullPage:true}).catch(()=>{});}finally{report.viewports.push(entry);console.log('EXPERIENCE',width,entry.ok,entry.failure||'');await c.close();}}
-  if(!report.issues.length){try{await handGame(browser,report,chargedSave);await calmDressing(browser,report,save);await isolatedLearning(browser,report,save,scenarios);await offlineExperience(browser,report,save,scenarios);}catch(e){report.issues.push({probe:'comfort-calm-isolation-or-offline',error:e.message});console.error('EXPERIENCE EXTRA',e.stack);}}
+  if(!report.issues.length){try{await handGame(browser,report,chargedSave);await calmDressing(browser,report,save);await isolatedLearning(browser,report,save,scenarios);if(process.env.NINJA_SKIP_OFFLINE!=='1')await offlineExperience(browser,report,save,scenarios);}catch(e){report.issues.push({probe:'comfort-calm-isolation-or-offline',error:e.message});console.error('EXPERIENCE EXTRA',e.stack);}}
   fs.writeFileSync(path.join(out,'report.json'),JSON.stringify(report,null,2));console.log(JSON.stringify({viewports:report.viewports.map(x=>({width:x.width,ok:x.ok})),issues:report.issues},null,2));if(report.issues.length)process.exitCode=1;
  }finally{await browser.close();}
 })().catch(e=>{console.error(e.stack);process.exitCode=1;});

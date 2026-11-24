@@ -5,6 +5,8 @@ import { getOpenSpeedFactor } from '../notification-ninja/src/progression.js';
 import { getDailyChallenges } from '../notification-ninja/src/journey.js';
 import { isThrowReady } from '../notification-ninja/src/throwers.js';
 
+const ORIGINAL_SKILL_IDS=['focus-root','slow-super','flow-boost','guard-root','shield-super','second-chance','coin-root','sweep-super','coin-boost'];
+
 class Storage {
   constructor() { this.data = new Map(); }
   getItem(key) { return this.data.get(key) ?? null; }
@@ -782,7 +784,7 @@ test('large targets keep separate lanes for their full flight and crowded waves 
 
 function prepared(skills = [], selectedSuper = null) {
   const storage = new Storage(), game = new NinjaGame({ storage, seed: 'progression', width: 800, height: 600 });
-  game.profile.coins = 1000;
+  game.profile.coins = Math.max(1000,skills.reduce((total,id)=>total+(SKILLS.find(skill=>skill.id===id)?.cost||0),0));
   for (const id of skills) assert.equal(game.buySkill(id).ok, true, id);
   if (selectedSuper) assert.equal(game.selectSuper(selectedSuper).ok, true);
   assert.equal(game.start({ mode: 'study', tutorial: false }).ok, true);
@@ -886,7 +888,7 @@ test('sweep clears distractions safely, credits real cuts and coins, and cannot 
 });
 
 test('passive guard, longer Flow, extra coins and second chance have one-run effects', () => {
-  const {game,storage}=prepared(SKILLS.map(skill=>skill.id),'shield-super');
+  const {game,storage}=prepared(ORIGINAL_SKILL_IDS,'shield-super');
   assert.equal(game.state.effects.shield,1);cut(game,'homework');assert.equal(game.state.lives,5);assert.equal(game.state.effects.shield,0);
   for(let i=0;i<5;i++)cut(game);assert.equal(game.state.effects.flow,7);assert.equal(game.state.superCharge,50);
   assert.equal(game.state.runCoins,0);for(let i=0;i<7;i++)cut(game);assert.equal(game.state.runCoins,1);
@@ -925,7 +927,7 @@ test('legacy profiles migrate safely and extended live state survives a paused r
   for(const key of ['unlockedSkills','selectedSuper','stats','claimedAchievements'])delete saved.profile[key];
   for(const key of ['difficulty','maxLives','speedFactor','runCoins','selectedSuper','skillIds','bonusClock','bonusPhase'])delete saved.state[key];
   storage.setItem(STORAGE_KEY,JSON.stringify(saved));const old=new NinjaGame({storage});
-  assert.equal(old.profile.coins,57);assert.deepEqual(old.profile.achievements,['first-cut','flow-five','healthy-stop']);assert.deepEqual(old.profile.unlockedSkills,[]);assert.equal(old.state.difficulty,'easy');
+  assert.equal(old.profile.coins,57);assert.deepEqual(old.profile.achievements,['first-cut','flow-five','healthy-stop','world-collection']);assert.deepEqual(old.profile.claimedAchievements,[]);assert.deepEqual(old.profile.unlockedSkills,[]);assert.equal(old.state.difficulty,'easy');
   const enhanced=prepared(['focus-root','slow-super','flow-boost'],'slow-super');for(let i=0;i<10;i++)cut(enhanced.game);enhanced.game.activateSuper();
   enhanced.game.state.bonusClock=19.99;enhanced.game.update(.05);enhanced.game.pause();
   const resumed=new NinjaGame({storage:enhanced.storage,width:800,height:600});
@@ -1157,13 +1159,14 @@ test('a paid campaign resets the small stage purse while carrying only the actua
 
 test('old saved money, paid unlocks and pending coins survive the new price list without retroactive charges', () => {
   const {game,storage}=setup('study');
-  game.profile.coins=2917;game.profile.unlockedSkills=SKILLS.map(item=>item.id);game.profile.selectedSuper='slow-super';
+  game.profile.coins=2917;game.profile.unlockedSkills=[...ORIGINAL_SKILL_IDS];game.profile.selectedSuper='slow-super';
   game.profile.unlockedBackgrounds=BACKGROUNDS.map(item=>item.id);game.profile.selectedBackgrounds.study='paper-garden';
   game.profile.unlockedSkins=['default','solar','mint','neon'];game.profile.selectedSkin='solar';
   game.profile.achievements=['first-cut','flow-five'];game.profile.claimedAchievements=['first-cut'];
   game.state.runCoins=50;game.state.metrics.correctDecisions=20;game.pause();
   const saved=JSON.parse(storage.getItem(STORAGE_KEY));delete saved.state.stageMetrics.earnedCoins;storage.setItem(STORAGE_KEY,JSON.stringify(saved));
-  const restored=new NinjaGame({storage,width:800,height:600,now:()=>100000});assert.equal(restored.storageFailed,false);assert.deepEqual(restored.profile,game.profile);
+  const restored=new NinjaGame({storage,width:800,height:600,now:()=>100000});assert.equal(restored.storageFailed,false);
+  assert.deepEqual(restored.profile,{...game.profile,achievements:['first-cut','flow-five','first-skill','skills-six','world-collection']});
   assert.equal(restored.state.runCoins,50);assert.equal(restored.claimAchievement('first-cut').ok,false);
   restored.resume();nearEnd(restored,75);assert.equal(restored.state.awardedCoins,52);assert.equal(restored.profile.coins,2969);
 });
@@ -1236,7 +1239,7 @@ test('restoring open play enforces its standard loadout even when paid fields we
   const saved=JSON.parse(storage.getItem(STORAGE_KEY));saved.state.skillIds=SKILLS.map(skill=>skill.id);saved.state.selectedSuper='slow-super';saved.state.superCharge=100;saved.state.effects.flow=7;saved.state.effects.slow=8;
   storage.setItem(STORAGE_KEY,JSON.stringify(saved));const restored=new NinjaGame({storage});
   assert.equal(restored.storageFailed,false);assert.deepEqual(restored.state.skillIds,[]);assert.equal(restored.state.selectedSuper,null);assert.equal(restored.state.superCharge,0);
-  assert.equal(restored.state.effects.flow,5);assert.equal(restored.state.effects.slow,6);assert.equal(restored.profile.unlockedSkills.length,9);
+  assert.equal(restored.state.effects.flow,5);assert.equal(restored.state.effects.slow,6);assert.deepEqual(restored.profile.unlockedSkills,SKILLS.map(skill=>skill.id));
   restored.resumeRun();assert.equal(restored.activateSuper().ok,false);
 });
 
@@ -1348,6 +1351,6 @@ test('existing earned XP grants the new rank outfits without charging or replaci
   const restored=new NinjaGame({storage,now:()=>100000});
   assert.equal(restored.profile.coins,81);assert.equal(restored.profile.stats.correct,300);assert.equal(restored.profile.selectedSkin,'solar');
   assert.deepEqual(restored.profile.unlockedSkins,['default','solar','dawn','shadow']);
-  assert.deepEqual(restored.initialJourneyEvents.map(event=>event.id),['dawn','shadow']);
+  assert.deepEqual(restored.initialJourneyEvents.map(({type,id})=>({type,id})),[{type:'rank-unlocked',id:'dawn'},{type:'rank-unlocked',id:'shadow'},{type:'achievement-unlocked',id:'correct-250'},{type:'achievement-unlocked',id:'world-collection'}]);
   restored.save();assert.deepEqual(new NinjaGame({storage,now:()=>100000}).initialJourneyEvents,[]);
 });

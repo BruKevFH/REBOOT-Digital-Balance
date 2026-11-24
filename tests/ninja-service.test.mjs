@@ -33,7 +33,7 @@ test('v3 health/config and static client are served without disclosing storage p
   assert.equal(health.status,200);assert.deepEqual(health.body,{ok:true,service:'notification-ninja',apiVersion:3,ruleset:'open-v2',durableStorage:false});
   const configResponse=await fetch(`${endpoint}/notification-ninja/accounts-config.json`),config=await configResponse.json();
   assert.equal(configResponse.status,200);assert.equal(config.enabled,true);assert.equal(config.endpoint,`${endpoint}/api/v3`);assert.equal(config.apiVersion,3);
-  const redirect=await fetch(endpoint,{redirect:'manual'});assert.equal(redirect.status,302);assert.equal(redirect.headers.get('location'),'/notification-ninja/home.html');
+  const rootHome=await fetch(endpoint,{redirect:'manual'});assert.equal(rootHome.status,200);assert.match(await rootHome.text(),/Notification Ninja/i);
   const home=await fetch(`${endpoint}/notification-ninja/home.html`);assert.equal(home.status,200);assert.match(await home.text(),/Notification Ninja/i);
   assert.match(home.headers.get('content-type'),/text\/html/);assert.equal(home.headers.get('x-content-type-options'),'nosniff');assert.equal(home.headers.get('x-frame-options'),'DENY');assert.match(home.headers.get('content-security-policy'),/object-src 'none'/);
   const font=await fetch(`${endpoint}/notification-ninja/assets/fonts/nunito-latin-wght-normal.woff2`,{method:'HEAD'});assert.equal(font.status,200);assert.equal(font.headers.get('content-type'),'font/woff2');

@@ -19,29 +19,36 @@ function explanation(item,context){
   return kind==='useful'?'Das passt zu deiner Ruhezeit. Ein ruhiges Ritual hilft dir beim Abschalten.':'Vor dem Schlafen kann diese Nachricht bis morgen warten. Du darfst deine Ruhe schützen.';
 }
 /** No timer, animation, currency or ranked score: only contextual decision practice. */
-export function createPracticeModel(context='study'){
+export function createPracticeModel(context='study',{history=[]}={}){
   let selected=Object.hasOwn(CONTEXTS,context)?context:'study',index=0,correct=0,feedback=null;
+  const decisions=[];
   const state=()=>{
     const item=itemById.get(ITEMS[selected][index]);
-    return {context:selected,contextName:CONTEXTS[selected].name,goal:CONTEXTS[selected].goal,index,total:ITEMS[selected].length,correct,answered:feedback!==null,finished:index>=ITEMS[selected].length,ranked:false,rewards:false,item:item?{...item,kind:item.kindByContext[selected]}:null,feedback:feedback?{...feedback}:null};
+    return {context:selected,contextName:CONTEXTS[selected].name,goal:CONTEXTS[selected].goal,index,total:ITEMS[selected].length,correct,answered:feedback!==null,finished:index>=ITEMS[selected].length,ranked:false,rewards:false,history:decisions.map(entry=>({...entry})),item:item?{...item,kind:item.kindByContext[selected]}:null,feedback:feedback?{...feedback}:null};
   };
   function choose(action){
     if(!['slice','keep'].includes(action)||feedback!==null||index>=ITEMS[selected].length)return {ok:false};
     const item=itemById.get(ITEMS[selected][index]),expected=item.kindByContext[selected]==='distraction'?'slice':'keep',right=action===expected;
     if(right)correct++;
+    decisions.push({action,advanced:false});
     feedback={correct:right,expected,explanation:explanation(item,selected)};
     return {ok:true,...feedback};
   }
-  function next(){if(feedback===null||index>=ITEMS[selected].length)return false;index++;feedback=null;return true;}
-  function setContext(value){if(!Object.hasOwn(CONTEXTS,value))return false;selected=value;index=0;correct=0;feedback=null;return true;}
+  function next(){if(feedback===null||index>=ITEMS[selected].length)return false;decisions.at(-1).advanced=true;index++;feedback=null;return true;}
+  function setContext(value){if(!Object.hasOwn(CONTEXTS,value))return false;selected=value;index=0;correct=0;feedback=null;decisions.length=0;return true;}
+  // Restore only bounded choices; counts and feedback are recomputed from actual rules.
+  if(Array.isArray(history)&&history.length<=ITEMS[selected].length)for(const entry of history){
+    if(!entry||!['slice','keep'].includes(entry.action)||typeof entry.advanced!=='boolean'||!choose(entry.action).ok)break;
+    if(entry.advanced)next();else break;
+  }
   return Object.freeze({getState:state,choose,next,setContext});
 }
 
 /** One root-scoped controller. Destroy removes all handlers; never touches NinjaGame. */
-export function createPractice({context='study',container,onExit=()=>{},onFinish=()=>{}}={}){
+export function createPractice({context='study',history=[],container,onExit=()=>{},onFinish=()=>{},onStateChange=()=>{}}={}){
   const root=container||globalThis.document?.getElementById('overlay-root');
   if(!root)throw new TypeError('Practice requires a container.');
-  const model=createPracticeModel(context);let active=false,reported=false;
+  const model=createPracticeModel(context,{history});let active=false,reported=false;
   function render(focus=true){
     const state=model.getState(),item=state.item;
     const body=state.finished?`<div class="practice-result"><span aria-hidden="true">✦</span><h3>Gut geübt!</h3><p>${escape(tr('Richtige Entscheidungen'))}: ${state.correct} / ${state.total}</p><p>Hier zählt das Verstehen. Diese Übung gibt keine Münzen, XP oder Ranglistenpunkte.</p><div class="practice-actions"><button class="btn primary" data-practice="restart">Noch einmal üben</button><button class="btn ghost" data-practice="exit">Zurück ins Dojo</button></div></div>`:`<label for="practice-context">Deine Alltagssituation</label><select id="practice-context" data-practice-context>${Object.entries(CONTEXTS).map(([id,value])=>`<option value="${id}" ${id===state.context?'selected':''}>${escape(tr(value.name))}</option>`).join('')}</select><p class="practice-goal"><strong>${escape(tr(state.goal))}</strong></p><p class="muted">${escape(tr('Beispiel'))} ${state.index+1} / ${state.total} · ${escape(tr('Ohne Zeitdruck'))}</p><article class="practice-object" aria-labelledby="practice-item"><span class="practice-object-icon" aria-hidden="true">${escape(item.icon)}</span><h3 id="practice-item">${escape(tr(item.label))}</h3><p>${escape(tr(item.text))}</p></article><div class="practice-actions"><button class="btn primary" data-practice="slice" ${state.answered?'disabled':''}>✂ ${escape(tr('Wegwischen'))} <kbd>1</kbd></button><button class="btn ghost" data-practice="keep" ${state.answered?'disabled':''}>✓ ${escape(tr('Durchlassen'))} <kbd>2</kbd></button></div><section class="practice-feedback" role="status" aria-live="polite" aria-atomic="true">${state.feedback?`<h3>${state.feedback.correct?'✓ '+escape(tr('Gut entschieden!')):'↻ '+escape(tr('Probier es gedanklich noch einmal.'))}</h3><p><strong>${escape(tr('Hier passt'))}: ${escape(tr(state.feedback.expected==='slice'?'Wegwischen':'Durchlassen'))}.</strong> ${escape(tr(state.feedback.explanation))}</p><button class="btn primary" data-practice="next">${escape(tr(state.index+1===state.total?'Übung abschließen':'Nächstes Beispiel'))} →</button>`:'<p>Entscheide selbst. NIM erklärt dir danach, warum die Wahl zu dieser Situation passt.</p>'}</section>`;
@@ -49,6 +56,7 @@ export function createPractice({context='study',container,onExit=()=>{},onFinish
     localizeDOM(root);
     if(focus)root.querySelector('[data-practice="next"]:not(:disabled),[data-practice="restart"]:not(:disabled),[data-practice="slice"]:not(:disabled)')?.focus({preventScroll:true});
     if(state.finished&&!reported){reported=true;onFinish({context:state.context,correct:state.correct,total:state.total,ranked:false,rewards:false});}
+    onStateChange(model.getState());
   }
   function act(action){
     if(action==='exit'){destroy();onExit();return;}

@@ -125,7 +125,17 @@ async function deleteTestAccount(context,created){
  }
  assert.equal(result.status(),200,'Synthetic account cleanup');
 }
-async function acknowledge(p){for(let n=0;n<20&&(await read(p)).mentor.open;n++)await p.locator('#mentor-next').click();}
+async function acknowledge(p){
+ // The automatic intro opens on the next rendered frame after entering the hub.
+ for(let i=0;i<32;i++){
+  await p.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));
+  const current=await read(p);
+  if(current.experience?.intro?.active){await p.locator('[data-intro-action=skip]').click();continue;}
+  if(current.mentor.open){await p.locator('#mentor-next').click();continue;}
+  return;
+ }
+ throw Error('Intro or mentor did not close through its native controls');
+}
 (async()=>{
  fs.mkdirSync(output,{recursive:true});
  const browser=await chromium.launch({executablePath:process.env.NINJA_CHROMIUM||(fs.existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),headless:true,args:['--no-sandbox']});
@@ -178,6 +188,7 @@ async function acknowledge(p){for(let n=0;n<20&&(await read(p)).mentor.open;n++)
      assert.equal((await read(page)).ui,'modes');
      assert.equal(await page.locator('.indie-mode-card').count(),4,'Four distinct challenge cards');
      assert.equal(await page.locator('.indie-world-card').count(),4,'Four illustrated world posters');
+     assert.equal(await page.locator('.indie-feature-run').count(),2,'Open Run and Digital Day have direct illustrated launch cards');
      const fit=await page.locator('.indie-mode-card,.indie-world-card').evaluateAll(cards=>cards.every(card=>{const box=card.getBoundingClientRect();return box.left>=-1&&box.right<=innerWidth+1;}));
      assert(fit,'Unified Play cards fit the phone');
      await goHome(page);
@@ -189,8 +200,8 @@ async function acknowledge(p){for(let n=0;n<20&&(await read(p)).mentor.open;n++)
      assert.equal(await page.locator('#ninja-hub h1').isVisible(),true,'hub shows the player name');
      await page.screenshot({path:path.join(output,'hub-'+width+'.png')});
      await page.locator('.indie-bottom-nav [data-game-route="bazaar"]').click();await acknowledge(page);
-     assert.equal(await page.locator('[data-shop-tab]').count(),2,'Only playable worlds and skins are sold');
-     assert.equal(await page.locator('[data-shop-tab="backgrounds"]').count(),0,'Legacy cosmetics are preserved outside the regular sale');
+     assert.deepEqual(await page.locator('[data-shop-tab]').evaluateAll(tabs=>tabs.map(tab=>tab.dataset.shopTab)),['worlds','skins','abilities'],'Worlds, outfits and abilities have explicit shop tabs');
+     assert.equal(await page.locator('[data-shop-tab="backgrounds"]').count(),0,'Legacy backgrounds have no sale tab');
      await page.locator('[data-shop-filter="owned"]').click();
      assert.equal(await page.locator('.shop-card.is-locked:visible').count(),0);
      await page.locator('[data-shop-filter="new"]').click();
