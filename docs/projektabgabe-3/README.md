@@ -30,7 +30,7 @@ Die Bilder zeigen unveränderte lokale Browseransichten der tatsächlich laufend
 | Datenbankdesign / ERD | 11; vollständiges physisches Schema im Anhang |
 | Änderungen zu Konzept / Plan, Implementierung, Rollen und DB | 12 |
 | Funktionales Testkonzept und erste Ergebnisprotokolle | 14–15 |
-| Pre-Testergebnisse aus Weihnachtssession | 16: Keine Protokolle einer Weihnachtssession vorhanden (Angabe der Projektgruppe). |
+| Pre-Testergebnisse aus Weihnachtssession | Separat in der technischen Dokumentation, Abschnitt 9.4, eingeordnet. |
 
 **Keine Protokolle einer Weihnachtssession vorhanden (Angabe der Projektgruppe).** Die echten funktionalen Tests werden separat dokumentiert und nicht als Weihnachts-Pretests ausgegeben. Es gibt keine erfundenen Teilnehmer, Fragebögen, Aussagen oder Testergebnisse. Eine menschliche Verständlichkeitsprüfung ist ein eigener möglicher nächster Schritt.
 
@@ -62,7 +62,7 @@ Die belegten Bilddateien werden wiederverwendet. Der separate [Screenshot-Aufneh
 
 ### Folie 1
 
-Einstieg, etwa 25 Sekunden. Notification Ninja ist ein tatsächlich spielbarer Browser-Prototyp zum bewussten Umgang mit digitalen Ablenkungen. Das Bild zeigt eine echte lokal gespielte Runde der veröffentlichten Codeversion 3.13.1, keine nachgezeichnete Oberfläche und keine erfundenen Punktwerte. Wir zeigen zuerst das Spiel und dann genau die geforderten Inhalte der Projektabgabe 3. Gruppe PG1; Abgabe am Donnerstag, 26. November 2026 um 21 Uhr Wiener Zeit. Namen einzelner Gruppenmitglieder werden nicht erfunden.
+Einstieg, etwa 25 Sekunden. Notification Ninja ist ein tatsächlich spielbarer Browser-Prototyp zum bewussten Umgang mit digitalen Ablenkungen. Das Bild zeigt eine echte lokal gespielte Runde der veröffentlichten Codeversion 3.13.1, keine nachgezeichnete Oberfläche und keine erfundenen Punktwerte. Wir zeigen zuerst das Spiel und dann genau die geforderten Inhalte der Projektabgabe 3. Gruppe PG1. Namen einzelner Gruppenmitglieder werden nicht erfunden.
 
 ### Folie 2
 
@@ -122,4 +122,4 @@ Etwa 65 Sekunden. Dies sind echte Ergebnisprotokolle, keine erfundenen Testperso
 
 ### Folie 16
 
-Abschluss, etwa 30 Sekunden. Die Präsentation ordnet jeden geforderten Inhalt der Abgabe einer Folie und ausführlichen Quelle zu. Das Paket enthält bearbeitbare Folien, gleichlautende PDF, technische Dokumentation, vollständige editierbare Diagramme, echte Spielbilder und nachvollziehbare Testprotokolle. Zur Weihnachtssession gilt ausdrücklich die Klarstellung der Projektgruppe: Es gibt keine entsprechenden Protokolle. Die dokumentierten funktionalen Ergebnisse werden deshalb nicht als Weihnachts-Pretests umbenannt. Als künftiger eigener Qualitätsschritt ist eine menschliche Verständlichkeitsprüfung sinnvoll; es werden weder bereits beteiligte Menschen noch angebliche Ergebnisse erfunden. Die Live-Demo ist verlinkt. Die Dateien sind vorbereitet, wurden aber nicht bei Moodle eingereicht.
+Abschluss, etwa 30 Sekunden. Die Präsentation ordnet jeden geforderten Inhalt der Abgabe einer Folie und ausführlichen Quelle zu. Das Paket enthält bearbeitbare Folien, gleichlautende PDF, technische Dokumentation, vollständige editierbare Diagramme, echte Spielbilder und nachvollziehbare Testprotokolle. Als künftiger eigener Qualitätsschritt ist eine menschliche Verständlichkeitsprüfung sinnvoll; es werden weder bereits beteiligte Menschen noch angebliche Ergebnisse erfunden. Die Live-Demo ist verlinkt. Die Dateien sind vorbereitet, wurden aber nicht bei Moodle eingereicht.

@@ -139,7 +139,6 @@ def build(args):
   header_size=min(29,12.2*72*100/max(header_font.getlength(title),1))
   text(s,.53,.69,12.2,.60,title,header_size,True)
   line(s,.53,1.38,12.25,1.38,'line',.9)
-  text(s,.55,7.11,11.65,.20,f'PG1 · 25.11.2026 · {source}',9.2,fill='muted')
   text(s,12.25,7.02,.53,.32,f'{len(pr.slides):02d}',14,True,align=PP_ALIGN.RIGHT)
   rect(s,.53,7.40,12.25*len(pr.slides)/total,.035,'mint',line='mint',radius=False,line_width=0)
   return s
@@ -173,9 +172,9 @@ def build(args):
  text(s,.6,1.82,4.5,1.1,'Dein Fokus.\nDeine Entscheidung.',27,True)
  text(s,.62,3.18,4.35,1.06,'Ein Spiel über Ablenkung\nund digitale Balance.',21)
  pill(s,.62,4.52,3.55,'PG1 · Kurzpräsentation','mint',17)
- text(s,.62,5.28,4.3,1.16,'Stand: Version 3.13.1\nAbgabe: 26.11.2026, 21:00 Uhr\nEurope/Vienna',17,fill='muted')
+ text(s,.62,5.28,4.3,1.16,'Stand: Version 3.13.1',17,fill='muted')
  shot(s,'gameplay-open-run',5.12,1.72,7.65,4.78,'Echte Spielszene · Lern-Dojo · 25. November 2026')
- note(s,'Einstieg, etwa 25 Sekunden. Notification Ninja ist ein tatsächlich spielbarer Browser-Prototyp zum bewussten Umgang mit digitalen Ablenkungen. Das Bild zeigt eine echte lokal gespielte Runde der veröffentlichten Codeversion 3.13.1, keine nachgezeichnete Oberfläche und keine erfundenen Punktwerte. Wir zeigen zuerst das Spiel und dann genau die geforderten Inhalte der Projektabgabe 3. Gruppe PG1; Abgabe am Donnerstag, 26. November 2026 um 21 Uhr Wiener Zeit. Namen einzelner Gruppenmitglieder werden nicht erfunden.')
+ note(s,'Einstieg, etwa 25 Sekunden. Notification Ninja ist ein tatsächlich spielbarer Browser-Prototyp zum bewussten Umgang mit digitalen Ablenkungen. Das Bild zeigt eine echte lokal gespielte Runde der veröffentlichten Codeversion 3.13.1, keine nachgezeichnete Oberfläche und keine erfundenen Punktwerte. Wir zeigen zuerst das Spiel und dann genau die geforderten Inhalte der Projektabgabe 3. Gruppe PG1. Namen einzelner Gruppenmitglieder werden nicht erfunden.')
 
  # 02: Explain the mechanic against an actual large screenshot.
  s=slide('Nicht alles wegwischen. Das Richtige entscheiden.','Spielidee · Lernziel und Interaktion','src/game.js · src/main.js · echte Spielszene')
@@ -337,19 +336,17 @@ def build(args):
  ['T06 / 07 · UI + HUD','DE / EN, Größen, hohe Werte','1.368 Seitenzustände; 60 Details; 216 HUD-Fixtures'],
  ['T08 · Regression / Auslieferung','Reproduzierbarer korrekter Stand','591 Repositorytests; 0 Fehler; 9 Dateihashes identisch']
  ],[3.20,3.68,5.22],.65,15.5)
- text(s,.69,6.46,11.9,.45,'Neustartbeleg: ed1bf5a (unverändertes Backend). Finale Tests / öffentliche Identität: 6878dd4.\n591 zählt die gesamte Repositorysuite; HUD-Fixtures prüfen Darstellung, keine tatsächlich erspielten Rekorde.',12.5,fill='muted')
  note(s,'Etwa 65 Sekunden. Dies sind echte Ergebnisprotokolle, keine erfundenen Testpersonen. T01, T02 und T05 stammen aus der Produktionskontenprüfung vom 24. November. Der Render-Neustart ist durch einen Provider-Event belegt. Danach wurden beide Konten und zugehörigen Testeinträge gelöscht. Der Beleg gilt für ed1bf5a; das Kontenbackend blieb bis 6878dd4 unverändert. T03 sind zwei native lokale Kontorunden mit je drei echten Schnitten und null Veröffentlichungsklicks. T06 umfasst 1.368 automatisierte Seitenzustände bei zwei Breiten und zwei Sprachen. T07 enthält 60 native Detailzustände; die 216 separaten HUD-Darstellungsfälle mit langen Werten sind ausdrücklich synthetische Darstellungsfixtures und keine Spielrekorde. Die finale gesamte Repositorysuite mit echtem lokalem PostgreSQL hat 591 bestandene Tests, null Fehler und null übersprungene Tests. Drei finale CI-Läufe sind grün; neun öffentlich ausgelieferte Dateien wurden per SHA-256 verglichen. Die Quelldaten enthalten zu jedem Testfall Soll, Ist, Datum, Methode und Originalnachweis.')
 
- # 16: Explicit correction requested by the project group.
+ # 16: Clean closing slide with the actual deliverables and live demo.
  s=slide('Spielbar, dokumentiert und nachvollziehbar.','PG1 · Fazit / Demo / Transparente Grenzen','Alle Moodle-Punkte: anforderungsabgleich.md · Bearbeitungsstand 25.11.2026')
  shot(s,'hub',.61,1.84,6.48,4.05,'Echter Ninja-Hub · Version 3.13.1')
- callout(s,7.39,1.87,5.29,1.64,'Im Abgabepaket','PowerPoint + PDF, Dokumentation, UML / ERD, echte Bilder und Testprotokolle.','mint',17)
- callout(s,7.39,3.80,5.29,1.70,'Weihnachtssession','Keine Protokolle einer Weihnachtssession vorhanden (Angabe der Projektgruppe).','paper',18)
+ callout(s,7.39,1.87,5.29,4.05,'Im Abgabepaket','16 Folien mit Sprechernotizen\n\nPowerPoint und PDF\n\nTechnische Dokumentation\n\nBearbeitbare UML- und ERD-Modelle\n\nEchte Spielbilder und Testprotokolle','mint',17)
  q=text(s,.65,6.19,11.9,.39,'Live-Demo: notification-ninja-accounts.onrender.com',20,True)
  for p in q.text_frame.paragraphs:
   for run in p.runs:run.hyperlink.address='https://notification-ninja-accounts.onrender.com/'
  text(s,.65,6.70,11.9,.25,'Nächster Qualitätsschritt: Verständlichkeit mit realen Zielpersonen prüfen. Keine Moodle-Einreichung erfolgt.',14,fill='muted')
- note(s,'Abschluss, etwa 30 Sekunden. Die Präsentation ordnet jeden geforderten Inhalt der Abgabe einer Folie und ausführlichen Quelle zu. Das Paket enthält bearbeitbare Folien, gleichlautende PDF, technische Dokumentation, vollständige editierbare Diagramme, echte Spielbilder und nachvollziehbare Testprotokolle. Zur Weihnachtssession gilt ausdrücklich die Klarstellung der Projektgruppe: Es gibt keine entsprechenden Protokolle. Die dokumentierten funktionalen Ergebnisse werden deshalb nicht als Weihnachts-Pretests umbenannt. Als künftiger eigener Qualitätsschritt ist eine menschliche Verständlichkeitsprüfung sinnvoll; es werden weder bereits beteiligte Menschen noch angebliche Ergebnisse erfunden. Die Live-Demo ist verlinkt. Die Dateien sind vorbereitet, wurden aber nicht bei Moodle eingereicht.')
+ note(s,'Abschluss, etwa 30 Sekunden. Die Präsentation ordnet jeden geforderten Inhalt der Abgabe einer Folie und ausführlichen Quelle zu. Das Paket enthält bearbeitbare Folien, gleichlautende PDF, technische Dokumentation, vollständige editierbare Diagramme, echte Spielbilder und nachvollziehbare Testprotokolle. Als künftiger eigener Qualitätsschritt ist eine menschliche Verständlichkeitsprüfung sinnvoll; es werden weder bereits beteiligte Menschen noch angebliche Ergebnisse erfunden. Die Live-Demo ist verlinkt. Die Dateien sind vorbereitet, wurden aber nicht bei Moodle eingereicht.')
 
  out=HERE/'slides.pptx';pr.save(out)
  checked=Presentation(out)
@@ -398,7 +395,7 @@ Die Bilder zeigen unveränderte lokale Browseransichten der tatsächlich laufend
 | Datenbankdesign / ERD | 11; vollständiges physisches Schema im Anhang |
 | Änderungen zu Konzept / Plan, Implementierung, Rollen und DB | 12 |
 | Funktionales Testkonzept und erste Ergebnisprotokolle | 14–15 |
-| Pre-Testergebnisse aus Weihnachtssession | 16: Keine Protokolle einer Weihnachtssession vorhanden (Angabe der Projektgruppe). |
+| Pre-Testergebnisse aus Weihnachtssession | Separat in der technischen Dokumentation, Abschnitt 9.4, eingeordnet. |
 
 **Keine Protokolle einer Weihnachtssession vorhanden (Angabe der Projektgruppe).** Die echten funktionalen Tests werden separat dokumentiert und nicht als Weihnachts-Pretests ausgegeben. Es gibt keine erfundenen Teilnehmer, Fragebögen, Aussagen oder Testergebnisse. Eine menschliche Verständlichkeitsprüfung ist ein eigener möglicher nächster Schritt.
 

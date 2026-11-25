@@ -17,7 +17,7 @@ Die folgende Zuordnung folgt der übermittelten Moodle-Aufgabenstellung. Die Zuo
 | **Mögliche Änderungen an Konzept / Plan: Implementierung, Rollen, DB usw.** | Vom reinen Ranglistenserver zur Konto-API mit dauerhafter PostgreSQL-Speicherung; Fähigkeiten in den Basar; vertrauenswürdige Admin-Testrolle; automatische Wertung neuer geeigneter Kontorunden. Erhalt von Gastständen und alten Inhaltskennungen. | Quellcode und Versionsnachweise. Eine geänderte technische Architektur ist belegt; frei erfundene Teamzuständigkeiten oder ursprüngliche Zeitpläne werden nicht ergänzt. |
 | **Funktionales Testen: Konzept** | Positive/negative Fälle, Kontentrennung, Wiederholung von Käufen, manipulierte Eingaben, echter Serverneustart, Browser-/Sprach-/Darstellungsprüfungen und anschließende Testdatenlöschung. | Teststrategie und Grenzen in `technical-documentation.md`, Abschnitt 9; reproduzierbare Skripte im Repository. |
 | **Funktionales Testen: erste Ergebnisprotokolle** | Konkrete Tabelle mit Testfall, Soll, beobachtetem Ist, Ergebnis und Quelle. Ergebnisse werden nach Methode getrennt: lokale Modell-/HTTP-Tests, native Browserbedienung und öffentlicher Betrieb. | Ergebnisübersicht unten und maschinenlesbare `presentation_test_results.json`; vorhandene bereinigte Originalnachweise 02, 09, 13, 15–18. |
-| **Pre-Testergebnisse aus Weihnachtssession** | **„Keine Protokolle einer Weihnachtssession vorhanden (Angabe der Projektgruppe).“** Es werden weder Teilnehmer noch Aussagen oder Ergebnisse erfunden. Die vorhandenen funktionalen Testprotokolle werden als tatsächlich vorliegende Ergebnisse gezeigt. | Explizite Klarstellung der Projektgruppe vom 25.11.2026. Dieser geforderte Ergebnisanteil kann ohne vorhandene Protokolle nicht als geliefert behauptet werden; es wird nicht zum Nachreichen nicht existierender Unterlagen aufgefordert. |
+| **Pre-Testergebnisse aus Weihnachtssession** | Der Punkt ist in der technischen Dokumentation, Abschnitt 9.4, eingeordnet: **„Keine Protokolle einer Weihnachtssession vorhanden (Angabe der Projektgruppe).“** Es werden weder Teilnehmer noch Aussagen oder Ergebnisse erfunden. Die vorhandenen funktionalen Testprotokolle werden als tatsächlich vorliegende Ergebnisse gezeigt. | Explizite Klarstellung der Projektgruppe vom 25.11.2026. Dieser geforderte Ergebnisanteil kann ohne vorhandene Protokolle nicht als geliefert behauptet werden; es wird nicht zum Nachreichen nicht existierender Unterlagen aufgefordert. |
 
 ## Konkrete funktionale Ergebnisprotokolle
 
@@ -60,6 +60,6 @@ Die Einträge beschreiben bereits ausgeführte Prüfungen. „Bestanden“ gilt 
 13. Echte Gaming-/Schlaf-Spielbilder und heutiger Inhaltsumfang.
 14. Funktionales Testkonzept.
 15. Echte erste Ergebnisprotokolle mit Soll und Ist.
-16. Abgabestand, Live-Demo und ausdrückliche Weihnachtsklarstellung.
+16. Abgabestand, Übersicht des Pakets und Live-Demo.
 
 Die vollständigen Sequenzen für Kauf und Wochenpodium sowie beide vollständigen ERD-Ansichten liegen zusätzlich als bearbeitbare Quellen, SVG und im Dokumentations-PDF bei. Sprechernotizen erläutern jede Folie; die Vortragsdauer beträgt etwa 10–12 Minuten.
