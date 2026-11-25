@@ -1,0 +1,182 @@
+{
+  "kind": "Original screenshots from the running game, never mocked",
+  "capturedAt": "2026-11-25T18:39:18.498Z",
+  "version": "3.13.1",
+  "sourceRevision": "f4043214a4aec62c4aa0aa27525ec7c819822b44",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "language": "de",
+  "theme": "relaxed",
+  "syntheticProfileGrants": false,
+  "accountCredentialsUsed": false,
+  "productionRequests": false,
+  "images": [
+    {
+      "file": "homepage.png",
+      "description": "Öffentliche Homepage mit Logo, NIM und Einstiegsmöglichkeiten.",
+      "urlPath": "/notification-ninja/home.html",
+      "sha256": "0b7a1d8b94d395d591a011a3ec7d5855b1dec5553eea995586816466b20d6737",
+      "bytes": 1231384,
+      "method": "Unmodified Playwright screenshot of the actual visible viewport"
+    },
+    {
+      "file": "hub.png",
+      "description": "Ninja-Hub eines frisch gestarteten echten Gastprofils.",
+      "urlPath": "/notification-ninja/index.html#overview",
+      "sha256": "e283a68a2f2e15cf03254671d20c262b388c0e1026ac36e71c057e2b343b3549",
+      "bytes": 1316366,
+      "method": "Unmodified Playwright screenshot of the actual visible viewport"
+    },
+    {
+      "file": "play-menu.png",
+      "description": "Gemeinsame Auswahl von Spielmodi und Spielwelten.",
+      "urlPath": "/notification-ninja/index.html#play",
+      "sha256": "058e439d6d7d6c536e18bca4d5531cfe0725b5004aac504c46386ea96fa08fee",
+      "bytes": 1395955,
+      "method": "Unmodified Playwright screenshot of the actual visible viewport"
+    },
+    {
+      "file": "gameplay-study.png",
+      "description": "Echte laufende study-Kurzrunde nach tatsächlichen Mausschnitten.",
+      "urlPath": "/notification-ninja/index.html#playing",
+      "sha256": "41c0a727407af91f3a1ac51f2602e36be6e3abed5b81ed6a7d08b97f743695b1",
+      "bytes": 1267603,
+      "method": "Unmodified Playwright screenshot of the actual visible viewport",
+      "nativeMouseCuts": 4,
+      "actualScore": 1000,
+      "elapsed": 34.24859999999964,
+      "attempts": 4
+    },
+    {
+      "file": "career-map.png",
+      "description": "Tatsächliche Karrierekarte mit Hauptmissionen und realen Freischaltzuständen.",
+      "urlPath": "/notification-ninja/index.html#campaign",
+      "sha256": "e2b660830fce9b4909124c0fb7f22756e7de6e1a01dc47731de696212ce38a3f",
+      "bytes": 1392363,
+      "method": "Unmodified Playwright screenshot of the actual visible viewport"
+    },
+    {
+      "file": "ninja-preview.png",
+      "description": "Echte wertungsfreie Ninja-Look-Vorschau im Gaming-Dojo.",
+      "urlPath": "/notification-ninja/index.html#dressing",
+      "sha256": "2589d6eef9dcad4856287be368db529c9150e5db7b9531e3ffcebe51c0bc3b0b",
+      "bytes": 1122622,
+      "method": "Unmodified Playwright screenshot of the actual visible viewport"
+    },
+    {
+      "file": "bazaar-abilities.png",
+      "description": "Fähigkeiten und Supers mit realen Preisen und Voraussetzungen.",
+      "urlPath": "/notification-ninja/index.html#bazaar",
+      "sha256": "778bc4dc8d46c3e11947459d4b65d606e16a92fd26df2d3e4bb7081cae71ea17",
+      "bytes": 590504,
+      "method": "Unmodified Playwright screenshot of the actual visible viewport"
+    },
+    {
+      "file": "registration.png",
+      "description": "Echtes Registrierungsformular; keine Anmeldung und keine Kontoerstellung durchgeführt.",
+      "urlPath": "/notification-ninja/index.html#register",
+      "sha256": "fe8f29d367da5a3328ac1bb3baf10651f7aec1578c8451b92dbdd2553f01c02e",
+      "bytes": 745248,
+      "method": "Unmodified Playwright screenshot of the actual visible viewport"
+    },
+    {
+      "file": "leaderboard.png",
+      "description": "Echte Ranglistenansicht und Wochenpodium; es werden keine erfundenen Spieler hinzugefügt.",
+      "urlPath": "/notification-ninja/index.html#leaderboard",
+      "sha256": "70f37d01de23114858d681d14b7dbbcf8a4a2242549b1e2e00156420916db416",
+      "bytes": 523021,
+      "method": "Unmodified Playwright screenshot of the actual visible viewport"
+    },
+    {
+      "file": "playtime-settings.png",
+      "description": "Tatsächliche Einstellungen für aktive Spielzeit, Intro und freiwillige Pausenerinnerungen.",
+      "urlPath": "/notification-ninja/index.html#settings",
+      "sha256": "f0f6459201233dfbb3888cf37aab4e38f9042557e76d77a9a3be2c5f4f84470b",
+      "bytes": 528797,
+      "method": "Unmodified Playwright screenshot of the actual visible viewport"
+    },
+    {
+      "file": "gameplay-gaming.png",
+      "description": "Echte laufende gaming-Kurzrunde mit geworfenen Signalen, Ninja und HUD.",
+      "urlPath": "/notification-ninja/index.html#playing",
+      "sha256": "12103ad5f1b617f94634ca0c170465c61eefd209e0e34342ab8a3fcb6c1e6036",
+      "bytes": 1254765,
+      "method": "Unmodified Playwright screenshot of the actual visible viewport",
+      "nativeMouseCuts": 3,
+      "actualScore": 500,
+      "elapsed": 13.482699999999973,
+      "visibleSignals": 2,
+      "attempts": 3
+    },
+    {
+      "file": "gameplay-sleep.png",
+      "description": "Echte laufende sleep-Kurzrunde mit geworfenen Signalen, Ninja und HUD.",
+      "urlPath": "/notification-ninja/index.html#playing",
+      "sha256": "2a7c2ae1afeb4e12bc23b8f4867581276ff8cf86f9f8680c9b8be229f8d36895",
+      "bytes": 1249881,
+      "method": "Unmodified Playwright screenshot of the actual visible viewport",
+      "nativeMouseCuts": 3,
+      "actualScore": 400,
+      "elapsed": 9.03290000000002,
+      "visibleSignals": 2,
+      "attempts": 3
+    },
+    {
+      "file": "bazaar-skins.png",
+      "description": "Echte Basar-Karten mit Ninja-Illustrationen, Seltenheiten und Freischaltbedingungen; sichtbarer erster Produktabschnitt.",
+      "urlPath": "/notification-ninja/index.html#bazaar",
+      "sha256": "abf7c0870e6e8f868ff34570359df77820bf524a608cfebfce46795a5661aaae",
+      "bytes": 573950,
+      "method": "Unmodified Playwright screenshot of the actual visible viewport"
+    },
+    {
+      "file": "bazaar-legendary.png",
+      "description": "Echter Basar mit dem ausgewählten Seltenheitsfilter Legendär; keine Freischaltung vorgenommen.",
+      "urlPath": "/notification-ninja/index.html#bazaar",
+      "sha256": "4bf126fe03155d141cf3949b68ac19ecb6bdf2ee35cc275688e77a5fce3de4a7",
+      "bytes": 563958,
+      "method": "Unmodified Playwright screenshot of the actual visible viewport"
+    },
+    {
+      "file": "gameplay-open-run.png",
+      "description": "Echte laufende open-Kurzrunde mit geworfenen Signalen, Ninja und HUD.",
+      "urlPath": "/notification-ninja/index.html#playing",
+      "sha256": "7ce7964573a361b87f3cd9fb68690b453e9be78eb76f934ec8a368540f610bf8",
+      "bytes": 1273147,
+      "method": "Unmodified Playwright screenshot of the actual visible viewport",
+      "nativeMouseCuts": 7,
+      "actualScore": 1200,
+      "elapsed": 18.099299999999882,
+      "visibleSignals": 2,
+      "attempts": 7
+    },
+    {
+      "file": "design-study-v5.png",
+      "description": "Illustrationsentwurf des Lern-Dojos aus Git-Version 3.6.0 vom 10.11.2026; keine Benutzeroberfläche und kein aktueller Gameplay-Screenshot.",
+      "urlPath": "git:8e4271cfa3d47d2ad0c2d4bb7cd6581146e86bd7:notification-ninja/assets/dojo-study-v5.svg",
+      "sha256": "2650f4876c833fc53f9ed03923a68f67f33dbdcbd9fff52d659227d3cbe38218",
+      "bytes": 314940,
+      "method": "Unmodified native browser screenshot rendering the exact historical SVG, preserved 3:2 aspect ratio",
+      "kind": "Illustrationsentwurf, kein UI-Screenshot",
+      "viewport": {
+        "width": 1440,
+        "height": 960
+      },
+      "sourceAsset": "notification-ninja/assets/dojo-study-v5.svg",
+      "sourceAssetRevision": "8e4271cfa3d47d2ad0c2d4bb7cd6581146e86bd7",
+      "sourceAssetSha256": "2e44f0bffd63d1ee05f9c79cc138555d2b5851ea670829aa074ab394c4045bd4",
+      "sourceAssetDate": "2026-11-10T17:53:24+01:00"
+    },
+    {
+      "file": "play-worlds.png",
+      "description": "Echte gemeinsame Spielwelt-Auswahl mit vier unterschiedlich gestalteten Dojos; echte Freischaltzustände eines neuen Gastprofils.",
+      "urlPath": "/notification-ninja/index.html#play",
+      "sha256": "fb315481f920d7ed395382d8573f97a1a4ae018c775c4a1fa94bf8925bfc23a0",
+      "bytes": 1411674,
+      "method": "Unmodified Playwright screenshot of the actual visible viewport"
+    }
+  ],
+  "errors": []
+}

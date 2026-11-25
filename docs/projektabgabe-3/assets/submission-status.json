@@ -5,5 +5,5 @@
   "release": "3.13.1 veröffentlicht; finale CI und öffentliche Versionsprüfung bestanden",
   "public_status": "Finale CI, öffentliche Dateigleichheit und Konto-/Neustartprüfung bestanden",
   "commit": "Geprüfter Quellstand: 6878dd4bc8717d48f257d5b89c17868c355fc2bd",
-  "xmas": "Kein Protokoll einer Weihnachtssession im Repository vorhanden."
+  "xmas": "Keine Protokolle einer Weihnachtssession vorhanden (Angabe der Projektgruppe)."
 }

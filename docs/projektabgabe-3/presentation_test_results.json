@@ -1,0 +1,107 @@
+{
+  "recordType": "presentation-functional-result-protocol-selection",
+  "observedOn": "2026-11-25",
+  "project": "Notification Ninja",
+  "version": "3.13.1",
+  "currentTestedSourceCommit": "6878dd4bc8717d48f257d5b89c17868c355fc2bd",
+  "productionRestartTestSourceCommit": "ed1bf5a00b5fdd93f39446e0a7adadf08852bf3c",
+  "results": [
+    {
+      "id": "T01",
+      "title": "Zwei Konten registrieren und anmelden",
+      "expected": "Zwei unabhängige Konten und getrennte gespeicherte Profile.",
+      "actual": "Zwei Produktionskonten registriert und angemeldet; getrennte Daten geprüft.",
+      "status": "passed",
+      "date": "2026-11-24",
+      "method": "production-http",
+      "evidence": "nachweise/13-production-accounts-restart-2026-11-24.json"
+    },
+    {
+      "id": "T02",
+      "title": "Kauf und idempotente Wiederholung",
+      "expected": "Die bekannte 35-Münzen-Fähigkeit wird genau einmal bezahlt.",
+      "actual": "Kauf mit erspielten Mitteln und Wiederholungen erfolgreich geprüft.",
+      "status": "passed",
+      "date": "2026-11-24",
+      "method": "production-http",
+      "evidence": "nachweise/13-production-accounts-restart-2026-11-24.json"
+    },
+    {
+      "id": "T03",
+      "title": "Automatischer Open-Run-Eintrag",
+      "expected": "Ein geeigneter neuer Kontorun wird ohne zusätzlichen Veröffentlichungsklick gewertet.",
+      "actual": "Zwei native lokale Runden mit je drei Schnitten; null Veröffentlichungsklicks; Eintrag nach Reload erhalten; beide Konten gelöscht.",
+      "status": "passed",
+      "date": "2026-11-24",
+      "method": "isolated-native-browser",
+      "evidence": "nachweise/09-native-auto-ranking-2026-11-24.json"
+    },
+    {
+      "id": "T04",
+      "title": "Manipulierte Geldwerte und unverdiente Ansprüche",
+      "expected": "Keine unberechtigte Wallet- oder Besitzänderung.",
+      "actual": "Negative Fälle sowie konkurrierende wiederholte Käufe in SQLite und PostgreSQL bestanden.",
+      "status": "passed",
+      "date": "2026-11-24",
+      "method": "isolated-process-http-with-synthetic-replay-clock",
+      "evidence": "nachweise/02-account-api-2026-11-24.json"
+    },
+    {
+      "id": "T05",
+      "title": "Persistenz nach tatsächlichem Serverneustart",
+      "expected": "Profile, Käufe und Rangliste überstehen den kontrollierten Neustart.",
+      "actual": "Zwei Produktionskonten nach belegtem Render-Neustart verifiziert; beide Konten und Einträge danach gelöscht.",
+      "status": "passed",
+      "date": "2026-11-24",
+      "method": "production-http-and-provider-event",
+      "evidence": "nachweise/13-production-accounts-restart-2026-11-24.json"
+    },
+    {
+      "id": "T06",
+      "title": "Seiten-, Sprach- und Größenprüfung",
+      "expected": "Keine Befunde innerhalb der definierten UI-Matrix.",
+      "actual": "1368 Zustände bei zwei Breiten und zwei Sprachen bestanden; vier Testkonten gelöscht.",
+      "status": "passed",
+      "date": "2026-11-25",
+      "method": "browser-emulation",
+      "evidence": "nachweise/15-final-all-pages-2026-11-25.json"
+    },
+    {
+      "id": "T07",
+      "title": "Detailansichten und lange HUD-Werte",
+      "expected": "Aufklappbare Erklärungen und hohe Zahlen bleiben zugänglich und lesbar.",
+      "actual": "60 native Detailzustände mit minimalem Missionszielkontrast 5,84:1; separat 216 reine HUD-Darstellungsfälle bestanden.",
+      "status": "passed",
+      "date": "2026-11-25",
+      "method": "native-ui-and-isolated-display-fixture",
+      "evidence": [
+        "nachweise/16-compact-ui-2026-11-25.json",
+        "nachweise/10-hud-stress-2026-11-24.json"
+      ]
+    },
+    {
+      "id": "T08",
+      "title": "Regression und öffentliche Auslieferung",
+      "expected": "Reproduzierbare Tests und identische ausgelieferte Version.",
+      "actual": "591 Repositorytests, 0 Fehler, 0 übersprungen; drei CI-Läufe erfolgreich; neun öffentliche Dateien per SHA-256 abgeglichen.",
+      "status": "passed",
+      "date": "2026-11-25",
+      "method": "repository-suite-and-independent-ci",
+      "evidence": [
+        "nachweise/17-final-repository-tests-2026-11-25.json",
+        "nachweise/18-final-ci-public-identity-2026-11-25.json"
+      ]
+    }
+  ],
+  "christmasSession": {
+    "recordsExist": false,
+    "source": "Explicit project-group clarification, 2026-11-25",
+    "presentationText": "Keine Protokolle einer Weihnachtssession vorhanden (Angabe der Projektgruppe).",
+    "inventedParticipantsOrResults": false
+  },
+  "limits": [
+    "591 is the entire repository suite, not only Notification Ninja.",
+    "The 132 integrated guest states are local, not a claimed count of public guest views.",
+    "Functional browser automation is not a human usability pretest or physical-device test."
+  ]
+}
