@@ -9,6 +9,7 @@ const root=path.resolve(__dirname,'..');
 const base=process.env.NINJA_BASE_URL||'http://127.0.0.1:8083/notification-ninja/';
 if(!['localhost','127.0.0.1','[::1]'].includes(new URL(base).hostname))throw Error('All-pages audit requires an isolated local service.');
 const output=path.resolve(process.env.NINJA_TEST_OUTPUT||'test-results/ninja-all-pages');
+const captureScreenshots=process.env.NINJA_CAPTURE_SCREENSHOTS!=='0';
 const widths=(process.env.NINJA_TEST_WIDTHS||'360,1280').split(',').map(Number);
 const languages=(process.env.NINJA_TEST_LANGUAGES||'de,en').split(',');
 const sections=new Set((process.env.NINJA_ALL_PAGES_SECTIONS||'homepage,primary,worlds,career,collections,shop,learning,settings,authentication,accounts').split(','));
@@ -52,7 +53,7 @@ async function record(p,entry,id,{screenshot=true,homepage=false}={}){
  const item={id};
  try{const g=await geometry(p),s=homepage?await homepageSnapshot(p,entry.language):await read(p);Object.assign(item,{ui:s.ui,geometry:g,missing:s.translation.missing});assert(g.document<=g.viewport+1,'Horizontal page overflow');assert.deepEqual(g.small,[],'Controls smaller than44px');assert.deepEqual(g.failedImages,[],'Artwork failed to load');assert.deepEqual(g.duplicateIds,[],'Duplicate element IDs');assert.deepEqual(s.translation.missing,[],'Missing English translations');item.ok=true;}
  catch(error){item.ok=false;item.error=error.message;console.error('ALL_PAGES_FINDING',entry.width,entry.language,id,JSON.stringify({error:item.error,geometry:item.geometry,missing:item.missing}));}
- if(screenshot||!item.ok)await p.screenshot({path:path.join(output,slug(entry.width+'-'+entry.language+'-'+id)+'.png'),fullPage:true,mask:[p.locator('#account-key'),p.locator('#mfa-setup-secret'),p.locator('.mfa-qr-wrap'),p.locator('#mfa-recovery-codes')]}).catch(()=>{});
+ if(screenshot&&captureScreenshots||!item.ok)await p.screenshot({path:path.join(output,slug(entry.width+'-'+entry.language+'-'+id)+'.png'),fullPage:true,mask:[p.locator('#account-key'),p.locator('#mfa-setup-secret'),p.locator('.mfa-qr-wrap'),p.locator('#mfa-recovery-codes')]}).catch(()=>{});
  entry.pages.push(item);if(entry.pages.length%25===0)console.log('ALL_PAGES_PROGRESS',entry.width,entry.language,entry.pages.length,id);return item;
 }
 async function safely(p,entry,id,task){try{await task();}catch(error){entry.pages.push({id,ok:false,error:error.message});console.error('ALL_PAGES_FLOW',entry.width,entry.language,id,error.message);await p.screenshot({path:path.join(output,slug(entry.width+'-'+entry.language+'-FAIL-'+id)+'.png'),fullPage:true}).catch(()=>{});}}

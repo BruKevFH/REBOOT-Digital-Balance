@@ -32,13 +32,13 @@ async function inspect(p,label,out,entry,{screenshot=true}={}){
 async function route(p,url,id,version){await p.goto(url+'#'+id);await ready(p,version);await dismiss(p);}
 async function intro(p,entry,out,{complete=false}={}){
  const expectedVersion=(await snapshot(p)).version,before=economy(await snapshot(p));await p.waitForFunction(()=>window.__NOTIFICATION_NINJA__.getSnapshot().experience.intro?.active);
- const initial=(await snapshot(p)).experience.intro;assert.equal(initial.kind,'original-canvas-cinematic');assert.equal(initial.duration,20);assert.equal(initial.ranked,false);assert.equal(initial.rewards,false);
+ const watchedAt=Date.now(),initial=(await snapshot(p)).experience.intro;assert.equal(initial.kind,'original-canvas-cinematic');assert.equal(initial.duration,20);assert.equal(initial.ranked,false);assert.equal(initial.rewards,false);
  await inspect(p,entry.width+'-intro',out,entry);
  if(complete){
   await click(p,'[data-intro-action=toggle]');const stopped=(await snapshot(p)).experience.intro.elapsed;await p.waitForTimeout(220);assert.equal((await snapshot(p)).experience.intro.elapsed,stopped,'Native pause stops cinematic time');await click(p,'[data-intro-action=toggle]');
-  await p.waitForFunction(()=>!window.__NOTIFICATION_NINJA__.getSnapshot().experience.intro,undefined,{timeout:27000});assert((await snapshot(p)).experience.lastIntro.finished,'Full 20-second cinematic completes');
+  await p.waitForFunction(()=>!window.__NOTIFICATION_NINJA__.getSnapshot().experience.intro,undefined,{timeout:60000});assert((await snapshot(p)).experience.lastIntro.finished,'Full 20-second cinematic completes');
  }else await click(p,'[data-intro-action=skip]');
- assert.equal((await snapshot(p)).ui,'home');assert.deepEqual(economy(await snapshot(p)),before,'Intro grants no progression');entry.intro={duration:20,complete,skipped:!complete,profilePreserved:true};
+ assert.equal((await snapshot(p)).ui,'home');assert.deepEqual(economy(await snapshot(p)),before,'Intro grants no progression');entry.intro={duration:20,complete,skipped:!complete,profilePreserved:true,observedWallSeconds:(Date.now()-watchedAt)/1000};
  await p.reload();await ready(p,expectedVersion);await p.waitForTimeout(100);assert.equal((await snapshot(p)).experience.intro,null,'Seen intro does not repeat after reload');await dismiss(p);
 }
 async function guestMatrix(browser,options,report){

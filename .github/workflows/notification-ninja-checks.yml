@@ -17,6 +17,7 @@ on:
       - 'scripts/check_ninja_account_audit.mjs'
       - 'scripts/check_ninja_313.cjs'
       - 'scripts/check_ninja_auto_ranking.cjs'
+      - 'scripts/check_ninja_compact.cjs'
       - 'render.yaml'
       - 'package.json'
       - 'package-lock.json'
@@ -40,6 +41,7 @@ on:
       - 'scripts/check_ninja_account_audit.mjs'
       - 'scripts/check_ninja_313.cjs'
       - 'scripts/check_ninja_auto_ranking.cjs'
+      - 'scripts/check_ninja_compact.cjs'
       - 'render.yaml'
       - 'package.json'
       - 'package-lock.json'
@@ -115,12 +117,17 @@ jobs:
             sleep 1
           done
           curl -fsS http://127.0.0.1:8083/api/v3/health
-          for ninja_check in check_ninja_portal check_ninja_indie check_ninja_browser check_ninja_experience check_ninja_crossflows check_ninja_all_pages check_ninja_313 check_ninja_auto_ranking; do
+          for ninja_check in check_ninja_portal check_ninja_indie check_ninja_browser check_ninja_experience check_ninja_crossflows check_ninja_all_pages check_ninja_313 check_ninja_auto_ranking check_ninja_compact; do
             ninja_log="$RUNNER_TEMP/${ninja_check}.log"
+            printf '::group::Notification Ninja: %s\n' "$ninja_check"
             if NINJA_CAPTURE_SCREENSHOTS=0 node "scripts/${ninja_check}.cjs" > "$ninja_log" 2>&1; then
               cat "$ninja_log"
+              printf -- '- Passed: `%s`\n' "$ninja_check" >> "$GITHUB_STEP_SUMMARY"
+              printf '::endgroup::\n'
             else
               cat "$ninja_log"
+              printf '::endgroup::\n'
+              printf '::error title=Notification Ninja browser suite::%s failed; see the step summary and its log.\n' "$ninja_check"
               {
                 printf '### Notification Ninja: %s failed\n\n```text\n' "$ninja_check"
                 tail -100 "$ninja_log"

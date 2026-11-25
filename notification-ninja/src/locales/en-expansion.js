@@ -1,5 +1,7 @@
 /** Authored copy for the extended techniques and collection goals. Stable IDs stay untranslated. */
 export const EN_EXPANSION={
+  'Deine Karriere und freigeschalteten Looks bleiben erhalten. Neue Wochenaufgaben beginnen montags nach UTC. Abholbereite Münzen stehen zuerst; gesicherte Aufgaben rutschen nach unten.':'Your career and unlocked outfits are kept. New weekly tasks start on Monday in UTC. Ready-to-claim coins appear first; claimed tasks move below them.',
+  'Missionsziel in dieser Runde noch nicht erreicht':'Mission objective not reached in this round',
   'Dein Dojo hat eine eigene Adresse':'Your dojo has its own address',
   'Neues Dojo öffnen':'Open the new dojo',
   'Gastspielstand mitnehmen':'Bring my guest profile',

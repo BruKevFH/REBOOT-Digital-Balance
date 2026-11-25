@@ -178,3 +178,4 @@ html[data-ninja-theme] body.is-playing .global-nav #pause-button{background:#b0e
 html[data-ninja-theme] body.is-playing .global-nav svg{color:inherit!important}
 html:is([data-ninja-theme=dark],[data-ninja-theme=noir]) .mission-briefing-goal{background:var(--iv-surface)!important;border-color:var(--iv-stroke)}
 html:is([data-ninja-theme=dark],[data-ninja-theme=noir]) .mission-briefing-goal :is(p,strong){color:var(--iv-ink)!important}
+html[data-ninja-theme] .mission-briefing-goal>strong{color:var(--iv-ink,#103d43)!important}
