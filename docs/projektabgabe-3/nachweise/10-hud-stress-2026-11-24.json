@@ -1,0 +1,61 @@
+{
+  "date": "2026-11-24",
+  "version": "3.13.1",
+  "method": "Presentation fixture: actual HUD markup, styles, loaded fonts and paintHudNumber; values are display-only, no game bridge or save mutations",
+  "sourceLabel": "Final HUD presentation stress report",
+  "sourceSHA256": "89468a9d00ada87494089baf1ba1fa0e644b816eca677683139612d7dccc8db1",
+  "caseCount": 216,
+  "viewports": [
+    [
+      360,
+      844
+    ],
+    [
+      390,
+      844
+    ],
+    [
+      768,
+      1024
+    ],
+    [
+      844,
+      390
+    ],
+    [
+      1280,
+      960
+    ],
+    [
+      1920,
+      1080
+    ]
+  ],
+  "languages": [
+    "de",
+    "en"
+  ],
+  "themes": [
+    "dark",
+    "noir",
+    "relaxed"
+  ],
+  "scores": [
+    4600,
+    999999,
+    100000000
+  ],
+  "combos": [
+    100,
+    12345
+  ],
+  "minimumCounterContrast": 6.296912596452703,
+  "minimumOtherFieldContrast": 5.124608391334294,
+  "counterFontRangePx": [
+    10,
+    25
+  ],
+  "ok": true,
+  "issues": [],
+  "scope": "Display-only fixture with actual markup/styles/font/painting function; no live game bridge, save mutations or score grants."
+}

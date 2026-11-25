@@ -1,0 +1,132 @@
+{
+  "recordType": "sanitized-native-mode-summary",
+  "playedOn": "2026-11-17",
+  "nativeInput": true,
+  "noProfilePatches": true,
+  "noVirtualClocks": true,
+  "allFourModesCompleted": true,
+  "guestDailyIsLocalPractice": true,
+  "runs": [
+    {
+      "mode": "boss-rush",
+      "width": 360,
+      "touch": true,
+      "cuts": 59,
+      "pauseFreezesClock": true,
+      "result": "complete",
+      "realTimeSeconds": 235.471,
+      "ok": true
+    },
+    {
+      "mode": "daily",
+      "width": 360,
+      "touch": true,
+      "cuts": 13,
+      "pauseFreezesClock": true,
+      "result": "complete",
+      "outcome": {
+        "result": "complete",
+        "elapsed": 60.01400000000108,
+        "metrics": {
+          "cuts": 13,
+          "usefulPassed": 21,
+          "usefulMistakes": 0,
+          "missedDistractions": 0,
+          "shieldedMistakes": 0,
+          "lifeLost": 0,
+          "healthyStops": 0,
+          "powerups": 9,
+          "flowTriggers": 6,
+          "correctDecisions": 34,
+          "superUses": 0,
+          "limitExtensions": 0,
+          "sleepContinues": 0,
+          "contextsPlayed": [
+            "sleep"
+          ],
+          "stageStats": [
+            {
+              "levelIndex": 0,
+              "context": "sleep",
+              "elapsed": 60,
+              "reason": "time",
+              "cuts": 13,
+              "usefulPassed": 21,
+              "usefulMistakes": 0,
+              "missedDistractions": 0,
+              "shieldedMistakes": 0,
+              "correctDecisions": 34,
+              "score": 10300,
+              "earnedCoins": 10
+            }
+          ]
+        },
+        "lives": 3,
+        "score": 10300
+      },
+      "realTimeSeconds": 66.666,
+      "ok": true
+    },
+    {
+      "mode": "open",
+      "width": 360,
+      "touch": true,
+      "cuts": 24,
+      "pauseFreezesClock": true,
+      "survived90": true,
+      "result": "lives",
+      "outcome": {
+        "result": "lives",
+        "elapsed": 110.86100000000962,
+        "metrics": {
+          "cuts": 24,
+          "usefulPassed": 18,
+          "usefulMistakes": 0,
+          "missedDistractions": 3,
+          "shieldedMistakes": 1,
+          "lifeLost": 3,
+          "healthyStops": 0,
+          "powerups": 7,
+          "flowTriggers": 8,
+          "correctDecisions": 42,
+          "superUses": 0,
+          "limitExtensions": 0,
+          "sleepContinues": 0,
+          "contextsPlayed": [
+            "study"
+          ],
+          "stageStats": []
+        },
+        "lives": 0,
+        "score": 12000
+      },
+      "realTimeSeconds": 117.707,
+      "ok": true
+    },
+    {
+      "mode": "training",
+      "width": 360,
+      "touch": true,
+      "cuts": 3,
+      "pauseFreezesClock": true,
+      "training": {
+        "decisions": 6,
+        "cuts": 4,
+        "passed": 2,
+        "elapsed": 12.832899999999961,
+        "reason": "learned"
+      },
+      "realTimeSeconds": 16.173,
+      "ok": true
+    }
+  ],
+  "trainingEconomyUnchanged": {
+    "coins": 10,
+    "totalRuns": 1
+  },
+  "sourceReportSha256": "4f9044afc12941280dd31c89f8ca72058284643d8fa62290b3162297271345b8",
+  "limitations": [
+    "Historical test with emulated mobile touch, not physical-device QA.",
+    "Guest daily run is local practice, not a public verified daily placement."
+  ]
+}

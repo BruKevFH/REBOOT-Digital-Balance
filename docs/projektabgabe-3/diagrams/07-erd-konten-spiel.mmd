@@ -1,0 +1,92 @@
+erDiagram
+    users ||--|| profiles : besitzt
+    users ||--|| wallets : besitzt
+    users ||--o{ sessions : hat
+    users ||--o| ninja_mfa : konfiguriert
+    users ||--o{ ninja_mfa_challenges : erhaelt
+    users ||--o{ ninja_ledger : bucht
+    users ||--o{ ninja_actions : beauftragt
+    users ||--o{ ninja_runs : spielt
+    users ||--o{ ninja_verified_scores : veroeffentlicht
+    ninja_runs ||--o| ninja_verified_scores : belegt
+    users {
+        TEXT id PK
+        TEXT username
+        TEXT username_key UK
+        TEXT password_hash
+        TEXT recovery_hash
+        BIGINT created_at
+        TEXT email UK "optional bei Altkonten und internem Bootstrap"
+        BIGINT privacy_at "optional bei Altkonten und internem Bootstrap"
+    }
+    profiles {
+        TEXT user_id PK,FK
+        TEXT data "validiertes JSON-Objekt"
+        BIGINT revision
+        BIGINT run_sequence
+    }
+    wallets {
+        TEXT user_id PK,FK
+        BIGINT balance "massgeblicher Kontostand; nicht negativ"
+    }
+    sessions {
+        TEXT token_hash PK
+        TEXT user_id FK
+        BIGINT created_at
+        BIGINT expires_at
+        BIGSERIAL session_order "nur PostgreSQL; SQLite verwendet rowid"
+    }
+    ninja_mfa {
+        TEXT user_id PK,FK
+        TEXT secret "AES-256-GCM-verschluesselt"
+        INTEGER enabled
+        BIGINT pending_until
+        BIGINT last_step
+        TEXT recovery_hashes "JSON-Liste gehashter MFA-Notfallcodes"
+    }
+    ninja_mfa_challenges {
+        TEXT challenge_hash PK
+        TEXT user_id FK
+        BIGINT created_at
+        BIGINT expires_at
+        INTEGER attempts
+    }
+    ninja_ledger {
+        BIGSERIAL id PK
+        TEXT user_id FK
+        TEXT reference "UNIQUE mit user_id"
+        TEXT kind
+        BIGINT delta
+        BIGINT balance_after
+        BIGINT created_at
+    }
+    ninja_actions {
+        TEXT user_id PK,FK
+        TEXT key PK
+        TEXT body_hash
+        TEXT response "JSON"
+        BIGINT created_at
+    }
+    ninja_runs {
+        TEXT id PK
+        TEXT user_id FK
+        TEXT seed
+        BIGINT started_at
+        BIGINT expires_at
+        TEXT initial "JSON-Initialzustand"
+        BIGINT profile_revision
+        TEXT status "active, superseded oder finished"
+        TEXT commands_hash
+        TEXT response "optionales JSON-Ergebnis"
+        BIGINT finished_at
+        INTEGER published
+    }
+    ninja_verified_scores {
+        TEXT run_id PK,FK
+        TEXT user_id FK
+        TEXT ruleset
+        BIGINT score
+        DOUBLE duration
+        BIGINT decisions
+        BIGINT submitted_at
+    }

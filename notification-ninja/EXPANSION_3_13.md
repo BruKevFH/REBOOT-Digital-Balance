@@ -1,6 +1,8 @@
-# Notification Ninja 3.13.0 – Erweiterung und Freigabestand
+# Notification Ninja 3.13 – Erweiterung und Freigabestand
 
-Stand: **24. November 2026**. Dieser Bericht beschreibt den lokalen Entwicklungskandidaten **3.13.0**. Die veröffentlichte Ausgangsversion bleibt **3.12.0**; Deployment, unabhängige CI und öffentliche Abnahme des neuen Kandidaten sind noch ausstehend. Der Kandidat enthält derzeit nicht eingecheckte Änderungen. Ein neuer Commit und dessen vollständige Kennung werden nach der Integration eingetragen.
+Stand: **25. November 2026**, veröffentlichter Quellstand **3.13.1**: [6878dd4bc8717d48f257d5b89c17868c355fc2bd](https://github.com/BruKevFH/REBOOT-Digital-Balance/commit/6878dd4bc8717d48f257d5b89c17868c355fc2bd). Homepage, Spiel und API laufen unter **https://notification-ninja-accounts.onrender.com/** auf dem bestehenden Render-Free-Dienst mit dauerhafter PostgreSQL-Datenbank. Render bestätigt für diesen Commit das erfolgreiche Deployment `dep-dc32it95efls73aj3eqg`. Die [3.13.1-Ergänzung](PATCH_3_13_1.md) beschreibt automatische neue Open-Run-Einträge, die lesbaren Zähler und kompaktere Ansichten.
+
+Der [Build- und Downloadlauf](https://github.com/BruKevFH/REBOOT-Digital-Balance/actions/runs/45517079333) und die [öffentliche API-/Gastabnahme](https://github.com/BruKevFH/REBOOT-Digital-Balance/actions/runs/45517079859) sind bestanden; letztere bestätigt neun identische Laufzeitdateien und die öffentlichen Gastansichten. Auch die [Gesamtprüfung](https://github.com/BruKevFH/REBOOT-Digital-Balance/actions/runs/45517079240) ist vollständig bestanden.
 
 Die [Spiel- und Seitenabnahme vom 17. November](FULL_GAME_AUDIT.md) bleibt als eigener historischer Nachweis erhalten; ihr Zusatzmissionsabschluss wurde anhand der gespeicherten Ergebnisse nachgetragen. Ihre tatsächlich ausgeführten nativen Karriere-/Modusläufe, SQLite-/PostgreSQL-Prozessprüfungen und damals 498 bestandenen Tests werden nicht als neue 3.13.0-Abnahme ausgegeben. Die bisherigen Erlebnisfunktionen dokumentiert der [3.12.0-Releasebericht](EXPERIENCE_RELEASE.md).
 
@@ -8,7 +10,7 @@ Die [Spiel- und Seitenabnahme vom 17. November](FULL_GAME_AUDIT.md) bleibt als e
 
 Welten, Gaming-Ansichten und Basar erhalten eine überarbeitete Darstellung innerhalb der bestehenden Hauptnavigation. Fähigkeiten liegen unter **Basar → Fähigkeiten** neben Spielwelten und Ninja-Looks. Die frühere radiale Darstellung mit neun Knoten wird durch die Angebote des erweiterten Katalogs ersetzt. Historisch gekaufte Kulissen bleiben im Spielstand erhalten; sie werden nicht als neue Archivnavigation angeboten.
 
-| Katalog | Umfang des Kandidaten | Maßgebliche Quelle |
+| Katalog | Umfang der Erweiterung | Maßgebliche Quelle |
 |---|---:|---|
 | Fähigkeiten einschließlich Supers | 18, sechs je Ast | [progression.js](src/progression.js) |
 | Aktive Supers | 6 | [progression.js](src/progression.js) |
@@ -49,19 +51,19 @@ Standard: Erinnerung **aktiv nach 15 Minuten aktiver Sitzungszeit**. Alternative
 
 ## UTC-Wochenpodium und privates Admin-Testkonto
 
-Die Wettbewerbswoche reicht von Montag 00:00 UTC bis zum folgenden Montag. Berücksichtigt werden echte servergeprüfte Open Runs regulärer Konten, die in derselben Woche beendet und ausdrücklich veröffentlicht wurden. Pro Konto zählt die beste Leistung; die drei Plätze gehören unterschiedlichen Konten. Die Wochenansicht basiert auf den vollständigen serverseitigen Ergebnissen und nicht auf einer im Browser gefilterten globalen Top 100.
+Die Wettbewerbswoche reicht von Montag 00:00 UTC bis zum folgenden Montag. Berücksichtigt werden echte servergeprüfte Open Runs regulärer Konten, die in derselben Woche beendet und veröffentlicht wurden. Seit 3.13.1 veranlasst der Browser den Eintrag neuer geeigneter Kontorunden automatisch nach erfolgreicher Serverprüfung; ältere Ergebnisse werden nicht gesammelt nachveröffentlicht. Pro Konto zählt die beste Leistung; die drei Plätze gehören unterschiedlichen Konten. Die Wochenansicht basiert auf den vollständigen serverseitigen Ergebnissen und nicht auf einer im Browser gefilterten globalen Top 100.
 
 Nach dem Wochenwechsel wird die Platzierung beim nächsten relevanten Serveraufruf transaktional eingefroren. Bei Punktgleichheit folgen längere Laufzeit, frühere Veröffentlichung und stabile Lauf-ID. Platz eins bis drei erhalten **100 / 60 / 30 Münzen** nach ausdrücklicher Abholung. Wiederholte oder parallele Anfragen zahlen dieselbe Prämie nicht erneut aus. Das Löschen eines Siegerkontos löst kein Nachrücken aus. Die Funktion beginnt mit der Woche ihrer Datenbankmigration und vergibt keine rückwirkenden Geschenke für alte Ranglistenwerte.
 
 Das private Admin-Testkonto besitzt eine serverseitige Rolle und ein wieder aufgefülltes Testbudget. Käufe verwenden weiter echte Preise und Besitzprüfungen; Missionen werden nicht pauschal freigeschaltet. Admin-Testkonten sind serverseitig aus öffentlichen Ranglisten und Wettbewerbsprämien ausgeschlossen. Lokale Profilfelder oder Registrierungsanfragen können die Rolle nicht setzen.
 
-Die unterstützte Einrichtung erfolgt nach [Admin-Testkonto und Wochenpodium](../server/NINJA_ADMIN_AND_PODIUM.md). Betreiberzugang, Passwort und Wiederherstellungscode gehören ausschließlich in private Betreiberkonfiguration beziehungsweise eine neu erstellte Datei außerhalb des Checkouts mit Modus 0600. Die öffentliche Einrichtung ist **noch ausstehend**; dieser Bericht enthält keine Zugangsdaten und behauptet keine erfolgreiche Produktionsanmeldung.
+Die unterstützte Einrichtung erfolgt nach [Admin-Testkonto und Wochenpodium](../server/NINJA_ADMIN_AND_PODIUM.md). Betreiberzugang, Passwort und Wiederherstellungscode gehören ausschließlich in private Betreiberkonfiguration beziehungsweise eine neu erstellte Datei außerhalb des Checkouts mit Modus 0600. Die private Bootstrapkonfiguration wurde vor dem erfolgreichen Serverstart gesetzt und anschließend wieder aus der Serverkonfiguration entfernt. Rollen, Testbudget und Ranglistenausschluss wurden lokal mit SQLite/PostgreSQL sowie nativen Käufen und Super-Aktivierungen geprüft. Die interaktive Anmeldung dieses Betreiberkontos in Produktion wurde aus dieser Cloud nicht geprüft. Dieser Bericht enthält keine Zugangsdaten.
 
 ## Adresse und Gastprofil-Übernahme
 
-Die kanonische Adresse des Kandidaten ist **https://notification-ninja-accounts.onrender.com/**. Homepage, Spiel und `/api/v3` sollen durch den bestehenden kostenlosen Dienst mit der bestehenden Datenbank ausgeliefert werden. Ein neuer kostenpflichtiger Dienst ist dafür nicht vorgesehen. Das öffentliche Deployment und die Prüfung der sauberen Wurzeladresse stehen noch aus.
+Die kanonische Adresse ist **https://notification-ninja-accounts.onrender.com/**. Homepage, Spiel und `/api/v3` werden durch den bestehenden kostenlosen Dienst mit der bestehenden Datenbank ausgeliefert. Der Pfad enthält kein `REBOOT-Digital-Balance`. Es wurde kein neuer kostenpflichtiger Dienst eingerichtet. Die öffentliche Wurzeladresse und API wurden im [öffentlichen Gast-/API-Lauf vom 24. November](https://github.com/BruKevFH/REBOOT-Digital-Balance/actions/runs/45445113782) geprüft; der neueste Lauf ist unten getrennt ausgewiesen.
 
-Die alte GitHub-Pages-Adresse bleibt ein anderer Ursprung mit eigenem localStorage. Ein Browser verschiebt diesen Speicher nicht automatisch. Der Kandidat bietet dort daher **„Gastspielstand mitnehmen“** an:
+Die alte GitHub-Pages-Adresse bleibt ein anderer Ursprung mit eigenem localStorage. Ein Browser verschiebt diesen Speicher nicht automatisch. Das Spiel bietet dort daher **„Gastspielstand mitnehmen“** an:
 
 1. Der Spieler startet die Übernahme ausdrücklich an der alten Adresse.
 2. Ein Fenster an der neuen Adresse zeigt das angebotene Gastprofil und verlangt die ausdrückliche Bestätigung des Imports.
@@ -73,7 +75,7 @@ Der Nachrichtenkanal prüft die beiden exakten Ursprünge, das tatsächlich geö
 
 ## Bereits ausgeführte lokale Integrationsprüfungen
 
-Die gespeicherten Integrationsberichte vom 18. November enthalten bereits die neuen Funktionen, melden jedoch noch die alte Buildkennung **3.12.0**. Sie belegen diese Zwischenstände und ersetzen die Abschlussprüfung des endgültigen 3.13.0-Builds nicht.
+Die gespeicherten Integrationsberichte vom 18. November enthalten bereits die neuen Funktionen, melden jedoch noch die alte Buildkennung **3.12.0**. Sie belegen diese Zwischenstände und ersetzen die unten dokumentierte Abschlussprüfung des endgültigen 3.13.1-Builds nicht.
 
 - Die vollständige automatisierte Suite mit echtem lokalem PostgreSQL bestand **572 Tests, null Fehler, null übersprungen**. Das ist ein Zwischenstand vor abschließendem Versionswechsel und Paketbau.
 - Die fünf Browserprüfungen für Grundspiel, Indie-Seiten, Kontoportal, Navigationsabläufe und Erlebnisfunktionen bestanden auf **360 und 1280 Pixeln**. Dazu gehören echte Schnitte, Anmeldung/MFA, Übungs-History, Pausen-/Verlassen-Dialoge und DE/EN-Lernbereiche. Die gesonderte breite Seitenmatrix fand noch englische Resttexte; sie wurde nicht als erfolgreich abgeschlossen gezählt. Die Offline-Abnahme stand noch aus.
@@ -82,23 +84,27 @@ Die gespeicherten Integrationsberichte vom 18. November enthalten bereits die ne
 - Die isolierte Introprüfung bestand auf **360, 390, 768 und 1280 Pixeln sowie 844 × 390 im Querformat**. Sie prüfte Pause, vier Szenen, Wiederholung, Escape und Aufräumen. Der automatische Lauf erreichte 20 Animationssekunden in 20,31 realen Sekunden. Reduzierte Bewegung bestand mit manuellen Szenenwechseln.
 - Die Spielzeit-/Erinnerungskomponente bestand ebenfalls zwölf Sprach-/Design-/Breitenkombinationen. Dies ist ausdrücklich eine Komponentenprüfung; eine künstlich vorgerückte Testuhr ist kein Nachweis von 15 tatsächlich gespielten Minuten.
 
-Die wiederholbaren Browserprüfungen liegen unter [Erweiterung](../scripts/check_ninja_313.cjs), [Seitensammlung](../scripts/check_ninja_all_pages.cjs), [Navigation](../scripts/check_ninja_crossflows.cjs) und [Konten/Wirtschaft](../scripts/check_ninja_account_audit.mjs). Die abschließenden Ergebnisse werden nach ihrem tatsächlichen Abschluss in der folgenden Tabelle ergänzt.
+Die wiederholbaren Browserprüfungen liegen unter [Erweiterung](../scripts/check_ninja_313.cjs), [Seitensammlung](../scripts/check_ninja_all_pages.cjs), [Navigation](../scripts/check_ninja_crossflows.cjs) und [Konten/Wirtschaft](../scripts/check_ninja_account_audit.mjs). Die abschließenden Ergebnisse stehen in der folgenden Tabelle; Zwischenstände werden nicht mit ihnen vermischt.
 
-## Nachweise und noch ausstehende Freigaben
+## Abschlussnachweise
 
-| Nachweis | Stand |
+| Nachweis | Tatsächlich geprüft |
 |---|---|
-| Historische Spiel-/Seitenabnahme vom 17. November | [Eigener Bericht](FULL_GAME_AUDIT.md); alle 18 Haupt- und acht Zusatzmissionen tatsächlich abgeschlossen. Damaliger automatisierter Stand: 498 bestanden. |
-| Lokaler automatisierter Zwischenstand mit PostgreSQL | 572 Tests bestanden, null Fehler und null übersprungen; Zwischenstand vor endgültigem Build. |
-| Finale Gesamtsuite nach Integration | **AUSSTEHEND** – Ergebnis, Anzahl und Datum ergänzen. |
-| Neue Browserabnahme der Erweiterung, DE/EN und mobil/Desktop | **AUSSTEHEND** – tatsächlich geprüfte Ansichten, Breiten und Befunde ergänzen. |
-| Release-Build, Service Worker, ZIP und Prüfsumme 3.13.0 | **AUSSTEHEND** – erzeugte Artefakte und Identität ergänzen. |
-| Commit und Push des Kandidaten | **AUSSTEHEND** – vollständige Commit-Kennung ergänzen. |
-| Unabhängige CI nach Push | **AUSSTEHEND** – Lauf und Ergebnis verlinken. |
-| Deployment des bestehenden Render-Dienstes und kanonische Wurzeladresse | **AUSSTEHEND** – tatsächliche Versionsidentität und öffentliche Prüfung ergänzen. |
-| Privates Admin-Testkonto im öffentlichen Dienst | **AUSSTEHEND** – nur erfolgreiche Einrichtung und Ausschlussprüfung dokumentieren, keine Zugangsdaten. |
-| Öffentliche Konto-/Persistenzprüfung des neuen Kandidaten | **AUSSTEHEND** – lokale Tests und historische Online-Belege ersetzen diesen Nachweis nicht. |
+| Historische Spiel-/Seitenabnahme vom 17. November | [Eigener Bericht](FULL_GAME_AUDIT.md): alle 18 Haupt- und acht Zusatzmissionen mit nativen Eingaben abgeschlossen. Damals 498 automatisierte Tests; kein neuer 3.13.1-Komplettdurchlauf behauptet. |
+| Finale Repository-Gesamtsuite, 25. November | **591 bestanden, null Fehler, null übersprungen**, mit echtem lokalem PostgreSQL; die Suite enthält auch die übrigen Repository-Spiele. |
+| Vollständige Seitenabnahme | **1.368 Zustände bestanden**: je 342 bei 360/1280 Pixeln und DE/EN. Keine gefundenen JS-, Übersetzungs-, Bild-, Überlauf-, ID- oder 44-px-Bedienflächenfehler. Vier temporäre Konten einschließlich MFA geprüft und gelöscht. |
+| Kompakte Ansichten und Übergänge | **60 Zustände bestanden**: Dojo, aufgeklappte Regeln, Rundenrückblick, Fähigkeitseffekt und Mission bei 360/1280, DE/EN und Relaxed/Dark/Noir. Missionshinweise mindestens **5,84:1** Kontrast. |
+| Integrierte Erlebnisabnahme | **132 native Gastzustände bestanden**, beide Sprachen und alle drei Designs, 360/1280 Pixel. Echte Rundensekunden, Pause, Intro-Wiederholung, Logout und zusätzliche Tablet-/Querformat-/Großbildansichten geprüft. |
+| Große Punkte-/Serienwerte und HUD | **216 Darstellungsfälle bestanden** mit der tatsächlichen Schrift, HUD-Struktur und Layoutlogik. Prüfung bei sechs Bildschirmformaten, DE/EN und allen drei Designs; exakte Werte bleiben über Tooltip und Screenreader verfügbar. Das ist ein Anzeige-Stresstest ohne erfundene Spielstände. |
+| Automatischer Ranglisteneintrag im Browser | Zwei echte lokale Kontorunden, 360/Deutsch und 1280/Englisch: je drei tatsächliche Schnitte, regulärer Herzverlust, Serverprüfung und Eintrag **ohne Veröffentlichungsklick**. Ergebnis nach Reload erhalten; beide Testkonten und Einträge gelöscht. |
+| Intro und Gastprofil-Übernahme | 20 aktive Introsekunden, Pause/Wiederholung und begrenztes erstes Ladebild geprüft. Ein real erspieltes Gastprofil wurde über ein echtes Popup zwischen den exakten HTTPS-Ursprüngen mit lokal bereitgestellten Antworten übertragen; ausdrückliche Zielbestätigung, Reload, Quellerhalt und Zielsicherung bestanden. Kein öffentlicher Import fremder Spielstände behauptet. |
+| Produktionskonten und tatsächlicher Neustart | [Online-Abnahme vom 24. November](https://github.com/BruKevFH/REBOOT-Digital-Balance/actions/runs/45445114118) **bestanden** auf `ed1bf5a00b5fdd93f39446e0a7adadf08852bf3c`: zwei Konten, erspielte Käufe, Profile, Wallet, Inventar und Rangliste nach kontrolliertem Render-Neustart erhalten; E-Mail-Login und Logout geprüft; beide Konten, Sitzungen und öffentlichen Testeinträge entfernt. Der spätere Quellstand ändert diese Backendregeln nicht. |
+| Aktueller Quellstand und Hosting | [6878dd4bc8717d48f257d5b89c17868c355fc2bd](https://github.com/BruKevFH/REBOOT-Digital-Balance/commit/6878dd4bc8717d48f257d5b89c17868c355fc2bd) auf `main`, Render Free bestätigt `live` für denselben Commit. Die bestehende Datenbank bleibt erhalten. |
+| Aktuelle unabhängige CI | Der [Build- und Downloadlauf](https://github.com/BruKevFH/REBOOT-Digital-Balance/actions/runs/45517079333) und die [öffentliche API-/Gastabnahme](https://github.com/BruKevFH/REBOOT-Digital-Balance/actions/runs/45517079859) sind bestanden; letztere bestätigt neun identische Laufzeitdateien und die öffentlichen Gastansichten. Auch die [Gesamtprüfung](https://github.com/BruKevFH/REBOOT-Digital-Balance/actions/runs/45517079240) ist vollständig bestanden. |
+| Offline-Download | [ZIP 3.13.1](downloads/Notification-Ninja-3.13.1.zip), 69 Einträge, CRC und Laufzeitdateien geprüft; Kontenanbindung im Offlinepaket ausdrücklich deaktiviert. SHA-256: `fc661360bb1354f0c270941c4dcdc1af8daf94b534f30d7b7380ca17056c7b4f`. |
 
-Die historische Freischaltung der v3-Konten vom 7. November und der im Audit vom 17. November dokumentierte CONNECT-403-Fehler bleiben getrennte Belege. Dieser Bericht behauptet keine aktuelle erfolgreiche Produktionsanmeldung, kein abgeschlossenes Deployment und keinen öffentlichen Neustarttest.
+Der tatsächliche Produktionsneustart ist durch den neuen Render-Eintrag `server_restarted` vom **24. November, 17:12:29,834 UTC** belegt. Die nachfolgende Profil-/Ranglistenprüfung und vollständige Bereinigung liefen erfolgreich von 17:17:10 bis 17:17:27 UTC. Dieser Nachweis ist von den lokalen Prozessprüfungen und der historischen Kontofreischaltung vom 7. November getrennt. Die direkte Cloud-Verbindung zum kanonischen Host war gesperrt; die öffentlichen Prüfungen liefen daher über den dokumentierten GitHub-Actions-Runner.
 
-Emulierter Touch ersetzt keine Prüfung auf einem physischen iPhone oder Android-Gerät. Reale Sprachausgabe, Haptik, Bildrate und Verständlichkeit mit Jugendlichen benötigen eigene praktische Abnahmen.
+Die wiederholbaren Prüfungen sind [Seitensammlung](../scripts/check_ninja_all_pages.cjs), [kompakte Ansichten](../scripts/check_ninja_compact.cjs), [integrierte Erweiterung](../scripts/check_ninja_313.cjs), [automatische Kontorangliste](../scripts/check_ninja_auto_ranking.cjs), [Konten/Wirtschaft](../scripts/check_ninja_account_audit.mjs) und [ausdrücklich gestartete Online-Abnahme](../.github/workflows/notification-ninja-live-acceptance.yml).
+
+Emulierter Touch ersetzt keine Prüfung auf einem physischen iPhone oder Android-Gerät. Reale Sprachausgabe, Haptik, Bildrate und Verständlichkeit mit Jugendlichen benötigen praktische Abnahmen. Ein belegtes menschliches Pretest-Protokoll der Weihnachtssession liegt nicht vor; es wird nicht durch funktionale Browserautomation ersetzt.

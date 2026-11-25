@@ -1,0 +1,21 @@
+{
+  "recordType": "sanitized-test-summary",
+  "observedOn": "2026-11-24",
+  "candidate": "3.13.0",
+  "scope": "Entire repository npm test, including Notification Ninja and other project tests; PostgreSQL enabled",
+  "command": "npm test",
+  "counts": {
+    "tests": 574,
+    "pass": 574,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 0,
+    "todo": 0
+  },
+  "durationMs": 49762.763799,
+  "sourceLogSha256": "e516b92878ac7e3c08060343e41e866c2754c00696e66524eddcf379a90d8213",
+  "limitations": [
+    "Local test execution; does not prove public deployment.",
+    "The test count is repository-wide, not a Ninja-only subtotal."
+  ]
+}

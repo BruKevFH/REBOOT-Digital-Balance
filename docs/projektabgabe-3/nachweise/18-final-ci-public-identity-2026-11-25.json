@@ -1,0 +1,138 @@
+{
+  "date": "2026-11-25",
+  "release": "3.13.1",
+  "sourceRevision": "6878dd4bc8717d48f257d5b89c17868c355fc2bd",
+  "method": "Read-only public GitHub Actions HTML status plus executed exact-asset/guest/API checks; provider metadata for existing Free service",
+  "ciCompletedAt": "2026-11-25T00:34:42.960701+00:00",
+  "ci": {
+    "Notification Ninja controlled live acceptance": {
+      "id": "45517079368",
+      "name": "Notification Ninja controlled live acceptance",
+      "url": "https://github.com/BruKevFH/REBOOT-Digital-Balance/actions/runs/45517079368",
+      "state": {
+        "status": "WORKFLOW_RUN_STATUS_COMPLETED",
+        "conclusion": "WORKFLOW_RUN_CONCLUSION_SKIPPED"
+      }
+    },
+    "Notification Ninja checks": {
+      "id": "45517079240",
+      "name": "Notification Ninja checks",
+      "url": "https://github.com/BruKevFH/REBOOT-Digital-Balance/actions/runs/45517079240",
+      "state": {
+        "status": "WORKFLOW_RUN_STATUS_COMPLETED",
+        "conclusion": "WORKFLOW_RUN_CONCLUSION_SUCCESS"
+      }
+    },
+    "Notification Ninja live account API smoke": {
+      "id": "45517079859",
+      "name": "Notification Ninja live account API smoke",
+      "url": "https://github.com/BruKevFH/REBOOT-Digital-Balance/actions/runs/45517079859",
+      "state": {
+        "status": "WORKFLOW_RUN_STATUS_COMPLETED",
+        "conclusion": "WORKFLOW_RUN_CONCLUSION_SUCCESS"
+      }
+    },
+    "Notification Ninja build and publish generated assets": {
+      "id": "45517079333",
+      "name": "Notification Ninja build and publish generated assets",
+      "url": "https://github.com/BruKevFH/REBOOT-Digital-Balance/actions/runs/45517079333",
+      "state": {
+        "status": "WORKFLOW_RUN_STATUS_COMPLETED",
+        "conclusion": "WORKFLOW_RUN_CONCLUSION_SUCCESS"
+      }
+    }
+  },
+  "canonicalAssetIdentity": {
+    "count": 9,
+    "verification": "Successful committed check_ninja_public_guest.cjs compares HTML, bundles, metadata and presentation files by SHA-256 before the browser matrix.",
+    "origin": "https://notification-ninja-accounts.onrender.com/"
+  },
+  "publicBrowserMatrix": {
+    "widths": [
+      360,
+      1280
+    ],
+    "languages": [
+      "de",
+      "en"
+    ],
+    "themes": [
+      "relaxed",
+      "dark",
+      "noir"
+    ],
+    "nativeFullPlaythrough": false,
+    "writesBlocked": true,
+    "countNote": "Public-only path omits the three resize inspections per width from the separate 132-state local matrix."
+  },
+  "pagesMirrorIdentity": {
+    "sourceRevision": "6878dd4bc8717d48f257d5b89c17868c355fc2bd",
+    "base": "https://brukevfh.github.io/REBOOT-Digital-Balance/notification-ninja/",
+    "assets": [
+      {
+        "file": "index.html",
+        "bytes": 34911,
+        "sha256": "26f7bdbd0a8cdf134f44cac0cbd30599c16029037d01c65c7e566cdca7eaed34"
+      },
+      {
+        "file": "home.html",
+        "bytes": 12424,
+        "sha256": "ba31d0525397ee1c341ae54452586d8400ed0f05f1fa400361bae205efb329b7"
+      },
+      {
+        "file": "dist/build.json",
+        "bytes": 2573,
+        "sha256": "76e0bd49838b916760e565a752fcc9e9c73b616446ae688e2ef29d6c9f592be0"
+      },
+      {
+        "file": "dist/ninja.js",
+        "bytes": 813567,
+        "sha256": "84b947c1c5e8ac00e53bf8eb2da4565fa0c581212824f190df97c4b1ac7cf045"
+      },
+      {
+        "file": "dist/home.js",
+        "bytes": 342836,
+        "sha256": "3617ee3f7ead8e54cb28ba1ae3150bd28ad730248d2672d2b0ffa30edd56a8f3"
+      },
+      {
+        "file": "presentation-polish.css",
+        "bytes": 41632,
+        "sha256": "91c459cdb382e05191b267648b4fe24c1738f946e70f9c9fc55fae5f8e44d84c"
+      },
+      {
+        "file": "theme-boot.js",
+        "bytes": 280,
+        "sha256": "99179efd56b652f5c4c85fc6c7440e80b86495cf6317c0cff9b5e18014a94b3b"
+      },
+      {
+        "file": "downloads/Notification-Ninja-3.13.1.zip",
+        "bytes": 24220601,
+        "sha256": "fc661360bb1354f0c270941c4dcdc1af8daf94b534f30d7b7380ca17056c7b4f"
+      },
+      {
+        "file": "downloads/Notification-Ninja-3.13.1.zip.sha256",
+        "bytes": 96,
+        "sha256": "28b37d189d51443d51c76c71cf34d14ba9b09fcfcf49beb67c93961877443822"
+      }
+    ],
+    "method": "GET only, byte identity against tested checkout"
+  },
+  "renderDeployment": {
+    "service": "notification-ninja-accounts",
+    "plan": "free",
+    "requestedRevision": "6878dd4bc8717d48f257d5b89c17868c355fc2bd",
+    "deployId": "dep-dc32it95efls73aj3eqg",
+    "reportedRevision": "6878dd4bc8717d48f257d5b89c17868c355fc2bd",
+    "status": "live"
+  },
+  "productionAccountTest": {
+    "separateProof": "13-production-accounts-restart-2026-11-24.json",
+    "sourceRevision": "ed1bf5a00b5fdd93f39446e0a7adadf08852bf3c",
+    "repeatedOnThisPush": false
+  },
+  "boundaries": [
+    "No raw account profiles, credentials, tokens or private owner-access files included.",
+    "No assertion of a physical mobile-device or human target-group pretest.",
+    "The ordinary correction push intentionally skipped creation of additional production accounts."
+  ]
+}

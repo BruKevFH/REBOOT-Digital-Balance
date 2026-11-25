@@ -1,0 +1,29 @@
+# Bereinigte Testnachweise zur Projektabgabe 3
+
+Diese Dateien wurden am **24./25. November 2026** aus tatsächlich gespeicherten lokalen und öffentlichen Prüfergebnissen abgeleitet. Die Auswahl entfernt komplette Profile, private Kennungen, lokale Speicherpfade und sensible Kontoinhalte. SHA-256-Fingerprints beziehen sich auf die ursprünglichen ausgewerteten Dateien; ein Fingerprint allein ist kein unabhängiger Testlauf.
+
+| Datei | Nachweis und Grenzen |
+|---|---|
+| [01-repository-tests-2026-11-24.json](01-repository-tests-2026-11-24.json) | 574 bestandene **Repositorytests**, null Fehler/Skips, echtes lokales PostgreSQL. Die Summe umfasst auch andere Spiele im Repository. |
+| [02-account-api-2026-11-24.json](02-account-api-2026-11-24.json) | Aktueller 3.13.0-Bericht: zwei Konten pro SQLite-/PostgreSQL-Adapter, servergeprüfte Missionen, Käufe, Ranking, MFA, tatsächliche Prozessneustarts und Datenbereinigung. Synthetische Replay-Testuhr, keine nativen Spielgesten. |
+| [03-native-career-2026-11-17.json](03-native-career-2026-11-17.json) | Historischer tatsächlicher Browserdurchlauf: 18 Haupt- und acht Zusatzmissionen mit nativen Eingaben und erspieltem Gastfortschritt. Fortsetzungen und damalige Versionsgrenze sind ausdrücklich angegeben. |
+| [04-native-modes-2026-11-17.json](04-native-modes-2026-11-17.json) | Historischer Touch-Browserdurchlauf für Boss Rush, lokale Tagesübung, Open Run und Training. Kein Nachweis eines physischen Mobilgeräts oder öffentlichen Tagesrankings. |
+| [05-new-supers-local-2026-11-18.json](05-new-supers-local-2026-11-18.json) | Neue Supers über reale lokale Serverkäufe, native Entscheidungen und sichtbare Aktivierung geprüft. Vor endgültigem Versionswechsel; kein Produktionsadminzugang. |
+| [06-diagram-validation-2026-11-24.json](06-diagram-validation-2026-11-24.json) | Alle acht bearbeitbaren Diagrammquellen mit Mermaid 11.12.2 geparst und gerendert; gespeicherte SVGs zusätzlich als XML geprüft und im Browser geöffnet. |
+| [07-native-ui-2026-11-24.json](07-native-ui-2026-11-24.json) | 132 aktuelle native Oberflächenzustände für 3.13.0: je 66 bei 360/1280 Pixeln, DE/EN und Relaxed/Dark/Noir; Intro, aktive kurze Runde und Pause eingeschlossen. |
+| [08-offline-transfer-2026-11-24.json](08-offline-transfer-2026-11-24.json) | Aktueller Offline-Gastweg sowie echte Popup-/Nachrichtenübernahme eines erspielten Gastprofils mit lokalen Antworten zwischen den geprüften Ursprüngen. Kein öffentlicher Umzugsnachweis. |
+| [09-native-auto-ranking-2026-11-24.json](09-native-auto-ranking-2026-11-24.json) | Neuer 3.13.1-Nachweis: zwei tatsächlich gespielte Kontorunden, automatische servergeprüfte Veröffentlichung ohne Zusatzklick, Reload und anschließende Löschung beider Testkonten. |
+| [10-hud-stress-2026-11-24.json](10-hud-stress-2026-11-24.json) | 216 ausdrücklich isolierte Darstellungsfälle mit tatsächlichem HUD und Schriftanpassung; lange Zahlen, DE/EN, drei Designs, sechs Größen und gemessene Kontraste. Keine Spielpunktvergabe. |
+| [11-repository-tests-3-13-1-2026-11-24.json](11-repository-tests-3-13-1-2026-11-24.json) | Neuer 3.13.1-Stand: 591 bestandene Repositorytests, keine Fehler oder Skips, mit echtem lokalem PostgreSQL. Der ältere 574-Test-Beleg bleibt erhalten. |
+
+| [12-integrated-browser-3-13-1-2026-11-24.json](12-integrated-browser-3-13-1-2026-11-24.json) | Integrierte 3.13.1-Abnahme: 132 native Gastansichten, 216 isolierte HUD-Fälle, echte Intro-/Spielzeit-/Pausenbedienung, Kaltstart und ausdrücklicher Gasttransfer; Methoden klar getrennt. |
+| [13-production-accounts-restart-2026-11-24.json](13-production-accounts-restart-2026-11-24.json) | Zwei echte temporäre Produktionskonten, verdiente Mittel, Käufe, verifizierte Rangliste, belegter Render-Neustart, anschließende Persistenzprüfung und vollständige Testkontobereinigung. |
+| [14-public-api-guest-2026-11-24.json](14-public-api-guest-2026-11-24.json) | Öffentliche API-/PostgreSQL-/Versions-/CORS-Prüfung sowie schreibgeschützte Browserabnahme am kanonischen Host; die damals fehlgeschlagene allgemeine CI wird getrennt ausgewiesen. |
+
+| [15-final-all-pages-2026-11-25.json](15-final-all-pages-2026-11-25.json) | Frische vollständige Seitenprüfung: 1.368 Zustände, vier unabhängige Breiten-/Sprachläufe mit je 342 Zuständen; echte Konten-/MFA- und Kaufwege, alle vier temporären Konten entfernt. Getestete Artefakte stimmen per SHA-256 mit dem finalen Quellcommit überein. |
+| [16-compact-ui-2026-11-25.json](16-compact-ui-2026-11-25.json) | 60 tatsächliche kurze UI-Abläufe für aufklappbare Texte, gestoppte Missionen und Missionszielkontraste in DE/EN, zwei Breiten und drei Designs. |
+| [17-final-repository-tests-2026-11-25.json](17-final-repository-tests-2026-11-25.json) | Finaler 591-Test-Repositorylauf am 25. November, keine Fehler/Skips, mit echtem lokalem PostgreSQL. Frühere 574-/591-Belege bleiben zeitlich getrennt. |
+
+| [18-final-ci-public-identity-2026-11-25.json](18-final-ci-public-identity-2026-11-25.json) | Abschließende drei erfolgreiche unabhängige Workflows für 6878dd4, kanonische neun Datei-Prüfsummen, öffentliche Gast-/API-Abnahme und bytegleicher GitHub-Pages-Spiegel inklusive ZIP. Der separate echte Zwei-Konten-Neustarttest wird nicht erneut behauptet. |
+
+Eine Weihnachtssession mit menschlichen Pretestern ist hier **nicht** enthalten: Dazu liegt kein belastbares Protokoll vor. Die lokalen Nachweise 01–11 und die öffentlichen Nachweise 13–14 sind getrennt: Die tatsächlich ausgeführte Produktionsanmeldung und Neustartpersistenz gelten für deren konkrete Quellkennung. Der historisch fehlgeschlagene allgemeine CI-Lauf wird nicht umgedeutet; der getrennte finale Korrekturlauf ist inzwischen erfolgreich belegt. Maßgeblich für später hinzugefügte öffentliche Belege ist der [aktuelle Freigabebericht](https://github.com/BruKevFH/REBOOT-Digital-Balance/blob/main/notification-ninja/EXPANSION_3_13.md).

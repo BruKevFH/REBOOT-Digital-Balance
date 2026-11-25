@@ -1,0 +1,75 @@
+{
+  "recordType": "sanitized-native-super-summary",
+  "playedOn": "2026-11-18",
+  "recordedDiagnosticVersion": "3.12.0",
+  "candidate": "Integrated 3.13 features before final version bump",
+  "kind": "Trusted isolated local test administrator, actual server purchases and native decisions",
+  "actualPurchasesThisRun": [],
+  "supers": [
+    {
+      "id": "zen-super",
+      "attempts": 2,
+      "correctDecisions": 7,
+      "cuts": 2,
+      "effects": {
+        "slow": 6,
+        "shield": 0,
+        "multiplier": 0,
+        "flow": 6
+      }
+    },
+    {
+      "id": "lotus-super",
+      "attempts": 4,
+      "correctDecisions": 8,
+      "cuts": 4,
+      "effects": {
+        "slow": 0,
+        "shield": 3,
+        "multiplier": 0,
+        "flow": 2.2667999999999626
+      }
+    },
+    {
+      "id": "star-super",
+      "attempts": 7,
+      "correctDecisions": 7,
+      "cuts": 3,
+      "effects": {
+        "slow": 0,
+        "shield": 0,
+        "multiplier": 11.849999999999998,
+        "flow": 0
+      }
+    }
+  ],
+  "ok": true,
+  "errors": [],
+  "sourceReportSha256": "14357b454317b4c7a838193589db56bf018a9e20e7bad0fe6b87b5bcdc2a95af",
+  "limitations": [
+    "Local isolated trusted test administrator only; no public admin login proved.",
+    "The complete result combines two recorded attempts; final PASS purchase array is empty because ownership already existed."
+  ],
+  "firstAttemptActualPurchaseIds": [
+    "focus-root",
+    "slow-super",
+    "flow-boost",
+    "clear-current",
+    "zen-super",
+    "focus-reserve",
+    "guard-root",
+    "shield-super",
+    "second-chance",
+    "gentle-blade",
+    "lotus-super",
+    "stage-shield",
+    "coin-root",
+    "sweep-super",
+    "coin-boost",
+    "coin-pouch",
+    "star-super",
+    "coin-drift"
+  ],
+  "firstAttemptPurchaseReportSha256": "e600a78de31a37ebe76709d9983a116b72fbd36329b78912ea8b8b8bed8bb1b8",
+  "firstAttemptResult": "All 18 server-confirmed purchases preceded a later harness failure; final PASS attempt reused this owned catalog and natively activated all three new Supers."
+}

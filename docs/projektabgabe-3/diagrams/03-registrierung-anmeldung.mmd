@@ -1,0 +1,40 @@
+sequenceDiagram
+    actor P as Spieler
+    participant UI as Browser / Kontomaske
+    participant API as Node-API
+    participant AUTH as Auth / MFA
+    participant DB as PostgreSQL oder SQLite
+    P->>UI: Name, E-Mail, Passwort + Bestätigung, Zustimmung
+    UI->>API: POST /api/v3/auth/register
+    API->>AUTH: Eingaben serverseitig validieren
+    AUTH->>AUTH: Zufälliger Salt, scrypt-Hash, Recovery-Code erzeugen
+    AUTH->>DB: BEGIN, Nutzer + Profil + Wallet + Sitzung
+    alt Identität frei und alle Schreiboperationen erfolgreich
+        DB-->>AUTH: COMMIT
+        AUTH-->>UI: 201: Profil, Token, einmaliger Recovery-Code
+        UI-->>P: Code sicher aufbewahren, Ninja-Hub
+    else Doppelter Name / E-Mail oder Transaktionsfehler
+        DB-->>AUTH: Vollständiger ROLLBACK
+        AUTH-->>UI: 409 bei doppelter Identität, sonst neutraler Fehler
+    end
+    Note over UI,DB: Token nur sessionStorage, Server speichert Token- und Recovery-Hashes
+    P->>UI: Name oder E-Mail + Passwort
+    UI->>API: POST /api/v3/auth/login
+    API->>AUTH: Normalisieren, scrypt prüfen
+    alt MFA nicht aktiviert
+        AUTH->>DB: Sitzung erzeugen, Token-Hash speichern
+        AUTH-->>UI: Sitzung und Profil
+    else MFA aktiviert
+        AUTH->>DB: Kurzlebige Challenge speichern
+        AUTH-->>UI: mfaRequired + Challenge, noch kein Sitzungstoken
+        P->>UI: Authenticator-Code oder MFA-Notfallcode
+        UI->>API: POST /api/v3/auth/mfa/verify
+        API->>AUTH: Challenge und Faktor prüfen
+        AUTH->>DB: Codeverbrauch / Challenge löschen / Sitzung erzeugen
+        AUTH-->>UI: Sitzung und Profil
+    end
+    opt Abmelden
+        UI->>API: POST /api/v3/auth/logout + Bearer-Token
+        API->>DB: Sitzung widerrufen
+        UI->>UI: Sitzung und kontobezogenen Tab-Cache löschen
+    end

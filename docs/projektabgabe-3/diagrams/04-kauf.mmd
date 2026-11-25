@@ -1,0 +1,28 @@
+sequenceDiagram
+    actor P as Spieler
+    participant UI as Basar
+    participant API as /api/v3/actions
+    participant S as Game-Service
+    participant DB as Kontodatenbank
+    P->>UI: Fähigkeit freischalten und Kauf bestätigen
+    UI->>API: Bearer, type=skill.buy, id, idempotencyKey
+    API->>S: Authentifizierte Nutzer-ID, geprüfter JSON-Body
+    S->>DB: BEGIN, Wiederholungskennung nachschlagen
+    alt Gleiche Kennung und gleicher Inhalt bereits verarbeitet
+        DB-->>S: Gespeicherte Antwort
+        S->>DB: COMMIT ohne zweite Buchung
+        S-->>UI: Aktueller Zustand + replayed=true
+    else Neue Aktion
+        S->>DB: Maßgebliches Profil und Wallet lesen
+        S->>S: Katalog-ID, Vorgänger, Besitz und echten Preis prüfen
+        alt Kauf erlaubt
+            S->>DB: Wallet + Ledger + Profilrevision + Aktionsantwort schreiben
+            DB-->>S: COMMIT
+            S-->>UI: Bestätigter Besitz und Kontostand
+            UI-->>P: Freigeschaltet, Wirkung ab nächster normaler Runde
+        else Ungenügend Geld / Vorgänger fehlt / unbekannte ID
+            S->>DB: ROLLBACK
+            S-->>UI: 4xx + verständlicher Grund
+        end
+    end
+    Note over S,DB: PostgreSQL SERIALIZABLE, SQLite BEGIN IMMEDIATE.<br/>Keine Preisvorgabe vom Browser.

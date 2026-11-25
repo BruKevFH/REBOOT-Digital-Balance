@@ -1,0 +1,36 @@
+flowchart LR
+    Gast["«actor»<br/>Gast"]
+    Spieler["«actor»<br/>Angemeldeter Spieler"]
+    Betreiber["«actor»<br/>Betreiber / Admin-Tester"]
+    subgraph SYS["Notification Ninja"]
+        U1(["Als Gast spielen"])
+        U2(["Registrieren"])
+        U3(["Anmelden / Abmelden"])
+        U4(["Zweiten Faktor prüfen"])
+        U5(["Intro / Training / NIM nutzen"])
+        U6(["Welt und Modus wählen"])
+        U7(["Runde spielen"])
+        U8(["Fortschritt speichern"])
+        U9(["Kauf / Belohnung abholen"])
+        U10(["Berechtigung und Guthaben prüfen"])
+        U11(["Neuen Open Run automatisch eintragen"])
+        U12(["Runde serverseitig nachspielen"])
+        U13(["Rangliste ansehen"])
+        U14(["Wochenprämie abholen"])
+        U15(["Profil verwalten / Konto löschen"])
+        U16(["Aktive Spielzeit / Pause einstellen"])
+        U17(["Admin-Testkonto privat einrichten"])
+        U18(["Mit Testbudget Käufe prüfen"])
+    end
+    Gast --> U1 & U2 & U3 & U5 & U6 & U7 & U13 & U16
+    Spieler --> U3 & U5 & U6 & U7 & U9 & U11 & U13 & U14 & U15 & U16
+    Betreiber --> U17 & U18
+    U7 -. "«include»" .-> U8
+    U11 -. "«extend»: gültiger Kontorun" .-> U7
+    U9 -. "«include»" .-> U10
+    U14 -. "«include»" .-> U10
+    U11 -. "«include»" .-> U12
+    U4 -. "«extend»: MFA aktiviert" .-> U3
+    U18 -. "«include»" .-> U10
+    NOTE["Admin-Testkonto: keine öffentlichen<br/>Ranglisten oder Wettbewerbsprämien"]
+    U18 --- NOTE

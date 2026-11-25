@@ -1,0 +1,78 @@
+{
+  "recordType": "sanitized-production-account-restart-acceptance",
+  "observedOn": "2026-11-24",
+  "reviewedOn": "2026-11-25",
+  "version": "3.13.1",
+  "testedSourceCommit": "ed1bf5a00b5fdd93f39446e0a7adadf08852bf3c",
+  "target": "https://notification-ninja-accounts.onrender.com",
+  "workflowURL": "https://github.com/BruKevFH/REBOOT-Digital-Balance/actions/runs/45445114118",
+  "workflowConclusion": "success",
+  "accounts": 2,
+  "method": "Actual production HTTP requests, real elapsed time for replay-verified rounds, controlled provider restart and post-restart verification. This is not native browser gameplay.",
+  "scope": [
+    "Separate registration and login for two synthetic accounts",
+    "Earned gameplay rewards and exact-price focus-root purchase with idempotent retries",
+    "Two explicitly published server-verified Open Runs",
+    "Whole profiles, revisions, wallet, inventory and public scores preserved after the operator restart",
+    "Email login and logout/session rejection after restart",
+    "Both synthetic accounts removed; their sessions revoked and public rows absent"
+  ],
+  "restart": {
+    "provider": "Render",
+    "existingService": "notification-ninja-accounts",
+    "plan": "free",
+    "method": "POST existing service restart",
+    "httpStatus": 200,
+    "requestedAt": "2026-11-24T17:12:29.182654Z",
+    "confirmedAt": "2026-11-24T17:12:30.133220Z",
+    "providerEvent": {
+      "id": "evt-dc2savei0phs73boi2d0",
+      "type": "server_restarted",
+      "timestamp": "2026-11-24T17:12:29.834914Z"
+    }
+  },
+  "steps": [
+    {
+      "name": "Prepare two temporary accounts and earned progress",
+      "conclusion": "success",
+      "startedAt": "2026-11-24T17:09:12Z",
+      "completedAt": "2026-11-24T17:12:10Z"
+    },
+    {
+      "name": "Wait for controlled production restart",
+      "conclusion": "success",
+      "startedAt": "2026-11-24T17:12:10Z",
+      "completedAt": "2026-11-24T17:17:10Z"
+    },
+    {
+      "name": "Verify account and ranking persistence after the operator restart",
+      "conclusion": "success",
+      "startedAt": "2026-11-24T17:17:10Z",
+      "completedAt": "2026-11-24T17:17:18Z"
+    },
+    {
+      "name": "Remove temporary accounts and revoke their sessions",
+      "conclusion": "success",
+      "startedAt": "2026-11-24T17:17:18Z",
+      "completedAt": "2026-11-24T17:17:27Z"
+    },
+    {
+      "name": "Record the sanitized acceptance result",
+      "conclusion": "success",
+      "startedAt": "2026-11-24T17:17:27Z",
+      "completedAt": "2026-11-24T17:17:27Z"
+    }
+  ],
+  "cleanup": {
+    "accountsDeleted": 2,
+    "sessionsRevoked": true,
+    "publicTestRowsRemoved": true
+  },
+  "limits": [
+    "No claim of physical-mobile-device testing.",
+    "The production script does not enable or test owner-admin MFA; the owner login is not part of this acceptance.",
+    "Native automatic client publication is documented separately in record 09.",
+    "This proof applies to the exact source commit above; later frontend polishing requires separate validation."
+  ],
+  "sourceProofSHA256": "cf55e0477ad6ed820fe3cc81b1f55194b2514a700e5ff82386db9f564e0985fc"
+}

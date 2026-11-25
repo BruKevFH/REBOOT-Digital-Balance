@@ -1,0 +1,52 @@
+{
+  "recordType": "sanitized-public-api-and-guest-browser-acceptance",
+  "observedOn": "2026-11-24",
+  "reviewedOn": "2026-11-25",
+  "version": "3.13.1",
+  "testedSourceCommit": "ed1bf5a00b5fdd93f39446e0a7adadf08852bf3c",
+  "target": "https://notification-ninja-accounts.onrender.com/",
+  "workflowURL": "https://github.com/BruKevFH/REBOOT-Digital-Balance/actions/runs/45445113782",
+  "workflowConclusion": "success",
+  "apiChecks": [
+    "Expected deployed source revision",
+    "API v3 health, PostgreSQL and durable storage",
+    "Verified public Open Run leaderboard",
+    "Account endpoint configuration and GitHub Pages CORS/preflight"
+  ],
+  "guestBrowserChecks": {
+    "viewports": [
+      360,
+      1280
+    ],
+    "languages": [
+      "de",
+      "en"
+    ],
+    "themes": [
+      "relaxed",
+      "dark",
+      "noir"
+    ],
+    "scope": [
+      "Canonical homepage and guest entry",
+      "Hub, settings, combined modes/worlds, Bazaar and rarity filters",
+      "Eighteen abilities, twelve looks, thirty-six achievements",
+      "Locked mission prerequisites and weekly podium information",
+      "Readonly preview and logout; no browser score or profile grants"
+    ],
+    "productionRequests": "Only GET, HEAD and OPTIONS permitted. Mutation attempts are blocked and asserted absent."
+  },
+  "separateAssetPublication": {
+    "workflowURL": "https://github.com/BruKevFH/REBOOT-Digital-Balance/actions/runs/45445113661",
+    "conclusion": "success"
+  },
+  "mainRepositoryCI": {
+    "workflowURL": "https://github.com/BruKevFH/REBOOT-Digital-Balance/actions/runs/45445113758",
+    "conclusion": "failure",
+    "note": "The main check was not successful at this snapshot. Its separate failure and later correction must not be hidden by the passing public checks."
+  },
+  "limits": [
+    "Public guest browsing does not prove a signed-in account gameplay round.",
+    "Production account mutation and restart are proven separately in record 13."
+  ]
+}

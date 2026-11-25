@@ -1,0 +1,81 @@
+{
+  "observedOn": "2026-11-24",
+  "renderer": "Mermaid 11.12.2 + Chromium",
+  "renderingEnvironment": "Temporary npm install outside repository with standard integrity checks; no project dependency changes",
+  "diagrams": [
+    {
+      "source": "01-systemkontext.mmd",
+      "svg": "01-systemkontext.svg",
+      "sourceSha256": "5a12ed3814818179c6dbd7bb1d9c411f1b35ee4cfd635b6cb13374db139e2032",
+      "svgSha256": "09a8bcda8fdd55723f414cafa1706f58227f4e5eb5942c431ada1d9b01fa603e",
+      "parseAndRenderPassed": true,
+      "svgXmlValid": true,
+      "savedSvgOpenedInChromium": true
+    },
+    {
+      "source": "02-use-cases.mmd",
+      "svg": "02-use-cases.svg",
+      "sourceSha256": "0fd3a156ecfdcf57eb23997fa434897282ca9b7dcfc64884ee8c8c87d7673f52",
+      "svgSha256": "d400580ee533ac1da7229d46174fe6ac92e7d79d6e73a332179416e623d10b77",
+      "parseAndRenderPassed": true,
+      "svgXmlValid": true,
+      "savedSvgOpenedInChromium": true
+    },
+    {
+      "source": "03-registrierung-anmeldung.mmd",
+      "svg": "03-registrierung-anmeldung.svg",
+      "sourceSha256": "9a99d176e8a8f34a712cc046408b5ddab361d5a797978eeb9c2c9a9039fcfde3",
+      "svgSha256": "74e81c8a2365ca9fd82a0c3e28c6520dfc3f95c2547bdc968b34216d8deb1570",
+      "parseAndRenderPassed": true,
+      "svgXmlValid": true,
+      "savedSvgOpenedInChromium": true
+    },
+    {
+      "source": "04-kauf.mmd",
+      "svg": "04-kauf.svg",
+      "sourceSha256": "27957c458aab47ef473d89881cc7228b6e24ca343e12b37df2ea0a42da5acdff",
+      "svgSha256": "439c4177b661015bb6c68fb9b231e9cc322fd2882457905cfdcaf21c8e5af6c6",
+      "parseAndRenderPassed": true,
+      "svgXmlValid": true,
+      "savedSvgOpenedInChromium": true
+    },
+    {
+      "source": "05-run-replay-rangliste.mmd",
+      "svg": "05-run-replay-rangliste.svg",
+      "sourceSha256": "58d253d0bd1f3300e4f882933ac89a737a02770e2ce5c86e1740cea783f3fb33",
+      "svgSha256": "e93f05ee296bb6355a7eb26e76077dbd569314b11cbb68ddb9614c6f8cfd4933",
+      "parseAndRenderPassed": true,
+      "svgXmlValid": true,
+      "savedSvgOpenedInChromium": true
+    },
+    {
+      "source": "06-wochenpodium.mmd",
+      "svg": "06-wochenpodium.svg",
+      "sourceSha256": "0c174dc01b93ddc4e9fb66c95b5b421219bf60b9e9f3175ae111e9a6021f1991",
+      "svgSha256": "0eb56badda8483a7e7b562392878ef716ace6dc3608fca04a05e8bbfebd47e48",
+      "parseAndRenderPassed": true,
+      "svgXmlValid": true,
+      "savedSvgOpenedInChromium": true
+    },
+    {
+      "source": "07-erd-konten-spiel.mmd",
+      "svg": "07-erd-konten-spiel.svg",
+      "sourceSha256": "6e10cf9b8c9a7b34eae0048b2774f0fc6c220c18e98a39efba104e6f007fc99c",
+      "svgSha256": "32c8a781d7d8a2ec01cb0176862304c165da5c7456d37f8102cfd6f07b4f840f",
+      "parseAndRenderPassed": true,
+      "svgXmlValid": true,
+      "savedSvgOpenedInChromium": true
+    },
+    {
+      "source": "08-erd-wettbewerb-migration.mmd",
+      "svg": "08-erd-wettbewerb-migration.svg",
+      "sourceSha256": "35c925cf0d1a66de8c4fdc3a50401c8e169677844f8d7f7b8a76f927fec06298",
+      "svgSha256": "a3accdde38931b212a7a4eab1a3bb560163c13e227cc5e3ff4fc36bfc20fcfd9",
+      "parseAndRenderPassed": true,
+      "svgXmlValid": true,
+      "savedSvgOpenedInChromium": true
+    }
+  ],
+  "allPassed": true,
+  "reopenMethod": "Saved SVG bytes served over temporary loopback HTTP; no external requests"
+}

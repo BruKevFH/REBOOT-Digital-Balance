@@ -1,0 +1,35 @@
+sequenceDiagram
+    actor P as Spieler
+    participant UI as Spielbrowser
+    participant API as Node-API / Game-Service
+    participant MODEL as Kanonisches NinjaGame
+    participant DB as Kontodatenbank
+    Note over P,UI: Vor dem Start Hinweis auf automatischen Ranglisteneintrag unter dem Ninja-Namen.
+    UI->>API: POST /api/v3/runs/start (Modus, Viewport)
+    API->>DB: Autorisiertes Profil und Revision laden
+    API->>MODEL: Server-Seed + erlaubtes Startprofil
+    API->>DB: Aktiven Run mit Initialzustand und Ablaufzeit speichern
+    API-->>UI: runId + kanonischer Initialzustand
+    loop Reale Runde
+        P->>UI: Wischen, durchlassen, pausieren
+        UI->>UI: Modellschritte ausführen, Befehle begrenzt protokollieren
+    end
+    UI->>API: POST /api/v3/runs/{id}/finish (commands)
+    API->>API: Besitzer, Ablauf, Umfang, Befehle und Zeitbudget prüfen
+    API->>MODEL: Vom gespeicherten Anfang identisch nachspielen
+    MODEL-->>API: Tatsächliches Ende, Punkte und Fortschritt
+    API->>DB: Ergebnis, Wallet, Ledger und Profil atomar speichern
+    API-->>UI: Serverbestätigtes Ergebnis, noch nicht öffentlich
+    opt Neuer geeigneter Open Run eines regulären Kontos
+        UI->>UI: Run-ID kontogetrennt lokal vormerken
+        UI->>API: Automatisch POST /api/v3/runs/{id}/publish
+        API->>API: Besitzer, Regelwerk, Ende und Nicht-Admin prüfen
+        API->>DB: Einmaligen öffentlichen Score speichern
+        API-->>UI: Veröffentlichungsbestätigung
+        UI->>UI: Erst nach Bestätigung Run-ID aus Warteschlange entfernen
+        Note over UI,API: Verbindungsausfall hält die Run-ID für spätere Wiederholung.
+    end
+    UI->>API: GET /api/v3/leaderboard?period=week
+    API->>DB: UTC-Zeitraum, bester Run je regulärem Konto
+    API-->>UI: Öffentlicher Name, Punkte, Dauer und Rang
+    Note over API,DB: Keine E-Mail, internen Konto-IDs oder angenommenen Client-Punktwerte in der Rangliste.

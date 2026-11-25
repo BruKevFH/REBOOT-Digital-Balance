@@ -1,0 +1,53 @@
+{
+  "recordType": "sanitized-offline-and-transfer-report",
+  "observedOn": "2026-11-24",
+  "version": "3.13.0",
+  "offline": {
+    "currentCache": true,
+    "journeyArt": true,
+    "learningReload": true,
+    "codex": true,
+    "readonlyPreview": true
+  },
+  "offlineViewport": 360,
+  "guestTransfer": {
+    "kind": "Actual browser popup and postMessage between exact HTTPS origins; all responses from isolated loopback",
+    "requests": 121,
+    "errors": [],
+    "blocked": [],
+    "sourceDecisions": 8,
+    "sourceActiveSeconds": 31.131899999999646,
+    "sourceCutAttempts": 4,
+    "sourceCuts": 4,
+    "previewScreens": [
+      {
+        "label": "guest-transfer-preview",
+        "geometry": {
+          "width": 390,
+          "height": 844,
+          "scrollWidth": 390,
+          "small": [],
+          "images": [],
+          "controls": 2,
+          "contrastSamples": [],
+          "parchmentContrast": []
+        }
+      }
+    ],
+    "ok": true,
+    "nativeSourceRuns": 1,
+    "explicitConsent": true,
+    "persistsAfterReload": true,
+    "sourcePreserved": true,
+    "existingDestinationBackedUp": true
+  },
+  "sourceReportSha256": {
+    "offline": "b987fc1322bcf8343a0dd0f64515e731ecdf30587cca2e307e1d98caa5cf529a",
+    "guestTransfer": "4bbea9b82a59b6c8ec0fc2428dd42609c9b15a9b1c01ce863ec4ce145877c7de"
+  },
+  "limitations": [
+    "Offline guest behavior only; no offline account sync.",
+    "Transfer uses actual browser origins/popup messaging with all responses fulfilled from an isolated loopback server.",
+    "This does not prove a completed public server move."
+  ]
+}

@@ -1,0 +1,303 @@
+{
+  "recordType": "sanitized-account-integration-report",
+  "observedOn": "2026-11-24",
+  "recordedHarnessVersion": "3.13.0",
+  "candidateUnderTest": "Official local 3.13.0 build",
+  "method": "Isolated real child server processes, synthetic clock explicitly advanced for replay simulation; no wallet or inventory grants",
+  "reproduceWith": "node scripts/check_ninja_account_audit.mjs",
+  "dialects": [
+    {
+      "dialect": "sqlite",
+      "checks": [
+        "health_persistent_no_paths",
+        "registration_validation",
+        "separate_private_profiles",
+        "forged_wallet_prices_and_unearned_claims_refused",
+        "18_verified_missions_rewards_once",
+        "worlds_unlocked_by_play",
+        "concurrent_idempotent_purchase_from_earned_coins",
+        "owned_outfit_equipped",
+        "no_cross_account_mutation",
+        "explicit_verified_publication_and_no_duplicate_scores",
+        "actual_process_restart_keeps_both_accounts_wallet_inventory_progress_ranking_mfa",
+        "mfa_challenge_not_session",
+        "mfa_otp_and_one_use_recovery",
+        "password_recovery_revokes_old_sessions",
+        "logout_revokes_session"
+      ],
+      "missions": [
+        {
+          "id": "study-01",
+          "verified": true,
+          "rewardClaimed": true,
+          "balance": 7
+        },
+        {
+          "id": "study-02",
+          "verified": true,
+          "rewardClaimed": true,
+          "balance": 15
+        },
+        {
+          "id": "study-03",
+          "verified": true,
+          "rewardClaimed": true,
+          "balance": 23
+        },
+        {
+          "id": "study-04",
+          "verified": true,
+          "rewardClaimed": true,
+          "balance": 32
+        },
+        {
+          "id": "study-05",
+          "verified": true,
+          "rewardClaimed": true,
+          "balance": 41
+        },
+        {
+          "id": "study-06",
+          "verified": true,
+          "rewardClaimed": true,
+          "balance": 52
+        },
+        {
+          "id": "gaming-01",
+          "verified": true,
+          "rewardClaimed": true,
+          "balance": 60
+        },
+        {
+          "id": "gaming-02",
+          "verified": true,
+          "rewardClaimed": true,
+          "balance": 69
+        },
+        {
+          "id": "gaming-03",
+          "verified": true,
+          "rewardClaimed": true,
+          "balance": 79
+        },
+        {
+          "id": "gaming-04",
+          "verified": true,
+          "rewardClaimed": true,
+          "balance": 89
+        },
+        {
+          "id": "gaming-05",
+          "verified": true,
+          "rewardClaimed": true,
+          "balance": 99
+        },
+        {
+          "id": "gaming-06",
+          "verified": true,
+          "rewardClaimed": true,
+          "balance": 111
+        },
+        {
+          "id": "sleep-01",
+          "verified": true,
+          "rewardClaimed": true,
+          "balance": 118
+        },
+        {
+          "id": "sleep-02",
+          "verified": true,
+          "rewardClaimed": true,
+          "balance": 126
+        },
+        {
+          "id": "sleep-03",
+          "verified": true,
+          "rewardClaimed": true,
+          "balance": 134
+        },
+        {
+          "id": "sleep-04",
+          "verified": true,
+          "rewardClaimed": true,
+          "balance": 143
+        },
+        {
+          "id": "sleep-05",
+          "verified": true,
+          "rewardClaimed": true,
+          "balance": 152
+        },
+        {
+          "id": "sleep-06",
+          "verified": true,
+          "rewardClaimed": true,
+          "balance": 163
+        }
+      ],
+      "ok": true,
+      "cleanup": {
+        "users": 0,
+        "sessions": 0,
+        "wallets": 0,
+        "profiles": 0,
+        "ninja_runs": 0,
+        "ninja_actions": 0,
+        "ninja_ledger": 0,
+        "ninja_verified_scores": 0,
+        "ninja_mfa": 0,
+        "ninja_mfa_challenges": 0
+      }
+    },
+    {
+      "dialect": "postgres",
+      "checks": [
+        "health_persistent_no_paths",
+        "registration_validation",
+        "separate_private_profiles",
+        "forged_wallet_prices_and_unearned_claims_refused",
+        "18_verified_missions_rewards_once",
+        "worlds_unlocked_by_play",
+        "concurrent_idempotent_purchase_from_earned_coins",
+        "owned_outfit_equipped",
+        "no_cross_account_mutation",
+        "explicit_verified_publication_and_no_duplicate_scores",
+        "actual_process_restart_keeps_both_accounts_wallet_inventory_progress_ranking_mfa",
+        "mfa_challenge_not_session",
+        "mfa_otp_and_one_use_recovery",
+        "password_recovery_revokes_old_sessions",
+        "logout_revokes_session"
+      ],
+      "missions": [
+        {
+          "id": "study-01",
+          "verified": true,
+          "rewardClaimed": true,
+          "balance": 7
+        },
+        {
+          "id": "study-02",
+          "verified": true,
+          "rewardClaimed": true,
+          "balance": 15
+        },
+        {
+          "id": "study-03",
+          "verified": true,
+          "rewardClaimed": true,
+          "balance": 23
+        },
+        {
+          "id": "study-04",
+          "verified": true,
+          "rewardClaimed": true,
+          "balance": 32
+        },
+        {
+          "id": "study-05",
+          "verified": true,
+          "rewardClaimed": true,
+          "balance": 41
+        },
+        {
+          "id": "study-06",
+          "verified": true,
+          "rewardClaimed": true,
+          "balance": 52
+        },
+        {
+          "id": "gaming-01",
+          "verified": true,
+          "rewardClaimed": true,
+          "balance": 60
+        },
+        {
+          "id": "gaming-02",
+          "verified": true,
+          "rewardClaimed": true,
+          "balance": 69
+        },
+        {
+          "id": "gaming-03",
+          "verified": true,
+          "rewardClaimed": true,
+          "balance": 79
+        },
+        {
+          "id": "gaming-04",
+          "verified": true,
+          "rewardClaimed": true,
+          "balance": 89
+        },
+        {
+          "id": "gaming-05",
+          "verified": true,
+          "rewardClaimed": true,
+          "balance": 99
+        },
+        {
+          "id": "gaming-06",
+          "verified": true,
+          "rewardClaimed": true,
+          "balance": 111
+        },
+        {
+          "id": "sleep-01",
+          "verified": true,
+          "rewardClaimed": true,
+          "balance": 118
+        },
+        {
+          "id": "sleep-02",
+          "verified": true,
+          "rewardClaimed": true,
+          "balance": 126
+        },
+        {
+          "id": "sleep-03",
+          "verified": true,
+          "rewardClaimed": true,
+          "balance": 134
+        },
+        {
+          "id": "sleep-04",
+          "verified": true,
+          "rewardClaimed": true,
+          "balance": 143
+        },
+        {
+          "id": "sleep-05",
+          "verified": true,
+          "rewardClaimed": true,
+          "balance": 152
+        },
+        {
+          "id": "sleep-06",
+          "verified": true,
+          "rewardClaimed": true,
+          "balance": 163
+        }
+      ],
+      "ok": true,
+      "cleanup": {
+        "users": 0,
+        "sessions": 0,
+        "wallets": 0,
+        "profiles": 0,
+        "ninja_runs": 0,
+        "ninja_actions": 0,
+        "ninja_ledger": 0,
+        "ninja_verified_scores": 0,
+        "ninja_mfa": 0,
+        "ninja_mfa_challenges": 0
+      }
+    }
+  ],
+  "issues": [],
+  "sourceReportSha256": "309282479142c87c3b584a61d1312d14fbc7b42aadf04f1bb04a80caf826b03e",
+  "limitations": [
+    "Isolated local databases only.",
+    "Replay integration advances a synthetic test clock; this is not a native input playthrough.",
+    "Cleanup counts cover the ten core account-related tables listed in the report, not every schema table."
+  ]
+}

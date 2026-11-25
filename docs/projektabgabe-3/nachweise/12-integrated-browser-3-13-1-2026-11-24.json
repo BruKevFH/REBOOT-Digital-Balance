@@ -1,0 +1,84 @@
+{
+  "recordType": "sanitized-integrated-local-browser-acceptance",
+  "observedOn": "2026-11-24",
+  "reviewedOn": "2026-11-25",
+  "version": "3.13.1",
+  "sourceState": "Local 3.13.1 polish candidate after ed1bf5a; identify the final reviewed commit separately.",
+  "sourceReportSHA256": "3b0fa9c379db62525e89c70631f31644a02383a0764e780d96615278e4ad22c9",
+  "kind": "Native 3.13 integration; no fabricated progression",
+  "viewports": [
+    {
+      "width": 360,
+      "states": 66,
+      "ok": true,
+      "errors": [],
+      "consoleErrors": [],
+      "csp": [],
+      "intro": {
+        "duration": 20,
+        "complete": true,
+        "skipped": false,
+        "profilePreserved": true,
+        "observedWallSeconds": 26.654
+      },
+      "playtime": {
+        "nativeRound": true,
+        "activeSeconds": 1,
+        "paused": true
+      }
+    },
+    {
+      "width": 1280,
+      "states": 66,
+      "ok": true,
+      "errors": [],
+      "consoleErrors": [],
+      "csp": [],
+      "intro": {
+        "duration": 20,
+        "complete": false,
+        "skipped": true,
+        "profilePreserved": true,
+        "observedWallSeconds": 1.744
+      },
+      "playtime": {
+        "nativeRound": true,
+        "activeSeconds": 1,
+        "paused": true
+      }
+    }
+  ],
+  "nativeStates": 132,
+  "hudPresentation": {
+    "kind": "Presentation fixture: actual HUD markup, styles, loaded fonts and paintHudNumber; values are display-only, no game bridge or save mutations",
+    "cases": 216,
+    "ok": true,
+    "issues": []
+  },
+  "coldPaint": {
+    "mode": "External styles unavailable; main bundle delayed; actual inline-only first paint",
+    "loadingFrameVisible": true,
+    "giantImageObserved": false
+  },
+  "guestTransfer": {
+    "kind": "Actual browser popup and postMessage between exact HTTPS origins; all responses from isolated loopback",
+    "requests": 123,
+    "errors": [],
+    "blocked": [],
+    "sourceDecisions": 8,
+    "sourceActiveSeconds": 31.33159999999965,
+    "sourceCuts": 4,
+    "ok": true,
+    "nativeSourceRuns": 1,
+    "explicitConsent": true,
+    "persistsAfterReload": true,
+    "sourcePreserved": true,
+    "existingDestinationBackedUp": true
+  },
+  "issues": [],
+  "limits": [
+    "Native guest flows and isolated HUD fixtures are distinct methods.",
+    "The cinematic is 20 active presentation seconds; CPU load increased observed wall time to 26.654 seconds in the recorded mobile run.",
+    "Guest transfer uses genuine browser origins but all HTTP responses are fulfilled by the isolated loopback service; it is not a production migration test."
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "recordType": "sanitized-final-repository-test-summary",
+  "observedOn": "2026-11-25",
+  "version": "3.13.1",
+  "testedSourceCommit": "6878dd4bc8717d48f257d5b89c17868c355fc2bd",
+  "command": "npm test",
+  "counts": {
+    "tests": 591,
+    "pass": 591,
+    "fail": 0,
+    "skipped": 0
+  },
+  "realLocalPostgreSQL": true,
+  "sourceLogSHA256": "75bb6758b36c082368ed1e7d71cfd632f802bb089ce2bf2684622fc2eb3e73a8",
+  "scope": "All repository tests, including other games; separate from the public API and independent CI proofs."
+}

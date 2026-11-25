@@ -1,0 +1,24 @@
+sequenceDiagram
+    actor P as Spieler
+    participant UI as Ranglistenansicht
+    participant S as Game-Service
+    participant DB as Kontodatenbank
+    UI->>S: Zustands- oder Ranglistenabfrage nach Montag 00:00 UTC
+    S->>DB: BEGIN, Settlement-Sperre / Wettbewerbseinstellung
+    S->>DB: Noch offene abgeschlossene Wochen und gültige Scores lesen
+    S->>S: Bester Run je Nicht-Admin, deterministische Rangfolge
+    S->>DB: Wochenabschluss + Top-3-Snapshots (100 / 60 / 30)
+    DB-->>S: COMMIT
+    S-->>UI: Verfügbare eigene Prämie, UTC-Schlusszeit
+    P->>UI: Wochenprämie ausdrücklich abholen
+    UI->>S: podium.claim (Montag-ID, idempotencyKey)
+    S->>DB: BEGIN, Aktion und noch offene eigene Prämie prüfen
+    alt Berechtigt und noch nicht abgeholt
+        S->>DB: claimed_at setzen, Wallet, Ledger, Profil und Antwort
+        DB-->>S: COMMIT
+        S-->>UI: Einmalige Münzgutschrift
+    else Wiederholung / bereits abgeholt / Admin / keine Prämie
+        S->>DB: Keine zweite Gutschrift
+        S-->>UI: Gespeicherte Antwort oder 4xx
+    end
+    Note over S,DB: Lazy Settlement statt kostenpflichtigem Scheduler.<br/>Keine rückwirkenden Altprämien.

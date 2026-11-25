@@ -1,0 +1,39 @@
+{
+  "date": "2026-11-24",
+  "version": "3.13.1",
+  "method": "Two native account runs; automatic publication only; no fabricated progression",
+  "sourceLabel": "Native two-account automatic-ranking final report",
+  "sourceSHA256": "2d30320a6b51df1c66c5f1ae19951a05320974c06af04619e4be32fb298fa773",
+  "accounts": [
+    {
+      "width": 360,
+      "language": "de",
+      "errors": [],
+      "manualPublishClicks": 0,
+      "ok": true,
+      "attempts": 3,
+      "actualCuts": 3,
+      "score": 700,
+      "elapsed": 41.04820000000011,
+      "wallSeconds": 44.121,
+      "persistedAfterReload": true,
+      "deleted": true
+    },
+    {
+      "width": 1280,
+      "language": "en",
+      "errors": [],
+      "manualPublishClicks": 0,
+      "ok": true,
+      "attempts": 3,
+      "actualCuts": 3,
+      "score": 1600,
+      "elapsed": 44.48140000000041,
+      "wallSeconds": 50.118,
+      "persistedAfterReload": true,
+      "deleted": true
+    }
+  ],
+  "issues": [],
+  "scope": "Isolated local HTTP service; real native input and wall time, no production restart."
+}

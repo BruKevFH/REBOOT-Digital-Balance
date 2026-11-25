@@ -1,0 +1,43 @@
+erDiagram
+    users ||--o| ninja_admin_accounts : besitzt_optionale_Testrolle
+    users ||--o{ ninja_podium_rewards : erhaelt
+    ninja_podium_weeks ||--o{ ninja_podium_rewards : friert_ein
+    users {
+        TEXT id PK
+    }
+    ninja_admin_accounts {
+        TEXT user_id PK,FK
+        BIGINT created_at
+    }
+    ninja_competition_settings {
+        TEXT name PK
+        TEXT value "podium_start_week als UTC-Zeitstempel"
+    }
+    ninja_podium_weeks {
+        BIGINT week_start PK
+        BIGINT settled_at
+        INTEGER eligible_entries
+    }
+    ninja_podium_rewards {
+        BIGINT week_start PK,FK
+        INTEGER place PK "1 bis 3"
+        TEXT user_id FK "UNIQUE mit week_start"
+        INTEGER coins "100, 60 oder 30 passend zum Platz"
+        TEXT run_id "historischer Snapshot, absichtlich kein FK"
+        BIGINT score
+        DOUBLE duration
+        BIGINT submitted_at
+        BIGINT claimed_at "NULL bis zur Abholung"
+    }
+    ninja_auth_migrations {
+        INTEGER version PK
+        BIGINT applied_at
+    }
+    ninja_game_migrations {
+        INTEGER version PK
+        BIGINT applied_at
+    }
+    ninja_feature_migrations {
+        INTEGER version PK
+        BIGINT applied_at
+    }

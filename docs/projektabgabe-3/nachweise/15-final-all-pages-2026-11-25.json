@@ -1,0 +1,68 @@
+{
+  "recordType": "sanitized-final-exhaustive-ui-acceptance",
+  "observedOn": "2026-11-25",
+  "version": "3.13.1",
+  "testedSourceCommit": "6878dd4bc8717d48f257d5b89c17868c355fc2bd",
+  "kind": "Fresh exhaustive UI audit, four independently executed width/language shards",
+  "ok": true,
+  "totalStates": 1368,
+  "issues": [],
+  "processExitCodes": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "shards": [
+    {
+      "width": 360,
+      "language": "de",
+      "states": 342,
+      "ok": true,
+      "javascriptErrors": 0,
+      "cleanedTemporaryAccounts": 1,
+      "sourceSHA256": "7bd367172451e2c9074993e301ce7949a1dcaef00413852ec88482c29ddcd178"
+    },
+    {
+      "width": 360,
+      "language": "en",
+      "states": 342,
+      "ok": true,
+      "javascriptErrors": 0,
+      "cleanedTemporaryAccounts": 1,
+      "sourceSHA256": "858b854beeafaec29593e5632632664e11a52d48fcbf3501b6b5d560ea266d3c"
+    },
+    {
+      "width": 1280,
+      "language": "de",
+      "states": 342,
+      "ok": true,
+      "javascriptErrors": 0,
+      "cleanedTemporaryAccounts": 1,
+      "sourceSHA256": "e0883e5cc5e4a23aa449aa972b974854974a9b3f300271bfb411c01823100315"
+    },
+    {
+      "width": 1280,
+      "language": "en",
+      "states": 342,
+      "ok": true,
+      "javascriptErrors": 0,
+      "cleanedTemporaryAccounts": 1,
+      "sourceSHA256": "db936b5ce83c9f989d688cad32c501fb4b8b4b369eb538a444127616b85e3992"
+    }
+  ],
+  "scope": "All original geometry, 44px target, artwork, duplicate-ID, translation and JavaScript assertions preserved. Successful screenshots disabled; failures always captured. Includes actual account/MFA/settings/deletion flows, earned campaign checkpoint, real guest purchase and preserved legacy inventory. Native full-game completion remains separate evidence.",
+  "temporaryAccountsDeleted": 4,
+  "assetIdentity": {
+    "workingTreeTestArtifactsMatchCommittedSource": true,
+    "sha256": {
+      "notification-ninja/dist/ninja.js": "84b947c1c5e8ac00e53bf8eb2da4565fa0c581212824f190df97c4b1ac7cf045",
+      "notification-ninja/dist/home.js": "3617ee3f7ead8e54cb28ba1ae3150bd28ad730248d2672d2b0ffa30edd56a8f3",
+      "notification-ninja/dist/build.json": "76e0bd49838b916760e565a752fcc9e9c73b616446ae688e2ef29d6c9f592be0",
+      "notification-ninja/presentation-polish.css": "91c459cdb382e05191b267648b4fe24c1738f946e70f9c9fc55fae5f8e44d84c",
+      "notification-ninja/home.html": "ba31d0525397ee1c341ae54452586d8400ed0f05f1fa400361bae205efb329b7",
+      "notification-ninja/src/locales/en-expansion.js": "e1bf87bea76da0ef3aaeebed6a9372e791823b3dbf38925c0f21dd57fa3cd078"
+    }
+  },
+  "sourceReportSHA256": "a5e9176e8afab2bbc57a1d6a1f7b5168f8d33498cb9899827f20e2eaa0b7e373"
+}

@@ -1,0 +1,33 @@
+flowchart LR
+    G["Gast / Spieler"] --> B
+    O["Betreiber"] -->|"kontrolliertes Deployment"| R
+    subgraph CLIENT["Browser auf Desktop, Tablet oder Smartphone"]
+        direction TB
+        B["HTML / CSS / JavaScript<br/>Canvas 2D, Web Audio, DE / EN"]
+        GAME["Geteiltes Spielmodell<br/>NinjaGame / Progression / Karriere"]
+        LOCAL[("localStorage<br/>Gastprofil, Designs, lokale Spielzeit")]
+        SESSION[("sessionStorage<br/>v3-Sitzung und Rundenprotokoll")]
+        SW["Service Worker<br/>Offline-Gastspiel"]
+        B --> GAME
+        B --> LOCAL
+        B --> SESSION
+        B --> SW
+    end
+    subgraph R["Bestehender Render-Free-Kontodienst"]
+        direction TB
+        HTTP["Node.js 24<br/>statische Dateien + /api/v3"]
+        AUTH["Auth / optionales TOTP-MFA"]
+        SERVICE["Aktionen, Replay, Rangliste,<br/>Wochenpodium"]
+        REPLAY["Serverinstanz von NinjaGame<br/>dieselben kanonischen Modellquellen"]
+        STORE["Transaktionaler Speicheradapter"]
+        HTTP --> AUTH
+        HTTP --> SERVICE
+        SERVICE --> REPLAY
+        AUTH --> STORE
+        SERVICE --> STORE
+    end
+    B <-->|"HTTPS + JSON / Bearer-Token"| HTTP
+    STORE --> PG[("Neon Free PostgreSQL<br/>dauerhafter Kontofortschritt")]
+    STORE -. "lokale Alternative" .-> SQL[("SQLite-Datei<br/>Entwicklung und isolierte Tests")]
+    PAGES["Bisherige GitHub-Pages-Adresse"] -. "altes Gastprofil: ausdrückliche<br/>Übernahme mit Bestätigung" .-> B
+    LEGACY["Historischer v2-Ranglistendienst"] -. "separater Altbestand;<br/>keine automatische v3-Migration" .-> PAGES
