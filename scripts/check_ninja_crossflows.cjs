@@ -64,6 +64,49 @@ async function themes(p,width,entry){
  assert.deepEqual(economy(await snap(p)),before,'Themes do not alter the economy or saved gameplay');
  entry.themes={choices:['dark','noir','relaxed'],unrelatedWrites:0,documentIsNotToggle:true};
 }
+async function accountModalHistory(p,width,entry){
+ const touch=width<768,before=economy(await snap(p)),cases=[];
+ for(const close of ['escape','close','browser-back']){
+  // A real direct menu URL has the hub as its recorded underlying view.
+  await p.goto(base+'index.html?modal-history='+close+'#weekly');await ready(p);
+  const original=await historyView(p);
+  await click(p,p.locator('.indie-account-tool'),touch);await p.locator('[data-account-form=login]').waitFor();
+  const opened=await historyView(p);assert.equal(opened.length,original.length+1,'An account modal creates exactly one history entry');
+  await click(p,p.locator('[data-account=register]'),touch);await p.locator('[data-account-form=register]').waitFor();
+  await click(p,p.locator('[data-account=login]'),touch);await p.locator('[data-account-form=login]').waitFor();
+  await click(p,p.locator('[data-account=recovery]'),touch);await p.locator('[data-account-form=recovery]').waitFor();
+  assert.equal((await historyView(p)).length,opened.length,'Auth subpages replace the same modal entry');
+  if(close==='escape')await p.keyboard.press('Escape');else if(close==='close')await click(p,p.locator('[data-account=close]').first(),touch);else await p.goBack();
+  await p.waitForFunction(()=>!document.querySelector('#account-root [role=dialog]')&&location.hash==='#weekly');
+  assert.equal((await snap(p)).ui,'weekly');assert.equal((await historyView(p)).depth,original.depth);
+  assert.equal(await p.evaluate(()=>document.activeElement?.matches('.indie-account-tool')),true,'Closing the modal restores focus to the same toolbar control');
+  if(close==='browser-back'){
+   await p.goForward();await p.locator('[data-account-form=recovery]').waitFor();
+   assert.equal((await historyView(p)).length,opened.length,'Forward reopens the original modal entry');
+   await p.goBack();await p.waitForFunction(()=>!document.querySelector('#account-root [role=dialog]')&&location.hash==='#weekly');
+  }
+  await click(p,p.locator('.indie-page>.panel-header .panel-back'),touch);
+  await p.waitForFunction(()=>window.__NOTIFICATION_NINJA__.getSnapshot().ui==='home');
+  assert.equal(new URL(p.url()).hash,'#overview','One Back reaches the hub after closing the modal');
+  cases.push({close,authSubpagesStable:true,focusRestored:true,singleBackToHub:true});
+ }
+ for(const route of ['login','register','recovery','account']){
+  await p.goto(base+'index.html?direct-auth='+route+'#'+route);await ready(p);
+  const form=route==='account'?'login':route;await p.locator('[data-account-form='+form+']').waitFor();
+  await p.keyboard.press('Escape');await p.waitForFunction(()=>!document.querySelector('#account-root [role=dialog]')&&location.hash==='#overview');
+  assert.equal((await snap(p)).ui,'home');
+  const freshContext=await p.context().browser().newContext({serviceWorkers:'block',viewport:p.viewportSize(),hasTouch:touch}),fresh=await freshContext.newPage();
+  fresh.on('pageerror',error=>entry.errors.push(error.message));
+  try{
+   await fresh.goto(base+'index.html#'+route);await ready(fresh);await fresh.locator('[data-account-form='+form+']').waitFor();
+   assert.equal((await snap(fresh)).session.signedIn,false,'A direct auth URL does not create a guest or sign in');
+   await fresh.keyboard.press('Escape');await fresh.waitForFunction(()=>!document.querySelector('#account-root [role=dialog]')&&location.hash==='#start');
+   assert.equal((await snap(fresh)).ui,'landing','Closing a fresh direct auth URL returns to its real landing page');
+  }finally{await freshContext.close();}
+ }
+ assert.deepEqual(economy(await snap(p)),before,'Account modal navigation cannot alter the guest economy');
+ entry.accountHistory={cases,directRoutes:['login','register','recovery','account'],freshAuthRoutes:true,forwardReopens:true};
+}
 async function practiceHistory(p,width,entry,content){
  const touch=width<768,before=economy(await snap(p));
  await click(p,p.locator('[data-game-route=codex]:visible'),touch);await click(p,p.locator('[data-codex-context=gaming]'),touch);await click(p,p.locator('[data-codex-action=practice]'),touch);
@@ -109,7 +152,7 @@ async function exitDialog(p,width,entry){
 (async()=>{
  fs.mkdirSync(out,{recursive:true});const {CONTENT}=await import(pathToFileURL(path.join(root,'notification-ninja/src/game.js')).href);
  const browser=await chromium.launch({executablePath:process.env.NINJA_CHROMIUM||(fs.existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),headless:true,args:['--no-sandbox']});const report={version,viewports:[],issues:[]};
- try{for(const width of widths){let context,p;const entry={width,errors:[]};try{({context,p}=await guest(browser,width));p.on('pageerror',error=>entry.errors.push(error.message));await themes(p,width,entry);await practiceHistory(p,width,entry,CONTENT);await exitDialog(p,width,entry);assert.deepEqual(entry.errors,[]);entry.ok=true;}catch(error){entry.ok=false;entry.failure=error.stack;report.issues.push({width,error:error.message});if(p)await p.screenshot({path:path.join(out,`FAIL-${width}.png`),fullPage:true}).catch(()=>{});}finally{await context?.close();report.viewports.push(entry);console.log('CROSSFLOWS',width,entry.ok,entry.failure||'');}}
+ try{for(const width of widths){let context,p;const entry={width,errors:[]};try{({context,p}=await guest(browser,width));p.on('pageerror',error=>entry.errors.push(error.message));if(process.env.NINJA_CROSSFLOW_ACCOUNT_ONLY!=='1')await themes(p,width,entry);await accountModalHistory(p,width,entry);if(process.env.NINJA_CROSSFLOW_ACCOUNT_ONLY!=='1'){await practiceHistory(p,width,entry,CONTENT);await exitDialog(p,width,entry);}assert.deepEqual(entry.errors,[]);entry.ok=true;}catch(error){entry.ok=false;entry.failure=error.stack;report.issues.push({width,error:error.message});if(p)await p.screenshot({path:path.join(out,`FAIL-${width}.png`),fullPage:true}).catch(()=>{});}finally{await context?.close();report.viewports.push(entry);console.log('CROSSFLOWS',width,entry.ok,entry.failure||'');}}
  fs.writeFileSync(path.join(out,'report.json'),JSON.stringify(report,null,2));console.log(JSON.stringify({viewports:report.viewports.map(x=>({width:x.width,ok:x.ok})),issues:report.issues},null,2));if(report.issues.length)process.exitCode=1;
  }finally{await browser.close();}
 })().catch(error=>{console.error(error.stack);process.exitCode=1;});

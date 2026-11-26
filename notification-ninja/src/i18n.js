@@ -14,7 +14,35 @@ import {EN_ARCADE} from './locales/en-arcade.js';
 import {EN_V2} from './locales/en-v2.js';
 
 const normalize=text=>String(text).replace(/&amp;/g,'&').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/\s+/gu,' ').trim();
-const dictionary=new Map(Object.entries({...EN_GAME,...EN_EXPANSION,...EN_UI,...EN_PORTAL,...EN_HOME,...EN_PDF,...EN_ACCOUNTS,...EN_SETTINGS,...EN_CAMPAIGN,...EN_LEGEND,...EN_REFLECTION,...EN_ARCADE,...EN_V2}).map(([de,en])=>[normalize(de),en]));
+const EN_ADDITIONAL_UI={
+  'Diese Münzen sind jetzt in deinem Dojo. Jede Erfolgsbelohnung lässt sich einmal abholen. Im Basar findest du passende Ninja-Looks und Fähigkeiten.':'These coins are now in your dojo. Each achievement reward can only be claimed once. Find matching ninja looks and abilities in the bazaar.',
+  'bestätigter Fortschritt':'verified progress',
+  'Run wird am Ende geprüft':'run verification at the end',
+  'Entspannt: 5 Herzen. Normal: 4. Profi: 3. Die normalen Räume werden allmählich schneller. Open Run hat einen einzigen Modus mit drei Herzen, langsamem Einstieg und dauerhaft steigendem Tempo. Sammle Münzen für Spielwelten, Ninja-Looks und Fähigkeiten. Der Ninja-Basar zeigt Vorschauen und Freischaltbedingungen; neue Welten werden der Reihe nach freigeschaltet.':'Relaxed: 5 hearts. Normal: 4. Pro: 3. Regular rooms gradually get faster. Open Run has one mode with three hearts, a gentle start and steadily increasing speed. Earn coins for game worlds, ninja looks and abilities. The ninja bazaar shows previews and unlock requirements; new worlds unlock in order.',
+  'Musik. Fähigkeiten, Superwahl und Ninja-Looks gelten ab der nächsten neuen Runde.':'Music. Abilities, your selected Super and ninja looks apply from the next new round.',
+  '✦ Zusatzmissionen':'✦ Bonus missions',
+  '6 Ziffern oder Wiederherstellungscode':'6 digits or recovery code',
+  'Diese zehn Codes werden nur einmal angezeigt.':'These ten codes are shown only once.',
+  'Bewahre sie getrennt vom Passwort an einem sicheren Ort auf. Jeder Code funktioniert nur einmal.':'Keep them somewhere safe, separate from your password. Each code works only once.',
+  'Ich habe die Codes sicher und privat gespeichert.':'I have saved the codes somewhere safe and private.',
+  '✓ MFA-Anmeldung bestätigt.':'✓ MFA sign-in confirmed.',
+  'Ungültiger Einrichtungscode.':'Invalid setup code.',
+  'Zwei-Faktor-Anmeldung ist am Server noch nicht konfiguriert.':'Two-factor sign-in is not configured on the server yet.',
+  'MFA-Schlüssel ungültig.':'Invalid MFA key.',
+  'MFA-Schlüssel konnte nicht entschlüsselt werden.':'The MFA key could not be decrypted.',
+  'MFA-Code ungültig oder abgelaufen.':'MFA code invalid or expired.',
+  'Passwort zur Bestätigung erforderlich.':'Confirm your password to continue.',
+  'Einrichtung abgelaufen. Bitte erneut beginnen.':'Setup expired. Please start again.',
+  'Authenticator-Code ungültig.':'Invalid authenticator code.',
+  'MFA-Code ungültig.':'Invalid MFA code.',
+  'Ein gültiger MFA-Code wird benötigt.':'A valid MFA code is required.',
+  'Wähle einen gültigen Ranglistenzeitraum.':'Choose a valid leaderboard period.',
+  'Bitte versuche die Anfrage erneut.':'Please try the request again.',
+  'Noch keine Rangliste geladen.':'No leaderboard loaded yet.',
+  'Stark! Gute Entscheidungen laden deine Super erneut auf. Im Basar kannst du vor deiner nächsten neuen Runde eine andere Super ausrüsten.':'Great! Good decisions recharge your Super. You can equip a different Super in the bazaar before your next new round.',
+  '60 oder 180 richtige Entscheidungen – dein neuer Ninja-Look wartet im Profil.':'60 or 180 correct decisions — your new ninja look is waiting in your profile.'
+};
+const dictionary=new Map(Object.entries({...EN_GAME,...EN_EXPANSION,...EN_UI,...EN_PORTAL,...EN_HOME,...EN_PDF,...EN_ACCOUNTS,...EN_SETTINGS,...EN_CAMPAIGN,...EN_LEGEND,...EN_REFLECTION,...EN_ARCADE,...EN_V2,...EN_ADDITIONAL_UI}).map(([de,en])=>[normalize(de),en]));
 const patterns=[...PORTAL_PATTERNS,...LEGEND_PATTERNS,...CAMPAIGN_PATTERNS,...ACCOUNT_PATTERNS,...SETTINGS_PATTERNS,...PDF_PATTERNS,...UI_PATTERNS,...GAME_PATTERNS,...HOME_PATTERNS];
 const missing=new Set(),cache=new Map(),roots=new Set(),subscribers=new Set();
 const textSources=new WeakMap(),attributeSources=new WeakMap();
@@ -39,14 +67,16 @@ function translatedCore(text){
     break;
   }
   if(output===key){
-    if(key.includes(' · '))output=key.split(' · ').map(part=>dictionary.get(part)??translatedPart(part)).join(' · ');
+    if(key.includes(' · '))output=key.split(' · ').map(part=>dictionary.get(part)??translatedCore(part)).join(' · ');
     else output=translatedPart(key);
   }
   if(cache.size>4096)cache.clear();cache.set(key,output);
-  if(output===key&&/[äöüß]|\b(?:Dein|Deine|dein|deine|Münzen|Punkte|Schalte|Runde|Erfolg|Beenden|Zurück|abholen|freigeschaltet|Lernen|Schlafen)\b/u.test(key)&&missing.size<1500)missing.add(key);
+  if(output===key&&/[äöüß]|\b(?:Dein|Deine|dein|deine|Münzen|Punkte|Schalte|Runde|Erfolg|Beenden|Zurück|abholen|freigeschaltet|Lernen|Schlafen|Zusatzmissionen|Ziffern|Wiederherstellungscode|Diese|Bewahre|gespeichert)\b|\bWELT(?=\s+\d)/u.test(key)&&missing.size<1500)missing.add(key);
   return output;
 }
 function translatedPart(key){
+  const world=key.match(/^WELT\s+(\d+)$/u);
+  if(world)return `WORLD ${world[1]}`;
   const months={'Januar':'January','Februar':'February','März':'March','April':'April','Mai':'May','Juni':'June','Juli':'July','August':'August','September':'September','Oktober':'October','November':'November','Dezember':'December'};
   const date=key.match(/^(\d{1,2})\. (Januar|Februar|März|April|Mai|Juni|Juli|August|September|Oktober|November|Dezember)(.*)$/u);
   if(date)return `${date[1]} ${months[date[2]]}${date[3]}`;

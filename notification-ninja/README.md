@@ -1,6 +1,6 @@
 # Notification Ninja
 
-Aktuelle Ergänzung: [3.13.1 – automatische Rangliste, lesbare Zähler und kompaktere Ansichten](PATCH_3_13_1.md).
+Neue Überarbeitung: [3.13.2 – mobile Navigation, Kontraste, vollständige Übersetzungen, Intro und Spielzeit](PATCH_3_13_2.md). Der lokale Prüfstand und die öffentliche Freigabe sind dort getrennt dokumentiert.
 
 **Aktuell: 3.13.1** unter **https://notification-ninja-accounts.onrender.com/**. Der [getestete Quellstand `6878dd4`](https://github.com/BruKevFH/REBOOT-Digital-Balance/commit/6878dd4bc8717d48f257d5b89c17868c355fc2bd) läuft auf dem bestehenden Render-Free-Dienst mit dauerhafter PostgreSQL-Datenbank. Verfeinerte Welten, Fähigkeiten im Basar, 18 Fähigkeiten einschließlich sechs Supers, 36 Erfolge und zwölf Looks mit fünf kosmetischen Seltenheiten ergänzen das Spiel. Neue geeignete Konten-Open-Runs werden nach Serverprüfung automatisch eingetragen. Ein eigenes Ninja-Intro, aktive lokale Spielzeit und freiwillige Pausenerinnerungen sind integriert. [Abschlussnachweise, Migration und Grenzen](EXPANSION_3_13.md) · [3.13.1-Änderungen](PATCH_3_13_1.md).
 

@@ -108,6 +108,37 @@ async function inspectMission(page,label,report){
   if(state.translation.missing.length)report.translationFindings.push({label:label+'-mission-stopped',missing:state.translation.missing});
 }
 
+async function inspectCardContrast(page,label,report){
+  const samples=[
+    ['campaign','.nn-career-node-copy strong,.nn-career-node-copy small'],
+    ['help','.briefing-items p,kbd'],
+    ['leaderboard','.legend-empty-score,.legend-podium-base span,.weekly-podium-rewards li>strong'],
+    ['achievements','.achievement-meta span,.achievement-meta strong,.tree-wallet strong,.owned-collection>summary,.collection-count'],
+    ['sensei','.sensei-total small,.sensei-total strong,.sensei-scenario-head>span'],
+    ['profile','#username-form>label'],
+  ];
+  for(const [routeId,selector]of samples){
+    await route(page,routeId);
+    await page.locator(selector).first().waitFor({state:'visible'});
+    const measured=await page.locator(selector).evaluateAll(elements=>{
+      const rgba=value=>value.match(/[\d.]+/g).map(Number);
+      const blend=(foreground,background)=>foreground.slice(0,3).map((value,index)=>value*(foreground[3]??1)+background[index]*(1-(foreground[3]??1)));
+      const luminance=color=>color.slice(0,3).map(value=>value/255).map(value=>value<=.04045?value/12.92:((value+.055)/1.055)**2.4).reduce((sum,value,index)=>sum+value*[.2126,.7152,.0722][index],0);
+      return elements.filter(element=>element.checkVisibility()).map(element=>{
+        let background=[255,255,255];const ancestors=[];
+        for(let node=element;node;node=node.parentElement)ancestors.unshift(node);
+        for(const node of ancestors)background=blend(rgba(getComputedStyle(node).backgroundColor),background);
+        const foreground=blend(rgba(getComputedStyle(element).color),background),a=luminance(foreground),b=luminance(background);
+        return {text:element.textContent.trim().slice(0,90),ratio:(Math.max(a,b)+.05)/(Math.min(a,b)+.05)};
+      });
+    });
+    assert(measured.length,'The expected card labels are present on '+routeId);
+    assert(measured.every(sample=>sample.ratio>=4.5),'Readable solid card text '+label+' '+routeId+' '+JSON.stringify(measured.filter(sample=>sample.ratio<4.5)));
+    const record=await inspect(page,label+'-readable-'+routeId,report);
+    record.cardContrast={samples:measured.length,minimum:Math.min(...measured.map(sample=>sample.ratio))};
+  }
+}
+
 async function flow(page,width,language,theme,report,initialEconomy){
   const label=width+'-'+language+'-'+theme;
   await route(page,'settings');
@@ -147,8 +178,9 @@ async function flow(page,width,language,theme,report,initialEconomy){
   assert.equal(await page.locator('.shop-skill-description:visible').count(),1);
   await inspect(page,label+'-ability-effect-open',report);
   await inspectMission(page,label,report);
+  await inspectCardContrast(page,label,report);
   assert.deepEqual(economy((await snapshot(page)).profile),initialEconomy,'Short presentation checks do not manufacture rewards, unlocks or qualified runs');
-  console.log('NINJA_COMPACT_FLOW',label,'5 states passed');
+  console.log('NINJA_COMPACT_FLOW',label,'11 states passed');
 }
 
 (async()=>{
@@ -172,7 +204,7 @@ async function flow(page,width,language,theme,report,initialEconomy){
     }
     assert.deepEqual(report.pageErrors,[],'No JavaScript errors');
     assert.deepEqual(report.translationFindings,[],'All expanded and stopped-result branches have English translations');
-    assert.equal(report.states.length,widths.length*2*3*5,'Every compact flow completed');
+    assert.equal(report.states.length,widths.length*2*3*11,'Every compact flow completed');
     report.ok=true;
   }catch(error){
     report.ok=false;report.issues.push(error.stack);console.error(error.stack);process.exitCode=1;

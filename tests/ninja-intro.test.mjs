@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {CONTENT} from '../notification-ninja/src/game.js';
-import {INTRO_STEPS,INTRO_DURATION,INTRO_STORAGE_PREFIX,createNinjaIntroModel,readNinjaIntro,shouldShowNinjaIntro,markNinjaIntroSeen,resetNinjaIntro} from '../notification-ninja/src/ninja-intro.js';
+import {INTRO_STEPS,INTRO_DURATION,INTRO_STORAGE_PREFIX,createNinjaIntroModel,createIntroModalBoundary,readNinjaIntro,shouldShowNinjaIntro,markNinjaIntroSeen,resetNinjaIntro} from '../notification-ninja/src/ninja-intro.js';
 
 const store=()=>{const data=new Map();return {data,getItem:key=>data.get(key)??null,setItem:(key,value)=>data.set(key,String(value)),removeItem:key=>data.delete(key)};};
 
@@ -65,4 +65,49 @@ test('corrupt or blocked preference storage never prevents viewing or skipping t
   assert.deepEqual(readNinjaIntro(blocked),{seen:false,available:false});assert.equal(markNinjaIntroSeen(blocked),false);
   assert.deepEqual(readNinjaIntro(blocked),{seen:true,available:false},'A blocked write still suppresses repeat intros in the open session');
   assert.equal(resetNinjaIntro(blocked),false);assert.equal(shouldShowNinjaIntro(blocked),true);
+});
+
+function modalFixture({nested=false,overflow='auto',priority='important',layer=false}={}){
+  const values=new Map(overflow?[['overflow',{value:overflow,priority}]]:[]),classes=new Set(layer?['ninja-intro-layer']:[]),scroll=[];
+  const doc={defaultView:{scrollX:17,scrollY:490,scrollTo:value=>scroll.push(value)}};
+  const style={getPropertyValue:name=>values.get(name)?.value||'',getPropertyPriority:name=>values.get(name)?.priority||'',setProperty:(name,value,priority='')=>values.set(name,{value,priority}),removeProperty:name=>values.delete(name)};
+  const root={ownerDocument:doc,classList:{contains:name=>classes.has(name),add:name=>classes.add(name),remove:name=>classes.delete(name)}};
+  const app={inert:false},alreadyInert={inert:true},localSibling={inert:false};
+  const body=doc.body={style,children:[]};
+  if(nested){const wrapper={parentElement:body,children:[root,localSibling]};root.parentElement=wrapper;localSibling.parentElement=wrapper;body.children=[app,wrapper,alreadyInert];}
+  else{root.parentElement=body;body.children=[app,root,alreadyInert];}
+  return {root,app,alreadyInert,localSibling,style,classes,scroll};
+}
+
+test('an intro blocks background interaction until closing and restores prior modal and scroll state exactly',()=>{
+  for(const nested of [false,true]){
+    const fixture=modalFixture({nested}),boundary=createIntroModalBoundary(fixture.root);
+    boundary.release();assert.equal(fixture.app.inert,false);
+    boundary.activate();assert.equal(fixture.app.inert,true);assert.equal(fixture.alreadyInert.inert,true);assert(fixture.classes.has('ninja-intro-layer'));
+    if(nested)assert.equal(fixture.localSibling.inert,true);
+    assert.equal(fixture.style.getPropertyValue('overflow'),'hidden');
+    boundary.activate();boundary.release();
+    assert.equal(fixture.app.inert,false);assert.equal(fixture.alreadyInert.inert,true);
+    if(nested)assert.equal(fixture.localSibling.inert,false);
+    assert.equal(fixture.style.getPropertyValue('overflow'),'auto');assert.equal(fixture.style.getPropertyPriority('overflow'),'important');assert.equal(fixture.classes.has('ninja-intro-layer'),false);
+    assert.deepEqual(fixture.scroll,[{left:17,top:490,behavior:'instant'}]);
+    boundary.release();assert.equal(fixture.scroll.length,1,'Repeated cleanup does not move the restored page again');
+  }
+});
+
+test('intro cleanup preserves an existing layer class and removes only its own temporary overflow',()=>{
+  const fixture=modalFixture({overflow:'',layer:true}),boundary=createIntroModalBoundary(fixture.root);boundary.activate();boundary.release();
+  assert(fixture.classes.has('ninja-intro-layer'));assert.equal(fixture.style.getPropertyValue('overflow'),'');assert.equal(fixture.app.inert,false);
+});
+
+test('optional narration can finish its sentence before an automatic scene change and never traps manual controls',()=>{
+  const model=createNinjaIntroModel();model.play();
+  for(let index=0;index<100;index++)model.advance(.1,{narrating:true});
+  assert.equal(model.getState().step,0);assert.equal(model.getState().finished,false);assert(model.getState().elapsed>3.9&&model.getState().elapsed<4);
+  model.advance(.05,{narrating:false});assert.equal(model.getState().step,1,'The story continues once the voice finishes');
+  for(let index=0;index<100;index++)model.advance(.1,{narrating:true});
+  model.next();assert.equal(model.getState().step,2,'Next remains an explicit choice while narration is in progress');
+  model.pause();const paused=model.getState();model.advance(.1,{narrating:true});assert.deepEqual(model.getState(),paused);model.play();
+  model.seekStep(3);for(let index=0;index<100;index++)model.advance(.1,{narrating:true});assert.equal(model.getState().finished,false,'The last sentence is also kept intact');
+  model.advance(.05,{narrating:false});assert.equal(model.getState().finished,true);assert.equal(model.getState().elapsed,INTRO_DURATION);
 });

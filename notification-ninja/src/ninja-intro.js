@@ -43,7 +43,7 @@ export function createNinjaIntroModel({reducedMotion=false}={}){
   const state=()=>{const index=finished?INTRO_STEPS.length-1:Math.max(0,starts.findLastIndex(start=>elapsed>=start));return {elapsed,duration:INTRO_DURATION,playing,finished,reducedMotion:calm,step:index,context:INTRO_STEPS[index].context,stepElapsed:Math.min(INTRO_STEPS[index].duration,Math.max(0,elapsed-starts[index])),progress:Math.min(1,elapsed/INTRO_DURATION)};};
   function play(){if(finished||calm)return false;playing=true;return true;}
   function pause(){playing=false;}
-  function advance(dt,{hidden=false}={}){if(!playing||finished||hidden||typeof dt!=='number'||!Number.isFinite(dt)||dt<=0)return state();elapsed=Math.min(INTRO_DURATION,elapsed+Math.min(.1,dt));if(elapsed>=INTRO_DURATION){finished=true;playing=false;}return state();}
+  function advance(dt,{hidden=false,narrating=false}={}){if(!playing||finished||hidden||typeof dt!=='number'||!Number.isFinite(dt)||dt<=0)return state();const current=state(),remaining=INTRO_STEPS[current.step].duration-current.stepElapsed;const step=narrating?Math.min(.1,dt,Math.max(0,remaining-.001)):Math.min(.1,dt);elapsed=Math.min(INTRO_DURATION,elapsed+step);if(elapsed>=INTRO_DURATION){finished=true;playing=false;}return state();}
   function seekStep(index){if(!Number.isInteger(index)||index<0||index>=INTRO_STEPS.length)return false;elapsed=starts[index];finished=false;return true;}
   function next(){const current=state();if(current.step<INTRO_STEPS.length-1)return seekStep(current.step+1);elapsed=INTRO_DURATION;finished=true;playing=false;return true;}
   function restart(){elapsed=0;finished=false;playing=!calm;return state();}
@@ -58,10 +58,36 @@ const COPY={
 const REGION={study:'768 0 768 512',gaming:'0 0 768 512',sleep:'0 512 768 512'};
 const room=context=>`<svg class="ninja-intro-room" viewBox="${REGION[context]||REGION.study}" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"><image href="./assets/indie-worlds.png" width="1536" height="1024"/></svg>`;
 
+/** Own the modal boundary for exactly as long as the story is on screen. */
+export function createIntroModalBoundary(root){
+  if(!root?.ownerDocument||!root.classList)throw new TypeError('An intro boundary needs a DOM container.');
+  const doc=root.ownerDocument,view=doc.defaultView,background=new Map();
+  let active=false,hadLayer=false,overflow=null,scroll=null;
+  function activate(){
+    if(active)return;active=true;hadLayer=root.classList.contains('ninja-intro-layer');root.classList.add('ninja-intro-layer');
+    // Walk outwards so an intro embedded in another container also protects its siblings.
+    for(let branch=root;branch?.parentElement;branch=branch.parentElement){
+      for(const sibling of branch.parentElement.children)if(sibling!==branch){background.set(sibling,sibling.inert===true);sibling.inert=true;}
+      if(branch.parentElement===doc.body)break;
+    }
+    scroll={left:view?.scrollX||0,top:view?.scrollY||0};
+    if(doc.body?.style){overflow={value:doc.body.style.getPropertyValue('overflow'),priority:doc.body.style.getPropertyPriority('overflow')};doc.body.style.setProperty('overflow','hidden');}
+  }
+  function release(){
+    if(!active)return;active=false;
+    for(const [element,inert]of background)element.inert=inert;background.clear();
+    if(!hadLayer)root.classList.remove('ninja-intro-layer');
+    if(overflow){if(overflow.value)doc.body.style.setProperty('overflow',overflow.value,overflow.priority);else doc.body.style.removeProperty('overflow');overflow=null;}
+    if(scroll)view?.scrollTo?.({...scroll,behavior:'instant'});scroll=null;
+  }
+  return Object.freeze({activate,release});
+}
+
 /** A skippable, original in-engine cinematic. Optional narration requires an explicit user click. */
 export function createNinjaIntro({container,storage=storageDefault(),scope='guest',skinId='default',audioPrefs=getPreferences,onDone=()=>{},onStateChange=()=>{},language}={}){
   if(!container?.ownerDocument)throw new TypeError('Ninja intro requires a DOM container.');
   const root=container,doc=root.ownerDocument,view=doc.defaultView||globalThis;
+  const boundary=createIntroModalBoundary(root);
   const motion=view.matchMedia?.('(prefers-reduced-motion: reduce)');
   const preferences=()=>{try{return typeof audioPrefs==='function'?audioPrefs():audioPrefs||{};}catch{return {muted:true};}};
   const reduced=motion?.matches===true||preferences().calmEffects===true;
@@ -134,7 +160,7 @@ export function createNinjaIntro({container,storage=storageDefault(),scope='gues
   }
   function schedule(){if(active&&!disposed&&!doc.hidden&&model.getState().playing&&raf===null)raf=view.requestAnimationFrame(tick);}
   function stopFrames(){if(raf!==null)view.cancelAnimationFrame(raf);raf=null;lastStamp=null;}
-  function tick(stamp){raf=null;if(!active||disposed||doc.hidden)return;const dt=lastStamp===null?0:Math.max(0,(stamp-lastStamp)/1000);lastStamp=stamp;const before=model.getState().step,state=model.advance(dt);
+  function tick(stamp){raf=null;if(!active||disposed||doc.hidden)return;const dt=lastStamp===null?0:Math.max(0,(stamp-lastStamp)/1000);lastStamp=stamp;const before=model.getState().step,state=model.advance(dt,{narrating:voiceOn&&Boolean(utterance)});
     if(state.finished){finish('complete');return;}if(before!==state.step||lastStep!==state.step)updateScene();else if(stamp-lastPaint>=1000/30-.1){paint();updateControls();lastPaint=stamp;}schedule();
   }
   function pause(){model.pause();stopFrames();stopVoice();updateControls();report();}
@@ -144,6 +170,7 @@ export function createNinjaIntro({container,storage=storageDefault(),scope='gues
   function toggleVoice(){if(!active||!voiceAvailable()||preferences().muted)return false;voiceOn=!voiceOn;if(voiceOn)narrate();else stopVoice();updateControls();report();return voiceOn;}
   function finish(reason){if(!active)return;const state=getState();storageAvailable=markNinjaIntroSeen(storage,scope);destroy();onDone({...state,reason,seenSaved:storageAvailable,completed:reason==='complete',shown:true});}
   function click(event){const button=event.target.closest?.('[data-intro-action],[data-intro-step]');if(!active||!button||!root.contains(button)||button.disabled)return;event.preventDefault();event.stopPropagation();if(button.hasAttribute('data-intro-step')){model.seekStep(Number(button.dataset.introStep));lastStamp=null;updateScene();schedule();return;}const action=button.dataset.introAction;if(action==='skip'||action==='enter')finish(action);else if(action==='next')next();else if(action==='replay')replay();else if(action==='voice')toggleVoice();else if(action==='toggle')model.getState().playing?pause():resume();}
+  function backdropPointerDown(event){if(active&&event.target===root)event.preventDefault();}
   function keydown(event){if(!active||event.defaultPrevented)return;if(event.key==='Escape'){event.preventDefault();event.stopImmediatePropagation();finish('skip');return;}if(event.key==='Tab'){const items=[...root.querySelectorAll('button:not(:disabled):not([hidden])')].filter(item=>item.getClientRects().length),first=items[0],last=items.at(-1);if(event.shiftKey&&(doc.activeElement===first||!root.contains(doc.activeElement))){event.preventDefault();last?.focus();}else if(!event.shiftKey&&(doc.activeElement===last||!root.contains(doc.activeElement))){event.preventDefault();first?.focus();}}}
   function visibility(){if(doc.hidden){wasPlaying=model.getState().playing;model.pause();stopFrames();stopVoice();}else{if(wasPlaying){model.play();schedule();narrate();}wasPlaying=false;paint();}updateControls();report();}
   function languageChanged(){if(!active)return;const focused=doc.activeElement?.getAttribute('data-intro-action');renderUI();if(focused)root.querySelector(`[data-intro-action="${focused}"]`)?.focus({preventScroll:true});updateScene();}
@@ -157,11 +184,11 @@ export function createNinjaIntro({container,storage=storageDefault(),scope='gues
   }
   function show({force=false}={}){
     if(disposed)return false;if(active)return true;if(!force&&!shouldShowNinjaIntro(storage,scope))return false;
-    active=true;previousFocus=doc.activeElement;root.addEventListener('click',click);root.addEventListener('keydown',keydown,true);doc.addEventListener('visibilitychange',visibility);view.addEventListener('resize',resize);view.speechSynthesis?.addEventListener?.('voiceschanged',voicesChanged);
+    active=true;previousFocus=doc.activeElement;boundary.activate();root.addEventListener('click',click);root.addEventListener('pointerdown',backdropPointerDown);view.addEventListener('keydown',keydown,true);doc.addEventListener('visibilitychange',visibility);view.addEventListener('resize',resize);view.speechSynthesis?.addEventListener?.('voiceschanged',voicesChanged);
     if(view.ResizeObserver)resizeObserver=new view.ResizeObserver(resize);motion?.addEventListener?.('change',motionChanged);unsubscribe=onLanguageChange(languageChanged);unsubscribePrefs=onPreferencesChange(preferencesChanged);model=createNinjaIntroModel({reducedMotion:reduced});model.play();renderUI();root.querySelector('[data-intro-action=skip]')?.focus({preventScroll:true});schedule();report();return true;
   }
   function destroy(){
-    if(disposed)return;active=false;disposed=true;model.pause();stopFrames();stopVoice();resizeObserver?.disconnect();resizeObserver=null;unsubscribe?.();unsubscribePrefs?.();motion?.removeEventListener?.('change',motionChanged);root.removeEventListener('click',click);root.removeEventListener('keydown',keydown,true);doc.removeEventListener('visibilitychange',visibility);view.removeEventListener('resize',resize);view.speechSynthesis?.removeEventListener?.('voiceschanged',voicesChanged);root.replaceChildren();canvas=null;context=null;if(previousFocus?.isConnected&&previousFocus.getClientRects?.().length)previousFocus.focus({preventScroll:true});
+    if(disposed)return;active=false;disposed=true;model.pause();stopFrames();stopVoice();resizeObserver?.disconnect();resizeObserver=null;unsubscribe?.();unsubscribePrefs?.();motion?.removeEventListener?.('change',motionChanged);root.removeEventListener('click',click);root.removeEventListener('pointerdown',backdropPointerDown);view.removeEventListener('keydown',keydown,true);doc.removeEventListener('visibilitychange',visibility);view.removeEventListener('resize',resize);view.speechSynthesis?.removeEventListener?.('voiceschanged',voicesChanged);root.replaceChildren();canvas=null;context=null;boundary.release();if(previousFocus?.isConnected&&previousFocus.getClientRects?.().length)previousFocus.focus({preventScroll:true});
   }
   return Object.freeze({show,destroy,getState,replay,pause,resume,toggleVoice});
 }

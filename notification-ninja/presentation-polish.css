@@ -1,7 +1,7 @@
 /* One presentation layer for the public page, the dojo and every inner page. */
 :root{--nn-shell-width:1240px;--nn-page-width:1080px;--nn-masthead-height:clamp(112px,11.5vw,154px);--nn-brand-width:clamp(184px,24vw,264px);--nn-nav-space:112px;--nn-card:#fff7e5;--nn-card-alt:#edf0d3;--nn-text:#103d43;--nn-copy:#365b55;--nn-focus:#087a6b}
 html{scroll-padding-block:18px calc(var(--nn-nav-space) + 18px)}
-body:not([data-ui=playing]){background-color:#fff6e3;background-image:linear-gradient(#fff7e5dc,#fff7e5e8),url('./assets/focus-village.png');background-size:auto,cover;background-position:center,center bottom;background-attachment:fixed}
+body:not([data-ui=playing]){background-color:#fff6e3;background-image:linear-gradient(#fff7e5b8,#fff7e5d1),url('./assets/focus-village.png');background-size:auto,cover;background-position:center,center bottom;background-attachment:fixed}
 body:not([data-ui=playing])::before{pointer-events:none}
 .home{width:min(var(--nn-shell-width),100%);background:transparent;padding-inline:clamp(17px,3vw,38px)}
 .home-content{padding-bottom:28px}.home-header{background:transparent!important}
@@ -179,3 +179,34 @@ html[data-ninja-theme] body.is-playing .global-nav svg{color:inherit!important}
 html:is([data-ninja-theme=dark],[data-ninja-theme=noir]) .mission-briefing-goal{background:var(--iv-surface)!important;border-color:var(--iv-stroke)}
 html:is([data-ninja-theme=dark],[data-ninja-theme=noir]) .mission-briefing-goal :is(p,strong){color:var(--iv-ink)!important}
 html[data-ninja-theme] .mission-briefing-goal>strong{color:var(--iv-ink,#103d43)!important}
+
+/* Small phones keep the full toolbar reachable without covering the back control. */
+@media(max-width:420px){
+ .indie-page>h2{font-size:clamp(26px,7.5vw,31px);overflow-wrap:anywhere;hyphens:auto}
+}
+@media(max-width:360px){
+ .indie-page>.panel-header .panel-back{width:44px;min-width:44px;padding:9px;font-size:0}
+ .indie-page>.panel-header .panel-back>span{font-size:20px}
+ .indie-page>.indie-page-tools{right:7px;gap:3px}
+ .indie-page>.indie-page-tools>div{gap:3px}
+}
+
+/* Labels on parchment keep ink contrast; themed cards use their own readable copy. */
+.panel .collection-count{color:#315b3f!important}
+.panel kbd{color:#5e4b3b!important}
+.panel .achievement-meta span{color:#66552e}
+.panel :is(.achievement-meta strong,.tree-wallet strong){color:#78531e}
+.panel .owned-collection>summary{color:#395d45}
+.panel #username-form>label{color:#66525e}
+html:is([data-ninja-theme=dark],[data-ninja-theme=noir]) body .panel :is(.nn-career-node-copy strong,.nn-career-chapter-emblem,.briefing-items p,.legend-empty-score,.legend-podium-base span,.result-list>div>span,.sensei-total small,.sensei-total strong){color:#173d40!important}
+html:is([data-ninja-theme=dark],[data-ninja-theme=noir]) body .panel :is(.nn-career-chapter-label>span,.nn-career-node-copy small,.nn-career-eyebrow,.nn-career-prerequisites,.achievement-meta span,.tree-wallet strong,.owned-collection>summary,#username-form>label,.weekly-podium-rewards li>strong,.sensei-scenario-head>span){color:var(--nn-copy)!important}
+html:is([data-ninja-theme=dark],[data-ninja-theme=noir]) body .panel .achievement-meta strong{color:#f9dc99!important}
+html:is([data-ninja-theme=dark],[data-ninja-theme=noir]) body .panel .account-check a{color:var(--nn-focus)!important}
+@media(max-width:360px){
+ .indie-bottom-nav{grid-template-columns:repeat(4,minmax(0,1fr)) minmax(0,1.2fr)}
+}
+html:is([data-ninja-theme=dark],[data-ninja-theme=noir]) body .panel .nn-career-node .nn-career-node-copy{background:var(--nn-card-alt)!important;color:var(--nn-text)}
+html:is([data-ninja-theme=dark],[data-ninja-theme=noir]) body .panel .nn-career-node .nn-career-node-copy strong{color:var(--nn-text)!important}
+@media(max-width:360px){
+ .indie-page-tools .indie-account-tool{width:44px;min-width:44px;padding-inline:4px;font-size:10px}
+}

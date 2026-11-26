@@ -5,6 +5,7 @@ on:
       - 'notification-ninja/**'
       - 'server/**'
       - 'tests/ninja*.mjs'
+      - 'tests/ninja*.cjs'
       - 'scripts/build_ninja.mjs'
       - 'scripts/package_ninja.py'
       - 'scripts/check_ninja_portal.cjs'
@@ -29,6 +30,7 @@ on:
       - 'notification-ninja/**'
       - 'server/**'
       - 'tests/ninja*.mjs'
+      - 'tests/ninja*.cjs'
       - 'scripts/build_ninja.mjs'
       - 'scripts/package_ninja.py'
       - 'scripts/check_ninja_portal.cjs'
@@ -103,6 +105,8 @@ jobs:
       - name: Isolated account economy and process-restart audit
         run: node scripts/check_ninja_account_audit.mjs
       - run: npx playwright install --with-deps chromium
+      - name: Native bidirectional translation and dynamic text regression
+        run: node tests/ninja-i18n-browser.cjs
       - name: Browser account portal and guest gameplay
         env:
           NINJA_BASE_URL: http://127.0.0.1:8083/notification-ninja/

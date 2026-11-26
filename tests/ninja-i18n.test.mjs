@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
 import {getPreferences,normalizePreferences,updatePreferences,PREFERENCES_KEY} from '../notification-ninja/src/preferences.js';
-import {tr,setLanguage,getLanguage,getLocale} from '../notification-ninja/src/i18n.js';
+import {tr,setLanguage,getLanguage,getLocale,getMissingTranslations} from '../notification-ninja/src/i18n.js';
 import {CONTENT} from '../notification-ninja/src/game.js';
 import {SKILLS,ACHIEVEMENTS} from '../notification-ninja/src/progression.js';
 
@@ -96,4 +97,83 @@ test('career mission labels, rewards and record links translate with their autho
   assert.equal(tr('✦ Wähle ein leuchtendes Level.'),'✦ Choose a glowing level.');
   assert.equal(tr('Meine Rekorde ansehen →'),'View my records →');
   setLanguage('de');
+});
+
+test('career chapter and bonus counters translate complete and already mixed labels without changing numbers',()=>{
+  setLanguage('en');
+  for(const [source,expected]of [
+    ['✦ Zusatzmissionen · 0 / 5','✦ Bonus missions · 0 / 5'],
+    ['✦ Zusatzmissionen · 4 / 5','✦ Bonus missions · 4 / 5'],
+    ['WELT 01 · Valley of Focus','WORLD 01 · Valley of Focus'],
+    ['WELT 02 · Tal des Fokus','WORLD 02 · Valley of Focus'],
+    ['WELT 3','WORLD 3']
+  ])assert.equal(tr(source),expected);
+  setLanguage('de');
+  assert.equal(tr('✦ Zusatzmissionen · 4 / 5'),'✦ Zusatzmissionen · 4 / 5');
+  assert.equal(tr('WELT 01 · Tal des Fokus'),'WELT 01 · Tal des Fokus');
+});
+
+test('English translates MFA recovery placeholders, one-time-code instructions and server feedback',()=>{
+  setLanguage('en');
+  for(const [source,expected]of [
+    ['6 Ziffern oder Wiederherstellungscode','6 digits or recovery code'],
+    ['Diese zehn Codes werden nur einmal angezeigt.','These ten codes are shown only once.'],
+    ['Bewahre sie getrennt vom Passwort an einem sicheren Ort auf. Jeder Code funktioniert nur einmal.','Keep them somewhere safe, separate from your password. Each code works only once.'],
+    ['Ich habe die Codes sicher und privat gespeichert.','I have saved the codes somewhere safe and private.'],
+    ['✓ MFA-Anmeldung bestätigt.','✓ MFA sign-in confirmed.'],
+    ['Authenticator-Code ungültig.','Invalid authenticator code.'],
+    ['MFA-Code ungültig oder abgelaufen.','MFA code invalid or expired.'],
+    ['Einrichtung abgelaufen. Bitte erneut beginnen.','Setup expired. Please start again.']
+  ])assert.equal(tr(source),expected);
+  setLanguage('de');
+});
+
+test('translation coverage records an untranslated German part even when another part was translated',()=>{
+  setLanguage('de');setLanguage('en');
+  const unknown='Weitere Zusatzmissionen sind noch nicht bereit.';
+  assert.equal(tr(`Münzen · ${unknown}`),`Coins · ${unknown}`);
+  assert(getMissingTranslations().includes(unknown),'The untranslated part must not disappear behind the translated prefix');
+  assert.equal(tr('Coins · Next step'),'Coins · Next step');
+  assert(!getMissingTranslations().includes('Next step'),'Ordinary English is not missing German copy');
+  setLanguage('de');setLanguage('en');
+  assert.equal(tr('WELT 01 · Valley of Focus'),'WORLD 01 · Valley of Focus');
+  assert.equal(tr('✦ Zusatzmissionen · 0 / 5'),'✦ Bonus missions · 0 / 5');
+  assert.deepEqual(getMissingTranslations(),[]);
+  setLanguage('de');
+});
+
+test('help describes the current bazaar offers and next-round effects in both languages',()=>{
+  const source=readFileSync(new URL('../notification-ninja/src/main.js',import.meta.url),'utf8');
+  const help=source.slice(source.indexOf('function help(){'),source.indexOf('function help(){')+5000);
+  const bazaarCopy=help.match(/<div class="insight-card">([^<]+)<\/div>/)?.[1];
+  const nextRoundCopy=help.match(/<kbd>M<\/kbd> ([^<]+)<\/p>/)?.[1];
+  assert(bazaarCopy?.includes('Spielwelten, Ninja-Looks und Fähigkeiten'));
+  assert(nextRoundCopy?.includes('Ninja-Looks gelten ab der nächsten neuen Runde'));
+  assert(!bazaarCopy.includes('Hintergründe'));
+  assert(!nextRoundCopy.includes('Hintergründe'));
+  setLanguage('en');
+  assert.match(tr(bazaarCopy),/Earn coins for game worlds, ninja looks and abilities\./);
+  assert.match(tr(bazaarCopy),/previews and unlock requirements/);
+  assert.equal(tr(nextRoundCopy),'Music. Abilities, your selected Super and ninja looks apply from the next new round.');
+  setLanguage('de');
+  assert.equal(tr(bazaarCopy),bazaarCopy);
+  assert.equal(tr(nextRoundCopy),nextRoundCopy);
+});
+
+test('account save indicators translate confirmed and pending progress without hiding unknown parts',()=>{
+  setLanguage('de');setLanguage('en');
+  for(const [source,expected]of [
+    ['Konto · bestätigter Fortschritt','Account · verified progress'],
+    ['Konto · Run wird am Ende geprüft','Account · run verification at the end'],
+    ['Online-Konto · bestätigter Fortschritt','Online account · verified progress'],
+    ['Speicherung blockiert · Sitzung spielbar','Saving blocked · this session is still playable'],
+    ['Lokal gespeichert','Saved on this device']
+  ])assert.equal(tr(source),expected);
+  assert.deepEqual(getMissingTranslations(),[]);
+  const unknown='Dieser Fortschritt braucht eine unbekannte Prüfung.';
+  assert.equal(tr(`Konto · ${unknown}`),`Account · ${unknown}`);
+  assert(getMissingTranslations().includes(unknown),'A translated account prefix must not suppress a genuine missing status');
+  setLanguage('de');
+  assert.equal(tr('Konto · bestätigter Fortschritt'),'Konto · bestätigter Fortschritt');
+  assert.equal(tr('Konto · Run wird am Ende geprüft'),'Konto · Run wird am Ende geprüft');
 });

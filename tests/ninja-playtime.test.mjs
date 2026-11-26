@@ -101,3 +101,38 @@ test('bilingual time surfaces are bounded, nonmodal and do not offer game reward
     const badge=renderPlaytimeBadge({totalSeconds:'<script>'},{language});assert.match(badge,/>0:00</);assert.doesNotMatch(badge,/<script>/);
   }
 });
+
+test('sequential play in two open tabs merges new time instead of overwriting the other tab',()=>{
+  const storage=store(),a=createPlaytimeTracker({storage,document:null});run(a,3);a.flush();
+  const b=createPlaytimeTracker({storage,document:null});run(b,2);b.flush();assert.equal(b.getSummary().totalSeconds,5);
+  run(a,2);a.flush();assert.equal(a.getSummary().totalSeconds,7,'An older tab adds only its two new seconds to the latest five');
+  run(b,1);b.destroy();a.destroy();const restored=createPlaytimeTracker({storage,document:null});
+  assert.equal(restored.getSummary().totalSeconds,8);assert.equal(restored.getSummary().todaySeconds,8);restored.destroy();
+});
+
+test('time-only writes preserve another tab settings and explicit setting patches do not reset unrelated choices',()=>{
+  const storage=store(),a=createPlaytimeTracker({storage,document:null}),b=createPlaytimeTracker({storage,document:null});
+  b.updateSettings({reminders:false,intervalMinutes:30});run(a,2);a.flush();
+  assert.deepEqual(a.getSettings(),{reminders:false,intervalMinutes:30});
+  const old=createPlaytimeTracker({storage,document:null});b.updateSettings({reminders:true});old.updateSettings({intervalMinutes:10});
+  assert.deepEqual(old.getSettings(),{reminders:true,intervalMinutes:10});
+  for(const tracker of [a,b,old])tracker.destroy();
+});
+
+test('cross-tab playtime merges keep yesterday pending time out of the current day',()=>{
+  const storage=store();let stamp=new Date(2026,10,25,23,59).getTime();
+  const a=createPlaytimeTracker({storage,now:()=>stamp,document:null});run(a,3);
+  stamp+=120000;const b=createPlaytimeTracker({storage,now:()=>stamp,document:null});run(b,2);b.flush();
+  run(a,2);a.flush();assert.equal(a.getSummary().totalSeconds,7);assert.equal(a.getSummary().todaySeconds,4);
+  a.destroy();b.destroy();
+});
+
+test('storage events refresh counters and reminder settings while retaining only this tab pending time',()=>{
+  const storage=store(),handlers=new Map(),doc={defaultView:{addEventListener:(name,fn)=>handlers.set(name,fn),removeEventListener:(name,fn)=>handlers.get(name)===fn&&handlers.delete(name)}};
+  const a=createPlaytimeTracker({storage,document:doc}),b=createPlaytimeTracker({storage,document:null});run(a,1);run(b,2);b.flush();
+  const events=[];a.subscribe(event=>events.push(event));handlers.get('storage')({key:playtimeKey(),storageArea:storage});
+  assert.equal(a.getSummary().totalSeconds,3);assert.equal(a.getSummary().sessionSeconds,1);
+  b.updateSettings({reminders:false,intervalMinutes:20});handlers.get('storage')({key:playtimeKey(),storageArea:storage});
+  assert.deepEqual(a.getSettings(),{reminders:false,intervalMinutes:20});assert.equal(events.at(-1).type,'settings');
+  a.flush();assert.equal(a.getSummary().totalSeconds,3);a.destroy();b.destroy();assert.equal(handlers.size,0);
+});

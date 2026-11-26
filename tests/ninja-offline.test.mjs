@@ -11,9 +11,8 @@ const root='notification-ninja/';
 const source=readFileSync(root+'sw.js','utf8');
 const version=JSON.parse(readFileSync(root+'dist/build.json','utf8')).version;
 
-function worker({fetch=async()=>{throw Error('offline');}}={}){
+function worker({fetch=async()=>{throw Error('offline');},scope='https://example.test/REBOOT-Digital-Balance/notification-ninja/'}={}){
   const handlers=new Map(),assets=[],puts=[];
-  const scope='https://example.test/REBOOT-Digital-Balance/notification-ninja/';
   const cache={addAll:async values=>assets.push(...values),match:async url=>({cachedUrl:String(url?.url||url)}),put:async(...args)=>puts.push(args)};
   const context={URL,self:{registration:{scope},skipWaiting:async()=>{},clients:{claim:async()=>{}},addEventListener:(name,fn)=>handlers.set(name,fn)},caches:{open:async name=>{assert(name.endsWith(':'+version));return cache;},keys:async()=>[]},fetch};
   vm.runInNewContext(source,context);
@@ -46,6 +45,23 @@ test('offline worker preserves distinct homepage/game/query routes and never int
   assert.equal(await w.request('unknown.html','navigate'),undefined);
   assert.equal(await w.request('/api/v3/me'),undefined);
   assert.equal(await w.request('/api/v3/runs/test/finish','cors','POST'),undefined);
+});
+
+test('canonical offline root preserves the online homepage while legacy folders retain their game entry',async()=>{
+  const fixtures=[
+    ['https://notification-ninja-accounts.onrender.com/','home.html'],
+    ['https://notification-ninja-accounts.onrender.com/notification-ninja/','index.html'],
+    ['https://brukevfh.github.io/REBOOT-Digital-Balance/notification-ninja/','index.html'],
+    ['https://offline.example.test/extracted-game/','index.html'],
+    ['http://localhost:8205/','index.html']
+  ];
+  for(const [scope,entry]of fixtures){
+    const w=worker({scope});
+    for(const file of ['','?source=installed'])assert.equal((await w.request(file,'navigate')).cachedUrl,scope+entry,scope+file);
+    assert.equal((await w.request('index.html?from=home','navigate')).cachedUrl,scope+'index.html');
+    assert.equal((await w.request('home.html?source=offline','navigate')).cachedUrl,scope+'home.html');
+    assert.equal(await w.request('/api/v3/me'),undefined,'Account state is never an offline navigation fallback');
+  }
 });
 
 test('game JS, CSS and configuration update from network instead of a stale previous release',async()=>{

@@ -1,4 +1,4 @@
-/* Release 3.13.1: bundle the expanded dojo and record its canonical catalog. */
+/* Release 3.13.2: bundle the expanded dojo and record its canonical catalog. */
 import {build} from 'esbuild';
 import {mkdir,readFile,writeFile} from 'node:fs/promises';
 import path from 'node:path';
@@ -25,7 +25,7 @@ await mkdir('notification-ninja/dist',{recursive:true});
 await build({entryPoints:['notification-ninja/src/home.js'],bundle:true,format:'iife',target:['es2020'],outfile:'notification-ninja/dist/home.js',minify:true,legalComments:'eof',sourcemap:false,logLevel:'info'});
 await build({entryPoints:['notification-ninja/src/main.js'],bundle:true,format:'iife',target:['es2020'],outfile:'notification-ninja/dist/ninja.js',minify:true,legalComments:'eof',sourcemap:false,logLevel:'info'});
 await writeFile('notification-ninja/dist/build.json',JSON.stringify({
-  name:'Notification Ninja',version:'3.13.1',engine:'Canvas 2D / Web Audio',style:'Sakura indie dojo',
+  name:'Notification Ninja',version:'3.13.2',engine:'Canvas 2D / Web Audio',style:'Sakura indie dojo',
   sharedPlayMenu:true,illustrationAtlas:true,illustratedScenes:true,senseiScenarios:12,notificationCodex:true,
   dressingRoom:true,missionDetailsSheet:true,deviceHandedness:true,roundCoaching:true,illustratedRoomArt:true,
   villageMap:true,logo:'assets/indie-wordmark.png',languages:['de','en'],guestPlay:true,

@@ -35,7 +35,18 @@ async function geometry(p){
   const small=controls.map(el=>{let r=el.getBoundingClientRect();if(el.matches('input[type=checkbox],input[type=radio]'))for(const l of el.labels||[]){const candidate=l.getBoundingClientRect();if(candidate.width>r.width&&candidate.height>r.height)r=candidate;}return {name:name(el),w:r.width,h:r.height};}).filter(x=>x.w<43.8||x.h<43.8);
   const failedImages=[...document.images].filter(el=>shown(el)&&(!el.complete||el.naturalWidth===0)).map(el=>el.getAttribute('src'));
   const duplicateIds=[...document.querySelectorAll('[id]')].map(el=>el.id).filter((id,index,all)=>all.indexOf(id)!==index);
-  return {viewport:innerWidth,document:document.documentElement.scrollWidth,small,failedImages,duplicateIds,controls:controls.length,title:modal?.querySelector('h2,h3')?.textContent||document.querySelector('#overlay-root h2')?.textContent||document.title};
+  const back=document.querySelector('.indie-page>.panel-header .panel-back');
+  const toolbarOverlaps=[];
+  if(back&&shown(back))for(const control of [...document.querySelectorAll('.indie-page-tools button')].filter(shown)){
+   const a=back.getBoundingClientRect(),b=control.getBoundingClientRect(),width=Math.min(a.right,b.right)-Math.max(a.left,b.left),height=Math.min(a.bottom,b.bottom)-Math.max(a.top,b.top);
+   if(width>.5&&height>.5)toolbarOverlaps.push({back:name(back),control:name(control),width,height});
+  }
+  const navLabelOverflow=[...document.querySelectorAll('.indie-bottom-nav>a')].filter(shown).flatMap(link=>{
+   const label=link.querySelector('span:last-child');if(!label)return [];
+   const range=document.createRange();range.selectNodeContents(label);const text=range.getBoundingClientRect(),bounds=link.getBoundingClientRect();
+   return text.left<bounds.left-1||text.right>bounds.right+1?[{text:label.textContent,linkWidth:bounds.width,textWidth:text.width,left:text.left-bounds.left,right:text.right-bounds.right}]:[];
+  });
+  return {viewport:innerWidth,document:document.documentElement.scrollWidth,small,failedImages,duplicateIds,toolbarOverlaps,navLabelOverflow,controls:controls.length,title:modal?.querySelector('h2,h3')?.textContent||document.querySelector('#overlay-root h2')?.textContent||document.title};
  });
 }
 async function homepageSnapshot(p,language){
@@ -51,7 +62,7 @@ async function homepageSnapshot(p,language){
 }
 async function record(p,entry,id,{screenshot=true,homepage=false}={}){
  const item={id};
- try{const g=await geometry(p),s=homepage?await homepageSnapshot(p,entry.language):await read(p);Object.assign(item,{ui:s.ui,geometry:g,missing:s.translation.missing});assert(g.document<=g.viewport+1,'Horizontal page overflow');assert.deepEqual(g.small,[],'Controls smaller than44px');assert.deepEqual(g.failedImages,[],'Artwork failed to load');assert.deepEqual(g.duplicateIds,[],'Duplicate element IDs');assert.deepEqual(s.translation.missing,[],'Missing English translations');item.ok=true;}
+ try{const g=await geometry(p),s=homepage?await homepageSnapshot(p,entry.language):await read(p);Object.assign(item,{ui:s.ui,geometry:g,missing:s.translation.missing});assert(g.document<=g.viewport+1,'Horizontal page overflow');assert.deepEqual(g.small,[],'Controls smaller than44px');assert.deepEqual(g.failedImages,[],'Artwork failed to load');assert.deepEqual(g.duplicateIds,[],'Duplicate element IDs');assert.deepEqual(g.toolbarOverlaps,[],'Back control overlaps the page toolbar');assert.deepEqual(g.navLabelOverflow,[],'Bottom navigation text exceeds its link');assert.deepEqual(s.translation.missing,[],'Missing English translations');item.ok=true;}
  catch(error){item.ok=false;item.error=error.message;console.error('ALL_PAGES_FINDING',entry.width,entry.language,id,JSON.stringify({error:item.error,geometry:item.geometry,missing:item.missing}));}
  if(screenshot&&captureScreenshots||!item.ok)await p.screenshot({path:path.join(output,slug(entry.width+'-'+entry.language+'-'+id)+'.png'),fullPage:true,mask:[p.locator('#account-key'),p.locator('#mfa-setup-secret'),p.locator('.mfa-qr-wrap'),p.locator('#mfa-recovery-codes')]}).catch(()=>{});
  entry.pages.push(item);if(entry.pages.length%25===0)console.log('ALL_PAGES_PROGRESS',entry.width,entry.language,entry.pages.length,id);return item;

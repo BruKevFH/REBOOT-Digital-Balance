@@ -42,13 +42,22 @@ export function createPlaytimeTracker({storage=deviceStorage(),scope='guest',now
   const persistEvery=Math.max(1000,Math.min(30000,Number.isFinite(persistEverySeconds)?persistEverySeconds*1000:5000));
   const today=()=>localDay(now())||localDay(Date.now());
   let available=Boolean(storage),record=normalizedRecord(null,today()),sessionMs=0,sinceSaveMs=0,dirty=false,destroyed=false,pending=null,delivered=false;
+  let pendingMs=0,pendingTodayMs=0,settingsPatch={};
   let nextReminderMs=record.settings.intervalMinutes*60000,lastDisplayedSecond=-1;
   try{
     const raw=storage?.getItem(key);
     if(raw&&raw.length<=MAX_RECORD_LENGTH)record=normalizedRecord(JSON.parse(raw),today());
   }catch{available=false;}
   nextReminderMs=record.settings.intervalMinutes*60000;
-  function ensureDay(){const day=today();if(day!==record.day){record.day=day;record.todayMs=0;dirty=true;}}
+  function ensureDay(){const day=today();if(day!==record.day){record.day=day;record.todayMs=0;pendingTodayMs=0;dirty=true;}}
+  function latestRecord(){
+    const raw=storage?.getItem(key);
+    return normalizedRecord(raw&&raw.length<=MAX_RECORD_LENGTH?JSON.parse(raw):null,today());
+  }
+  function mergePending(saved){
+    const totalMs=Math.min(MAX_MS,saved.totalMs+pendingMs);
+    return {...saved,totalMs,todayMs:Math.min(totalMs,saved.todayMs+pendingTodayMs),settings:normalizePlaytimeSettings({...saved.settings,...settingsPatch})};
+  }
   function getSettings(){return {...record.settings};}
   function getSummary(){
     ensureDay();
@@ -60,8 +69,11 @@ export function createPlaytimeTracker({storage=deviceStorage(),scope='guest',now
     ensureDay();
     try{
       if(!storage)throw new Error('Device storage is unavailable.');
+      // Another tab may have saved since this tracker was created. Only add the
+      // active time earned by this tracker; an old absolute total must not win.
+      try{record=mergePending(latestRecord());}catch(error){if(error instanceof SyntaxError)record=mergePending(normalizedRecord(null,today()));else throw error;}
       storage.setItem(key,JSON.stringify({...record,totalMs:Math.round(record.totalMs),todayMs:Math.round(record.todayMs)}));
-      available=true;dirty=false;sinceSaveMs=0;
+      available=true;dirty=false;sinceSaveMs=0;pendingMs=0;pendingTodayMs=0;settingsPatch={};
     }catch{available=false;}
     return available;
   }
@@ -69,6 +81,7 @@ export function createPlaytimeTracker({storage=deviceStorage(),scope='guest',now
     if(destroyed||hidden||!state||state.started!==true||state.scene!=='playing'||state.paused===true||state.ended===true||typeof dt!=='number'||!Number.isFinite(dt)||dt<=0||dt>.25)return false;
     ensureDay();
     const ms=dt*1000;
+    pendingMs=Math.min(MAX_MS,pendingMs+ms);pendingTodayMs=Math.min(MAX_MS,pendingTodayMs+ms);
     record.totalMs=Math.min(MAX_MS,record.totalMs+ms);record.todayMs=Math.min(MAX_MS,record.todayMs+ms);sessionMs=Math.min(MAX_MS,sessionMs+ms);sinceSaveMs+=ms;dirty=true;
     if(sinceSaveMs>=persistEvery)flush();
     if(record.settings.reminders&&!pending&&sessionMs+.00001>=nextReminderMs){
@@ -87,7 +100,7 @@ export function createPlaytimeTracker({storage=deviceStorage(),scope='guest',now
     const safe={};if(typeof patch.reminders==='boolean')safe.reminders=patch.reminders;if(PLAYTIME_INTERVALS.includes(patch.intervalMinutes))safe.intervalMinutes=patch.intervalMinutes;
     const next=normalizePlaytimeSettings({...record.settings,...safe});
     if(next.reminders===record.settings.reminders&&next.intervalMinutes===record.settings.intervalMinutes)return getSettings();
-    record.settings=next;pending=null;delivered=false;nextReminderMs=sessionMs+next.intervalMinutes*60000;dirty=true;flush();notify('settings');return getSettings();
+    settingsPatch={...settingsPatch,...safe};record.settings=next;pending=null;delivered=false;nextReminderMs=sessionMs+next.intervalMinutes*60000;dirty=true;flush();notify('settings');return getSettings();
   }
   function consumeReminder(){if(!pending||delivered)return null;delivered=true;return {...pending};}
   function dismissReminder(){pending=null;delivered=false;nextReminderMs=sessionMs+record.settings.intervalMinutes*60000;if(!destroyed)notify('reminder-dismissed');}
@@ -95,8 +108,16 @@ export function createPlaytimeTracker({storage=deviceStorage(),scope='guest',now
   function subscribe(listener){if(typeof listener!=='function'||destroyed)return()=>{};listeners.add(listener);return()=>listeners.delete(listener);}
   const visibility=()=>{if(doc?.hidden)flush();};
   const view=doc?.defaultView||globalThis.window;
-  doc?.addEventListener?.('visibilitychange',visibility);view?.addEventListener?.('pagehide',flush);
-  function destroy(){if(destroyed)return;flush();destroyed=true;listeners.clear();doc?.removeEventListener?.('visibilitychange',visibility);view?.removeEventListener?.('pagehide',flush);}
+  const storageChanged=event=>{
+    if(destroyed||event.key!==key&&event.key!==null||event.storageArea&&event.storageArea!==storage)return;
+    ensureDay();const previous=record.settings;
+    try{record=mergePending(latestRecord());available=true;}catch{available=false;return;}
+    const changed=previous.reminders!==record.settings.reminders||previous.intervalMinutes!==record.settings.intervalMinutes;
+    if(changed){pending=null;delivered=false;nextReminderMs=sessionMs+record.settings.intervalMinutes*60000;}
+    notify(changed?'settings':'tick');
+  };
+  doc?.addEventListener?.('visibilitychange',visibility);view?.addEventListener?.('pagehide',flush);view?.addEventListener?.('storage',storageChanged);
+  function destroy(){if(destroyed)return;flush();destroyed=true;listeners.clear();doc?.removeEventListener?.('visibilitychange',visibility);view?.removeEventListener?.('pagehide',flush);view?.removeEventListener?.('storage',storageChanged);}
   return Object.freeze({tick,getSummary,getSettings,updateSettings,consumeReminder,dismissReminder,resetSession,flush,subscribe,destroy});
 }
 
