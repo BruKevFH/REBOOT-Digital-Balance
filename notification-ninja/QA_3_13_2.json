@@ -1,0 +1,101 @@
+{
+  "version": "3.13.2",
+  "date": "2026-11-26",
+  "sourceRevision": "c5afd9c57d0e3b4ee76bcaf1783c3345a41320f2",
+  "canonicalURL": "https://notification-ninja-accounts.onrender.com/",
+  "localRepositoryTests": {
+    "total": 604,
+    "passed": 604,
+    "failed": 0,
+    "skipped": 0,
+    "database": "real isolated PostgreSQL plus SQLite"
+  },
+  "deviceMethods": {
+    "widths": [
+      320,
+      768,
+      1440
+    ],
+    "additionalContrastFormats": [
+      "320x780",
+      "768x1024",
+      "844x390",
+      "1440x900"
+    ],
+    "physicalDevicesTested": false
+  },
+  "ui": {
+    "initialBroadStates": 1848,
+    "initialTranslationFindings": 42,
+    "initialTranslationRootCauses": 1,
+    "correctedAccountStatesRetested": 45,
+    "allTestAccountsDeleted": true,
+    "compactStates": 198,
+    "cardContrastIncluded": true,
+    "contrastStates": 304,
+    "contrastMinimum": 4.561,
+    "contrastScope": "measured text on solid surfaces; illustrated/gradient surfaces reviewed separately",
+    "homepageStates": 16,
+    "homepageMinimum": 6.078,
+    "introContexts": 16,
+    "introDesktopContextsRetestedAfterFinalKeyboardFix": 4,
+    "nativeCrossflowWidths": [
+      320,
+      768,
+      1440
+    ]
+  },
+  "playtime": {
+    "method": "native active rounds in two tabs, no fabricated profile or time grant",
+    "storedMilliseconds": [
+      3333,
+      6566,
+      9532
+    ]
+  },
+  "narration": {
+    "completionTest": "isolated browser speech stub",
+    "operatingSystemVoiceQualityTested": false
+  },
+  "deployment": {
+    "provider": "Render",
+    "plan": "free",
+    "deploymentId": "dep-dc42ufnf3r2c73a4v6og",
+    "status": "live",
+    "sourceRevision": "c5afd9c57d0e3b4ee76bcaf1783c3345a41320f2",
+    "finishedAt": "2026-11-26T13:09:03.86276Z"
+  },
+  "publicVerification": {
+    "status": "passed",
+    "sourceRevision": "c5afd9c57d0e3b4ee76bcaf1783c3345a41320f2",
+    "method": "fresh_public_html",
+    "workflows": [
+      {
+        "name": "Notification Ninja checks",
+        "id": "45826170249",
+        "conclusion": "success",
+        "url": "https://github.com/BruKevFH/REBOOT-Digital-Balance/actions/runs/45826170249"
+      },
+      {
+        "name": "Notification Ninja build and publish generated assets",
+        "id": "45826170225",
+        "conclusion": "success",
+        "url": "https://github.com/BruKevFH/REBOOT-Digital-Balance/actions/runs/45826170225"
+      },
+      {
+        "name": "Notification Ninja live account API smoke",
+        "id": "45826170109",
+        "conclusion": "success",
+        "url": "https://github.com/BruKevFH/REBOOT-Digital-Balance/actions/runs/45826170109"
+      }
+    ]
+  },
+  "offlineArchive": {
+    "file": "Notification-Ninja-3.13.2.zip",
+    "entries": 69,
+    "bytes": 24224448,
+    "sha256": "d866a954c315372b3ac29e6896860d4f1f77f07357bdae6e239a24184be1cd1c",
+    "configuration": "guest-only; accounts disabled"
+  },
+  "productionRestartScope": "No new production-account mutation/restart test claimed. The unchanged backend has a separate two-account restart proof from 2026-11-24."
+}
