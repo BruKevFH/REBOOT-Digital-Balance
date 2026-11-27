@@ -8,15 +8,16 @@ import {SKIN_RARITIES} from '../notification-ninja/src/skin-presentation.js';
 import {INTRO_DURATION} from '../notification-ninja/src/ninja-intro.js';
 import {PLAYTIME_DEFAULTS,PLAYTIME_INTERVALS} from '../notification-ninja/src/playtime.js';
 import {PODIUM_REWARDS} from '../server/ninja-competition.mjs';
+import {CANONICAL_SITE_ORIGIN} from '../notification-ninja/src/site-location.js';
 const root='notification-ninja/';
 test('release version, homepage download links, SW cache and packaged filename agree',()=>{
   const version=JSON.parse(readFileSync(root+'dist/build.json','utf8')).version;
   const sw=readFileSync(root+'sw.js','utf8');
   const index=readFileSync(root+'index.html','utf8');
   const script=readFileSync('scripts/package_ninja.py','utf8');
-  assert.equal(version,'3.13.2');
+  assert.equal(version,'3.13.3');
   assert(sw.includes('${PREFIX}'+version));
-  assert.equal((index.match(/downloads\/Notification-Ninja-3\.13\.2\.zip/g)||[]).length,2);
+  assert.equal((index.match(/downloads\/Notification-Ninja-3\.13\.3\.zip/g)||[]).length,2);
 
   assert(script.includes("NAME='Notification-Ninja-"+version+"'"));
 });
@@ -28,7 +29,7 @@ test('release metadata matches the expanded canonical catalogs and implemented o
   assert.equal(metadata.skillTree,'bazaar-abilities');assert.equal(metadata.intro,'original-canvas-cinematic');assert.equal(metadata.introDurationSeconds,INTRO_DURATION);
   assert.equal(metadata.devicePlaytime,true);assert.deepEqual(metadata.playtimeReminders,{deviceOnly:true,enabledByDefault:PLAYTIME_DEFAULTS.reminders,defaultMinutes:PLAYTIME_DEFAULTS.intervalMinutes,intervalsMinutes:[...PLAYTIME_INTERVALS]});
   assert.deepEqual(metadata.weeklyPodium,{calendar:'UTC',rewards:[...PODIUM_REWARDS],claims:'once-per-player-per-week',adminExcluded:true});
-  assert.equal(metadata.canonicalOrigin,'https://notification-ninja-accounts.onrender.com');assert.equal(metadata.adminTestAccounts,'server-only');
+  assert.equal(metadata.canonicalOrigin,CANONICAL_SITE_ORIGIN);assert.equal(metadata.adminTestAccounts,'server-only');
 });
 
 test('release runtime dependencies are included in both offline manifests and trigger asset publication',()=>{

@@ -17,6 +17,7 @@ on:
       - 'notification-ninja/theme-boot.js'
       - 'notification-ninja/accounts-config.json'
       - 'scripts/build_ninja.mjs'
+      - 'scripts/build_ninja_static.mjs'
       - 'scripts/check_ninja_313.cjs'
       - 'scripts/check_ninja_public_guest.cjs'
   workflow_dispatch:
@@ -31,7 +32,7 @@ concurrency:
 jobs:
   smoke:
     runs-on: ubuntu-latest
-    timeout-minutes: 18
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -57,8 +58,14 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
           exit 1
       - run: npm ci --ignore-scripts
+      - name: Build the expected static homepage and game
+        env:
+          RENDER_GIT_COMMIT: ${{ github.sha }}
+        run: npm run build:ninja:site
       - run: npx playwright install --with-deps chromium
       - name: Verify canonical homepage and game as a public guest
+        env:
+          NINJA_EXPECTED_REVISION: ${{ github.sha }}
         run: node scripts/check_ninja_public_guest.cjs
       - uses: actions/upload-artifact@v4
         if: always()
@@ -69,5 +76,5 @@ jobs:
       - name: Explain scope of the test
         if: success()
         run: |
-          echo "Read-only checks passed: expected source revision, API v3, durable PostgreSQL flag, public leaderboard, account config and GitHub Pages CORS."
+          echo "Read-only checks passed: expected source revision, API v3, durable PostgreSQL flag, public leaderboard, account config, GitHub Pages and static-site CORS, matching static assets and native guest navigation."
           echo "This does not replace account mutation or restart-persistence tests; it creates no production test data."

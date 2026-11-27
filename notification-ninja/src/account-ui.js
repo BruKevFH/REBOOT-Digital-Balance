@@ -1,6 +1,6 @@
 import {tr,localizeDOM} from './i18n.js';
 import {getPlayerProgress} from './player.js';
-import {validateRegistration} from './accounts.js';
+import {validateRegistration,AccountError} from './accounts.js';
 import {mfaQR} from './mfa-qr.js';
 import {sceneArt} from './scene-art.js';
 
@@ -39,11 +39,26 @@ export function installModalAccessibility(doc=document){
 export function createAccountUI({accounts,onSignedIn=()=>{},onGuest=()=>{},onNavigate=()=>{},onDismiss=()=>{},onViewChange=()=>{},onDelete=()=>{},onLogout=()=>{},onRename=()=>{},onRefresh=async()=>null,onImport=()=>{},toast=()=>{},portrait=()=>''}={}){
   if(!accounts)throw new TypeError('Account client required.');
   const host=document.createElement('div');host.id='account-root';document.body.append(host);
-  let active='',busy=false,returnFocus=null,returnScroll=null,formId=0,mfaChallenge=null;
+  let active='',busy=false,returnFocus=null,returnScroll=null,formId=0,mfaChallenge=null,authPreparation=null,noteFocusPending=false;
   const b=(label,action,kind='ghost')=>`<button type="button" class="btn ${kind}" data-account="${action}">${label}</button>`;
-  const statusMarkup=()=>{const status=accounts.getStatus?.()||{};return status.configured===false?'<aside class="account-service-note"><strong>Online-Konten sind hier noch nicht verbunden.</strong><p>Du kannst sofort als Gast spielen. Für die Synchronisierung muss der Kontodienst erreichbar sein.</p><button type="button" class="btn ghost" data-account="retry">Verbindung erneut prüfen</button></aside>':'';};
-  function close(){if(busy)return false;host.replaceChildren();active='';const previous=returnFocus,scroll=returnScroll;returnFocus=null;returnScroll=null;if(scroll)window.scrollTo(scroll);if(previous?.isConnected)previous.focus({preventScroll:true});return true;}
+  const serviceNoteMarkup=(status=accounts.getStatus?.()||{})=>{
+    if(status.configured!==false)return '';
+    if(['checking-config','warming'].includes(status.phase))return '<aside class="account-service-note" role="status"><strong>Online-Verbindung wird hergestellt …</strong><p>Du kannst sofort als Gast spielen.</p></aside>';
+    const message=status.phase==='offline'?escape(status.message||'Die Online-Verbindung ist noch nicht bereit. Dein Gastspiel bleibt verfügbar. Bitte versuche es erneut.'):'Online-Konten sind hier noch nicht verbunden.';
+    return `<aside class="account-service-note" role="status"><strong>${message}</strong><p>Du kannst sofort als Gast spielen. Für die Synchronisierung muss der Kontodienst erreichbar sein.</p><button type="button" class="btn ghost" data-account="retry">Verbindung erneut prüfen</button></aside>`;
+  };
+  const statusMarkup=()=>`<div data-account-service-status>${serviceNoteMarkup()}</div>`;
+  function updateServiceNote(status){
+    const region=host.querySelector('[data-account-service-status]');if(!region)return;
+    const focused=document.activeElement,hadFocus=region.contains(focused);
+    region.innerHTML=serviceNoteMarkup(status);localizeDOM(region);
+    if(hadFocus&&!focused.isConnected){noteFocusPending=true;restoreNoteFocus();}
+  }
+  function restoreNoteFocus(){if(!noteFocusPending)return;const input=host.querySelector('input:not(:disabled)');if(input){noteFocusPending=false;input.focus({preventScroll:true});}}
+  const unsubscribeStatus=accounts.subscribe?.(updateServiceNote);
+  function close(){if(busy&&!authPreparation)return false;authPreparation?.abort();authPreparation=null;noteFocusPending=false;busy=false;formId++;host.replaceChildren();active='';const previous=returnFocus,scroll=returnScroll;returnFocus=null;returnScroll=null;if(scroll)window.scrollTo(scroll);if(previous?.isConnected)previous.focus({preventScroll:true});return true;}
   function draw(title,body,{footer=true,kind=''}={}){
+    authPreparation?.abort();authPreparation=null;noteFocusPending=false;
     if(!active){returnFocus=document.activeElement;returnScroll={left:window.scrollX,top:window.scrollY};}
     active=kind||title;busy=false;formId++;
     const sceneKind=kind==='profile'?'village':kind==='purchase'?'rewards':'welcome',scene=sceneArt(sceneKind).replace('xMidYMid slice',sceneKind==='welcome'?'xMaxYMid slice':'xMidYMid slice');
@@ -100,7 +115,20 @@ export function createAccountUI({accounts,onSignedIn=()=>{},onGuest=()=>{},onNav
     purchase=onConfirm;
     draw('Bereit für dein nächstes Upgrade?',`<div class="account-purchase-preview">${preview}</div><h3>${escape(name)}</h3><p>${escape(description)}</p><div class="purchase-price"><span aria-hidden="true">★</span><strong>${Math.max(0,Number(cost)||0)}</strong> Münzen</div><p>${kind==='skin'?'Das Outfit verändert deinen Look und deine Wischspur. Im gewerteten Open Run bleibt die Herausforderung für alle gleich.':'Der angezeigte Münzbetrag wird einmal von deinem Guthaben abgezogen.'}</p><div class="account-purchase-actions">${b('Abbrechen','close')}${b('Kauf bestätigen','purchase','primary')}</div>`,{kind:'purchase',footer:false});
   }
-  function working(value){busy=value;for(const element of host.querySelectorAll('button,input'))element.disabled=value;host.querySelector('[role="dialog"]')?.setAttribute('aria-busy',String(value));const p=host.querySelector('#account-working');if(p)p.textContent=value?tr('Einen Moment …'):'';}
+  function working(value){busy=value;for(const element of host.querySelectorAll('button,input'))element.disabled=value;host.querySelector('[role="dialog"]')?.setAttribute('aria-busy',String(value));const p=host.querySelector('#account-working');if(p)p.textContent=value?tr('Einen Moment …'):'';if(!value)restoreNoteFocus();}
+  async function prepareAuthentication(){
+    if(typeof accounts.warmup!=='function')return;
+    const generation=formId,controller=new AbortController(),previous=accounts.getSession?.();authPreparation=controller;
+    const label=host.querySelector('#account-working');if(label)label.textContent=tr('Online-Verbindung wird hergestellt …');
+    const back=host.querySelector('[data-account="close"]');if(back)back.disabled=false;
+    try{
+      const status=await accounts.warmup({signal:controller.signal}),current=accounts.getSession?.();
+      if(controller.signal.aborted||generation!==formId)throw new AccountError('Die Verbindungsprüfung wurde abgebrochen.',{code:'REQUEST_CANCELLED'});
+      if(previous?.token!==current?.token||previous?.user?.id!==current?.user?.id)throw new AccountError('Diese Anmeldung wurde inzwischen ersetzt.',{code:'STALE_SESSION',status:409});
+      if(!status.online)throw new AccountError(status.message||'Die Online-Verbindung ist noch nicht bereit. Dein Gastspiel bleibt verfügbar. Bitte versuche es erneut.',{code:'NOT_CONFIGURED',retryable:true});
+      working(true);
+    }finally{if(authPreparation===controller)authPreparation=null;}
+  }
   async function run(task){if(busy)return;const generation=formId;working(true);try{await task();}catch(error){if(generation===formId&&host.querySelector('#account-error')){host.querySelector('#account-error').textContent=tr(error?.message||'Verbindung fehlgeschlagen. Bitte versuche es erneut.');const badge=host.querySelector('.account-connected');if(badge&&accounts.getStatus?.().online===false){badge.textContent=tr('● Verbindung unterbrochen');badge.classList.add('is-offline');if(!host.querySelector('[data-account-offline]'))host.querySelector('.account-identity')?.insertAdjacentHTML('afterend',`<aside class="account-service-note" data-account-offline role="status">${tr('Du siehst den letzten bestätigten Stand. Verbinde dich erneut und aktualisiere deinen Fortschritt.')}</aside>`);}}}finally{if(generation===formId)working(false);}}
   host.addEventListener('input',event=>{if(event.target.matches('input'))event.target.removeAttribute('aria-invalid');});
   host.addEventListener('submit',event=>{
@@ -109,6 +137,7 @@ export function createAccountUI({accounts,onSignedIn=()=>{},onGuest=()=>{},onNav
     if(kind==='register'){const checked=validateRegistration({...values,privacyAccepted:values.privacyAccepted==='on'});if(!checked.ok){host.querySelector('#account-error').textContent=tr(checked.message);const input=form.elements.namedItem(checked.field);input?.setAttribute('aria-invalid','true');input?.focus();return;}}
     void run(async()=>{
       if(['login','register','recovery'].includes(kind)){
+        await prepareAuthentication();
         const result=await accounts[kind==='recovery'?'reset':kind]({username:values.username,password:values.password,...(kind==='recovery'?{recoveryKey:values.recoveryKey,mfaCode:values.mfaCode}:kind==='register'?{email:values.email,passwordConfirmation:values.passwordConfirmation,privacyAccepted:values.privacyAccepted==='on'}:{})});
         form.reset();busy=false;
         if(result.mfaRequired){mfaChallenge=result.challenge;mfaLogin();return;}
@@ -123,14 +152,15 @@ export function createAccountUI({accounts,onSignedIn=()=>{},onGuest=()=>{},onNav
     });
   });
   host.addEventListener('click',event=>{
-    const button=event.target.closest('[data-account]');if(!button||busy)return;const action=button.dataset.account;
+    const button=event.target.closest('[data-account]');if(!button||busy&&!(authPreparation&&button.dataset.account==='close'))return;const action=button.dataset.account;
     if(action==='reveal'){const input=host.querySelector('#account-password'),shown=input.type==='password';input.type=shown?'text':'password';button.setAttribute('aria-pressed',String(shown));button.textContent=tr(shown?'Verbergen':'Anzeigen');button.setAttribute('aria-label',tr(shown?'Passwort verbergen':'Passwort anzeigen'));return;}
     if(action==='mfa-setup'){mfaSetup();return;}
     if(action==='mfa-disable'){mfaDisable();return;}
     if(action==='close'){if(close())onDismiss();return;}if(action==='login'){login();return;}if(action==='register'){register();return;}if(action==='recovery'){recovery();return;}
     if(action==='guest'){close();void onGuest();return;}if(action==='game-profile'){close();onNavigate('profile');return;}
+    if(action==='retry')noteFocusPending=true;
     void run(async()=>{
-      if(action==='retry'){await accounts.init({retry:true});busy=false;(active==='register'?register:active==='recovery'?recovery:login)();}
+      if(action==='retry'){await accounts.init({retry:true});updateServiceNote(accounts.getStatus?.()||{});}
       if(action==='logout'){let offline=false;try{await accounts.logout();}catch(error){if(accounts.getSession?.())throw error;offline=true;}busy=false;close();await onLogout();if(offline)toast('Du bist auf diesem Gerät abgemeldet. Die Server-Sitzung läuft automatisch ab.');}
       if(action==='refresh'){const result=await onRefresh();if(result?.profile){busy=false;profile(result.profile);toast('Dein Kontofortschritt ist aktuell.');}}
       if(action==='import'){const result=await onImport();if(result!==false){busy=false;profile(result?.profile);toast('Einführung übernommen. Dein Gastspielstand bleibt erhalten.');}}
@@ -141,6 +171,6 @@ export function createAccountUI({accounts,onSignedIn=()=>{},onGuest=()=>{},onNav
   });
   const onKey=event=>{if(active&&event.key==='Escape'){event.stopImmediatePropagation();event.preventDefault();if(active!=='key'&&close())onDismiss();}};
   document.addEventListener('keydown',onKey,true);
-  function destroy(){busy=false;close();document.removeEventListener('keydown',onKey,true);host.remove();}
+  function destroy(){if(typeof unsubscribeStatus==='function')unsubscribeStatus();busy=false;close();document.removeEventListener('keydown',onKey,true);host.remove();}
   return {login,register,recovery,profile,recoveryKey,confirmPurchase,close,destroy,isOpen:()=>Boolean(active)};
 }

@@ -12,8 +12,13 @@ const TITLE='Notification Ninja';
 function refreshLanguage(){
   const language=getLanguage();
   document.documentElement.lang=language;
-  document.title=tr(TITLE);
-  document.querySelector('meta[name="description"]')?.setAttribute('content',tr(DESCRIPTION));
+  const title=document.querySelector('title');
+  document.title=title?.dataset?.[language==='en'?'ninjaTitleEn':'ninjaTitleDe']||tr(TITLE);
+  const description=document.querySelector('meta[name=description]');
+  const copy=description?.dataset?.[language==='en'?'ninjaDescriptionEn':'ninjaDescriptionDe']||tr(DESCRIPTION);
+  description?.setAttribute('content',copy);
+  document.querySelector('meta[property="og:title"]')?.setAttribute('content',document.title);
+  document.querySelector('meta[property="og:description"]')?.setAttribute('content',copy);
   for(const button of document.querySelectorAll('[data-language]'))button.setAttribute('aria-pressed',String(button.dataset.language===language));
   document.body.dataset.calm=String(getPreferences().calmEffects===true);
   applyTheme();
@@ -53,15 +58,17 @@ async function revealSignedInLanding(){
   if(!storage)return;
   const client=createAccounts({sessionStorage:storage,baseURL:location.href});
   try{
-    await client.init();
     const session=client.getSession();
     if(!session?.token)return;
+    await client.init();
+    const connection=await client.warmup();
+    if(!connection.online)return;
     const state=await client.restore();
     if(!state?.user?.id)return;
     const access=document.querySelector('.access-choices');
     if(!access)return;
     const entry=document.createElement('a');
-    entry.href=homeGameURL('overview');entry.className='button large';entry.textContent='Zum persönlichen Dojo →';
+    entry.href=getSiteLocation().gameURL;entry.className='button large';entry.textContent='Zum persönlichen Dojo →';
     const logout=document.createElement('button');
     logout.type='button';logout.className='button secondary';logout.textContent='Abmelden';
     const note=document.createElement('p');note.className='home-auth-state';note.setAttribute('role','status');
@@ -80,7 +87,7 @@ async function revealSignedInLanding(){
 }
 void revealSignedInLanding();
 
-function homeGameURL(route){const site=getSiteLocation();return site.isCanonical||site.isLegacy?canonicalGameURL(route):'./index.html#'+route;}
+function homeGameURL(route){const site=getSiteLocation();if(site.isLegacy)return canonicalGameURL(route);const url=new URL(site.gameURL);url.hash=route;return url.href;}
 function savedGuestProfile(){try{const raw=localStorage.getItem(STORAGE_KEY);if(!raw||raw.length>128*1024)return null;return JSON.parse(raw)?.profile||null;}catch{return null;}}
 for(const link of document.querySelectorAll('a[href^="./index.html#"]')){const route=new URL(link.href).hash.slice(1);link.href=homeGameURL(route);}
 let migrationSender=null;

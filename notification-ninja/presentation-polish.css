@@ -210,3 +210,7 @@ html:is([data-ninja-theme=dark],[data-ninja-theme=noir]) body .panel .nn-career-
 @media(max-width:360px){
  .indie-page-tools .indie-account-tool{width:44px;min-width:44px;padding-inline:4px;font-size:10px}
 }
+
+.account-connection-note{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin:16px 0;padding:14px 16px;border:2px solid var(--iv-stroke);border-radius:14px;background:var(--nn-card-alt);color:var(--nn-text)}
+.account-connection-note>span{flex:1 1 180px;font-weight:800}
+.account-connection-note>.btn{min-height:44px}

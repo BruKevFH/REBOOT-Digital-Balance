@@ -7,6 +7,8 @@ on:
       - 'tests/ninja*.mjs'
       - 'tests/ninja*.cjs'
       - 'scripts/build_ninja.mjs'
+      - 'scripts/build_ninja_static.mjs'
+      - 'scripts/check_ninja_static_frontend.cjs'
       - 'scripts/package_ninja.py'
       - 'scripts/check_ninja_portal.cjs'
       - 'scripts/check_ninja_browser.cjs'
@@ -32,6 +34,8 @@ on:
       - 'tests/ninja*.mjs'
       - 'tests/ninja*.cjs'
       - 'scripts/build_ninja.mjs'
+      - 'scripts/build_ninja_static.mjs'
+      - 'scripts/check_ninja_static_frontend.cjs'
       - 'scripts/package_ninja.py'
       - 'scripts/check_ninja_portal.cjs'
       - 'scripts/check_ninja_browser.cjs'
@@ -105,6 +109,8 @@ jobs:
       - name: Isolated account economy and process-restart audit
         run: node scripts/check_ninja_account_audit.mjs
       - run: npx playwright install --with-deps chromium
+      - name: Native account readiness, cancellation and form preservation
+        run: node tests/ninja-account-warmup-browser.cjs
       - name: Native bidirectional translation and dynamic text regression
         run: node tests/ninja-i18n-browser.cjs
       - name: Browser account portal and guest gameplay
@@ -141,6 +147,14 @@ jobs:
             fi
           done
       - run: npm run package:ninja
+      - run: npm run build:ninja:site
+      - name: Static homepage, backend outage and readable themes
+        env:
+          NINJA_STATIC_ROOT: dist/notification-ninja-site
+          NINJA_EXPECTED_PUBLIC_ORIGIN: https://notification-ninja.onrender.com
+          NINJA_TEST_WIDTHS: 320,768,1440
+          NINJA_TEST_OUTPUT: test-results/ninja-static-frontend
+        run: node scripts/check_ninja_static_frontend.cjs
       - name: Verify bundled entry and offline homepage routes
         run: |
           node --input-type=module <<'NODE'

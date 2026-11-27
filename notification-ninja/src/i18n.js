@@ -15,6 +15,9 @@ import {EN_V2} from './locales/en-v2.js';
 
 const normalize=text=>String(text).replace(/&amp;/g,'&').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/\s+/gu,' ').trim();
 const EN_ADDITIONAL_UI={
+  'Dein Online-Konto ist bereit.':'Your online account is ready.',
+  'Dein Online-Konto wird verbunden …':'Connecting your online account …',
+  'Konto öffnen':'Open account',
   'Diese Münzen sind jetzt in deinem Dojo. Jede Erfolgsbelohnung lässt sich einmal abholen. Im Basar findest du passende Ninja-Looks und Fähigkeiten.':'These coins are now in your dojo. Each achievement reward can only be claimed once. Find matching ninja looks and abilities in the bazaar.',
   'bestätigter Fortschritt':'verified progress',
   'Run wird am Ende geprüft':'run verification at the end',

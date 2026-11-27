@@ -1,5 +1,5 @@
 import {NinjaGame,STORAGE_KEY} from './game.js';
-import {CANONICAL_SITE_ORIGIN,LEGACY_SITE_ORIGIN,canonicalGameURL,getSiteLocation} from './site-location.js';
+import {CANONICAL_SITE_ORIGIN,ACCOUNT_SERVICE_ORIGIN,LEGACY_SITE_ORIGINS,canonicalGameURL,getSiteLocation} from './site-location.js';
 
 export const GUEST_TRANSFER_VERSION=1;
 export const MAX_GUEST_TRANSFER_BYTES=128*1024;
@@ -60,10 +60,20 @@ export function createGuestTransferNonce(crypto=globalThis.crypto){
   return Array.from(bytes,value=>value.toString(16).padStart(2,'0')).join('');
 }
 
-export function guestTransferNonceFromHash(hash){
+function transferRequestFromHash(hash){
   if(typeof hash!=='string')return null;
-  const match=/^#guest-transfer=([a-f0-9]{64})$/.exec(hash);
-  return match&&match[0].length===hash.length?match[1]:null;
+  const match=/^#guest-transfer=([a-f0-9]{64})(?:&source=([^&]+))?$/.exec(hash);
+  if(!match||match[0].length!==hash.length)return null;
+  let sourceOrigin=null;
+  if(match[2]!==undefined){
+    try{sourceOrigin=decodeURIComponent(match[2]);}catch{return null;}
+    if(!LEGACY_SITE_ORIGINS.includes(sourceOrigin))return null;
+  }
+  return {nonce:match[1],sourceOrigin};
+}
+
+export function guestTransferNonceFromHash(hash){
+  return transferRequestFromHash(hash)?.nonce??null;
 }
 
 /** A trusted origin is insufficient: the exact opened window and nonce must match. */
@@ -90,11 +100,12 @@ export function createGuestTransferSender({window:win=globalThis.window,location
   function destroy(){cleanup();popup=null;nonce=null;}
   function start(){
     destroy();
-    if(!getSiteLocation(location).isLegacy||typeof win?.open!=='function'||typeof getProfile!=='function'){status(onStatus,'unavailable');return {ok:false,status:'unavailable'};}
+    const site=getSiteLocation(location);
+    if(!site.isLegacy||typeof win?.open!=='function'||typeof getProfile!=='function'){status(onStatus,'unavailable');return {ok:false,status:'unavailable'};}
     try{nonce=createGuestTransferNonce(crypto);}catch{status(onStatus,'unavailable');return {ok:false,status:'unavailable'};}
     sent=false;active=true;expiresAt=now()+GUEST_TRANSFER_TTL;
     listener=event=>{
-      if(!active||now()>expiresAt)return;
+      if(!active||now()>=expiresAt)return;
       if(isGuestTransferMessage(event,{origin:CANONICAL_SITE_ORIGIN,source:popup,nonce,type:'ready'})){
         if(sent)return;
         let profile;try{profile=normalizeGuestProfile(getProfile(),{now});}catch{cleanup();status(onStatus,'invalid-profile');return;}
@@ -106,9 +117,11 @@ export function createGuestTransferSender({window:win=globalThis.window,location
       }
     };
     win.addEventListener('message',listener);
-    // The fragment contains only a fresh random nonce. Profiles and account
-    // credentials never appear in a URL, query string, referrer or window name.
-    try{popup=win.open(canonicalGameURL().split('#')[0]+'#guest-transfer='+nonce,'_blank','popup');}catch{popup=null;}
+    // Only a fresh nonce and the public source origin enter the fragment. The
+    // receiver can address its opener exactly, without probing another origin.
+    // Profiles and account credentials never appear in any URL or window name.
+    const fragment='#guest-transfer='+nonce+'&source='+encodeURIComponent(site.origin);
+    try{popup=win.open(canonicalGameURL().split('#')[0]+fragment,'_blank','popup');}catch{popup=null;}
     if(!popup){cleanup();status(onStatus,'popup-blocked');return {ok:false,status:'popup-blocked'};}
     timer=timers.setTimeout(()=>{cleanup();status(onStatus,'expired');},GUEST_TRANSFER_TTL);
     status(onStatus,'waiting');return {ok:true,status:'waiting'};
@@ -118,42 +131,49 @@ export function createGuestTransferSender({window:win=globalThis.window,location
 
 /** Receipt prepares a preview; only accept() may call the import callback. */
 export function createGuestTransferReceiver({window:win=globalThis.window,location=win?.location,onImport,onStatus,now=()=>Date.now()}={}){
-  let opener=null,nonce=null,listener=null,retry=null,timer=null,profile=null,active=false,accepting=false,expiresAt=0;
+  let opener=null,sourceOrigin=null,expectedSourceOrigin=null,nonce=null,listener=null,retry=null,timer=null,profile=null,active=false,accepting=false,expiresAt=0,generation=0;
   const timers=win||globalThis;
   function cleanup(){if(listener)win?.removeEventListener('message',listener);if(retry!==null)timers.clearInterval(retry);if(timer!==null)timers.clearTimeout(timer);listener=null;retry=null;timer=null;active=false;}
-  function destroy(){cleanup();profile=null;nonce=null;opener=null;accepting=false;}
+  function destroy(){generation++;cleanup();profile=null;nonce=null;opener=null;sourceOrigin=null;expectedSourceOrigin=null;accepting=false;}
   function start(){
     destroy();
-    nonce=guestTransferNonceFromHash(location?.hash||'');opener=win?.opener;
-    if(!getSiteLocation(location).isCanonical||!nonce||!opener||opener===win||typeof onImport!=='function')return {ok:false,status:'unavailable'};
+    const request=transferRequestFromHash(location?.hash||''),site=getSiteLocation(location);
+    nonce=request?.nonce??null;expectedSourceOrigin=request?.sourceOrigin??null;opener=win?.opener;
+    // Old published senders still open the former account-hosted game. Keep
+    // that exact origin compatible; aliases and unrelated hosts remain denied.
+    if(!(site.isCanonical||site.origin===ACCOUNT_SERVICE_ORIGIN)||!nonce||!opener||opener===win||typeof onImport!=='function')return {ok:false,status:'unavailable'};
     active=true;expiresAt=now()+GUEST_TRANSFER_TTL;
     try{win.history?.replaceState(win.history.state,'',location.pathname+(location.search||'')+'#overview');}catch{/* Fragment never reaches the server. */}
     listener=event=>{
-      if(!active||profile||now()>expiresAt||!isGuestTransferMessage(event,{origin:LEGACY_SITE_ORIGIN,source:opener,nonce,type:'profile'}))return;
+      if(!active||profile||now()>=expiresAt||!LEGACY_SITE_ORIGINS.includes(event.origin)||expectedSourceOrigin&&event.origin!==expectedSourceOrigin||!isGuestTransferMessage(event,{origin:event.origin,source:opener,nonce,type:'profile'}))return;
+      sourceOrigin=event.origin;
       try{profile=normalizeGuestProfile(event.data.profile,{now});}catch{status(onStatus,'invalid-profile');return;}
       if(retry!==null)timers.clearInterval(retry);retry=null;
       status(onStatus,'awaiting-accept',{profile:JSON.parse(JSON.stringify(profile))});
     };
     win.addEventListener('message',listener);
-    const ready=()=>post(opener,message('ready',nonce),LEGACY_SITE_ORIGIN);
+    // New links name exactly one trusted opener origin. Nonce-only links from
+    // older releases retain the two-origin fallback; neither sends profile data.
+    // Acknowledgements always use the validated profile event's pinned origin.
+    const ready=()=>{if(!active||now()>=expiresAt)return;for(const origin of expectedSourceOrigin?[expectedSourceOrigin]:LEGACY_SITE_ORIGINS)post(opener,message('ready',nonce),origin);};
     retry=timers.setInterval(ready,500);
     timer=timers.setTimeout(()=>{cleanup();profile=null;status(onStatus,'expired');},GUEST_TRANSFER_TTL);
     status(onStatus,'waiting');ready();return {ok:true,status:'waiting'};
   }
   async function accept(){
-    if(!active||!profile||accepting||now()>expiresAt)return {ok:false,status:'unavailable'};
-    accepting=true;
+    if(!active||!profile||accepting||now()>=expiresAt)return {ok:false,status:'unavailable'};
+    accepting=true;const operation=generation;
     try{
       // A detached object prevents the UI's preview from changing the import.
       const result=await onImport(JSON.parse(JSON.stringify(profile)));
       if(result?.ok===false)throw transferError('IMPORT_FAILED');
-      if(!active)return {ok:false,status:'unavailable'};
-      post(opener,message('accepted',nonce),LEGACY_SITE_ORIGIN);
+      if(!active||operation!==generation||now()>=expiresAt)return {ok:false,status:'unavailable'};
+      post(opener,message('accepted',nonce),sourceOrigin);
       cleanup();profile=null;status(onStatus,'complete');
       try{win.opener=null;}catch{}
       return {ok:true,status:'complete'};
-    }catch{if(active)status(onStatus,'import-failed');return {ok:false,status:'import-failed'};}
-    finally{accepting=false;}
+    }catch{if(active&&operation===generation)status(onStatus,'import-failed');return {ok:false,status:'import-failed'};}
+    finally{if(operation===generation)accepting=false;}
   }
   return Object.freeze({start,accept,destroy});
 }

@@ -137,6 +137,10 @@ export const EN_LEGEND=Object.freeze({
   "Beitritt":"Join"
 });
 export const LEGEND_PATTERNS=[
+  [/^(\d+) von (\d+) Missionen$/u,'$1 of $2 missions','authored'],
+  [/^(\d+)\s*\/\s*(\d+) Missionen$/u,'$1 / $2 missions','authored'],
+  [/^(.+), (\d+) von (\d+) Missionen geschafft$/u,'$1, $2 of $3 missions completed','authored'],
+  [/^Missionspfad (.+)$/u,'Mission path: $1','authored'],
   [/^Mission (\d+): (.+), (Geschafft|Spielbar|Gesperrt)$/u,'Mission $1: $2, $3','authored'],
   [/^Details zu Mission (.+) ansehen$/u,'View details for mission $1','authored'],
   [/^✦ \+(\d+) Münzen$/u,'✦ +$1 coins','authored'],

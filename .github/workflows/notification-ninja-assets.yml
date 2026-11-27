@@ -41,6 +41,7 @@ on:
       - 'notification-ninja/assets/dojo-*-v2.svg'
       - 'notification-ninja/sw.js'
       - 'scripts/build_ninja.mjs'
+      - 'scripts/build_ninja_static.mjs'
       - 'scripts/package_ninja.py'
       - 'server/ninja-competition.mjs'
       - '.github/workflows/notification-ninja-assets.yml'

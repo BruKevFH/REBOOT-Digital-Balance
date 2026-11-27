@@ -177,3 +177,15 @@ test('account save indicators translate confirmed and pending progress without h
   assert.equal(tr('Konto · bestätigter Fortschritt'),'Konto · bestätigter Fortschritt');
   assert.equal(tr('Konto · Run wird am Ende geprüft'),'Konto · Run wird am Ende geprüft');
 });
+
+
+test('career chapter counters and navigation labels translate at every completion count',()=>{
+  setLanguage('en');
+  for(const count of [0,3,6]){
+    assert.equal(tr(`${count} von 6 Missionen`),`${count} of 6 missions`);
+    assert.equal(tr(`${count}/6 Missionen`),`${count} / 6 missions`);
+    assert.equal(tr(`Lern-Dojo, ${count} von 6 Missionen geschafft`),`Study Dojo, ${count} of 6 missions completed`);
+  }
+  assert.equal(tr('Missionspfad Lern-Dojo'),'Mission path: Study Dojo');
+  setLanguage('de');assert.equal(tr('3 von 6 Missionen'),'3 von 6 Missionen');
+});

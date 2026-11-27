@@ -1,16 +1,10 @@
 # Notification Ninja
 
-**Current version: 3.13.2** at **https://notification-ninja-accounts.onrender.com/**. The [tested source `c5afd9c`](https://github.com/BruKevFH/REBOOT-Digital-Balance/commit/c5afd9c57d0e3b4ee76bcaf1783c3345a41320f2) is live on the existing Render Free service with the unchanged durable PostgreSQL database.
+**3.13.3 – static website prepared:** The homepage and guest game are delivered separately from the existing account API. Intended homepage: `https://notification-ninja.onrender.com/`; game entry: `play.html`. Publication and public acceptance evidence are recorded in the [release report, German](PATCH_3_13_3.md). Preparation alone does not prove a live deployment.
 
-This update fixes narrow-screen navigation, light/dark text contrast, remaining German text, account-dialog history, intro interaction boundaries and playtime across tabs. Twelve looks with five rarity levels, 18 abilities including six Supers, 36 achievements, weekly podium rewards and automatic server-verified Open Run rankings remain available. [Changes and test limits, German](PATCH_3_13_2.md) · [Structured release evidence](QA_3_13_2.json).
+Anonymous homepage and guest play make no API requests. Account readiness and saved-session restoration happen in the background; sign-in preserves fields and supports cancelling the read-only connection check. The account database and existing guest saves remain intact. Optional migration from old sites requires explicit consent and never transfers session tokens.
 
-Passed: **604 repository tests with real local PostgreSQL**, **198 compact UI states**, **304 contrast states**, **16 homepage combinations**, native navigation and **45 English account states**. Intro coverage includes 16 combinations, with four desktop cases repeated after the final keyboard-priority fix. [Independent checks](https://github.com/BruKevFH/REBOOT-Digital-Balance/actions/runs/45826170249), [build/download](https://github.com/BruKevFH/REBOOT-Digital-Balance/actions/runs/45826170225) and [public API/guest verification](https://github.com/BruKevFH/REBOOT-Digital-Balance/actions/runs/45826170109) passed.
-
-The [3.13.1 acceptance](EXPANSION_3_13.md), [17 November complete native career audit](FULL_GAME_AUDIT.md) and [24 November production account/restart test](https://github.com/BruKevFH/REBOOT-Digital-Balance/actions/runs/45445114118) remain separate historical evidence. This UI patch does not claim a new production-account restart test or physical testing of every device.
-
-An illustrated browser arcade game in **English and German**. Slice distractions and let helpful items pass. Study, Gaming and Sleep use distinct dojo scenes and context rules. No extra brand name or slogan.
-
-[German guide](README.md) · [Requirement matrix](REQUIREMENTS_FULL.md) · [Executed checks and limitations](TEST_REPORT.md)
+The [3.13.2 UI acceptance](PATCH_3_13_2.md) and [24 November production two-account/restart test](https://github.com/BruKevFH/REBOOT-Digital-Balance/actions/runs/45445114118) remain separate historical evidence. This release does not claim testing on every physical device, a new production restart test, or instant search-engine indexing.
 
 ## Run the complete application locally
 

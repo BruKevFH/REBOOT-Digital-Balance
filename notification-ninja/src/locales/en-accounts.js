@@ -1,5 +1,11 @@
 /** Account forms and recovery are authored in German; IDs and user input stay untouched. */
 export const EN_ACCOUNTS={
+  'Die Online-Verbindung ist noch nicht bereit. Dein Gastspiel bleibt verfügbar. Bitte versuche es erneut.':'The online connection is not ready yet. Guest play stays available. Please try again.',
+  'Der Online-Dienst wird gestartet. Du kannst sofort als Gast spielen.':'The online service is starting. You can play as a guest straight away.',
+  'Online-Verbindung wird hergestellt …':'Connecting to the online service …',
+  'Du kannst sofort als Gast spielen.':'You can play as a guest straight away.',
+  'Die Verbindungsprüfung wurde abgebrochen.':'The connection check was cancelled.',
+  'Die Kontoverbindung wurde inzwischen geändert.':'The account connection has changed.',
   "Beende und prüfe zuerst deinen Open Run.":"Finish and verify your Open Run first.",
   "Bitte sende die Anfrage als JSON.":"Please send the request as JSON.",
   "Bitte verwende eine sichere HTTPS-Verbindung.":"Please use a secure HTTPS connection.",

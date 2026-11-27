@@ -1,6 +1,6 @@
 {
   "name": "Notification Ninja",
-  "version": "3.13.2",
+  "version": "3.13.3",
   "engine": "Canvas 2D / Web Audio",
   "style": "Sakura indie dojo",
   "sharedPlayMenu": true,
@@ -70,7 +70,7 @@
   "accountAPI": 3,
   "accountSync": true,
   "publicAccountsConfigured": true,
-  "canonicalOrigin": "https://notification-ninja-accounts.onrender.com",
+  "canonicalOrigin": "https://notification-ninja.onrender.com",
   "backendRequiresPersistentDatabase": true,
   "databaseAdapters": [
     "postgresql",

@@ -42,7 +42,7 @@ async function intro(p,entry,out,{complete=false}={}){
  await p.reload();await ready(p,expectedVersion);await p.waitForTimeout(100);assert.equal((await snapshot(p)).experience.intro,null,'Seen intro does not repeat after reload');await dismiss(p);
 }
 async function guestMatrix(browser,options,report){
- const {base,out,version,publicOnly,widths}=options;
+ const {base,out,version,publicOnly,widths,gameEntry}=options;
  for(const width of widths){
   const c=await browser.newContext({serviceWorkers:'block',viewport:{width,height:width<768?844:960},hasTouch:width<768});
   const p=await c.newPage();p.setDefaultTimeout(15000);const entry={width,screens:[],errors:[],consoleErrors:[],csp:[],blockedMethods:[]};
@@ -50,7 +50,7 @@ async function guestMatrix(browser,options,report){
   await c.addInitScript(()=>{document.addEventListener('securitypolicyviolation',e=>{(window.__NINJA_CSP_FAILURES__||=[]).push({directive:e.effectiveDirective,uri:e.blockedURI});});});
   if(publicOnly)await c.route('**/*',async request=>{const method=request.request().method();if(!['GET','HEAD','OPTIONS'].includes(method)){entry.blockedMethods.push({method,url:request.request().url()});await request.abort();}else await request.continue();});
   try{
-   await p.goto(publicOnly?base:new URL('home.html',base).href);await p.locator('article.situation-card').first().waitFor();await inspect(p,width+'-homepage',out,entry);await click(p,'.access-choices a[href$="#guest"]');await ready(p,version);
+   await p.goto(publicOnly?base:new URL('home.html',base).href);await p.locator('article.situation-card').first().waitFor();await inspect(p,width+'-homepage',out,entry);await click(p,'.access-choices a[href$="#guest"]');await ready(p,version);assert.equal(new URL(p.url()).pathname,new URL(gameEntry,base).pathname,'Homepage enters the expected game document');
    await intro(p,entry,out,{complete:!publicOnly&&width===360});const gameURL=p.url().split('#')[0].split('?')[0],baseline=economy(await snapshot(p));
    for(const language of ['de','en'])for(const theme of ['relaxed','dark','noir']){
     await route(p,gameURL,'settings',version);await click(p,`[data-settings-language=${language}]`);await click(p,`button[data-ninja-theme=${theme}]`);assert.equal(await p.locator('html').getAttribute('data-ninja-theme'),theme);
@@ -87,14 +87,14 @@ async function coldPaint(browser,options,report){
  // Empty external sheets and a held main bundle expose the real inline-only
  // first paint without letting boot hide the loader before it is inspected.
  await c.route('**/*.css',route=>route.fulfill({status:200,contentType:'text/css',body:''}));await c.route('**/dist/ninja.js',async route=>{await delay;await route.continue();});
- try{await p.goto(new URL('index.html',base).href,{waitUntil:'commit'});await p.waitForSelector('body',{state:'attached'});await p.waitForTimeout(100);const result=await p.evaluate(()=>({mode:'External styles unavailable; main bundle delayed; actual inline-only first paint',loadingHidden:document.querySelector('#loading')?.hidden,bodyVisibility:getComputedStyle(document.body).visibility,images:[...document.images].map(el=>({src:el.getAttribute('src'),width:el.getBoundingClientRect().width,height:el.getBoundingClientRect().height})),theme:document.documentElement.dataset.ninjaTheme}));const session=await c.newCDPSession(p),shot=await session.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});fs.writeFileSync(path.join(out,'cold-inline-only.png'),Buffer.from(shot.data,'base64'));await session.detach();assert.equal(result.loadingHidden,false,'The actual loading frame remains visible before boot');assert(result.images.every(image=>image.width<=360),'Cold HTML never paints a giant logo');report.coldPaint=result;release();await p.waitForLoadState('domcontentloaded');}finally{release();await c.close();}
+ try{await p.goto(new URL(options.gameEntry,base).href,{waitUntil:'commit'});await p.waitForSelector('body',{state:'attached'});await p.waitForTimeout(100);const result=await p.evaluate(()=>({mode:'External styles unavailable; main bundle delayed; actual inline-only first paint',loadingHidden:document.querySelector('#loading')?.hidden,bodyVisibility:getComputedStyle(document.body).visibility,images:[...document.images].map(el=>({src:el.getAttribute('src'),width:el.getBoundingClientRect().width,height:el.getBoundingClientRect().height})),theme:document.documentElement.dataset.ninjaTheme}));const session=await c.newCDPSession(p),shot=await session.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});fs.writeFileSync(path.join(out,'cold-inline-only.png'),Buffer.from(shot.data,'base64'));await session.detach();assert.equal(result.loadingHidden,false,'The actual loading frame remains visible before boot');assert(result.images.every(image=>image.width<=360),'Cold HTML never paints a giant logo');report.coldPaint=result;release();await p.waitForLoadState('domcontentloaded');}finally{release();await c.close();}
 }
 async function hudStress(browser,options,report){
  const result={kind:'Presentation fixture: actual HUD markup, styles, loaded fonts and paintHudNumber; values are display-only, no game bridge or save mutations',cases:[],issues:[]};
  const sourceContext=await browser.newContext({serviceWorkers:'block',viewport:{width:1280,height:960}}),source=await sourceContext.newPage(),sources={};
  const fixtureContext=await browser.newContext({serviceWorkers:'block'}),fixture=await fixtureContext.newPage();let stage='capture actual HUD';
  try{
-  const gameURL=new URL('index.html',options.base).href;await source.goto(gameURL+'#guest');await ready(source,options.version);await dismiss(source);
+  const gameURL=new URL(options.gameEntry,options.base).href;await source.goto(gameURL+'#guest');await ready(source,options.version);await dismiss(source);
   for(const language of ['de','en']){
    await route(source,gameURL,'settings',options.version);await click(source,`[data-settings-language=${language}]`);await route(source,gameURL,'play',options.version);await click(source,'[data-world-inspect=study]');await click(source,'.indie-world-detail-panel [data-quick-context=study]');await dismiss(source);await click(source,'[data-action=next]');await dismiss(source);await source.waitForFunction(()=>window.__NOTIFICATION_NINJA__.getSnapshot().ui==='playing'&&!window.__NOTIFICATION_NINJA__.getSnapshot().mentor.open);
    sources[language]=await source.evaluate(()=>({styles:[...document.querySelectorAll('link[rel=stylesheet]')].map(el=>el.href),inline:document.querySelector('#ninja-first-paint')?.textContent||'',bodyClass:document.body.className,hud:document.querySelector('#hud').outerHTML,nav:document.querySelector('.global-nav').outerHTML}));
@@ -137,7 +137,7 @@ async function hudStress(browser,options,report){
  finally{await sourceContext.close().catch(()=>{});await fixtureContext.close();report.hudPresentation=result;fs.writeFileSync(path.join(options.out,'hud-report.json'),JSON.stringify(result,null,2));}
 }
 async function guestTransfer(browser,options,report){
- const oldOrigin='https://brukevfh.github.io',oldPath='/REBOOT-Digital-Balance/notification-ninja/',newOrigin='https://notification-ninja-accounts.onrender.com';
+ const {CANONICAL_SITE_ORIGIN:newOrigin}=await import(pathToFileURL(path.join(root,'notification-ninja/src/site-location.js')).href),oldOrigin='https://brukevfh.github.io',oldPath='/REBOOT-Digital-Balance/notification-ninja/';
  const localOrigin=new URL(options.base).origin,c=await browser.newContext({serviceWorkers:'block',viewport:{width:390,height:844},hasTouch:true});
  const result={kind:'Actual browser popup and postMessage between exact HTTPS origins; all responses from isolated loopback',requests:0,errors:[],blocked:[]};let stage='source guest';
  c.on('page',page=>page.on('pageerror',error=>result.errors.push(error.message)));
@@ -147,7 +147,7 @@ async function guestTransfer(browser,options,report){
   const request=route.request(),url=new URL(request.url());
   if(!['GET','HEAD','OPTIONS'].includes(request.method())||![oldOrigin,newOrigin].includes(url.origin)){result.blocked.push({method:request.method(),origin:url.origin});await route.abort();return;}
   if(url.origin===oldOrigin&&!url.pathname.startsWith(oldPath)){result.blocked.push({method:request.method(),path:url.pathname});await route.abort();return;}
-  const pathname=url.origin===oldOrigin?'/notification-ninja/'+url.pathname.slice(oldPath.length):url.pathname;
+  const pathname=url.origin===oldOrigin?'/notification-ninja/'+url.pathname.slice(oldPath.length):url.pathname==='/play.html'?'/index.html':url.pathname;
   const response=await c.request.fetch(localOrigin+pathname+url.search,{method:request.method(),headers:request.headers(),failOnStatusCode:false});result.requests++;await route.fulfill({response});
  });
  const p=await c.newPage();p.setDefaultTimeout(15000);
@@ -171,7 +171,7 @@ async function adminNative(browser,options,report,file){
  const credentials=JSON.parse(fs.readFileSync(file,'utf8')),c=await browser.newContext({serviceWorkers:'block',viewport:{width:1280,height:960}}),p=await c.newPage();p.setDefaultTimeout(15000);
  const result={kind:'Trusted isolated local test administrator, actual server purchases and native decisions',purchases:[],supers:[],errors:[]};let stage='login';p.on('pageerror',error=>result.errors.push(error.message));
  try{
-  await p.goto(new URL('index.html#login',options.base).href);await ready(p,options.version);await p.locator('[name=username]').fill(credentials.username);await p.locator('[name=password]').fill(credentials.password);await click(p,'[data-account-form=login] button[type=submit]');await p.waitForFunction(()=>window.__NOTIFICATION_NINJA__.getSnapshot().session.kind==='account');await dismiss(p);
+  await p.goto(new URL(options.gameEntry+'#login',options.base).href);await ready(p,options.version);await p.locator('[name=username]').fill(credentials.username);await p.locator('[name=password]').fill(credentials.password);await click(p,'[data-account-form=login] button[type=submit]');await p.waitForFunction(()=>window.__NOTIFICATION_NINJA__.getSnapshot().session.kind==='account');await dismiss(p);
   const gameURL=p.url().split('#')[0].split('?')[0];await route(p,gameURL,'abilities',options.version);assert.match(await p.locator('.shop-wallet').innerText(),/∞/,'Trusted administrator sees the test budget');
   const {SKILLS}=await import(pathToFileURL(path.join(root,'notification-ninja/src/progression.js')).href);
   for(const skill of SKILLS){stage='purchase '+skill.id;if((await snapshot(p)).profile.unlockedSkills.includes(skill.id))continue;const button=p.locator(`[data-skill-buy="${skill.id}"]`);assert.equal(await button.isDisabled(),false,'Prerequisite-complete admin skill is purchasable');await click(p,button);await click(p,'[data-account=purchase]');await p.waitForFunction(id=>window.__NOTIFICATION_NINJA__.getSnapshot().profile.unlockedSkills.includes(id),skill.id);result.purchases.push(skill.id);await dismiss(p);}
@@ -190,12 +190,13 @@ async function adminNative(browser,options,report,file){
  finally{await c.close();report.admin=result;}
 }
 async function run(options={}){
- const base=options.base||process.env.NINJA_BASE_URL||'http://127.0.0.1:8203/notification-ninja/',url=new URL(base),publicOnly=options.publicOnly===true;
- if(publicOnly){assert.equal(url.protocol,'https:');assert.equal(url.hostname,'notification-ninja-accounts.onrender.com');assert.equal(url.pathname,'/');assert.equal(url.port,'');assert.equal(url.username+url.password+url.search+url.hash,'');}
+ const base=options.base||process.env.NINJA_BASE_URL||'http://127.0.0.1:8203/notification-ninja/',url=new URL(base),publicOnly=options.publicOnly===true,gameEntry=options.gameEntry||'index.html';
+ assert(['index.html','play.html'].includes(gameEntry),'The game entry is an explicit public document');
+ if(publicOnly){const {CANONICAL_SITE_ORIGIN}=await import(pathToFileURL(path.join(root,'notification-ninja/src/site-location.js')).href);assert.equal(url.href,CANONICAL_SITE_ORIGIN+'/');assert.equal(gameEntry,'play.html','Public smoke enters the separately hosted static game');}
  else assert(['localhost','127.0.0.1','[::1]'].includes(url.hostname),'Integration checks require an isolated local service');
  const out=path.resolve(options.out||process.env.NINJA_TEST_OUTPUT||'test-results/ninja-313'),version=process.env.NINJA_EXPECTED_VERSION||JSON.parse(fs.readFileSync(path.join(root,'notification-ninja/dist/build.json'))).version,widths=(process.env.NINJA_TEST_WIDTHS||'360,1280').split(',').map(Number);fs.mkdirSync(out,{recursive:true});
  const browser=await chromium.launch({executablePath:process.env.NINJA_CHROMIUM||(fs.existsSync('/usr/bin/chromium')?'/usr/bin/chromium':undefined),headless:true,args:['--no-sandbox']}),report={version,base,kind:publicOnly?'Read-only public guest smoke':'Native 3.13 integration; no fabricated progression',screenshots:process.env.NINJA_CAPTURE_SCREENSHOTS!=='0',viewports:[],issues:[]};
- try{const settings={base,out,version,widths,publicOnly},transferOnly=!publicOnly&&process.env.NINJA_313_TRANSFER_ONLY==='1',hudOnly=!publicOnly&&process.env.NINJA_313_HUD_ONLY==='1';if(!transferOnly&&!hudOnly&&(publicOnly||process.env.NINJA_313_ADMIN_ONLY!=='1'))await guestMatrix(browser,settings,report);if(!publicOnly&&process.env.NINJA_313_ADMIN_ONLY!=='1'){if(!transferOnly){if(!hudOnly)await coldPaint(browser,settings,report);await hudStress(browser,settings,report);}if(!hudOnly)await guestTransfer(browser,settings,report);}if(!transferOnly&&!hudOnly&&!publicOnly&&process.env.NINJA_TEST_ADMIN_FILE)await adminNative(browser,settings,report,process.env.NINJA_TEST_ADMIN_FILE);}finally{await browser.close();fs.writeFileSync(path.join(out,'report.json'),JSON.stringify(report,null,2));}
+ try{const settings={base,out,version,widths,publicOnly,gameEntry},transferOnly=!publicOnly&&process.env.NINJA_313_TRANSFER_ONLY==='1',hudOnly=!publicOnly&&process.env.NINJA_313_HUD_ONLY==='1';if(!transferOnly&&!hudOnly&&(publicOnly||process.env.NINJA_313_ADMIN_ONLY!=='1'))await guestMatrix(browser,settings,report);if(!publicOnly&&process.env.NINJA_313_ADMIN_ONLY!=='1'){if(!transferOnly){if(!hudOnly)await coldPaint(browser,settings,report);await hudStress(browser,settings,report);}if(!hudOnly)await guestTransfer(browser,settings,report);}if(!transferOnly&&!hudOnly&&!publicOnly&&process.env.NINJA_TEST_ADMIN_FILE)await adminNative(browser,settings,report,process.env.NINJA_TEST_ADMIN_FILE);}finally{await browser.close();fs.writeFileSync(path.join(out,'report.json'),JSON.stringify(report,null,2));}
  assert.deepEqual(report.issues,[],'All native 3.13 guest checks pass');return report;
 }
 module.exports={run};

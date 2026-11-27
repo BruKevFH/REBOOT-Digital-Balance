@@ -1,4 +1,4 @@
-/* Release 3.13.2: bundle the expanded dojo and record its canonical catalog. */
+/* Release 3.13.3: bundle the expanded dojo and record its canonical catalog. */
 import {build} from 'esbuild';
 import {mkdir,readFile,writeFile} from 'node:fs/promises';
 import path from 'node:path';
@@ -9,6 +9,7 @@ import {SKIN_RARITIES} from '../notification-ninja/src/skin-presentation.js';
 import {INTRO_DURATION} from '../notification-ninja/src/ninja-intro.js';
 import {PLAYTIME_DEFAULTS,PLAYTIME_INTERVALS} from '../notification-ninja/src/playtime.js';
 import {PODIUM_REWARDS} from '../server/ninja-competition.mjs';
+import {CANONICAL_SITE_ORIGIN} from '../notification-ninja/src/site-location.js';
 
 /** A public account switch is build metadata, never evidence of a tested deployment. */
 export function publicAccountsConfigured(config){
@@ -25,7 +26,7 @@ await mkdir('notification-ninja/dist',{recursive:true});
 await build({entryPoints:['notification-ninja/src/home.js'],bundle:true,format:'iife',target:['es2020'],outfile:'notification-ninja/dist/home.js',minify:true,legalComments:'eof',sourcemap:false,logLevel:'info'});
 await build({entryPoints:['notification-ninja/src/main.js'],bundle:true,format:'iife',target:['es2020'],outfile:'notification-ninja/dist/ninja.js',minify:true,legalComments:'eof',sourcemap:false,logLevel:'info'});
 await writeFile('notification-ninja/dist/build.json',JSON.stringify({
-  name:'Notification Ninja',version:'3.13.2',engine:'Canvas 2D / Web Audio',style:'Sakura indie dojo',
+  name:'Notification Ninja',version:'3.13.3',engine:'Canvas 2D / Web Audio',style:'Sakura indie dojo',
   sharedPlayMenu:true,illustrationAtlas:true,illustratedScenes:true,senseiScenarios:12,notificationCodex:true,
   dressingRoom:true,missionDetailsSheet:true,deviceHandedness:true,roundCoaching:true,illustratedRoomArt:true,
   villageMap:true,logo:'assets/indie-wordmark.png',languages:['de','en'],guestPlay:true,
@@ -37,7 +38,7 @@ await writeFile('notification-ninja/dist/build.json',JSON.stringify({
   hudLayout:'framed-arena-bottom-ribbon',largeHearts:true,ninjaRanks:5,skins:SKINS.length,
   skinRarities:Object.keys(SKIN_RARITIES).length,rarityTiers:Object.keys(SKIN_RARITIES),
   dailyChallenges:3,careerMissions:26,mainMissions:18,accountAPI:3,accountSync:true,
-  publicAccountsConfigured:accountsConfigured,canonicalOrigin:'https://notification-ninja-accounts.onrender.com',
+  publicAccountsConfigured:accountsConfigured,canonicalOrigin:CANONICAL_SITE_ORIGIN,
   backendRequiresPersistentDatabase:true,databaseAdapters:['postgresql','sqlite'],bossRush:true,dailyRun:true,
   registrationEmailAndConsent:true,accessiblePractice:true,autoplayBosses:3,weeklyChallenges:3,
   weeklyOutfits:['lotus','ember','tide'],comboMilestones:[10,25,50],dynamicWorld:true,menuMusic:true,

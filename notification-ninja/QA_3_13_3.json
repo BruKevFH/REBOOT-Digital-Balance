@@ -1,0 +1,67 @@
+{
+  "version": "3.13.3",
+  "date": "2026-11-27",
+  "status": "local-acceptance-passed-publication-pending",
+  "intendedHomepage": "https://notification-ninja.onrender.com/",
+  "repositoryTests": {
+    "passed": 638,
+    "failed": 0,
+    "skipped": 0,
+    "postgresql": "real isolated local PostgreSQL 17",
+    "sqlite": true
+  },
+  "staticBrowser": {
+    "passed": 18,
+    "issues": [],
+    "widths": [
+      320,
+      768,
+      1440
+    ],
+    "languages": [
+      "de",
+      "en"
+    ],
+    "apiOutages": [
+      "network-blocked",
+      "json-503",
+      "wake-html"
+    ],
+    "noAnonymousAPIRequests": true,
+    "guestBootMs": {
+      "min": 757,
+      "max": 1252
+    },
+    "healthBackoffClockAcceleratedInHarness": true,
+    "productionAccountsCreated": 0,
+    "minCareerContrast": {
+      "dark": 6.813764917713835,
+      "noir": 10.741627604705018
+    }
+  },
+  "accountFormBrowserCases": 10,
+  "serviceWorkerOffline": {
+    "precacheFiles": 69,
+    "routes": [
+      "/",
+      "/index.html",
+      "/home.html",
+      "/play.html"
+    ],
+    "reload": true,
+    "nativeChromium": true
+  },
+  "guestTransfer": "native isolated played round; consent, backup, source retained, target reload persisted",
+  "publicVerifierFixture": "all 74 files, corruption rejected, stale revision retried, wrong revision rejected",
+  "historicalProductionRestart": {
+    "date": "2026-11-24",
+    "workflow": "https://github.com/BruKevFH/REBOOT-Digital-Balance/actions/runs/45445114118",
+    "rerunForThisRelease": false
+  },
+  "limits": [
+    "Viewport emulation is not every physical device.",
+    "Search indexing and ranking cannot be guaranteed.",
+    "Accounts still depend on the separate free API; frontend does not.",
+    "New production URLs and CI proof pending."
+  ]
+}
