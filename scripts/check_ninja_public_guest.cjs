@@ -8,6 +8,17 @@ const {createHash}=require('node:crypto');
 const repository=path.resolve(__dirname,'..');
 const digest=value=>createHash('sha256').update(value).digest('hex');
 const pause=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+let phase='initialization';
+function enterPhase(value){phase=value;console.log('Public guest acceptance phase: '+phase);}
+function reportFailure(error){
+ const details=String(error?.stack||error).slice(-12000),message=('Phase: '+phase+'; '+String(error?.message||error)).slice(0,3000);
+ if(process.env.GITHUB_ACTIONS==='true')console.error('::error title=Public guest acceptance failed::'+message.replace(/%/g,'%25').replace(/\r/g,'%0D').replace(/\n/g,'%0A'));
+ if(process.env.GITHUB_STEP_SUMMARY){
+  try{fs.appendFileSync(process.env.GITHUB_STEP_SUMMARY,'\n### Public guest acceptance failed\n\nPhase: `'+phase+'`\n\n~~~text\n'+details.replace(/~~~/g,'~ ~ ~')+'\n~~~\n');}
+  catch(summaryError){console.error('Could not write acceptance summary: '+summaryError.message);}
+ }
+ console.error(details);process.exitCode=1;
+}
 
 async function get(base,file,{fetchImpl=fetch,timeoutMs=15000}={}){
  const url=new URL(file,base);url.searchParams.set('acceptance',String(Date.now()));
@@ -35,8 +46,10 @@ async function verifyPublicAssets({base,out,staticRoot=path.join(repository,'dis
  assert.equal(expectedManifest.sourceRevision,expectedRevision,'Build static output with RENDER_GIT_COMMIT set to the expected commit');
  assert.equal(expectedManifest.canonicalOrigin,new URL(base).origin);
  assert.equal(expectedManifest.homepage,'index.html');assert.equal(expectedManifest.entry,'play.html');
+ enterPhase('static manifest and expected source revision');
  const manifest=await waitForStaticRevision({base,expectedRevision,fetchImpl,attempts,intervalMs});
  assert.deepEqual(manifest,expectedManifest,'Published static file inventory and build identity match this checkout');
+ enterPhase('static file SHA-256 identity');
  const hashes=[];
  // Compare every allowlisted public file, including HTML, CSS, code, artwork,
  // robots, sitemap and the downloadable archive. Never read paths from a remote manifest.
@@ -70,11 +83,13 @@ async function main(){
  const assets=await verifyPublicAssets({base,out,expectedRevision});
  // Keep GitHub Pages preflight in the workflow and verify this new origin too.
  const {verifyNinjaDeployment}=await import(pathToFileURL(path.join(repository,'scripts/verify_ninja_deployment.mjs')).href);
+ enterPhase('separate API and static-origin CORS');
  const api=await verifyNinjaDeployment(ACCOUNT_SERVICE_ORIGIN,{pagesOrigin:CANONICAL_SITE_ORIGIN,expectedRevision});
  fs.writeFileSync(path.join(out,'static-origin-api-cors.json'),JSON.stringify(api,null,2));
+ enterPhase('native public guest navigation and presentation');
  const report=await run({base,gameEntry:'play.html',publicOnly:true,out});
  console.log(JSON.stringify({version:report.version,base:report.base,sourceRevision:expectedRevision,verifiedAssets:assets.length,apiChecks:api.checks,viewports:report.viewports.map(v=>({width:v.width,ok:v.ok,screens:v.screens.length})),issues:report.issues},null,2));
 }
 
-module.exports={verifyPublicAssets,waitForStaticRevision};
-if(require.main===module)main().catch(error=>{console.error(error.stack);process.exitCode=1;});
+module.exports={verifyPublicAssets,waitForStaticRevision,reportFailure};
+if(require.main===module)main().catch(reportFailure);
