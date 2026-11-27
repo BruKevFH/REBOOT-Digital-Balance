@@ -1,5 +1,6 @@
 /** Account forms and recovery are authored in German; IDs and user input stay untouched. */
 export const EN_ACCOUNTS={
+  "Dein persönliches Notification-Ninja-Dojo: Spiele als Gast oder mit deinem Konto.":"Your personal Notification Ninja dojo: play as a guest or with your account.",
   'Die Online-Verbindung ist noch nicht bereit. Dein Gastspiel bleibt verfügbar. Bitte versuche es erneut.':'The online connection is not ready yet. Guest play stays available. Please try again.',
   'Der Online-Dienst wird gestartet. Du kannst sofort als Gast spielen.':'The online service is starting. You can play as a guest straight away.',
   'Online-Verbindung wird hergestellt …':'Connecting to the online service …',

@@ -189,3 +189,10 @@ test('career chapter counters and navigation labels translate at every completio
   assert.equal(tr('Missionspfad Lern-Dojo'),'Mission path: Study Dojo');
   setLanguage('de');assert.equal(tr('3 von 6 Missionen'),'3 von 6 Missionen');
 });
+
+
+test('the separate static game description translates when English is selected',()=>{
+  setLanguage('en');
+  assert.equal(tr('Dein persönliches Notification-Ninja-Dojo: Spiele als Gast oder mit deinem Konto.'),'Your personal Notification Ninja dojo: play as a guest or with your account.');
+  setLanguage('de');
+});
